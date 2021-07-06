@@ -1,8 +1,13 @@
 <template>
 	<el-row class="row-one">
-		<el-col :span="12" :offset="8" >
+		<el-col :span="12"  >
 						病人信息：<el-input class="myin" v-model="input" placeholder="请输入你要查询的手术" ></el-input>
 						<el-button type="primary" icon="el-icon-search">查询</el-button>
+		</el-col>
+	</el-row>
+	<el-row>
+		<el-col :span="6" >
+			结果：<span>2</span>条
 		</el-col>
 	</el-row>
 	<el-dialog title="手术详情" v-model="isShow" width="50%" center  ><!-- 弹窗      -=-=-=-=-=-=-==-=-=-=-=--=-=-=-=-=-=-手术详情 -->
@@ -129,16 +134,13 @@
 			  </el-form-item>
 		</el-form>
 	</el-dialog>
-	<el-row>
-		<el-col :span="6" >
-			结果：<span>2</span>条
-		</el-col>
-	</el-row>
+	
 	<el-row > <!--======= ============================================================表格 ====================-->
 		<el-table
 		    ref="multipleTable"
 		    :data="ssTa"
 		    tooltip-effect="dark"
+			height="650"
 		    style="width: 100%"
 		    @selection-change="handleSelectionChange">
 		    <el-table-column
@@ -190,6 +192,16 @@
 			      </template>
 			    </el-table-column>
 		</el-table>
+		<el-pagination
+						 					style="text-align: center;"
+						       @size-change="totalCut"
+						       @current-change="pageCut"
+						       :current-page="1"
+						       :page-sizes="[2,4,6,8,10]"
+						       :page-size="size"
+						       layout="total, sizes, prev, pager, next, jumper"
+						       :total="total">
+						     </el-pagination>
 	</el-row>
 	
 </template>

@@ -1,9 +1,27 @@
 <template>
 	<el-row class="row-one">
-		<el-col :span="12" :offset="8" >
-						手术信息：<el-input class="myin" v-model="input" placeholder="请输入你要查询的手术" ></el-input>
-						<el-button type="primary" icon="el-icon-search">查询</el-button>
-		</el-col>
+		<el-form label-width="100px" >
+			<el-col :span="9">
+				<el-form-item label="结果：" label-width="60px">
+					<span>2</span>条
+				</el-form-item>
+			</el-col>
+			<el-col :span="5">
+				<el-form-item  label="手术信息" label-width="100px">
+					<el-input style="width: 200px;" v-model="input" placeholder="请输入你要查询的手术" ></el-input>
+				</el-form-item>
+			</el-col>
+			<el-col :span="5">
+				<el-form-item label="" label-width="18px">
+					<el-button type="primary" icon="el-icon-search">查询</el-button>
+					</el-form-item>
+			</el-col>
+			<el-col :span="5" >
+				<el-form-item label="" label-width="800px">
+				<el-button type="primary"  @click="ssEdit()">新增</el-button>	
+				</el-form-item>
+			</el-col>
+		</el-form>
 	</el-row>
 	<el-dialog title="手术详情" v-model="isShow" width="50%" center  ><!-- 弹窗      -=-=-=-=-=-=-==-=-=-=-=--=-=-=-=-=-=-手术详情 -->
 		<el-form  status-icon :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
@@ -195,19 +213,13 @@
 			  </el-form-item>
 		</el-form>
 	</el-dialog>
-	<el-row >
-		<el-col :span="6" >
-			结果：<span>2</span>条
-		</el-col>
-		<el-col  :span="6" :offset="18">
-			<el-button type="primary"   @click="ssEdit()">新增</el-button>	
-		</el-col>
-	</el-row>
+	
 	<el-row > <!--======= ============================================================表格 ====================-->
 		<el-table
 		    ref="multipleTable"
 		    :data="ssTa"
 		    tooltip-effect="dark"
+			height="600"
 		    style="width: 100%"
 		    @selection-change="handleSelectionChange">
 		    <el-table-column
@@ -255,6 +267,16 @@
 			      </template>
 			    </el-table-column>
 		</el-table>
+		<el-pagination
+				 					style="text-align: center;"
+				       @size-change="totalCut"
+				       @current-change="pageCut"
+				       :current-page="1"
+				       :page-sizes="[2,4,6,8,10]"
+				       :page-size="size"
+				       layout="total, sizes, prev, pager, next, jumper"
+				       :total="total">
+				     </el-pagination>
 	</el-row>
 	
 </template>
@@ -361,7 +383,7 @@
 	  }
 </script>
 
-<style>
+<style scoped>
 	.my-el-time{
 		padding-top: 20px;
 		width: 200px;

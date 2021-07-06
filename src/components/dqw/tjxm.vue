@@ -1,17 +1,39 @@
 <template>
 	<el-row class="row-one">		
-		<el-col :span="16" :offset="7">
-			<i class="el-icon-wind-power"></i>
-			<el-select class="my-el-slect" v-model="value" placeholder="请选择">
-				<el-option
-				  v-for="item in options"
-				  :key="item.value"
-				  :label="item.label"
-				  :value="item.value">
-				</el-option>
-			</el-select>
-			套餐信息：<el-input class="my-el-tc" v-model="input" placeholder="请输入你要查询的套餐" ></el-input>  
-			<el-button type="primary" icon="el-icon-search">查询</el-button>
+		<el-form label-width="100px" >
+			<el-col :span="9">
+				<el-form-item label="类型：" label-width="60px">
+					<el-select class="my-el-slect" v-model="value" placeholder="请选择">
+						<el-option
+						  v-for="item in options"
+						  :key="item.value"
+						  :label="item.label"
+						  :value="item.value">
+						</el-option>
+					</el-select>
+				</el-form-item>
+			</el-col>
+			<el-col :span="5">
+				<el-form-item  label="套餐信息:" label-width="100px">
+					<el-input  v-model="input" placeholder="请输入你要查询的套餐" ></el-input>  
+				</el-form-item>
+			</el-col>
+			<el-col :span="5">
+				<el-form-item label="" label-width="0px">
+					<el-button type="primary" icon="el-icon-search">查询</el-button>
+					</el-form-item>
+			</el-col>
+			<el-col :span="5" >
+				<el-form-item label="" label-width="710px">
+				<el-button type="primary"  @click="tjtcEdit()">新增套餐</el-button>	
+				</el-form-item>
+			</el-col>
+		</el-form>
+			
+	</el-row>
+	<el-row>
+		<el-col :span="7">
+				筛选结果<span>1</span>条
 		</el-col>
 	</el-row>
 	
@@ -232,20 +254,9 @@
 	</el-dialog>
 	
 	
-	<el-form>
-		<el-row>
-			<el-col :span="7">
-				<el-form-item label="筛选结果:" label-width="80px">
-					<span>1</span>条
-				</el-form-item>
-			</el-col>
-			<el-col  :span="3" :offset="14">
-					<el-button type="primary" @click=tjtcEdit()>新增套餐</el-button>
-			</el-col>
-		</el-row>
-	</el-form>
+
 	<el-row > <!-- ==================================================================上表格 ==================================================================-->
-		<el-table :data="tableData" style="width: 100%;height:300px;" v-if="isShow!==null">
+		<el-table :data="tableData" style="width: 100%;height:260px;" v-if="isShow!==null">
 			<el-table-column label="编号" width="180">
 				<template #default="scope">
 					<span style="margin-left: 10px">{{ scope.row.date }}</span>
@@ -294,24 +305,33 @@
 		      </template>
 		    </el-table-column>
 		</el-table>
+ <!--分页插件-->
+				<el-pagination
+								 					style="text-align: center;"
+								       @size-change="totalCut"
+								       @current-change="pageCut"
+								       :current-page="1"
+								       :page-sizes="[2,4,6,8,10]"
+								       :page-size="size"
+								       layout="total, sizes, prev, pager, next, jumper"
+								       :total="total">
+								     </el-pagination>
 	</el-row>
 	
-	<el-form style="padding-top: 5px;">
+
 		<el-row>
-			<el-col :span="7">
-				<el-form-item label="筛选结果:" label-width="80px">
-					<span>2</span>条
-				</el-form-item>
-			</el-col>
-			
-			<el-col  :span="3" :offset="14">
+			<el-col  :span="3" :offset="20">
 					<el-button type="primary" @click=jcxmEdit()>新增项目</el-button>
 			</el-col>
 		</el-row>
-	</el-form>
-	
-	<el-row > <!-- ============================================下表格============================================ -->
-		<el-table :data="yldate" style="width: 100%;height: 300px;" v-if="isShow!==null">
+	<el-row>
+		<el-col :span="7">
+				筛选结果<span>2</span>条
+		</el-col>
+	</el-row>
+	<!-- ============================================下表格============================================ -->
+	<el-row > 
+		<el-table :data="yldate" style="width: 100%;height: 280px;" v-if="isShow!==null">
 			<el-table-column label="编号" width="180">
 				<template #default="scope">
 					<span style="margin-left: 10px">{{ scope.row.date }}</span>
@@ -371,6 +391,17 @@
 						  </template>
 			</el-table-column>
 		</el-table>
+		 <!--分页插件-->
+						  <el-pagination
+						 					style="text-align: center;"
+						       @size-change="totalCut"
+						       @current-change="pageCut"
+						       :current-page="1"
+						       :page-sizes="[2,4,6,8,10]"
+						       :page-size="size"
+						       layout="total, sizes, prev, pager, next, jumper"
+						       :total="total">
+						     </el-pagination>
 	</el-row>
 	
 </template>
