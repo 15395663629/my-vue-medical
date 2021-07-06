@@ -1,5 +1,5 @@
 <template >
-	<div class="my-works" >
+	<div>
 		<el-row>
 			<el-col :span="5">
 				<h4>呼叫列表：</h4>
@@ -108,7 +108,7 @@
 		<!-- table=============================== -->
 		<h4>当天病例表：</h4>
 		 <el-table
-			height="340"
+			height="315"
 		    :data="tableData.filter(data => !search || data.name.toLowerCase().includes(search.toLowerCase()))"
 		    style="width: 100%">
 		    <el-table-column
@@ -196,9 +196,6 @@
 	};
 </script>
 
-<style scoped>
-	.my-works{
-			box-shadow: 0 2px 4px rgba(0, 0, 0, .12), 0 0 6px rgba(0, 0, 0, .04)
-	}
+<style>
 </style>
 

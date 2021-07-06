@@ -22,7 +22,7 @@
 	<el-table 
 		:data="rightTableData1"
 		style="width: 100%"
-		height="594"
+		height="571"
 		>
 		<el-table-column
 		  label="就诊卡号"

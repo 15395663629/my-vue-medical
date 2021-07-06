@@ -58,7 +58,7 @@
 		</el-form>
 	</el-row>
 	
-	<el-table show-summary height="600" row-key="date"  :data="tableData" style="width: 100%">
+	<el-table show-summary height="580" row-key="date"  :data="tableData" style="width: 100%">
 		<el-table-column fixed  label="药品名称"  width="120"></el-table-column>
 		<el-table-column fixed  label="计量"  width="120"></el-table-column>
 		<el-table-column fixed  label="单位"  width="120"></el-table-column>
