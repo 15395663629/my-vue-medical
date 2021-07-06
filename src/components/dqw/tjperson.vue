@@ -1,12 +1,6 @@
 <template>
-		<el-breadcrumb separator-class="el-icon-arrow-right">
-		  <el-breadcrumb-item :to="{ path: '/home' }">首页</el-breadcrumb-item>
-		  <el-breadcrumb-item>统计</el-breadcrumb-item>
-		</el-breadcrumb>
 		<el-row>
-			<el-col :span="3">
-				统计
-			</el-col>
+			
 		</el-row>
 		<!--=============================================统计表格===================================-->
 		<el-row>
@@ -14,7 +8,7 @@
 				<el-table
 				    ref="multipleTable"
 				    :data="empArr"
-				    tooltip-effect="dark"
+				    tooltip-effect="dark" height="400"
 				    style="width: 100%"
 				    @selection-change="handleSelectionChange">
 				    <el-table-column
@@ -62,16 +56,16 @@
 					
 				  </el-table>
 				  <!--分页插件-->
-				   <el-pagination
-				  					style="text-align: center;"
-				        @size-change="totalCut"
-				        @current-change="pageCut"
-				        :current-page="1"
-				        :page-sizes="[2,4,6,8,10]"
-				        :page-size="size"
-				        layout="total, sizes, prev, pager, next, jumper"
-				        :total="total">
-				    </el-pagination>
+				  <el-pagination
+				  				 					style="text-align: center;"
+				  				       @size-change="totalCut"
+				  				       @current-change="pageCut"
+				  				       :current-page="1"
+				  				       :page-sizes="[2,4,6,8,10]"
+				  				       :page-size="size"
+				  				       layout="total, sizes, prev, pager, next, jumper"
+				  				       :total="total">
+				  				     </el-pagination>
 					
 			</el-col>
 			
