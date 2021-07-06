@@ -1,7 +1,6 @@
 <template>
 	<el-row class="row-one">		
-		<el-col :span="16" :offset="6">
-			
+		<el-col :span="12" >
 			<i class="el-icon-wind-power"></i>
 			体检人员信息：<el-input class="my-tjss" v-model="input" placeholder="请输入你要查询的体检人员" ></el-input>  
 			<el-button type="primary" icon="el-icon-search">查询</el-button>
@@ -10,15 +9,12 @@
 			  <el-radio-button label="当天体检"></el-radio-button>
 			  <el-radio-button label="预约体检"></el-radio-button>
 			</el-radio-group>
+			<el-button  type="primary" @click=xztjEdit()>新增</el-button>
 		</el-col>
 	</el-row>
-
-	<el-row>
+	<el-row style="margin-bottom: 5px;">
 		<el-col :span="6">
-			筛选结果：<span>2</span>条
-		</el-col>
-		<el-col :span="1" :offset="15">
-		<el-button type="primary" @click=xztjEdit()>新增</el-button>
+			结果：<span>2</span>条	
 		</el-col>
 	</el-row>
 	<el-dialog title="新增体检人员" v-model="xztj" width="50%" center  ><!-- 弹窗      -=-=-=-=-=-=-==-=-=-=-=--=-=-=-=-=-=-新增体检人员======================================= -->
@@ -126,7 +122,7 @@
 	<!-- ==================================================体检人员表================================================== -->
 	<el-row>
 		<el-col>
-			<el-table :data="tjry" style="width: 100%;">
+			<el-table :data="tjry" height="620" style="width: 100%;">
 			    <el-table-column
 			      label="编号"
 				  prop="empId"
@@ -162,16 +158,16 @@
 				
 			  </el-table>
 			  <!--分页插件-->
-			   <el-pagination
-			  					style="text-align: center;"
-			        @size-change="totalCut"
-			        @current-change="pageCut"
-			        :current-page="1"
-			        :page-sizes="[2,4,6,8,10]"
-			        :page-size="size"
-			        layout="total, sizes, prev, pager, next, jumper"
-			        :total="total">
-			      </el-pagination>
+			 				  <el-pagination
+			 				 					style="text-align: center;"
+			 				       @size-change="totalCut"
+			 				       @current-change="pageCut"
+			 				       :current-page="1"
+			 				       :page-sizes="[2,4,6,8,10]"
+			 				       :page-size="size"
+			 				       layout="total, sizes, prev, pager, next, jumper"
+			 				       :total="total">
+			 				     </el-pagination>
 		</el-col>
 	</el-row>
 	
