@@ -46,7 +46,7 @@
 			  </div>
 			
 			 <el-table
-				height="650"
+				height="630"
 			    :data="tableData1"
 			    style="width: 100%">
 			    <el-table-column
@@ -113,7 +113,7 @@
 			</el-radio-group>
 			
 			<el-table
-				height="650"
+				height="630"
 			   :data="tableData2"
 			   style="width: 100%">
 			   <el-table-column
