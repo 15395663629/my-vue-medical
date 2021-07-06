@@ -1,6 +1,5 @@
 <template>
 	<router-view></router-view>
-  11
 </template>
 
 <script >
