@@ -1,6 +1,5 @@
 <template>
 	<div>部门管理</div>
-  {{list}}
 	<div class="wz">
 		<el-button type="primary" @click="dialogVisible1 = true">新增部门</el-button>
 		<span style="margin-left: 20px;">
@@ -9,43 +8,25 @@
 		</span>
 		<!-- <el-button type="primary">重置密码</el-button> -->
 	</div>
-	 <el-table
-	    ref="multipleTable"
-	    :data="list"
-	    tooltip-effect="dark"
-	    style="width: 100%"
-	    @selection-change="handleSelectionChange" class="dome">
-	    <el-table-column
-	      type="selection"
-	      width="55">
-	    </el-table-column>
-	    <el-table-column
-	      label="编号"
-        prop="ksId"
-	      width="120">
+  <el-table ref="multipleTable" :data="dept" tooltip-effect="dark" style="width: 100%"
+            @selection-change="handleSelectionChange" class="dome">
+    <el-table-column type="selection" width="55">
+    </el-table-column>
+    <el-table-column label="部门编号" width="120" prop="deId">
+    </el-table-column>
+    <el-table-column prop="deName" label="部门名称" width="120">
+    </el-table-column>
+    <el-table-column prop="deDate" label="创建时间" width="540">
+    </el-table-column>
+    <el-table-column label="操作">
+      <template v-slot:default="r">
+        <el-button type="danger" @click="open">删除</el-button>
+        <el-button type="primary" @click="dialogVisible1 = true">编辑部门</el-button>
 
-	    </el-table-column>
-	    <el-table-column
-	      prop="ksName"
-	      label="科室名称"
-	      width="120">
-	    </el-table-column>
-	    <el-table-column
-	      prop="deId"
-	      label="所属部门"
-		   width="540"
-	     >
-	    </el-table-column>
-		<el-table-column
-		  label="操作">
-		  <template v-slot:default="r">
-			 <el-button type="primary" @click="open">删除</el-button>
-			<el-button type="primary" @click="dialogVisible1= true">编辑部门</el-button>
+      </template>
+    </el-table-column>
 
-		  </template>
-		</el-table-column>
-
-	  </el-table>
+  </el-table>
 	  <!-- 分页插件 -->
 	  <el-pagination
 	  	style="text-align: center;"
@@ -84,42 +65,13 @@
 	export default {
 	    data() {
 	      return {
-	        list:[],
+	        dept:[],
 			  dialogVisible1:false,
 			  dialogVisible:false,
           currentPage1: 5,
           currentPage2: 5,
 			          currentPage3: 5,
 			          currentPage4: 4,
-	        tableData: [{
-	          date: '2016-05-03',
-	          name: '王小虎',
-	          address: '上海市普陀区金沙江路 1518 弄'
-	        }, {
-	          date: '2016-05-02',
-	          name: '王小虎',
-	          address: '上海市普陀区金沙江路 1518 弄'
-	        }, {
-	          date: '2016-05-04',
-	          name: '王小虎',
-	          address: '上海市普陀区金沙江路 1518 弄'
-	        }, {
-	          date: '2016-05-01',
-	          name: '王小虎',
-	          address: '上海市普陀区金沙江路 1518 弄'
-	        }, {
-	          date: '2016-05-08',
-	          name: '王小虎',
-	          address: '上海市普陀区金沙江路 1518 弄'
-	        }, {
-	          date: '2016-05-06',
-	          name: '王小虎',
-	          address: '上海市普陀区金沙江路 1518 弄'
-	        }, {
-	          date: '2016-05-07',
-	          name: '王小虎',
-	          address: '上海市普陀区金沙江路 1518 弄'
-	        }],
 	        multipleSelection: [],
 			 dialogTableVisible: false,
 			 formLabelWidth: '120px',
@@ -137,9 +89,9 @@
 	
 	    methods: {
         getData(){
-          this.axios.get('http://localhost:8089/dome').then((v)=>{
-           this.list=v.data
-            console.log(this.list)
+          this.axios.get("http://localhost:8089/bm-list").then((v)=>{
+            this.dept=v.data
+            console.log(this.dept)
           }).catch()
         },
 	      handleSelectionChange(val) {
@@ -170,9 +122,9 @@
 			          console.log(`当前页: ${val}`);
 			        }
 	    },
-    created() {
+  created() {
 	      this.getData()
-    }
+  }
   }
 	</script>
 
