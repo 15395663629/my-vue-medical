@@ -172,7 +172,7 @@
 		</el-col>
 	</el-row>
 	
-	<el-dialog title="提示" v-model="isShow" width="55%" center  ><!-- 第一个弹窗新增 -->
+	<el-dialog title="提示" v-model="isShow" width="55%" center  ><!-- 第一个弹窗普通挂号 -->
 		<el-row><!-- :rules="rules" -->
 			<el-form  status-icon  ref="ruleForm" label-width="100px" class="demo-ruleForm">
 				<el-col >
@@ -406,7 +406,7 @@
 			<el-form  status-icon ref="ruleForm" label-width="830px" style="margin-top: 30px;" class="demo-ruleForm">
 				<el-col>
 					<el-form-item>
-						<el-button type="primary" @click="submitForm('ruleForm')">提交</el-button>
+						<el-button type="primary" @click="submitMzSick('ruleForm')">提交</el-button>
 						<el-button @click="resetForm('ruleForm')">取消</el-button>
 					</el-form-item>
 				</el-col>
@@ -469,7 +469,29 @@
 				          value: '选项3',
 				          label: '急诊'
 				        }],
-				value2: ''
+				value2: '',
+
+
+
+
+
+
+
+        //加入后台的部分----------------------------------------
+        MzSickAttr:[{
+
+        }],
+        MzSickprot:{
+          sickNumber:0,
+          sickIdCard:"",
+          sickName:"",
+          sickPhone:"",
+          sickAge:0,
+          sickSex:"",
+          sickSite:"",
+          sickHistory:"",
+        },
+
 			};
 		},
 		 methods: {
@@ -492,6 +514,16 @@
 				  }
 				});
 			},
+       submitMzSick(formName) {
+         this.$refs[formName].validate((valid) => {
+           if (valid) {
+             alert('submit!');
+           } else {
+             console.log('error submit!!');
+             return false;
+           }
+         });
+       },
 			resetForm(formName) {
 				this.isShow = false
 				this.$refs[formName].resetFields();
