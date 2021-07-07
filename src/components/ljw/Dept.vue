@@ -1,5 +1,6 @@
 <template>
 	<div>部门管理</div>
+  {{list}}
 	<div class="wz">
 		<el-button type="primary" @click="dialogVisible1 = true">新增部门</el-button>
 		<span style="margin-left: 20px;">
@@ -10,7 +11,7 @@
 	</div>
 	 <el-table
 	    ref="multipleTable"
-	    :data="tableData"
+	    :data="list"
 	    tooltip-effect="dark"
 	    style="width: 100%"
 	    @selection-change="handleSelectionChange" class="dome">
@@ -19,18 +20,19 @@
 	      width="55">
 	    </el-table-column>
 	    <el-table-column
-	      label="日期"
+	      label="编号"
+        prop="ksId"
 	      width="120">
-	      <template #default="scope">{{ scope.row.date }}</template>
+
 	    </el-table-column>
 	    <el-table-column
-	      prop="name"
-	      label="姓名"
+	      prop="ksName"
+	      label="科室名称"
 	      width="120">
 	    </el-table-column>
 	    <el-table-column
-	      prop="address"
-	      label="地址"
+	      prop="deId"
+	      label="所属部门"
 		   width="540"
 	     >
 	    </el-table-column>
@@ -39,10 +41,10 @@
 		  <template v-slot:default="r">
 			 <el-button type="primary" @click="open">删除</el-button>
 			<el-button type="primary" @click="dialogVisible1= true">编辑部门</el-button>
-			 
+
 		  </template>
 		</el-table-column>
-		
+
 	  </el-table>
 	  <!-- 分页插件 -->
 	  <el-pagination
@@ -82,10 +84,11 @@
 	export default {
 	    data() {
 	      return {
+	        list:[],
 			  dialogVisible1:false,
 			  dialogVisible:false,
-			     currentPage1: 5,
-			          currentPage2: 5,
+          currentPage1: 5,
+          currentPage2: 5,
 			          currentPage3: 5,
 			          currentPage4: 4,
 	        tableData: [{
@@ -133,7 +136,12 @@
 	    },
 	
 	    methods: {
-	
+        getData(){
+          this.axios.get('http://localhost:8089/dome').then((v)=>{
+           this.list=v.data
+            console.log(this.list)
+          }).catch()
+        },
 	      handleSelectionChange(val) {
 	        this.multipleSelection = val;
 			// alert(123)
@@ -161,8 +169,11 @@
 			        handleCurrentChange(val) {
 			          console.log(`当前页: ${val}`);
 			        }
-	    }
-	  }
+	    },
+    created() {
+	      this.getData()
+    }
+  }
 	</script>
 
 
