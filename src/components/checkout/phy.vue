@@ -1,14 +1,4 @@
 <template>
-	<el-breadcrumb separator-class="el-icon-arrow-right">
-	  <el-breadcrumb-item :to="{ path: '/home' }">首页</el-breadcrumb-item>
-	  <el-breadcrumb-item>统计</el-breadcrumb-item>
-	</el-breadcrumb>
-	<el-row>
-		<el-col :span="3">
-			体检记录
-		</el-col>
-	</el-row>
-	
 	
 	<el-dialog title="体检详情" v-model="tjjl" width="50%" center  ><!-- 弹窗      -=-=-=-=-=-=-==-=-=-=-=--=-=-=-=-=-=-体检表格 -->
 		<el-form  status-icon :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
@@ -92,6 +82,7 @@
 			    ref="multipleTable"
 			    :data="tjry"
 			    tooltip-effect="dark"
+				height="700"
 			    style="width: 100%"
 			    @selection-change="handleSelectionChange">
 			    <el-table-column
@@ -123,7 +114,7 @@
 				  prop="empSalary"
 				  label="操作" width="200px">
 				  <template #default="scope">
-				  	<el-button size="mini"  @click="tjjlEdit(scope.$index, scope.row)">体检结果
+				  	<el-button size="mini"  @click="tjjlEdit(scope.$index, scope.row)">手术详情
 				  					  </el-button>
 					<el-button size="mini"  type="primary">打印</el-button>
 				  </template>
@@ -149,16 +140,16 @@
 				
 			  </el-table>
 			  <!--分页插件-->
-			   <el-pagination
-			  					style="text-align: center;"
-			        @size-change="totalCut"
-			        @current-change="pageCut"
-			        :current-page="1"
-			        :page-sizes="[2,4,6,8,10]"
-			        :page-size="size"
-			        layout="total, sizes, prev, pager, next, jumper"
-			        :total="total">
-			      </el-pagination>
+			  <el-pagination
+			  				 					style="text-align: center;"
+			  				       @size-change="totalCut"
+			  				       @current-change="pageCut"
+			  				       :current-page="1"
+			  				       :page-sizes="[2,4,6,8,10]"
+			  				       :page-size="size"
+			  				       layout="total, sizes, prev, pager, next, jumper"
+			  				       :total="total">
+			  				     </el-pagination>
 		</el-col>
 	</el-row>
 </template>
