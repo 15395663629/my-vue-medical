@@ -36,7 +36,7 @@
 		科室名称：<el-input type="text" style="width: 40%;"></el-input><br />
 		部&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;门 ：<el-select v-model="value" placeholder="请选择"
 			style="width: 20%;margin-top:20px;">
-			<el-option v-for="item in dplist" :key="item.deId" :label="item.deName" :value="item.value">
+			<el-option v-for="item in dplist" :key="item.deId" :label="item.deName" :value="item.deId">
 
 			</el-option>
 		</el-select><br />
