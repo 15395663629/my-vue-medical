@@ -11,6 +11,7 @@
 					<el-button type="primary" icon="el-icon-search">查询</el-button>
 				</el-form-item>
 			</el-col>
+
 			
 		</el-form>
 	</el-row>
@@ -22,7 +23,7 @@
 	<el-table 
 		:data="rightTableData1"
 		style="width: 100%"
-		height="594"
+		height="571"
 		>
 		<el-table-column
 		  label="就诊卡号"

@@ -194,6 +194,7 @@
 		    ref="multipleTable"
 		    :data="ssTa"
 		    tooltip-effect="dark"
+			height="650"
 		    style="width: 100%"
 		    @selection-change="handleSelectionChange">
 		    <el-table-column
@@ -238,6 +239,16 @@
 			      </template>
 			</el-table-column>
 		</el-table>
+		<el-pagination
+						 					style="text-align: center;"
+						       @size-change="totalCut"
+						       @current-change="pageCut"
+						       :current-page="1"
+						       :page-sizes="[2,4,6,8,10]"
+						       :page-size="size"
+						       layout="total, sizes, prev, pager, next, jumper"
+						       :total="total">
+						     </el-pagination>
 	</el-row>
 	
 </template>

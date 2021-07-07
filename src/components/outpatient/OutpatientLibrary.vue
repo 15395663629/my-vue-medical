@@ -10,7 +10,7 @@
 	@row-dblclick="drawer = true"
     :data="tableData"
     border
-	height="700"
+	height="677"
     style="width: 100%">
     <el-table-column
       fixed

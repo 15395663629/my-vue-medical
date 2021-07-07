@@ -17,7 +17,7 @@
 	  <el-radio-button label="诊卡充值退款"></el-radio-button> 
 	  <el-radio-button label="充值退款记录"></el-radio-button><!-- 当这里切换到退款记录时不能显示操作按钮 -->
 	</el-radio-group>
-	<el-table :data="rightTableData2" style="width: 100%" height="594" >
+	<el-table :data="rightTableData2" style="width: 100%" height="571" >
 		<el-table-column label="日期" width="180">
 		  <template #default="scope">
 			<i class="el-icon-time"></i>
