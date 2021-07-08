@@ -362,7 +362,7 @@
 					</el-form-item>
 				</el-col>
 				<el-col>
-					<el-form-item  label="年龄" >
+					<el-form-item prop="sickAge"  label="年龄" >
 						<el-input  v-model="mzSickArr.sickAge"></el-input>
 					</el-form-item>
 				</el-col>
@@ -389,17 +389,17 @@
 					</el-form-item>
 				</el-col>
 				<el-col>
-					<el-form-item prop="" label="诊疗卡卡号:" >
-						<el-input disabled></el-input>
+					<el-form-item  prop="mcNumberCard" label="诊疗卡卡号:"  >
+						<el-input class="te" v-model="mzSickArr.mcNumberCard"  disabled></el-input>
 					</el-form-item>
 				</el-col>
 				<el-col>
-					<el-form-item  label=""  label-width="10px">
-						<el-button type="primary" icon="el-icon-paperclip" size="small">生成诊疗卡</el-button>
+					<el-form-item  label-width="10px">
+						<el-button type="primary" @click="submitMedicalCard('mzSickArr')" icon="el-icon-paperclip" size="small">生成诊疗卡</el-button>
 					</el-form-item>
 				</el-col>
         <el-col>
-          <el-form-item label-width="335px">
+          <el-form-item label-width="287px">
             <el-button type="primary" @click="submitMzSick('mzSickArr')">提交</el-button>
             <el-button @click="resetForm('mzSickArr')">取消</el-button>
           </el-form-item>
@@ -411,6 +411,8 @@
 </template>
 
 <script>
+import { defineComponent } from 'vue'
+import { ElMessage } from 'element-plus'
 	export default {
 		data() {
 			return {
@@ -477,6 +479,7 @@
           sickAge:'',
           sickSex:"",
           sickSite:"",
+          mcNumberCard:'',//诊疗卡字段
         },
         optionsSex: [{
           value: '选项1',
@@ -485,19 +488,54 @@
           value: '选项2',
           label: '女'
         }],
-        rules: {
-          sickIdCard: [{ required: true, message: "身份证不能为空", trigger: 'blur' },],
+        rules: {//非空校验
+          sickIdCard: [{ required: true, message: "身份证不能为空", trigger: 'blur' },
+                        { min: 6, max: 18, message: "身份证格式大于或小于18位", trigger: 'blur' }],
           sickPhone: [{ required: true, message: "电话不能为空", trigger: 'blur' },],
           sickName:[{required: true, message: "输入栏不能为空", trigger: 'blur'}],
-          sickSex:[{required: true, message: "输入栏不能为空", trigger: 'blur'}],
-          // medicalCard:[{required: true, message: "请先生成诊疗卡", trigger: 'blur'}],
+          sickSex:[{required: true, message: "输入栏不能为空", trigger: 'blur'},],
+          sickAge: [{required: true, message: "输入栏不能为空", trigger: 'blur'},],
+          mcNumberCard:[{required: true, message: "请生成诊疗卡", trigger: 'blur'}],
+
         },
+			}
 
-
-
-			};
 		},
 		 methods: {
+       submitMzSick(formName) { // 确定病人新增
+         this.$refs[formName].validate((valid) => {
+           if (valid) {
+             this.axios.post("addMzSick", this.mzSickArr).then((res) => {
+               console.log(res.data)
+               if (res.data == 'ok') {
+                 this.$refs[formName].resetFields();//注意这里只能刷新加了prop的
+                 this.resetMzSick()
+                 console.log("ssssss")
+               }
+             }).catch(() => {
+             })
+           }
+         });
+       },
+       resetMzSick(){
+         this.isShow3=false;
+         this.mzSickArr.sickNumber=0;
+         this.mzSickArr.sickAge='';
+         this.mzSickArr.sickSite="";
+       },
+       submitMedicalCard(formName) { // 生成诊疗卡卡号
+         this.axios.post("inserMedicalCard").then((res) => {
+           console.log(res.data)
+           this.mzSickArr.mcNumberCard=res.data
+           ElMessage.success({
+             message: '恭喜你，生成成功~',
+             type: 'success'
+           });
+           console.log("1111")
+         }).catch(() => {})
+       },
+
+
 			 filterTag(value, row) {/* 复诊初诊标签方法 */
 			 				return row.tag === value;
 			 },
@@ -517,35 +555,11 @@
 				  }
 				});
 			},
-       submitMzSick(formName) { // 确定病人新增
-         this.$refs[formName].validate((valid) => {
-           if (valid) {
-             this.axios.post("addMzSick", this.mzSickArr).then((res) => {
-               console.log(res.data)
-               if (res.data == 'ok') {
-                 this.$refs[formName].resetFields();//注意这里只能刷新加了prop的
-                 this.resetMzSick()
-                 console.log("ssssss")
-               }
-             }).catch(() => {
-             })
-           }
-			   });
-       },
-       resetMzSick(){
-              this.isShow3=false;
-              this.mzSickArr.sickNumber=0;
-              // this.mzSickArr.sickIdCard="";
-              //  this.mzSickArr.sickName="";
-              // this.mzSickArr.sickPhone="";
-              this.mzSickArr.sickAge='';
-              // this.mzSickArr.sickSex="";
-              this.mzSickArr.sickSite="";
-       },
 			resetForm(formName) {//取消
 				this.isShow = false
 				this.$refs[formName].resetFields();
 			},
+
 
 
 
@@ -578,5 +592,10 @@
 	};
 </script>
 
-<style>
+<style scoped>
+.te /deep/ .el-input__inner {
+  color: red;
+  font-size: 18px;
+  cursor: pointer;
+}
 </style>
