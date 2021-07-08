@@ -12,6 +12,7 @@
 			<!-- 新增弹窗 -->
 			<el-button round @click="dialogFormVisible = true">新增采购计划</el-button>
 			<el-dialog title="采购计划" v-model="dialogFormVisible">
+        <button round @click="open = true">添加药品</button>
 				<el-form>
 					<el-form-item label="生产厂家" :label-width="formLabelWidth">
 					  <el-input autocomplete="off" style="width: 215px;"></el-input>
@@ -26,17 +27,14 @@
 						  <el-option label="王五" value="beijing"></el-option>
 						</el-select>
 					</el-form-item>
-					<el-form-item label="药品选择" :label-width="formLabelWidth">
-						<button round @click="open = true">添加药品</button>
-					</el-form-item>
 				</el-form>
 			    <el-table :data="gridData">
-				  <el-table-column type="selection" width="55"></el-table-column>
-			      <el-table-column property="date" label="药品名" ></el-table-column>
-			      <el-table-column property="name" label="数量" ></el-table-column>
-			      <el-table-column property="address" label="单价"></el-table-column>
-				  <el-table-column property="xj" label="小计"></el-table-column>
-			    </el-table>
+            <el-table-column type="selection" width="55"></el-table-column>
+              <el-table-column property="date" label="药品名" ></el-table-column>
+              <el-table-column property="name" label="数量" ></el-table-column>
+              <el-table-column property="address" label="单价"></el-table-column>
+            <el-table-column property="xj" label="小计"></el-table-column>
+            </el-table>
 			  <template #footer>
 			    <span class="dialog-footer">
 			      <el-button @click="dialogFormVisible = false">取 消</el-button>
