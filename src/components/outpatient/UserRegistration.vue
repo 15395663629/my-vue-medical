@@ -498,10 +498,8 @@ import { ElMessage } from 'element-plus'
           mcNumberCard:[{required: true, message: "请生成诊疗卡", trigger: 'blur'}],
 
         },
-
-
-
 			}
+
 		},
 		 methods: {
        submitMzSick(formName) { // 确定病人新增
