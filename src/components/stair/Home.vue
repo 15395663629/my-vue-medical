@@ -118,6 +118,7 @@
 							<el-menu-item @click="pushUrl('/CK')" index="/CK"><i class="el-icon-folder-remove"></i>出库</el-menu-item>
 							<el-menu-item @click="pushUrl('/PD')" index="/PD"><i class="el-icon-folder-remove"></i>盘点</el-menu-item>
 							<el-menu-item @click="pushUrl('/XH')" index="/XH"><i class="el-icon-folder-remove"></i>销毁</el-menu-item>
+              <el-menu-item @click="pushUrl('/GYS')" index="/GYS"><i class="el-icon-folder-remove"></i>供应商管理</el-menu-item>
 						</el-menu-item-group>
 					</el-submenu>
 					

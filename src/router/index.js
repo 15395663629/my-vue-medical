@@ -225,6 +225,12 @@ const routes = [
 					component:()=>import("/src/components/pharmacy/Destroy.vue"),
 					meta:{title:'销毁', noCache: true },
 				},
+				{
+					name:'GYS',
+					path:'/GYS',
+					component:()=>import("/src/components/pharmacy/Supplier.vue"),
+					meta:{title:'供应商管理', noCache: true },
+				},
 			/* =======================================================checkout 二级 体检管理===================================================== */
 				{	
 					name:'TJ',
