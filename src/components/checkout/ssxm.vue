@@ -1,6 +1,6 @@
 <template>
 	<el-row class="row-one">
-		<el-form label-width="100px" >
+		<el-form label-width="100px" style="padding-top: 10px">
 			<el-col :span="9">
 				<el-form-item label="结果：" label-width="60px">
 					<span>2</span>条
@@ -24,62 +24,56 @@
 		</el-form>
 	</el-row>
 	<el-dialog title="手术详情" v-model="isShow" width="50%" center  ><!-- 弹窗      -=-=-=-=-=-=-==-=-=-=-=--=-=-=-=-=-=-手术详情 -->
-		<el-form  status-icon :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
+		<el-form :model="ssproject"   label-width="100px" class="demo-ruleForm">
 			<el-row>
 								<el-col :span="6">
-									<el-form-item label="手术编号:" prop="name">
-									35153
+									<el-form-item label="手术编号:" prop="projectId">
+                    {{ssproject[0].projectId}}
 									</el-form-item>
 								</el-col>
 								<el-col :span="6" :offset="4">
-									<el-form-item label="科室:" prop="name">
-									内科
+									<el-form-item label="科室:" prop="士大夫">
+                    {{ssproject[0].ksName}}
 									</el-form-item>
 								</el-col>
 			</el-row>
 			  <el-row>
-					<el-col :span="6">
-						<el-form-item label="手术名称:" prop="name">
-						阑尾炎
+					<el-col :span="8">
+						<el-form-item label="手术名称:" prop="projectName">
+              {{ssproject[0].projectName}}
 						</el-form-item>
 					</el-col>
-					<el-col :span="6" :offset="4">
+					<el-col :span="6" :offset="2">
 						<el-form-item label="手术类型:" prop="name">
-						开刀
+              {{ssproject[0].projectType}}
 						</el-form-item>
 					</el-col>
 			  </el-row>
 			<el-row>
 				<el-col :span="6">
 					<el-form-item label="手术位置:" prop="name">
-						腹部
+            {{ssproject[0].projectPosition}}
 					</el-form-item>
 					</el-col>
 					<el-col :span="6" :offset="4">
 						<el-form-item label="手术价格:" prop="name">
-						1234元
+              {{ssproject[0].projectPay}}
 						</el-form-item>
 					</el-col>
 			</el-row>
 			<el-row>
-				<el-col :span="6">
-					<el-form-item label="所需麻醉:" prop="name">
-						区域麻醉
+				<el-col :span="12">
+					<el-form-item label="可选麻醉:" prop="name">
+            <ul>
+              <li style="list-style: none;float: left" v-for="(value) in mzproject">{{value.operationAnaesthesia}}&nbsp</li>
+            </ul>
 					</el-form-item>
 				</el-col>
 			</el-row>
 			<el-row>
 				<el-col :span="22">
 					<el-form-item label="适应症:" prop="name">
-					　　1.低位直肠癌，如切除至肿瘤下方2~3cm正常肠段肛直肠环已不完整者。
-					
-					　　2.直肠癌肿侵及直肠环者。
-					
-					　　3.中下段直肠癌肠外侵犯较广泛者。
-					
-					　　4.男性、肥胖、骨盆狭小等由于解剖条件而无法进行直肠肿瘤切除和吻合术。
-					
-					　　5.肛管和肛缘周围癌肿者。
+					　　{{ssproject[0].projectIndication}}
 					</el-form-item>
 				</el-col>
 					
@@ -87,13 +81,7 @@
 			<el-row>
 				<el-col :span="22">
 					<el-form-item label="注意事项:" prop="name">
-					　　1.游离直肠前，可先在直肠及乙状结肠交界处用纱带或粗丝线双重结扎阻断肠腔，向远端肠腔内注入5-FU1000mg，以减少分离直肠时癌细胞脱落引起播散和种植的危险。
-					
-					　　2.切开乙状结肠和直肠、乙状结肠系膜根部时，应将肠段上提拉紧，贴靠根部内侧与后腹膜交界处切开，这样易避开输尿管，不必常规解剖暴露输尿管。
-					
-					　　3.在骶岬平面进入直肠后间隙，应看清间隙直视下进行锐性分离，注意保护腹下神经，并深S形拉钩向前上方提起，后方分离需一直断离直肠骶筋膜至超越尾骨尖。
-					
-					　　4.在进行侧方分离断离侧韧带时，应以深S形拉钩向外侧拉开，保护输尿管。
+					　　{{ssproject[0].projectMatters}}
 					</el-form-item>
 				</el-col>
 					
@@ -101,9 +89,7 @@
 			<el-row>
 				<el-col :span="22">
 					<el-form-item label="手术禁忌:" prop="name">
-									  　　1.高龄、体弱、全身情况太差、伴严重心、肺、肝、肾等脏器功能不全，不能耐受经腹手术者。
-									  
-									  　　2.直肠癌局部盆腔有广泛浸润或呈冷冻骨盆者。
+									  　{{ssproject[0].projectTaboo}}
 					</el-form-item>
 				</el-col>		
 			</el-row>
@@ -172,12 +158,12 @@
 				</el-col>
 				<el-col :span="12" :offset="2">
 						<el-form-item label="所需麻醉:" prop="name">
-						<el-select v-model="value1" multiple placeholder="请选择" style="width: 300px;">
+						<el-select v-model="ana" multiple placeholder="请选择" style="width: 300px;">
 						    <el-option
 						      v-for="item in mazui"
 						      :key="item.value"
 						      :label="item.label"
-						      :value="item.value">
+						      :value="item.operationAnaesthesia">
 						    </el-option>
 						  </el-select>
 
@@ -214,48 +200,43 @@
 		</el-form>
 	</el-dialog>
 	
-	<el-row > <!--======= ============================================================表格 ====================-->
+	<el-row > <!--======= ============================================================表格 ==================================================-->
 		<el-table
-		    ref="multipleTable"
-		    :data="ssTa"
+		    :data="sproject"
 		    tooltip-effect="dark"
-			height="600"
-		    style="width: 100%"
-		    @selection-change="handleSelectionChange">
+			  height="600"
+		    style="width: 100%">
 		    <el-table-column
 		      label="编号"
-			  prop="ssId"
+			  prop="projectId"
 		      >
 		    </el-table-column>
 		    <el-table-column
-		      prop="ssName"
+		      prop="projectName"
 		      label="手术名称">
 		    </el-table-column>
 		    <el-table-column
-		      prop="sscard"
+		      prop="projectType"
 		      label="手术类型">
 		    </el-table-column>
 			<el-table-column
-			  prop="ssbed"
-			  label="手术注意事项">
+			  prop="projectPay"
+			  label="手术价格">
 			</el-table-column>
 			<el-table-column
-			  prop="sstime"
-			      sortable
+			  prop="ksName"
 			      width="180"
-			      column-key="date"
-			      :filter-method="filterHandler"
-			  label="修改日期">
+			  label="科室">
 			</el-table-column>
 			<el-table-column
-			  prop="ssdemo"
-			  label="手术项目">
+			  prop="projectPosition"
+			  label="开刀位置">
 			</el-table-column>
 			<el-table-column label="操作" width="400px">
 			      <template #default="scope">
 					<el-button
 					  size="mini"
-					  @click="handleEdit(scope.$index, scope.row)">手术详情
+					  @click="handleEdit(scope.row)">手术详情
 					  </el-button>
 			        <el-button
 			          size="mini"
@@ -285,78 +266,50 @@
 	export default {
 	    data () {
 	      return {
-			  ssjj:'',
-			  options: [{
-			            value: '选项1',
-			            label: '头部'
-			          }, {
-			            value: '选项2',
-			            label: '腰部'
-			          }, {
-			            value: '选项3',
-			            label: '腹部'
-			          }, {
-			            value: '选项4',
-			            label: '肩部'
-			          }, {
-			            value: '选项5',
-			            label: '腿部'
-			          }],
-				mazui: [{
-				          value: '选项1',
-				          label: '全麻'
-				        }, {
-				          value: '选项2',
-				          label: '椎管内麻醉'
-				        }, {
-				          value: '选项3',
-				          label: '复合麻醉'
-				        }, {
-				          value: '选项4',
-				          label: '静吸复合麻醉'
-				        }, {
-				          value: '选项5',
-				          label: '硬膜外麻醉'
-				        },{
-				          value: '选项1',
-				          label: '不麻醉'
-				        }],
-			          value: '',
-					  value1: [],
-			ssTa: [{
-				ssId: '11',
-				ssName: '20202',
-				sscard: ' 15183456789',
-				ssbed: '复诊',
-				sstime: '2121-2-2',
-				ssdemo:'开颅',
-			},
-			{
-				ssId: '12',
-				ssName: '20202',
-				sscard: ' 15183456789',
-				ssbed: '复诊',
-				sstime: '2121-2-1',
-				ssdemo:'开膛'
-			}],
-			
-			        value: '',
-			isShow:false,
-			xgss:false,
-			input: '',
-			sstime: '',
-	        radio1: '查看全部',
+          sproject:[],
+          ssproject:[],
+          mzproject:[],
+          total:0,
+          pageNo:1,
+          size:5,
+          projectId:'',
+          mazui: [],
 
-			ruleForm: {
+
+          ana: '',
+
+			    isShow:false,
+			    xgss:false,
+			    input: '',
+			    sstime: '',
+	        radio1: '查看全部',
+			    ruleForm: {
 			          pass: '',
 			          checkPass: '',
 			          age: ''
-			}      
-	      } 
+			       }
+	       }
 	    },
 		methods: {
-			handleEdit(index, row) {
-				this.isShow = true;
+      getData(){
+        this.axios.get("http://localhost:8089/sprot").then((res)=>{
+          this.sproject = res.data;
+        }).catch()
+        this.axios.get("http://localhost:8089/mzproject").then((res)=>{
+          this.mazui = res.data;
+        }).catch()
+
+      },
+			handleEdit(row) {
+        this.projectId=row.projectId;
+        console.log(this.projectId)
+        this.axios.get("http://localhost:8089/ssprot",{params:{projectId:this.projectId}}).then((res)=>{
+          this.ssproject = res.data;
+          this.isShow = true;
+        }).catch()
+        this.axios.get("http://localhost:8089/mzprot",{params:{projectId:this.projectId}}).then((res)=>{
+          this.mzproject = res.data;
+        }).catch()
 			},
 			ssEdit(index, row) {
 				this.xgss = true;
@@ -380,7 +333,10 @@
 				this.$refs[formName].resetFields();
 			}
 		},
-	  }
+    created() {
+      this.getData()
+    }
+  }
 </script>
 
 <style scoped>
