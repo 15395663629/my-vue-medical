@@ -75,8 +75,47 @@
 				<el-button @click="isShowAddBed = false" type="danger">取消</el-button>
 		</template>
 	</el-dialog>
-	
-	
+
+  <!--=============================================新增修改床位弹框===================================-->
+  <el-dialog width="40%" v-model="isWradShow" @close="offWardTk" :title="titleWard">
+    <el-form ref="wardForm" :model="wardObj">
+      
+      <el-row >
+        <el-col :span="1"/>
+         <el-col :span="10">
+           <el-form-item label="病房名称" label-width="80px">
+             <el-input v-model="wardObj.wdName"></el-input>
+           </el-form-item>
+         </el-col>
+         <el-col :offset="2" :span="10">
+           <el-form-item label="所属科室" label-width="80px">
+<!--             <el-input v-model=""></el-input>-->
+           </el-form-item>
+         </el-col>
+      </el-row>
+
+      <el-row >
+        <el-col :span="1"/>
+        <el-col :span="10">
+          <el-form-item label="管理护士" label-width="80px">
+            <el-input></el-input>
+          </el-form-item>
+        </el-col>
+
+      </el-row>
+
+    </el-form>
+
+    <template #footer>
+      <el-button @click="wardaddOrUpdate('wardForm')" type="primary">确定</el-button>
+      <el-button @click="offWardTk" type="danger">取消</el-button>
+    </template>
+
+  </el-dialog>
+
+
+
+  <!--=============================================查询病房输入框和搜索按钮===================================-->
 	<el-row>
     <el-col :span="9"></el-col>
 		<el-col :span="5">
@@ -123,10 +162,10 @@
         <el-table-column width="100px"
                          align="right">
           <template  #header>
-            <el-button type="primary" size="mini">新增病房</el-button>
+            <el-button @click="openWardTk(1)" type="primary" size="mini">新增病房</el-button>
           </template>
           <template  #default="r">
-            <el-button @click.stop="wardArrInit" size="mini">修改</el-button>
+            <el-button @click="openWardTk(2,r.row)" size="mini">修改</el-button>
           </template>
         </el-table-column>
 
@@ -255,6 +294,8 @@
 			  wardSearchText:'',//病房搜索值
 				isShowAddBed:false,//病床弹框是否显示
 				isBedZT:'',
+
+        //病房
         wardObj:{//病房对象
           wdId:'',//病房编号
           wdName:'',//病房名称
@@ -266,11 +307,19 @@
         },
         wardArr:[//病房集合
         ],
+        isWradShow:false,//是否显示新增或者修改病房弹框
+        titleWard:'',//新增或者修改病床弹框标题
         wardCurrentPage:1,//病房分页当前页初始化
         wardPageSize:4,//病房分页页数初始化
 
 
+        //科室
+        xzKsName:'',//选择科室名称
+        ksObje:[//科室集合
 
+        ],
+
+        //病床
         bedObj:{//病床对象
           bdId:'',
           bdName:'',
@@ -288,13 +337,34 @@
 		},
 		methods:{
 			wardArrInit(){
-			  this.axios({url:"zyWard",params:{search:this.wardSearchText}}).then((v)=>{
+			  this.axios({url:"zyWard",params:{search:this.wardSearchText}}).then((v)=>{//查询所有病房
 			    console.log(v.data)
             this.wardArr = v.data;
         }).catch((data)=>{
 
         });
+
+
+        this.axios.post("ks-list").then((v)=>{//查询所有科室
+          console.log(v.data);
+          this.ksObje = v.data;
+        }).catch((data)=>{
+
+        });
       },
+      //打开新增或者修改弹框
+      //is参数用来判断是新增还是修改 1是新增  2是修改
+      //ward病房对象
+      openWardTk(is,ward){
+        this.isWradShow = true;//打开弹框
+        this.titleWard = is == 1 ? '新增病房' : '修改病房';//设置弹框标题
+        // console.log(ward);
+        // this.wardObj = ward;
+
+      },
+
+
+
       // 初始病房每页数据数wardpagesize和数据data
       wardHandleSizeChange: function(size) {
         this.wardPageSize = size;
@@ -329,7 +399,7 @@
   }
 </script>
 
-<style>
+<style scoped>
 	.works{
 		padding: 15px;
 	}
