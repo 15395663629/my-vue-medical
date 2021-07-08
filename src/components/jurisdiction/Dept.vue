@@ -44,17 +44,11 @@
 	    width="30%"
 	    :before-close="handleClose">
 	   <!-- 表格 -->
-	   部门名称：<el-input type="text" style="width: 40%;"></el-input><br />
-	   部&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;门：<el-select v-model="value" placeholder="请选择"
-	   	style="width: 20%;margin-top:20px;">
-	   	<el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
-	   
-	   	</el-option>
-	   </el-select><br />
+	   部门名称：<el-input type="text" style="width: 40%;" v-model="value"></el-input><br />
 	    <template #footer>
 	      <span class="dialog-footer">
 	        <el-button @click="dialogVisible1 = false">取 消</el-button>
-	        <el-button type="primary" @click="dialogVisible1 = false">确 定</el-button>
+	        <el-button type="primary" @click="dome()">确 定</el-button>
 	      </span>
 	    </template>
 	  </el-dialog>
@@ -66,6 +60,12 @@
 	    data() {
 	      return {
 	        dept:[],
+          value:'',
+          valus:{
+            deId:0,
+            deName:'',
+            deDate:''
+          },
 			  dialogVisible1:false,
 			  dialogVisible:false,
           currentPage1: 5,
@@ -75,14 +75,7 @@
 	        multipleSelection: [],
 			 dialogTableVisible: false,
 			 formLabelWidth: '120px',
-			 options: [{
-			 	value: '选项1',
-			 	label: '护理科'
-			 }, {
-			 	value: '选项2',
-			 	label: '五官科'
-			 }],
-			 value: '',
+
 			 
 	      }
 	    },
@@ -93,6 +86,20 @@
             this.dept=v.data
             console.log(this.dept)
           }).catch()
+        },
+        // cs(){
+        //   console.log(this.value)
+        // },
+        dome(){
+          this.valus.deName=this.value
+          this.valus.deDate=new Date()
+
+        this.axios.post("http://localhost:8089/add-list",this.valus).then((v)=>{
+          console.log("返回："+v.data)
+          this.clearForm()
+          this.getData()
+        }).catch()
+          this.dialogVisible1=false
         },
 	      handleSelectionChange(val) {
 	        this.multipleSelection = val;
@@ -119,8 +126,11 @@
 			          console.log(`每页 ${val} 条`);
 			        },
 			        handleCurrentChange(val) {
-			          console.log(`当前页: ${val}`);
-			        }
+                console.log(`当前页: ${val}`);
+              },
+        clearForm(){
+          this.value=''
+        }
 	    },
   created() {
 	      this.getData()
