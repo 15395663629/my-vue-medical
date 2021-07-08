@@ -350,67 +350,61 @@
 	
 	<el-dialog title="提示" v-model="isShow3" width="55%" center  ><!-- 病人新增 -->
 		<el-row><!-- :rules="rules" -->
-			<el-form  status-icon  ref="ruleForm" label-width="100px" class="demo-ruleForm">
+			<el-form ref="mzSickArr" :model="mzSickArr" :rules="rules" label-width="100px" class="demo-ruleForm">
 				<el-col>
-					<el-form-item label="姓名" >
-						<el-input></el-input>
+					<el-form-item prop="sickName" label="姓名" >
+						<el-input v-model="mzSickArr.sickName"></el-input>
 					</el-form-item>
 				</el-col>
 				<el-col>
-					<el-form-item label="电话" >
-						<el-input></el-input>
+					<el-form-item prop="sickPhone" label="电话" >
+						<el-input v-model="mzSickArr.sickPhone"></el-input>
 					</el-form-item>
 				</el-col>
 				<el-col>
-					<el-form-item label="年龄" >
-						<el-input></el-input>
+					<el-form-item  label="年龄" >
+						<el-input  v-model="mzSickArr.sickAge"></el-input>
 					</el-form-item>
 				</el-col>
 				<el-col >
-					<el-form-item label="性别" >
-						<el-select v-model="value2" placeholder="请选择" style="width: 202px;" >
+					<el-form-item prop="sickSex" label="性别" >
+						<el-select v-model="mzSickArr.sickSex" placeholder="请选择" style="width: 202px;" >
 						  <el-option
-						    v-for="item in options2"
-						    :key="item.value2"
+						    v-for="item in optionsSex"
+						    :key="item.value"
 						    :label="item.label"
-						    :value="item.value">
+						    :value="item.label">
 						  </el-option>
 						</el-select>
 					</el-form-item>
 				</el-col>
 				<el-col>
-					<el-form-item label="身份证" >
-						<el-input></el-input>
+					<el-form-item prop="sickIdCard" label="身份证" >
+						<el-input v-model="mzSickArr.sickIdCard"></el-input>
 					</el-form-item>
 				</el-col>
 				<el-col>
-					<el-form-item label="家庭地址" >
-						<el-input></el-input>
+					<el-form-item  label="家庭地址" >
+						<el-input v-model="mzSickArr.sickSite"></el-input>
 					</el-form-item>
 				</el-col>
-			</el-form>
-			<el-form  status-icon  ref="ruleForm" label-width="100px" class="demo-ruleForm">
 				<el-col>
-					<el-form-item label="诊疗卡卡号:" >
+					<el-form-item prop="" label="诊疗卡卡号:" >
 						<el-input disabled></el-input>
 					</el-form-item>
 				</el-col>
 				<el-col>
-					<el-form-item label=""  label-width="10px">
+					<el-form-item  label=""  label-width="10px">
 						<el-button type="primary" icon="el-icon-paperclip" size="small">生成诊疗卡</el-button>
 					</el-form-item>
 				</el-col>
-			</el-form>
-		</el-row>
-		<el-row>
-			<el-form  status-icon ref="ruleForm" label-width="830px" style="margin-top: 30px;" class="demo-ruleForm">
-				<el-col>
-					<el-form-item>
-						<el-button type="primary" @click="submitMzSick('ruleForm')">提交</el-button>
-						<el-button @click="resetForm('ruleForm')">取消</el-button>
-					</el-form-item>
-				</el-col>
-			</el-form>
+        <el-col>
+          <el-form-item label-width="335px">
+            <el-button type="primary" @click="submitMzSick('mzSickArr')">提交</el-button>
+            <el-button @click="resetForm('mzSickArr')">取消</el-button>
+          </el-form-item>
+        </el-col>
+      </el-form>
 		</el-row>
 	</el-dialog>
 	
@@ -473,24 +467,33 @@
 
 
 
-
-
-
-
         //加入后台的部分----------------------------------------
-        MzSickAttr:[{
-
-        }],
-        MzSickprot:{
+        mzSickList:[],
+        mzSickArr:{
           sickNumber:0,
           sickIdCard:"",
           sickName:"",
           sickPhone:"",
-          sickAge:0,
+          sickAge:'',
           sickSex:"",
           sickSite:"",
-          sickHistory:"",
         },
+        optionsSex: [{
+          value: '选项1',
+          label: '男'
+        }, {
+          value: '选项2',
+          label: '女'
+        }],
+        rules: {
+          sickIdCard: [{ required: true, message: "身份证不能为空", trigger: 'blur' },],
+          sickPhone: [{ required: true, message: "电话不能为空", trigger: 'blur' },],
+          sickName:[{required: true, message: "输入栏不能为空", trigger: 'blur'}],
+          sickSex:[{required: true, message: "输入栏不能为空", trigger: 'blur'}],
+          // medicalCard:[{required: true, message: "请先生成诊疗卡", trigger: 'blur'}],
+        },
+
+
 
 			};
 		},
@@ -514,20 +517,47 @@
 				  }
 				});
 			},
-       submitMzSick(formName) {
+       submitMzSick(formName) { // 确定病人新增
          this.$refs[formName].validate((valid) => {
            if (valid) {
-             alert('submit!');
-           } else {
-             console.log('error submit!!');
-             return false;
+             this.axios.post("addMzSick", this.mzSickArr).then((res) => {
+               console.log(res.data)
+               if (res.data == 'ok') {
+                 this.$refs[formName].resetFields();//注意这里只能刷新加了prop的
+                 this.resetMzSick()
+                 console.log("ssssss")
+               }
+             }).catch(() => {
+             })
            }
-         });
+			   });
        },
-			resetForm(formName) {
+       resetMzSick(){
+              this.isShow3=false;
+              this.mzSickArr.sickNumber=0;
+              // this.mzSickArr.sickIdCard="";
+              //  this.mzSickArr.sickName="";
+              // this.mzSickArr.sickPhone="";
+              this.mzSickArr.sickAge='';
+              // this.mzSickArr.sickSex="";
+              this.mzSickArr.sickSite="";
+       },
+			resetForm(formName) {//取消
 				this.isShow = false
 				this.$refs[formName].resetFields();
 			},
+
+
+
+
+
+
+
+
+
+
+
+
 			//处理默认选中当前日期
 			getNowTime() {
 				var now = new Date();
