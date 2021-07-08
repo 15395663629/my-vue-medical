@@ -1,23 +1,22 @@
 <template>
 	<div class="wz">
 		<el-button type="primary" @click="dialogVisible1 = true">新增科室</el-button>
-
 		<span style="margin-left: 20px;">
 			<el-input style="width: 120px;" v-model="name" value=""></el-input>
 			<el-button type="primary" icon="el-icon-orange" style="margin-left: 20px;">查询科室</el-button>
 		</span>
+
 	</div>
-	<!-- <el-button type="primary">重置密码</el-button> -->
-	<el-table ref="multipleTable" :data="tableData" tooltip-effect="dark" style="width: 100%"
+    <!-- 表格 -->
+	<el-table ref="multipleTable" :data="kslist" tooltip-effect="dark" style="width: 100%"
 		@selection-change="handleSelectionChange" class="dome">
 		<el-table-column type="selection" width="55">
 		</el-table-column>
-		<el-table-column label="日期" width="120">
-			<template #default="scope">{{ scope.row.date }}</template>
+		<el-table-column label="科室编号" prop="ksId" width="120">
 		</el-table-column>
-		<el-table-column prop="name" label="姓名" width="120">
+		<el-table-column prop="ksName" label="科室名称" width="120">
 		</el-table-column>
-		<el-table-column prop=" " label="地址" width="540">
+		<el-table-column prop="deName" label="所属部门" width="540">
 		</el-table-column>
 		<el-table-column label="操作">
 			<template v-slot:default="r">
@@ -34,10 +33,10 @@
 	</el-pagination>
 	<el-dialog title="科室管理" v-model="dialogVisible1" width="30%" :before-close="handleClose">
 		<!-- 表格 -->
-		员工姓名：<el-input type="text" style="width: 40%;"></el-input><br />
-		科&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;室：<el-select v-model="value" placeholder="请选择"
+		科室名称：<el-input type="text" style="width: 40%;"></el-input><br />
+		部&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;门 ：<el-select v-model="value" placeholder="请选择"
 			style="width: 20%;margin-top:20px;">
-			<el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
+			<el-option v-for="item in dplist" :key="item.deId" :label="item.deName" :value="item.deId">
 
 			</el-option>
 		</el-select><br />
@@ -55,41 +54,14 @@
 	export default {
 		data() {
 			return {
+			  dplist:[],//查询部门
+			  kslist:[],//表格查询集合
 				dialogVisible: false,
 				dialogVisible1: false,
 				currentPage1: 5,
 				currentPage2: 5,
 				currentPage3: 5,
 				currentPage4: 4,
-				tableData: [{
-					date: '2016-05-03',
-					name: '王小虎',
-					address: '上海市普陀区金沙江路 1518 弄'
-				}, {
-					date: '2016-05-02',
-					name: '王小虎',
-					address: '上海市普陀区金沙江路 1518 弄'
-				}, {
-					date: '2016-05-04',
-					name: '王小虎',
-					address: '上海市普陀区金沙江路 1518 弄'
-				}, {
-					date: '2016-05-01',
-					name: '王小虎',
-					address: '上海市普陀区金沙江路 1518 弄'
-				}, {
-					date: '2016-05-08',
-					name: '王小虎',
-					address: '上海市普陀区金沙江路 1518 弄'
-				}, {
-					date: '2016-05-06',
-					name: '王小虎',
-					address: '上海市普陀区金沙江路 1518 弄'
-				}, {
-					date: '2016-05-07',
-					name: '王小虎',
-					address: '上海市普陀区金沙江路 1518 弄'
-				}],
 				multipleSelection: [],
 				dialogTableVisible: false,
 				formLabelWidth: '120px',
@@ -105,7 +77,18 @@
 		},
 
 		methods: {
-
+      getData(){
+        //查询表格
+        this.axios.get('http://localhost:8089/ks-list').then((v)=>{
+          this.kslist=v.data
+          console.log(this.kslist)
+        }).catch()
+        //查询部门
+        this.axios.get("http://localhost:8089/bm-list").then((v)=>{
+          this.dplist=v.data
+          console.log(this.dplist)
+        }).catch()
+      },
 			handleSelectionChange(val) {
 				this.multipleSelection = val;
 				// alert(123)
@@ -133,8 +116,11 @@
 			handleCurrentChange(val) {
 				console.log(`当前页: ${val}`);
 			}
-		}
-	}
+		},
+    created() {
+		  this.getData()
+    }
+  }
 </script>
 
 
