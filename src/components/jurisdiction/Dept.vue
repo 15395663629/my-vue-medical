@@ -129,7 +129,7 @@
 
           this.dialogVisible1=false
         },
-  //删除
+  //删除 （待确定，部门一般不要删除）
 		  open(row) {
         this.valus.deId=row.deId
         this.valus.deName=row.deName
