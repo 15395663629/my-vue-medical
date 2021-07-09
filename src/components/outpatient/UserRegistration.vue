@@ -556,7 +556,9 @@ import { ElMessage } from 'element-plus'
 				});
 			},
 			resetForm(formName) {//取消
-				this.isShow = false
+				this.isShow1 = false
+        this.isShow2 = false
+        this.isShow3 = false
 				this.$refs[formName].resetFields();
 			},
 

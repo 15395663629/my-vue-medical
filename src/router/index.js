@@ -20,7 +20,7 @@ const routes = [
 	//opc门诊的一级路由
 	{
 			name:'OPC',
-			path:'/OPC',
+			path:'/opc',
 			component:()=>import("/src/components/outpatient/OPC.vue"),
 			meta:{title:'门诊管理', noCache: true },
 	},
