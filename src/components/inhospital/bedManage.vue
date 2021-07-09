@@ -76,9 +76,9 @@
 		</template>
 	</el-dialog>
 
-  <!--=============================================新增修改床位弹框===================================-->
-  <el-dialog width="40%" v-model="isWradShow" @close="offWardTk" :title="titleWard">
-    <el-form ref="wardForm" :model="wardObj">
+  <!--=============================================新增修改病房弹框===================================-->
+  <el-dialog width="40%" v-model="isWradShow" @close="wardAddOrUpdateReset('wardForm')" :title="titleWard">
+    <el-form ref="wardForm"  :model="wardObj">
       
       <el-row >
         <el-col :span="1"/>
@@ -89,7 +89,12 @@
          </el-col>
          <el-col :offset="2" :span="10">
            <el-form-item label="所属科室" label-width="80px">
-<!--             <el-input v-model=""></el-input>-->
+             <el-select @change="ksChangeFunction(1)" v-model="wardObj.ksId">
+               <el-option v-for="ks in ksArr"
+                   :label="ks.ksName"
+                   :value="ks.ksId">
+               </el-option>
+             </el-select>
            </el-form-item>
          </el-col>
       </el-row>
@@ -98,7 +103,12 @@
         <el-col :span="1"/>
         <el-col :span="10">
           <el-form-item label="管理护士" label-width="80px">
-            <el-input></el-input>
+            <el-select @change="staffChangeFunction" v-model="wardObj.sId">
+              <el-option v-for="sf in staffArr"
+                         :label="sf.sname"
+                         :value="sf.sid">
+              </el-option>
+            </el-select>
           </el-form-item>
         </el-col>
 
@@ -108,7 +118,7 @@
 
     <template #footer>
       <el-button @click="wardaddOrUpdate('wardForm')" type="primary">确定</el-button>
-      <el-button @click="offWardTk" type="danger">取消</el-button>
+      <el-button @click="wardAddOrUpdateReset('wardForm')" type="danger">取消</el-button>
     </template>
 
   </el-dialog>
@@ -134,10 +144,10 @@
       <el-table
           ref="multipleTable"
           highlight-current-row
-          height="300px"
+          height="345px"
+          :header-cell-style="{background:'#000', color:'#fff'}"
           @cell-click="wardClickBedObj"
           :data="wardArr.slice((wardCurrentPage-1)*wardPageSize,wardCurrentPage*wardPageSize)"
-          tooltip-effect="dark"
           style="width: 100%"
           @selection-change="handleSelectionChange">
        <el-table-column label="病房管理" align="center">
@@ -162,10 +172,10 @@
         <el-table-column width="100px"
                          align="right">
           <template  #header>
-            <el-button @click="openWardTk(1)" type="primary" size="mini">新增病房</el-button>
+            <el-button @click.stop="openWardTk(1)" type="primary" size="mini">新增病房</el-button>
           </template>
           <template  #default="r">
-            <el-button @click="openWardTk(2,r.row)" size="mini">修改</el-button>
+            <el-button @click.stop="openWardTk(2,r.row)" size="mini">修改</el-button>
           </template>
         </el-table-column>
 
@@ -217,7 +227,7 @@
 		<el-col>
 			<el-table
 			    ref="multipleTable"
-          :data="bedArr.slice((wardCurrentPage-1)*wardPageSize,wardCurrentPage*wardPageSize)"
+          :data="bedArr.slice((bedCurrentPage-1)*bedPageSize,bedCurrentPage*bedPageSize)"
 			    tooltip-effect="dark"
 			    style="width: 100%"
 			    @selection-change="handleSelectionChange">
@@ -297,13 +307,14 @@
 
         //病房
         wardObj:{//病房对象
-          wdId:'',//病房编号
-          wdName:'',//病房名称
-          ksId:'',//科室编号
-          sId:'',//员工编号
-          listBed:[//病床数组
-
-          ]
+            // wdId:'',//病房编号
+            // wdName:'',//病房名称
+            // ksId:'',//科室编号
+            // sId:'',//员工编号
+            // listBed:[//病床数组
+            //
+            // ],
+            // staff:{}//员工对象
         },
         wardArr:[//病房集合
         ],
@@ -314,8 +325,14 @@
 
 
         //科室
-        xzKsName:'',//选择科室名称
-        ksObje:[//科室集合
+        xzKsId:'',//选择科室编号
+        ksArr:[//科室集合
+
+        ],
+
+        //员工
+        xzStaffId:'',//选择员工编号
+        staffArr:[//员工集合
 
         ],
 
@@ -344,10 +361,9 @@
 
         });
 
-
         this.axios.post("ks-list").then((v)=>{//查询所有科室
           console.log(v.data);
-          this.ksObje = v.data;
+          this.ksArr = v.data;
         }).catch((data)=>{
 
         });
@@ -356,14 +372,72 @@
       //is参数用来判断是新增还是修改 1是新增  2是修改
       //ward病房对象
       openWardTk(is,ward){
+			  this.wardObj.ksId = '';
+        this.wardObj.sId = '';
+
         this.isWradShow = true;//打开弹框
         this.titleWard = is == 1 ? '新增病房' : '修改病房';//设置弹框标题
-        // console.log(ward);
-        // this.wardObj = ward;
+
+        if(ward != undefined){//判断是否有值
+          this.wardObj.wdId = ward.wdId;
+          this.wardObj.ksId = ward.ksId;
+          this.wardObj.sId = ward.sid;
+          this.wardObj.wdName = ward.wdName;
+          this.ksChangeFunction();
+        }
+      },
+
+      //新增或者修改病房方法
+      wardaddOrUpdate(form){
+      console.log(this.wardObj)
+
+        this.axios.post("addOrUpdataWard",this.wardObj).then((v)=>{//新增
+          console.log(v.data);
+          this.wardArrInit();//重新查询所有数据
+          this.wardAddOrUpdateReset("formWard");//清除表单以及数据
+        }).catch((data)=>{
+
+        });
+      },
+      //清除新增或者修改弹框的表单方法
+      wardAddOrUpdateReset(formName){
+        this.isWradShow = false;
+        this.wardClear();
+        this.$refs[formName].resetFields();
+      },
+      //清空病房弹框数据
+      wardClear(){
+			  this.wardObj = {//病房对象
+          // wdId:'',//病房编号
+          // wdName:'',//病房名称
+          // ksId:'',//科室编号
+          // sId:'',//员工编号
+          // listBed:[//病床数组
+          //
+          // ],
+          // staff: {}//员工对象
+        }
+      },
+
+      //选择科室值发生改变是触发
+      ksChangeFunction(is){
+			  if(is == 1){//如果是等于1就说明他不是从弹框那边调用的就需要将员工编号清空
+          this.wardObj.sId = '';
+        }
+
+        this.axios({url:"select-staff-all",params:{ksId:this.wardObj.ksId}}).then((v)=>{//查询所有病房
+          console.log(v.data)
+          this.staffArr = v.data;
+        }).catch((data)=>{
+
+        });
 
       },
 
+      //选择员工值发生改变时触发
+      staffChangeFunction(){
 
+      },
 
       // 初始病房每页数据数wardpagesize和数据data
       wardHandleSizeChange: function(size) {
@@ -399,7 +473,7 @@
   }
 </script>
 
-<style scoped>
+<style>
 	.works{
 		padding: 15px;
 	}
