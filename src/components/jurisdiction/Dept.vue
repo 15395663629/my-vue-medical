@@ -22,7 +22,7 @@
     </el-table-column>
     <el-table-column label="操作">
       <template v-slot:default="r">
-        <el-button type="danger" @click="open(r.row)">删除</el-button>
+<!--        <el-button type="danger" @click="open(r.row)">删除</el-button>-->
         <el-button type="primary" @click="addDept(r.row)">编辑部门</el-button>
       </template>
     </el-table-column>
@@ -130,36 +130,36 @@
           this.dialogVisible1=false
         },
   //删除 （待确定，部门一般不要删除）
-		  open(row) {
-        this.valus.deId=row.deId
-        this.valus.deName=row.deName
-        this.valus.deDate=row.deDate
-		        this.$confirm('此操作将永久删除该记录, 是否继续?', '提示', {
-		          confirmButtonText: '确定',
-		          cancelButtonText: '取消',
-		          type: 'warning'
-		        }).then(() => {
-		          this.axios.post("http://localhost:8089/delet-list",this.valus).then((v)=>{
-		            if(v.data==='ok'){
-		              this.getData()
-                  this.$message({
-                    type: 'success',
-                    message: '删除成功!'
-                  });
-                }else{
-                  this.$message({
-                    type: 'info',
-                    message: '已取消删除'
-                  });
-                }
-              }).catch()
-		        }).catch(() => {
-		          this.$message({
-		            type: 'info',
-		            message: '已取消删除'
-		          });
-		        });
-		      },
+	// 	  open(row) {
+  //       this.valus.deId=row.deId
+  //       this.valus.deName=row.deName
+  //       this.valus.deDate=row.deDate
+	// 	        this.$confirm('此操作将永久删除该记录, 是否继续?', '提示', {
+	// 	          confirmButtonText: '确定',
+	// 	          cancelButtonText: '取消',
+	// 	          type: 'warning'
+	// 	        }).then(() => {
+	// 	          this.axios.post("http://localhost:8089/delet-list",this.valus).then((v)=>{
+	// 	            if(v.data==='ok'){
+	// 	              this.getData()
+  //                 this.$message({
+  //                   type: 'success',
+  //                   message: '删除成功!'
+  //                 });
+  //               }else{
+  //                 this.$message({
+  //                   type: 'info',
+  //                   message: '已取消删除'
+  //                 });
+  //               }
+  //             }).catch()
+	// 	        }).catch(() => {
+	// 	          this.$message({
+	// 	            type: 'info',
+	// 	            message: '已取消删除'
+	// 	          });
+	// 	        });
+	// 	      },
         select(name){
           this.name=name
           this.valus.deName=this.name
