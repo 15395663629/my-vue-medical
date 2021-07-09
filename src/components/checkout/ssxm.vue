@@ -110,7 +110,14 @@
 								</el-col>
 								<el-col :span="6" :offset="4">
 									<el-form-item label="科室:" prop="name">
-									<el-input></el-input>
+                    <el-select v-model="ks" placeholder="请选择">
+                      <el-option
+                          v-for="item in department"
+                          :key="item.value"
+                          :label="item.ksName"
+                          :value="item.ksId">
+                      </el-option>
+                    </el-select>
 									</el-form-item>
 								</el-col>
 			</el-row>
@@ -129,17 +136,10 @@
 			<el-row>
 					<el-col :span="6">
 							<el-form-item label="手术位置:" prop="name">
-							 <el-select v-model="value" placeholder="请选择">
-							    <el-option
-							      v-for="item in options"
-							      :key="item.value"
-							      :label="item.label"
-							      :value="item.value">
-							    </el-option>
-							  </el-select>
-							</el-form-item>
-						</el-col>
-								<el-col :span="6" :offset="4">
+							<el-input></el-input>
+              </el-form-item>
+          </el-col>
+					<el-col :span="6" :offset="4">
 						<el-form-item label="手术价格:" prop="name">
 						<el-input></el-input>
 						</el-form-item>
@@ -208,7 +208,7 @@
 		    style="width: 100%">
 		    <el-table-column
 		      label="编号"
-			  prop="projectId"
+			  prop="projectNumber"
 		      >
 		    </el-table-column>
 		    <el-table-column
@@ -244,7 +244,7 @@
 			        <el-button
 			          size="mini"
 			          type="danger"
-			          @click="handleDelete(scope.$index, scope.row)">删除</el-button>
+			          @click="ssptDelete(scope.row)">删除</el-button>
 			      </template>
 			    </el-table-column>
 		</el-table>
@@ -263,12 +263,14 @@
 </template>
 
 <script>
+  import qs from 'qs'
 	export default {
 	    data () {
 	      return {
           sproject:[],
           ssproject:[],
           mzproject:[],
+          department:[],
           total:0,
           pageNo:1,
           size:5,
@@ -277,6 +279,7 @@
 
 
           ana: '',
+          ks: '',
 
 			    isShow:false,
 			    xgss:false,
@@ -298,6 +301,9 @@
         this.axios.get("http://localhost:8089/mzproject").then((res)=>{
           this.mazui = res.data;
         }).catch()
+        this.axios.get("http://localhost:8089/ks-list").then((res)=>{
+          this.department = res.data;
+        }).catch()
 
       },
 			handleEdit(row) {
@@ -311,6 +317,36 @@
           this.mzproject = res.data;
         }).catch()
 			},
+      ssptDelete(row){
+        this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          this.scprjt(row)
+          this.$message({
+            type: 'success',
+            message: '删除成功!'
+          });
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          });
+        });
+      },
+      scprjt(row){
+        this.axios.post('http://localhost:8089/delet-sprot', qs.stringify({projectId:row.projectId}))
+            .then((v)=>{
+              if(v.data == 'ok'){
+                this.getData()
+              }else{
+                alert(v.data);
+              }
+            }).catch(function(){
+
+        })
+      },
 			ssEdit(index, row) {
 				this.xgss = true;
 			},
