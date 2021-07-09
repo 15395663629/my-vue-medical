@@ -57,7 +57,7 @@
 						</template>
 						<el-menu-item-group>
 							<el-menu-item @click="pushUrl('/UserRegistration')" index="/UserRegistration"><i class="el-icon-user"></i>用户挂号</el-menu-item>
-							<el-menu-item @click="pushUrl('/OPC')"  index="/OPC"><i class="el-icon-s-cooperation"></i>医生问诊</el-menu-item>
+							<el-menu-item @click="pushUrl('/opc')"  index="/OPC"><i class="el-icon-s-cooperation"></i>医生问诊</el-menu-item>
 							<el-menu-item @click="pushUrl('/ProjectPayment')" index="/ProjectPayment"><i class="el-icon-s-finance"></i>项目缴费</el-menu-item>
 							<el-menu-item @click="pushUrl('/ProjectObservation')" index="/ProjectObservation"><i class="el-icon-odometer"></i>项目检查</el-menu-item>
 							<!-- <el-menu-item @click="pushUrl('/RecipePrice')" index="/RecipePrice"><i class="el-icon-odometer"></i>RecipePrice</el-menu-item> -->

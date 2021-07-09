@@ -15,11 +15,12 @@ import 'element-plus/lib/theme-chalk/index.css'
 //ElementUI改中文
 import locale from "element-plus/lib/locale/lang/zh-cn"
 
+//引入opc的对应表格
 import newDateOPC from "./components/outpatient/newDate.vue"
-import opcTable1 from "./components/outpatient/OPC/OPC_table1.vue"
-import opcTable2 from "./components/outpatient/OPC/OPC_table2.vue"
-import opcTable3 from "./components/outpatient/OPC/OPC_table3.vue"
-import opcTable4 from "./components/outpatient/OPC/OPC_table4.vue"
+import opcTable1 from "./components/outpatient/opc/OPCTable1.vue"
+import opcTable2 from "./components/outpatient/opc/OPCTable2.vue"
+import opcTable3 from "./components/outpatient/opc/OPCTable3.vue"
+import opcTable4 from "./components/outpatient/opc/OPCTable4.vue"
 
 //统一的跨域前缀--------------------------------
 axios.defaults.baseURL = 'http://localhost:8089/';
