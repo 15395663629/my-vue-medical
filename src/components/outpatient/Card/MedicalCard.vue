@@ -180,17 +180,17 @@
         console.log(this.currentPage) //点击第几页allDescSick
       },
       //
-      allDescSick(){
-        this.axios({url:'allDescCard'}).then((v)=>{
-          if(v.data!=null){
-              this.mzSickList=v.data.list;
-          }
-        }).catch();
-      },
+      // allDescSick(){
+      //   this.axios({url:'allDescCard'}).then((v)=>{
+      //     if(v.data!=null){
+      //         this.mzSickList=v.data.list;
+      //     }
+      //   }).catch();
+      // },
 
 		},
     created() {
-      this.allDescSick();
+      // this.allDescSick();
     }
   }
 </script>
