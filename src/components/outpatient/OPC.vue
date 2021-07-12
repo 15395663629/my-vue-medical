@@ -1,6 +1,6 @@
 <template>
 	<el-container style="height: 100%;">
-		<el-header height="50px"  style="line-height: 80px; background-color: #B3C0D1;color: #333;">
+		<el-header height="30px"  style="line-height: 30px; background-color: #B3C0D1;color: #333;">
 			<!-- <newDateOPC style="margin: 0px; padding: 0px;"></newDateOPC> -->
 		</el-header>
 		<el-container style="height: 100%;">
@@ -21,9 +21,7 @@
 						<h4>呼叫列表：</h4>
 					</el-col>
 					<el-col>
-						<el-table 
-						style="width: 100%"
-						height="360">
+						<el-table  style="width: 100%;" height="300">
 								<el-table-column fixed  label="排列序号"  width="120"></el-table-column>
 								<el-table-column fixed  label="姓名"  width="120"></el-table-column>
 								<el-table-column prop="tag" label="标签"
@@ -41,10 +39,7 @@
 						<h4>就诊列表：</h4>
 					</el-col>
 					<el-col>
-						<el-table 
-						:data="bottom_tables"
-						style="width: 100%"
-						height="365">
+						<el-table  :data="bottom_tables" style="width: 100%" height="300">
 								<el-table-column fixed  label="排列序号"  width="120"></el-table-column>
 								<el-table-column fixed  label="姓名"  width="120"></el-table-column>
 								<el-table-column prop="tag" label="标签"
@@ -547,5 +542,8 @@
 	}
 </script>
 
-<style>
+<style scoped>
+   table{
+    margin-top: 0px;
+  }
 </style>
