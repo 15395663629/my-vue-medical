@@ -26,14 +26,14 @@
 				</el-col>
 			</el-row>
 		</el-header>
-	    <el-container style="height: 100%;">
+	    <el-container style="max-height: 100%;overflow: hidden;">
 			<!-- 左边 -->
 	        <el-aside width="200px" style="background-color: #D3DCE6;color: #333;">
 				<el-menu
 				 :uniqueOpened="true"
 				      default-active="2"
 				      class="el-menu-vertical-demo"
-					  style="height: 100%;">
+					  style="height: 100%">
 					  <el-submenu index="1">
 					  	<template #title>
 					          <i class="el-icon-s-home"></i>
@@ -138,7 +138,7 @@
 				</el-menu>				
 			</el-aside>
 			<!-- 右边 -->
-	        <el-main style="padding: 0px 20px; color: #333;background-color: #E9EEF3">
+        <el-main style="padding: 0px 20px; color: #333;background-color: #E9EEF3">
 					<crumb></crumb>
 					<div class="works">
 						<router-view></router-view>
@@ -152,22 +152,31 @@
 export default{
 	data(){
 		return{
+		  token:[],
 			 squareUrl: "../../../public/static/img/1000.png",
 		}
 	},
 	methods:{
 		pushUrl(path){
 			this.$router.push(path);
+
 		}
-	}
+	},
+  created() {
+	  //取token值
+    this.token = this.$store.state.token
+  }
 }
 </script>
 
-<style scoped>
+<style>
 	a {
 		color: #333333;
 		text-decoration: none;
 	}
+  table{
+    margin-top: 0px;
+  }
 	  .works{
 		  box-shadow: 0 2px 4px rgba(0, 0, 0, .12), 0 0 6px rgba(0, 0, 0, .04)
 	  }
