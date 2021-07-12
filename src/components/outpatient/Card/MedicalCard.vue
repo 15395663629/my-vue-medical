@@ -16,12 +16,12 @@
 		</el-form>
 	</el-row>
 	<el-radio-group v-model="radio2" class=" my-radio-group"  size="mini">
-	  <el-radio-button label="修改记录"></el-radio-button>
+	  <el-radio-button label="诊卡操作"></el-radio-button>
 	  <el-radio-button label="挂失记录"></el-radio-button>
 	</el-radio-group>
 	<!-- 表格是得切换的 -->
 	<el-table 
-		:data="rightTableData1"
+		:data="rightTableData1.slice((wardCurrentPage-1)*wardPageSize,wardCurrentPage*wardPageSize)"
 		style="width: 100%"
 		height="571"
 		>
@@ -69,7 +69,7 @@
 			<el-button
 			size="mini"
 			type="primary"
-			@click="isShow3=!isShow3"> 修改密码</el-button>
+			@click="isShow3=!isShow3">修改密码</el-button>
 			<el-button
 			size="mini"
 			type="danger"
@@ -86,16 +86,15 @@
 			</template>
 		</el-table-column>
 	  </el-table>
-	  <el-pagination
-	  	style="text-align: center; margin-top: 10px;"
-	  	@size-change="totalCut"
-	  	@current-change="pageCut"
-	  	:current-page="1"
-	  	:page-sizes="[2,4,6,8,10]"
-	  	:page-size="size"
-	  	layout="total, sizes, prev, pager, next, jumper"
-	  	:total="total">
-	  </el-pagination>
+  <!--分页插件-->
+  <el-pagination  @size-change="wardHandleSizeChange" @current-change="wardHandleCurrentChange"
+                 style="text-align: center; margin-top: 10px"
+                 :current-page="wardCurrentPage"
+                 :page-sizes="[2,4,6,8]"
+                 :page-size="wardPageSize"
+                 layout="total, sizes, prev, pager, next, jumper"
+                 :total="rightTableData1.length">
+  </el-pagination>
 	  
 	<el-dialog title="提示" v-model="isShow3" width="20%" center  ><!-- 密码修改 -->
 		<el-row><!-- :rules="rules" -->
@@ -132,7 +131,9 @@
 		data(){
 			return{
 				isShow3:false,
-				radio2:"修改记录",
+				radio2:"诊卡操作",
+        wardCurrentPage:1,
+        wardPageSize:4,
 				rightTableData1: [{
 				          date: '2016-05-02',
 				          name: '王小虎',
@@ -156,15 +157,42 @@
 				          name: '王小虎',
 				          address: '上海市普陀区金沙江路 1518 弄',
 						  tag:"卡号挂失",
-				}]
+				}],
+        mzSickList:[],
+        maSickArr:{
+
+        },
+
 			}
 		},
 		methods:{
 			filterTag(value, row) {/* 复诊初诊标签方法 */
 				return row.tag === value;
 			},
-		}
-	}
+      // 初始病房每页数据数wardpagesize和数据data
+      wardHandleSizeChange: function(size) {
+        this.wardPageSize = size;
+        console.log(this.pagesize) //每页下拉显示数据
+      },
+      //初始页病房wardcurrentPage
+      wardHandleCurrentChange: function(currentPage) {
+        this.wardCurrentPage = currentPage;
+        console.log(this.currentPage) //点击第几页allDescSick
+      },
+      //
+      // allDescSick(){
+      //   this.axios({url:'allDescCard'}).then((v)=>{
+      //     if(v.data!=null){
+      //         this.mzSickList=v.data.list;
+      //     }
+      //   }).catch();
+      // },
+
+		},
+    created() {
+      // this.allDescSick();
+    }
+  }
 </script>
 
 <style>
