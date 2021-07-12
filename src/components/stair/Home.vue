@@ -1,17 +1,17 @@
 <template>
 	<el-container style="height: 100%;">
-	    <el-header  height="86px" style="line-height: 86px;background-color: #409EFF ;color: #333;">
+	    <el-header  height="40px" style="line-height: 86px;background-color: #409EFF ;color: #333;">
 			<el-row type="flex" justify="space-between">
-				<el-col :span="20">
-					<router-link to="/home" style="font-size: 28px;font-weight: 900; color: white;">
+				<el-col :span="20" style="line-height: 40px">
+					<router-link to="/home" style=" margin-top: 0px; font-size: 20px;font-weight: 900; color: white;">
 						🍅🍅🐟医院管理系统
 					</router-link>
 				</el-col>
 				<el-col :span="4">
-					<el-form style="margin-top: 18px;margin-left: 100px;">
+					<el-form style="line-height: 40px; margin-left: 100px;">
 						<el-form-item label="">
-							<el-avatar shape="square" :size="50" :src="squareUrl"></el-avatar>
-							<el-dropdown style="margin-left: 10px; font-size: 18px;">
+							<el-avatar shape="square" style="margin-top: 5px" :size="30" :src="squareUrl"></el-avatar>
+							<el-dropdown style="margin-left: 10px; padding-bottom: 20px; font-size: 15px;">
 								<span class="el-dropdown-link">
 									管理员您好<i class="el-icon-arrow-down el-icon--right"></i>
 								</span>
