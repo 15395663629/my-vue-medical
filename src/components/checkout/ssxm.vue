@@ -7,17 +7,17 @@
 				</el-form-item>
 			</el-col>
 			<el-col :span="5">
-				<el-form-item  label="手术信息" label-width="100px">
+				<el-form-item  label="手术信息:" label-width="100px">
 					<el-input style="width: 200px;" v-model="input" placeholder="请输入你要查询的手术" ></el-input>
 				</el-form-item>
 			</el-col>
 			<el-col :span="5">
-				<el-form-item label="" label-width="18px">
+				<el-form-item label="" label-width="50px">
 					<el-button type="primary" icon="el-icon-search">查询</el-button>
 					</el-form-item>
 			</el-col>
 			<el-col :span="5" >
-				<el-form-item label="" label-width="800px">
+				<el-form-item label="" label-width="600px">
 				<el-button type="primary"  @click="ssEdit()">新增</el-button>	
 				</el-form-item>
 			</el-col>
@@ -204,7 +204,7 @@
 		<el-table
 		    :data="sproject"
 		    tooltip-effect="dark"
-			  height="600"
+			  height="450"
 		    style="width: 100%">
 		    <el-table-column
 		      label="编号"

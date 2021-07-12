@@ -3,7 +3,7 @@
 		<el-form label-width="100px" >
 			<el-col :span="9">
 				<el-form-item label="类型：" label-width="60px">
-					<el-select class="my-el-slect" v-model="value" placeholder="请选择">
+					<el-select style="width: 120px" v-model="value" placeholder="请选择">
 						<el-option
 						  v-for="item in options"
 						  :key="item.value"
@@ -15,26 +15,21 @@
 			</el-col>
 			<el-col :span="5">
 				<el-form-item  label="套餐信息:" label-width="100px">
-					<el-input  v-model="input" placeholder="请输入你要查询的套餐" ></el-input>  
+					<el-input style="width: 180px" v-model="input" placeholder="请输入你要查询的套餐" ></el-input>
 				</el-form-item>
 			</el-col>
 			<el-col :span="5">
-				<el-form-item label="" label-width="0px">
+				<el-form-item label="" label-width="44px">
 					<el-button type="primary" icon="el-icon-search">查询</el-button>
 					</el-form-item>
 			</el-col>
 			<el-col :span="5" >
-				<el-form-item label="" label-width="710px">
+				<el-form-item label="" label-width="449px">
 				<el-button type="primary"  @click="tjtcEdit()">新增套餐</el-button>	
 				</el-form-item>
 			</el-col>
 		</el-form>
 			
-	</el-row>
-	<el-row>
-		<el-col :span="7">
-				筛选结果<span>1</span>条
-		</el-col>
 	</el-row>
 	
 	<el-dialog title="套餐" v-model="tjtc" width="50%" center  ><!-- 弹窗      -=-=-=-=-=-=-==-=-=-=-=--=-=-=-=-=-=-套餐======================================= -->
@@ -256,7 +251,7 @@
 	
 
 	<el-row > <!-- ==================================================================上表格 ==================================================================-->
-		<el-table :data="tableData" style="width: 100%;height:260px;" v-if="isShow!==null">
+		<el-table :data="tableData" style="width: 100%;height:200px;" v-if="isShow!==null">
 			<el-table-column label="编号" width="180">
 				<template #default="scope">
 					<span style="margin-left: 10px">{{ scope.row.date }}</span>
@@ -320,25 +315,21 @@
 	
 
 		<el-row>
-			<el-col  :span="3" :offset="20">
+			<el-col  style="padding-bottom: 5px" :span="3" :offset="19">
 					<el-button type="primary" @click=jcxmEdit()>新增项目</el-button>
 			</el-col>
 		</el-row>
-	<el-row>
-		<el-col :span="7">
-				筛选结果<span>2</span>条
-		</el-col>
-	</el-row>
+
 	<!-- ============================================下表格============================================ -->
 	<el-row > 
-		<el-table :data="yldate" style="width: 100%;height: 280px;" v-if="isShow!==null">
+		<el-table :data="yldate" style="width: 100%;height: 200px;" v-if="isShow!==null">
 			<el-table-column label="编号" width="180">
 				<template #default="scope">
 					<span style="margin-left: 10px">{{ scope.row.date }}</span>
 				</template>
 			</el-table-column>
 			
-		    <el-table-column label="医疗项目名称" width="300">
+		    <el-table-column label="医疗项目名称" >
 				<template #default="scope">
 				<el-popover effect="light" trigger="hover"  placement="top">
 					<template #default>
@@ -352,12 +343,12 @@
 				</el-popover>
 		      </template>
 		    </el-table-column>
-			<el-table-column label="价格" width="180">
+			<el-table-column label="价格">
 				<template #default="scope">
 					<span style="margin-left: 10px">{{ scope.row.price }}</span>
 				</template>
 			</el-table-column>
-			<el-table-column label="指标" width="180">
+			<el-table-column label="指标">
 				<template #default="scope">
 					<span style="margin-left: 10px">{{ scope.row.lx }}</span>
 				</template>
@@ -367,7 +358,7 @@
 					<span style="margin-left: 10px">{{ scope.row.zbyy }}</span>
 				</template>
 		    </el-table-column>
-			<el-table-column label="操作">
+			<el-table-column width="180" label="操作">
 			  <template #default="scope">
 			    <el-button
 			      size="mini"

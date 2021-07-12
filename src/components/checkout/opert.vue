@@ -1,6 +1,6 @@
 <template >
 	<el-row class="row-one">
-		<el-col :span="12" >
+		<el-col :span="20" >
 			时间选择：<el-date-picker
 						  v-model="value"
 						  type="daterange"
@@ -189,12 +189,12 @@
 			  </el-col>
 		  </el-row>
 		</el-dialog>
-<!-- ====================================================表格 -->
+<!-- ====================================================表格 ==========================================-->
 		<el-table
 		    ref="multipleTable"
 		    :data="ssTa"
 		    tooltip-effect="dark"
-			height="650"
+			height="450"
 		    style="width: 100%"
 		    @selection-change="handleSelectionChange">
 		    <el-table-column
