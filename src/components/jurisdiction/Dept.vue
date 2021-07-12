@@ -32,7 +32,7 @@
 	  <el-pagination
 	  	style="text-align: center;"
 	       @size-change="HandleSizeChange"
-	       @current-change="HandleCurrentChange"
+	       @current-change=" "
 	       :current-page="page"
 	       :page-sizes="[2,4,6,8,10]"
 	       :page-size="size"
@@ -69,7 +69,6 @@
             deDate:''
           },
 			  dialogVisible1:false,
-			 formLabelWidth: '120px',
           //分页
           size:4,
           page:1

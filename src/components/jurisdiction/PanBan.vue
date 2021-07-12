@@ -8,7 +8,7 @@
 					</el-select>
 					姓名：<el-input style="width: 120px;" v-model="name" value=""></el-input>
 		</el-col>
-		<el-col :span="8">
+		<el-col :span="0.25">
 			<el-date-picker
 			      v-model="value3"
 			      type="daterange"
@@ -19,11 +19,12 @@
 			      :shortcuts="shortcuts"
 			    >
 			    </el-date-picker>
+      <el-button type="primary" icon="el-icon-orange" size="medium" style="margin-left: 20px">查询</el-button>
+      <el-button type="primary" @click="dialogVisible = true" size="medium">新增排班记录</el-button>
 		</el-col>
-		<el-col :span="4" >
-			<el-button type="primary" icon="el-icon-orange">查询</el-button>
-			<el-button type="primary" @click="dialogVisible = true">新增排班记录</el-button>
-		</el-col>
+<!--		<el-col :span="12" >-->
+
+<!--		</el-col>-->
 	</el-row>
 		
 
@@ -43,7 +44,7 @@
 		</el-table-column>
 		<el-table-column label="操作">
 			<template v-slot:default="r">
-				<el-button type="primary" @click="dialogVisible = true">编辑</el-button>
+				<el-button type="primary" @click="dialogVisible = true" size="small">编辑</el-button>
 			</template>
 		</el-table-column>
 

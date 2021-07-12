@@ -152,14 +152,20 @@
 export default{
 	data(){
 		return{
+		  token:[],
 			 squareUrl: "../../../public/static/img/1000.png",
 		}
 	},
 	methods:{
 		pushUrl(path){
 			this.$router.push(path);
+
 		}
-	}
+	},
+  created() {
+	  //取token值
+    this.token = this.$store.state.token
+  }
 }
 </script>
 

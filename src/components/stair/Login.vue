@@ -3,13 +3,13 @@
 		<video style="width: 100%;" data-v-10a6bc2b="" autoplay="autoplay" loop="loop" muted="muted"><source  data-v-10a6bc2b="" src="../../../public/static/img/jl.mp4" type="video/mp4">
 		</video>
 		<div class="div-w">
-			<el-form  ref="loginForm" :model="form" :rules="rules" class="login-box">
+			<el-form  ref="form" :model="form" :rules="rules" class="login-box">
 					  <h3 class="login-title">柿子医疗后台登录</h3>
-					  <el-form-item prop="userName" :error="errors.user" >
-					    <el-input type="text" style="margin-top: 20px;" placeholder="请输入账号" v-model="form.userName"/>
+					  <el-form-item prop="uName" :error="errors.user" >
+					    <el-input type="text" style="margin-top: 20px;" placeholder="请输入账号" v-model="form.uName"/>
 					  </el-form-item>
-					  <el-form-item  prop="userPassword" :error="errors.user">
-					    <el-input type="password" placeholder="请输入密码" style="width: 100%;" v-model="form.userPassword"/>
+					  <el-form-item  prop="uPswd" :error="errors.user">
+					    <el-input type="password" placeholder="请输入密码" style="width: 100%;" v-model="form.uPswd"/>
 					  </el-form-item>
 					  <el-form-item>
 						<el-row>
@@ -18,7 +18,7 @@
 							</el-col>
 							
 							<el-col :offset="2" :span="11">
-								 <el-button type="primary" v-on:click="onSubmit('loginForm')">登录</el-button>
+								 <el-button type="primary" @click="onSubmit('form')">登录</el-button>
 							</el-col>
 						</el-row>
 					  </el-form-item>
@@ -38,16 +38,19 @@
 </template>
 
 <script>
+import qs from 'qs'
 	export default{
 		data(){
 			return{
+
 				user:{
 					userName:'',
 					userPassword:''
 				},
 				form: {
-				  userName:'',
-				  userPassword:''
+				  uId:0,
+          uName:'',
+          uPswd:'',
 				},
 				errors:{
 					users:'',
@@ -67,21 +70,26 @@
 			}
 		},
 		methods:{
-			login() {
-				  // 数据验证
-				this.axios.post(
-					'http://localhost:8888/user',this.user
-				).then((v)=>{
-					if(v.data=='ok'){
-						console.log("+++++++")
-						this.$router.push('/home')
-					}else{
-						// 使用 vue-router 路由到指定页面，该方式称之为编程式导航
-					}
-				}).catch((v)=>{
-					alert(v)
-				});
-			},
+			// login() {
+			// 	  // 数据验证
+      //   if(this.form.userName=== "admin" && this.form.userPassword==="123456"){
+      //     this.$router.push('/home')
+      //   }else{
+      //     this.errors.users="账号密码错误"
+      //   }
+			// 	// this.axios.post(
+			// 	// 	'http://localhost:8888/user',this.user
+			// 	// ).then((v)=>{
+			// 	// 	if(v.data=='ok'){
+			// 	// 		console.log("+++++++")
+			// 	// 		this.$router.push('/home')
+			// 	// 	}else{
+			// 	// 		// 使用 vue-router 路由到指定页面，该方式称之为编程式导航
+			// 	// 	}
+			// 	// }).catch((v)=>{
+			// 	// 	alert(v)
+			// 	// });
+			// },
 			resetForm(){
 				this.$refs['loginForm'].resetFields();
 			},
@@ -96,39 +104,25 @@
 				}
 			},
 			onSubmit(formName) {
-				this.$router.push('/home')
-			        // 为表单绑定验证功能
-			   //      this.$refs[formName].validate((valid) => {
-			   //        if (valid) {
-			   //          // 使用 vue-router 路由到指定页面，该方式称之为编程式导航
-			           
-						// this.axios.post(
-						// 	'http://localhost:8888/user',this.form
-						// ).then((v)=>{
-						// 	if(v.data=='ok'){
-						// 		console.log("+++++++")
-						// 		this.$message.info("登入成功")
-						// 		setTimeout(()=>{
-						// 			// this.$router.push('/home')
-						// 			 this.$router.replace("/home");
-						// 		},1000)
-						// 	}else{
-						// 		// 使用 vue-router 路由到指定页面，该方式称之为编程式导航
-								
-						// 		// this.errors = {users: '用户名&密码错误'}
-						// 		this.$message.error("账号密码错误")
-						// 		// this.clearForm()
-						// 		this.$refs[formName].resetFields();
-						// 		this.$router.push('/')
-						// 	}
-						// }).catch((v)=>{
-						// 	alert(v) 
-						// });
-			   //        } else {
-			   //          this.dialogVisible = true;
-			   //          return false;
-			   //        }
-			        // });
+			  console.log(this.form)
+        this.$refs[formName].validate(valid =>{
+          if(valid){
+            this.axios.post('http://localhost:8089/cs',qs.stringify(this.form)).then((v)=>{
+              console.log(v.data)
+              if(v.data !== 0){
+                this.$store.state.token = v.data;
+                sessionStorage.setItem("token",JSON.stringify(v.data))
+                // console.log(token)
+                this.$router.push('/home')
+              }else{
+                this.$message.error("账号密码错误")
+              }
+            }).catch()
+          }else{
+            this.$message.error("账号密码错误")
+          }
+        });
+
 			}
 			
 		}
