@@ -1,17 +1,17 @@
 <template>
 	<el-container style="height: 100%;">
-	    <el-header  height="86px" style="line-height: 86px;background-color: #409EFF ;color: #333;">
+	    <el-header  height="40px" style="line-height: 86px;background-color: #409EFF ;color: #333;">
 			<el-row type="flex" justify="space-between">
-				<el-col :span="20">
-					<router-link to="/home" style="font-size: 28px;font-weight: 900; color: white;">
+				<el-col :span="20" style="line-height: 40px">
+					<router-link to="/home" style=" margin-top: 0px; font-size: 20px;font-weight: 900; color: white;">
 						🍅🍅🐟医院管理系统
 					</router-link>
 				</el-col>
 				<el-col :span="4">
-					<el-form style="margin-top: 18px;margin-left: 100px;">
+					<el-form style="line-height: 40px; margin-left: 100px;">
 						<el-form-item label="">
-							<el-avatar shape="square" :size="50" :src="squareUrl"></el-avatar>
-							<el-dropdown style="margin-left: 10px; font-size: 18px;">
+							<el-avatar shape="square" style="margin-top: 5px" :size="30" :src="squareUrl"></el-avatar>
+							<el-dropdown style="margin-left: 10px; padding-bottom: 20px; font-size: 15px;">
 								<span class="el-dropdown-link">
 									管理员您好<i class="el-icon-arrow-down el-icon--right"></i>
 								</span>
@@ -57,7 +57,7 @@
 						</template>
 						<el-menu-item-group>
 							<el-menu-item @click="pushUrl('/UserRegistration')" index="/UserRegistration"><i class="el-icon-user"></i>用户挂号</el-menu-item>
-							<el-menu-item @click="pushUrl('/OPC')"  index="/OPC"><i class="el-icon-s-cooperation"></i>医生问诊</el-menu-item>
+							<el-menu-item @click="pushUrl('/opc')"  index="/OPC"><i class="el-icon-s-cooperation"></i>医生问诊</el-menu-item>
 							<el-menu-item @click="pushUrl('/ProjectPayment')" index="/ProjectPayment"><i class="el-icon-s-finance"></i>项目缴费</el-menu-item>
 							<el-menu-item @click="pushUrl('/ProjectObservation')" index="/ProjectObservation"><i class="el-icon-odometer"></i>项目检查</el-menu-item>
 							<!-- <el-menu-item @click="pushUrl('/RecipePrice')" index="/RecipePrice"><i class="el-icon-odometer"></i>RecipePrice</el-menu-item> -->

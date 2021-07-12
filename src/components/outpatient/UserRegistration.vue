@@ -2,7 +2,7 @@
 	<el-row :gutter="10" > <!-- 选择挂号================== -->
 		<el-form  status-icon  ref="ruleForm" label-width="100px" class="demo-ruleForm">
 			<el-col >
-				<el-select v-model="value" placeholder="请选择科室">
+				<el-select v-model="value" style="width: 140px;" placeholder="请选择科室">
 					<el-option
 					  v-for="item in options"
 					  :key="item.value"
@@ -10,7 +10,7 @@
 					  :value="item.value">
 					</el-option>
 				</el-select>
-				<el-select v-model="value" disabled placeholder="请选择看诊内容">
+				<el-select v-model="value" style="width: 155px;" disabled placeholder="请选择看诊内容">
 					<el-option
 					  v-for="item in options"
 					  :key="item.value"
@@ -20,7 +20,7 @@
 				</el-select>
 			</el-col>
 			<el-col >
-				<el-input style="width:300px" class="my-el-input" v-model="input" placeholder="请输入你要查询的病理或医生信息" ></el-input>  
+				<el-input style="width:240px" class="my-el-input" v-model="input" placeholder="请输入你要查询的病理或医生信息" ></el-input>
 				<el-button type="primary" icon="el-icon-search">查询</el-button>
 			</el-col>
 			<el-col>
@@ -28,7 +28,7 @@
 				<el-button @click="isShow2 = true" type="primary" icon="el-icon-circle-plus-outline" class="my-radio-group" >预约挂号</el-button>
 			</el-col>
 			<el-col >
-				<el-input style="width:300px" class="my-el-input" v-model="input" placeholder="请输入你要查询的挂号信息" ></el-input>  
+				<el-input style="width:220px" class="my-el-input" v-model="input" placeholder="请输入你要查询的挂号信息" ></el-input>
 				<el-button type="primary" icon="el-icon-search">查询</el-button>
 			</el-col>
 		</el-form>
@@ -46,7 +46,7 @@
 			  </div>
 			
 			 <el-table
-				height="630"
+				height="490"
 			    :data="tableData1"
 			    style="width: 100%">
 			    <el-table-column
@@ -113,7 +113,7 @@
 			</el-radio-group>
 			
 			<el-table
-				height="630"
+				height="490"
 			   :data="tableData2"
 			   style="width: 100%">
 			   <el-table-column
@@ -556,7 +556,9 @@ import { ElMessage } from 'element-plus'
 				});
 			},
 			resetForm(formName) {//取消
-				this.isShow = false
+				this.isShow1 = false
+        this.isShow2 = false
+        this.isShow3 = false
 				this.$refs[formName].resetFields();
 			},
 
