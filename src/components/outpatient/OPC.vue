@@ -542,7 +542,7 @@
 	}
 </script>
 
-<style scoped>
+<style>
    table{
     margin-top: 0px;
   }

@@ -7,6 +7,9 @@ import axios from 'axios'
 
 //引入路由--------------------------------
 import router from './router/index.js'
+
+//引入store--------------------------
+import store from './store/index.js'
 //面包屑组件
 import crumb from './components/utils/Breadcrumb.vue'
 //引入ElementUI--------------------------------
@@ -32,6 +35,7 @@ createApp(App)
 .use(router)
 .use(VueAxios,axios)
 .use(ElementUI,{locale})
+.use(store)
 .component('newDateOPC',newDateOPC)
 .component('opcTable1',opcTable1)
 .component("opcTable2",opcTable2)
