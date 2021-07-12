@@ -107,7 +107,7 @@ import qs from 'qs'
 			  console.log(this.form)
         this.$refs[formName].validate(valid =>{
           if(valid){
-            this.axios.post('http://localhost:8089/cs',qs.stringify(this.form)).then((v)=>{
+            this.axios.post('http://localhost:8089/login',qs.stringify(this.form)).then((v)=>{
               console.log(v.data)
               if(v.data !== 0){
                 this.$store.state.token = v.data;
