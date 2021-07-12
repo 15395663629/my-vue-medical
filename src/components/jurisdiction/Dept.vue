@@ -12,13 +12,13 @@
   <el-table ref="multipleTable" :data="dept.slice((page-1)*size,page*size)"
             tooltip-effect="dark" style="width: 100%"
             @selection-change="handleSelectionChange" class="dome">
-    <el-table-column type="selection" width="55">
+    <el-table-column type="selection">
     </el-table-column>
-    <el-table-column label="部门编号" width="120" prop="deId">
+    <el-table-column label="部门编号"  prop="deId">
     </el-table-column>
-    <el-table-column prop="deName" label="部门名称" width="120">
+    <el-table-column prop="deName" label="部门名称" >
     </el-table-column>
-    <el-table-column prop="deDate" label="创建时间" width="540">
+    <el-table-column prop="deDate" label="创建时间">
     </el-table-column>
     <el-table-column label="操作">
       <template v-slot:default="r">
@@ -30,7 +30,7 @@
   </el-table>
 	  <!-- 分页插件 -->
 	  <el-pagination
-	  	style="text-align: center;"
+	  	style="text-align: center;margin-top: 10px"
 	       @size-change="HandleSizeChange"
 	       @current-change=" "
 	       :current-page="page"
