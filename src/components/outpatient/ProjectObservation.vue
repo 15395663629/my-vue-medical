@@ -1,15 +1,12 @@
 <template >
 	<div>
 		<el-row>
-			<el-col :span="5">
+			<el-col :span="6">
 				<h4>呼叫列表：</h4>
-				<el-table 
-				v-loading="loading"
-				element-loading-text="读取中..."
-				style="width: 100%"
-				height="360">
-						<el-table-column fixed  label="排列序号"  width="120"></el-table-column>
-						<el-table-column fixed  label="姓名"  width="120"></el-table-column>
+				<el-table  v-loading="loading" element-loading-text="读取中..."
+				style="width: 100%" height="330">
+						<el-table-column fixed  label="排列序号"   width="100"></el-table-column>
+						<el-table-column fixed  label="姓名"  width="100"></el-table-column>
 						<el-table-column prop="tag" label="标签"
 						width="100" :filters="[{ text: '复诊', value: '复诊' }, { text: '初诊', value: '初诊' }]"
 						:filter-method="filterTag"  filter-placement="bottom-end">
@@ -21,76 +18,73 @@
 						</el-table-column>
 				</el-table>
 			</el-col>
-			<el-col :span="19">
-				<el-row>
-					<el-form  status-icon   label-width="110px" style="margin-top: 58px;">
-						<el-col>
+			<el-col :span="18" >
+				<el-row class="rows">
+					<el-form   status-icon label-width="110px" style="margin-top: 48px;">
+						<el-col  style="height: 40px">
 							<el-form-item label="卡号" >
-								<el-input disabled ></el-input>
-							</el-form-item>
+								<el-input size="mini" style="width: 152px" disabled ></el-input>
+                <el-button size="mini"  style="margin-left: 5px;" @click="openJa" type="primary" icon="el-icon-edit" circle></el-button>
+              </el-form-item>
 						</el-col>
-						<el-col>
-							<el-button style="margin-left: 5px;" @click="openJa" type="primary" icon="el-icon-edit" circle></el-button>
-						</el-col>
-						<el-col>
+						<el-col  style="height: 40px">
 							<el-form-item label="就诊号" >
-								<el-input disabled></el-input>
+								<el-input size="mini"  disabled></el-input>
 							</el-form-item>
 						</el-col>
-						<el-col>
+						<el-col  style="height: 40px">
 							<el-form-item label="就诊" >
-								<el-input disabled></el-input>
+								<el-input size="mini" disabled></el-input>
 							</el-form-item>
 						</el-col>
-						<el-col>
+						<el-col style="height: 40px">
 							<el-form-item label="身份证" >
-								<el-input disabled></el-input>
+								<el-input size="mini"  disabled></el-input>
 							</el-form-item>
 						</el-col>
-						<el-col>
+						<el-col style="height: 40px">
 							<el-form-item label="姓名" >
-								<el-input disabled></el-input>
+								<el-input size="mini"  disabled></el-input>
 							</el-form-item>
 						</el-col>
-						<el-col>
-							<el-form-item label="性别" label-width="155px">
-								<el-input disabled></el-input>
+						<el-col style="height: 40px">
+							<el-form-item label="性别" label-width="110px">
+								<el-input size="mini"  disabled></el-input>
 							</el-form-item>
 						</el-col>
-						<el-col>
+						<el-col style="height: 40px">
 							<el-form-item label="年龄" >
-								<el-input disabled></el-input>
+								<el-input size="mini"  disabled></el-input>
 							</el-form-item>
 						</el-col>
-						<el-col>
+						<el-col style="height: 40px">
 							<el-form-item label="电话" >
-								<el-input disabled></el-input>
+								<el-input size="mini"  disabled></el-input>
 							</el-form-item>
 						</el-col>
-						<el-col>
+						<el-col style="height: 45px">
 							<el-form-item label="诊断医生" >
-								<el-input disabled></el-input>
+								<el-input size="mini"  disabled></el-input>
 							</el-form-item>
 						</el-col>
-						<el-col>
-							<el-form-item label="诊断科室" label-width="155px">
-								<el-input disabled></el-input>
+						<el-col style="height: 45px">
+							<el-form-item label="诊断科室" label-width="110px">
+								<el-input size="mini"  disabled></el-input>
 							</el-form-item>
 						</el-col>
-						<el-col>
+						<el-col style="height: 45px">
 							<el-form-item label="过敏及特殊病史"  >
-								<el-input disabled></el-input>
+								<el-input size="mini"  disabled></el-input>
 							</el-form-item>
 						</el-col>
-						<el-col>
+						<el-col >
 							<el-form-item >
-								<el-button type="primary" style="width: 200px;" icon="el-icon-s-claim">
+								<el-button size="mini"  type="primary" style="width: 186px;" icon="el-icon-s-claim">
 									打印诊断结果
 								</el-button>
 							</el-form-item>
 						</el-col>
 						<el-input 
-								style="margin-top: 20px"
 								type="textarea"
 								placeholder="请输入病理原因"
 								v-model="textarea2"
@@ -108,7 +102,7 @@
 		<!-- table=============================== -->
 		<h4>当天病例表：</h4>
 		 <el-table
-			height="315"
+			height="215"
 		    :data="tableData.filter(data => !search || data.name.toLowerCase().includes(search.toLowerCase()))"
 		    style="width: 100%">
 		    <el-table-column

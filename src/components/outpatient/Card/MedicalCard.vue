@@ -1,18 +1,16 @@
 <template>
-	<el-row> <!-- 选择挂号================== -->
+	<el-row style="height: 40px"> <!-- 选择操作人员================== -->
 		<el-form  status-icon  ref="ruleForm" label-width="100px" class="demo-ruleForm">
 			<el-col>
-				<el-form-item label-width="0px">
-					<el-input   style="width: 300px;" placeholder="请输入你要查询的卡信息,或持有人信息"></el-input>
+				<el-form-item  label-width="0px">
+					<el-input size="small"  style="width: 300px;" placeholder="请输入你要查询的卡信息,或持有人信息"></el-input>
 				</el-form-item>
 			</el-col>
 			<el-col>
 				<el-form-item label-width="0px">
-					<el-button type="primary" icon="el-icon-search">查询</el-button>
+					<el-button size="small" type="primary" icon="el-icon-search">查询</el-button>
 				</el-form-item>
 			</el-col>
-
-			
 		</el-form>
 	</el-row>
 	<el-radio-group v-model="radio2" class=" my-radio-group"  size="mini">
@@ -23,8 +21,7 @@
 	<el-table 
 		:data="rightTableData1.slice((wardCurrentPage-1)*wardPageSize,wardCurrentPage*wardPageSize)"
 		style="width: 100%"
-		height="571"
-		>
+		height="460" >
 		<el-table-column
 		  label="就诊卡号"
 		  width="180">
@@ -80,7 +77,7 @@
 		width="100" :filters="[{ text: '卡号挂失', value: '卡号挂失' }, { text: '密码修改', value: '密码修改' }]"
 		:filter-method="filterTag"  filter-placement="bottom-end">
 			<template #default="scope">
-				<el-tag :type="scope.row.tag === '密码修改' ? 'primary' : 'success'" disable-transitions>
+				<el-tag  size="mini"  :type="scope.row.tag === '密码修改' ? 'primary' : 'success'" disable-transitions>
 				{{scope.row.tag}}
 				</el-tag>
 			</template>

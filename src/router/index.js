@@ -28,7 +28,7 @@ const routes = [
 		name:'Home',
 		path:'/home',//默认路径，登入就进来
 		component:()=>import("/src/components/stair/Home.vue"),
-		meta:'主页',
+		meta:{title:'主页', noCache: true },
 		//二级
 		children:[
 				/* ======================================================outpatient 二级 门诊路由====================================================== */
