@@ -502,13 +502,14 @@
         this.axios.post("bedAddOrUpdate",this.bedObj).then((v)=>{//新增
           console.log(v.data);
           this.bedAddOrUpdateReset("bedForm");//清空数据
+          this.bedSelectByWdId(this.bedObj.wdId);//查询当前表格病床数据
         }).catch((data)=>{
 
         });
       },
       //清除病房新增或者修改弹框的表单方法
       bedAddOrUpdateReset(formName){
-        this.isBedShow = false;
+        this.isShowAddBed = false;
         this.bedClear();
         this.$refs[formName].resetFields();
       },
