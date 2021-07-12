@@ -3,27 +3,27 @@
 </template>
 
 <script >
-	// export default {
-	//   name: 'App',
-	//   created: function() {
+	export default {
+	  name: 'App',
+	  created: function() {
 	    
-	//     if (sessionStorage.getItem("state")) {
-	//       this.$store.replaceState(
-	//         Object.assign(
-	//           {},
-	//           this.$store.state,
-	//           JSON.parse(sessionStorage.getItem("state"))
-	//         )
-	//       )
-	//     }
-	//   },
-	//   mounted: function() {
-	//     window.addEventListener('beforeunload', () => {
-	//       //刷新前将目前登录的用户保存到sessionStorage中
-	//       sessionStorage.setItem('state', JSON.stringify(this.$store.state))
-	//     })
-	//   }
-	// }
+	    if (sessionStorage.getItem("state")) {
+	      this.$store.replaceState(
+	        Object.assign(
+	          {},
+	          this.$store.state,
+	          JSON.parse(sessionStorage.getItem("state"))
+	        )
+	      )
+	    }
+	  },
+	  mounted: function() {
+	    window.addEventListener('beforeunload', () => {
+	      //刷新前将目前登录的用户保存到sessionStorage中
+	      sessionStorage.setItem('state', JSON.stringify(this.$store.state))
+	    })
+	  }
+	}
 </script>
 
 <style>
