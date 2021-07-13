@@ -1,37 +1,33 @@
 <template>
 	<el-button type="primary"  @click="dialogVisible1 = true">新增角色</el-button>
 	<!-- <el-button type="primary">重置密码</el-button> -->
-	<el-table ref="multipleTable" :data="tableData" tooltip-effect="dark" style="width: 100%"
+	<el-table ref="multipleTable" :data="role.slice((page-1)*size,page*size)" tooltip-effect="dark" style="width: 100%"
 		@selection-change="handleSelectionChange" class="dome">
-		<el-table-column type="selection" width="55">
+		<el-table-column type="selection" >
 		</el-table-column>
-		<el-table-column label="日期" width="120">
-			<template #default="scope">{{ scope.row.date }}</template>
+
+		<el-table-column prop="rid" label="姓名">
 		</el-table-column>
-		<el-table-column prop="name" label="姓名" width="120">
-		</el-table-column>
-		<el-table-column prop="address" label="地址" width="540">
+		<el-table-column prop="rname" label="地址" >
 		</el-table-column>
 		<el-table-column label="操作">
 			<template v-slot:default="r">
-				<el-button type="primary" @click="dialogVisible1 = true">编辑角色</el-button>
-				<el-button type="primary" @click="">角色授权</el-button>
-				<el-button type="danger" @click="open">删除角色</el-button>
+				<el-button type="primary" @click="dialogVisible= true">角色授权</el-button>
 			</template>
 		</el-table-column>
 
 	</el-table>
 	<!--分页插件-->
-	<el-pagination style="text-align: center;" @size-change="totalCut" @current-change="pageCut" :current-page="1"
-		:page-sizes="[2,4,6,8,10]" :page-size="size" layout="total, sizes, prev, pager, next, jumper" :total="total">
+	<el-pagination style="text-align: center;" @size-change="HandleSizeChange" @current-change="" :current-page="page"
+		:page-sizes="[2,4,6,8,10]" :page-size="size" layout="total, sizes, prev, pager, next, jumper" :total="role.length">
 	</el-pagination>
+  <!--                 新增角色弹框                                   -->
 	<el-dialog title="角色管理" v-model="dialogVisible1" width="30%" :before-close="handleClose">
-		<!-- 表格 -->
-		请输入角色名称：<el-input type="text" style="width: 40%;"></el-input><br />
+
+		请输入角色名称：<el-input type="text" style="width: 40%;" v-model="rolename"></el-input><br />
 		请选择所属部门：<el-select v-model="value" placeholder="请选择"
-			style="width: 20%;margin-top:20px;">
-			<el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
-	
+			style="width: 20%;margin-top:20px;"  @change="dome($event)">
+			<el-option v-for="item in dept" :key="item.deId" :label="item.deName" :value="item.deId">
 			</el-option>
 		</el-select><br />
 		<template #footer>
@@ -41,91 +37,88 @@
 			</span>
 		</template>
 	</el-dialog>
+  <!-- 角色授权弹框-->
+  <el-dialog title="角色授权" v-model="dialogVisible" width="30%" style="height: 50%">
+    <el-tree ref="tree" :data="funs" node-key="fctionId"
+             :props="props" show-checkbox  default-expand-all
+             @check-change="checkChange">
+    </el-tree>
+
+
+    <template #footer>
+			<span class="dialog-footer">
+				<el-button @click="dialogVisible = false">取 消</el-button>
+				<el-button type="primary" @click="saveGrant()">确 定</el-button>
+			</span>
+    </template>
+  </el-dialog>
+
 </template>
 
 <script>
 	export default {
 		data() {
 			return {
-				currentPage1: 5,
-				currentPage2: 5,
-				currentPage3: 5,
-				currentPage4: 4,
+			  //角色列表
+        role:[],
+        //部门列表
+        dept:[],
+        //权限
+        funs:[],
+        size:4,
+        page:1,
+        dialogVisible:false,
 				dialogVisible1:false,
-				tableData: [{
-					date: '2016-05-03',
-					name: '王小虎',
-					address: '上海市普陀区金沙江路 1518 弄'
-				}, {
-					date: '2016-05-02',
-					name: '王小虎',
-					address: '上海市普陀区金沙江路 1518 弄'
-				}, {
-					date: '2016-05-04',
-					name: '王小虎',
-					address: '上海市普陀区金沙江路 1518 弄'
-				}, {
-					date: '2016-05-01',
-					name: '王小虎',
-					address: '上海市普陀区金沙江路 1518 弄'
-				}, {
-					date: '2016-05-08',
-					name: '王小虎',
-					address: '上海市普陀区金沙江路 1518 弄'
-				}, {
-					date: '2016-05-06',
-					name: '王小虎',
-					address: '上海市普陀区金沙江路 1518 弄'
-				}, {
-					date: '2016-05-07',
-					name: '王小虎',
-					address: '上海市普陀区金沙江路 1518 弄'
-				}],
-				multipleSelection: [],
-				dialogTableVisible: false,
 				formLabelWidth: '120px',
-				options: [{
-					value: '选项1',
-					label: '护理科'
-				}, {
-					value: '选项2',
-					label: '五官科'
-				}],
 				value: '',
+        cs:[],
+        rolename:'',
+        props: {
+          id:'fctionId',
+          label: 'fctionAssembly',
+          children: 'list'
+        },
 			}
 		},
 
 		methods: {
+      getData(){
+        this.axios.post("http://localhost:8089/role-list").then((v)=>{
+          this.role=v.data
+          // console.log(this.role)
+        }).catch()
+        //查询部门
+        this.axios.get("http://localhost:8089/bm-list").then((v)=>{
+          this.dept=v.data
 
-			handleSelectionChange(val) {
-				this.multipleSelection = val;
-				// alert(123)
-			},
-			open() {
-				this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
-					confirmButtonText: '确定',
-					cancelButtonText: '取消',
-					type: 'warning'
-				}).then(() => {
-					this.$message({
-						type: 'success',
-						message: '删除成功!'
-					});
-				}).catch(() => {
-					this.$message({
-						type: 'info',
-						message: '已取消删除'
-					});
-				});
-			},
-			handleSizeChange(val) {
-				console.log(`每页 ${val} 条`);
-			},
-			handleCurrentChange(val) {
-				console.log(`当前页: ${val}`);
-			}
-		}
-	}
+        }).catch()
+        this.axios.get("http://localhost:8089/func-list").then((v)=>{
+          this.funs=v.data
+          console.log(this.funs)
+        }).catch()
+      },
+      //初始每页数据数size和数据data
+      HandleSizeChange: function(size) {
+        this.size = size;
+        console.log(this.pagesize) //每页下拉显示数据
+      },
+      //初始页page
+      HandleCurrentChange: function(currentPage) {
+        this.page = currentPage;
+        console.log(this.currentPage) //点击第几页
+      },
+      dome(event){
+        console.log(event)
+      },
+      saveGrant(){
+        var funs=this.$refs.tree.getCheckedKeys();
+        console.log(funs)
+      }
+		},
+    created() {
+		  this.getData()
+    }
+  }
 </script>
 
 

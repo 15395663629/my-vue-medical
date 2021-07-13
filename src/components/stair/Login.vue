@@ -5,10 +5,10 @@
 		<div class="div-w">
 			<el-form  ref="form" :model="form" :rules="rules" class="login-box">
 					  <h3 class="login-title">柿子医疗后台登录</h3>
-					  <el-form-item prop="userName" :error="errors.user" >
+					  <el-form-item prop="uName" :error="errors.user" >
 					    <el-input type="text" style="margin-top: 20px;" placeholder="请输入账号" v-model="form.uName"/>
 					  </el-form-item>
-					  <el-form-item  prop="userPassword" :error="errors.user">
+					  <el-form-item  prop="uPswd" :error="errors.user">
 					    <el-input type="password" placeholder="请输入密码" style="width: 100%;" v-model="form.uPswd"/>
 					  </el-form-item>
 					  <el-form-item>
@@ -57,10 +57,10 @@ import qs from 'qs'
 				},
 				// 表单验证，需要在 el-form-item 元素中增加 prop 属性
 				rules: {
-				  userName: [
+          uName: [
 					{required: true, message: '账号不可为空', trigger: 'blur'}
 				  ],
-				  userPassword: [
+          uPswd: [
 					{required: true, message: '密码不可为空', trigger: 'blur'}
 				  ]
 				},
