@@ -261,6 +261,11 @@
             <el-table-column
                 prop="ptNo"
                 label="病人住院号">
+
+              <template #default="scope">
+                {{scope.row.ptNo == 0 ? "未入住病人" : scope.row.ptNo}}
+              </template>
+
             </el-table-column>
             <el-table-column
                 prop="ptName"
@@ -289,7 +294,7 @@
 
 
               <el-button v-if="r.row.bdIs == 3"
-                         @click="openBedTk(r)" type="primary" size="mini">转病床</el-button>
+                         @click="openPatientShiftBedTK(r.row)" type="primary" size="mini">转病床</el-button>
 
               <el-button v-if="r.row.bdIs != 3 && r.row.bdIs != 2"
                          @click="openPatient(r)" size="mini">入住病人</el-button>
@@ -377,6 +382,82 @@
   </el-dialog>
 
 
+  <!--==================================================转病床弹框==================================================-->
+  <el-dialog width="40%" title="转床位" v-model="isShowPatientShiftBed" @close="closePatientShiftBedTK">
+
+    <el-form ref="bedChangeForm" :model="bedChangeRecordObj" label-width="80px">
+
+      <el-row>
+        <el-col :offset="1" :span="9">
+          <el-form-item label="当前病床" label-width="80px">
+            <el-input disabled v-model="bedChangeRecordObj.bdName"></el-input>
+          </el-form-item>
+        </el-col>
+
+        <el-col :span="3"></el-col>
+
+        <el-col :span="9">
+          <el-form-item label="病人名称" label-width="80px">
+            <el-input disabled v-model="bedChangeRecordObj.ptName"></el-input>
+          </el-form-item>
+        </el-col>
+      </el-row>
+
+      <el-row>
+        <el-col :offset="1" :span="9">
+          <el-form-item label="科室名称" label-width="80px">
+            <el-input disabled v-model="bedChangeRecordObj.ksName"></el-input>
+          </el-form-item>
+        </el-col>
+
+        <el-col :span="3"></el-col>
+
+        <el-col :span="9">
+          <el-form-item label="选择病房" label-width="80px">
+            <el-select @change="wardPatientChangeFunction" value-key="wdId" v-model="bedChangeRecordObj.wdObj">
+              <el-option v-for="ward in wardChangeRecordArr"
+                         :label="ward.wdName"
+                         :key="ward.wdId"
+                         :value="ward">
+              </el-option>
+            </el-select>
+          </el-form-item>
+        </el-col>
+      </el-row>
+
+
+      <el-row>
+        <el-col :offset="1" :span="9">
+          <el-form-item label="病床名称" label-width="80px">
+            <el-select @change="bedPatientChangeFunction" value-key="bdId" v-model="bedChangeRecordObj.bedObjs">
+              <el-option v-for="bed in bedChangeRecordArr"
+                         :label="bed.bdName"
+                         :value="bed"
+                         :key="bed.bdId"
+              >
+              </el-option>
+            </el-select>
+          </el-form-item>
+        </el-col>
+
+        <el-col :span="3"></el-col>
+
+        <el-col :span="9">
+          <el-form-item label="管理护士" label-width="80px">
+            <el-input disabled v-model="bedChangeRecordObj.sName"></el-input>
+          </el-form-item>
+        </el-col>
+      </el-row>
+    </el-form>
+
+
+    <template #footer>
+      <el-button @click="patientUpdateBed('bedChangeForm')" type="primary">确定</el-button>
+      <el-button @click="closePatientShiftBedTK('bedChangeForm')" type="danger">取消</el-button>
+    </template>
+
+  </el-dialog>
+
 </template>
 
 <script>
@@ -408,6 +489,29 @@
         PatientXZBedObj:{},//被选中的病床数据
         patientSize:4,//分页页大小
         patientCurrent:1,//当前页
+
+
+        //==============================================================================病床转换数据
+        bedChangeRecordObj:{//病床转换对象
+          bcId:'',
+          bcCurrentBdId:'',//调换之前的病床编号
+          bcLaterBdId:'',//调换之后的病床编号
+          bcDate:'',
+          ptNo:'',
+          ptName:'',//病人名称
+          bdName:'',//病床名称
+          wdId:'',//病房编号
+          bdId:'',//病床编号
+          sName: '',//管理护士名称
+          wdObj:{},//病房对象
+          bedObjs:{},
+          ksName:''//科室名称
+        },
+        wardChangeRecordArr:[],//病房数组
+        bedChangeRecordArr:[],//病床数组
+        isShowPatientShiftBed:false,//是否显示病床转换弹框
+
+
 
 
 
@@ -451,7 +555,7 @@
         isWradShow:false,//是否显示新增或者修改病房弹框
         titleWard:'',//新增或者修改病床弹框标题
         wardCurrentPage:1,//病房分页当前页初始化
-        wardPageSize:4,//病房分页页数初始化
+        wardPageSize:8,//病房分页页数初始化
 
 
 
@@ -500,6 +604,75 @@
         });
       },
 
+      //=======================================================================病床转换方法
+      //打开弹框
+      openPatientShiftBedTK(obj){
+		    this.bedChangeRecordObj.bcCurrentBdId = obj.bdId;
+		    this.bedChangeRecordObj.ptName = obj.ptName;
+		    this.bedChangeRecordObj.bdName = obj.bdName;
+		    this.bedChangeRecordObj.ksName = this.bedObj.ksName;
+		    this.bedChangeRecordObj.ptNo = obj.ptNo;
+        this.axios({url:"wardByKsId",params:{ksId:this.bedObj.ksId}}).then((v)=>{
+          this.wardChangeRecordArr = v.data;
+        }).catch((data)=>{
+
+        });
+		    this.isShowPatientShiftBed = true;
+      },
+      //关闭弹框
+      closePatientShiftBedTK(){
+		    this.patientUpdateBedReset();
+        this.isShowPatientShiftBed = false;
+      },
+      //病房切换时调用
+      wardPatientChangeFunction(row){
+        this.bedChangeRecordObj.bdId = '';
+        this.bedChangeRecordArr =  row.listBed;
+        this.bedChangeRecordObj.sName = row.staff.sname;
+      },
+      //病床切换时调用
+      bedPatientChangeFunction(row){
+        this.bedChangeRecordObj.bdPrice = row.bdPrice;
+        this.bedChangeRecordObj.bcLaterBdId = row.bdId;
+      },
+      //修改病床方法
+      patientUpdateBed(){
+        console.log(this.bedChangeRecordObj);
+        this.axios.post("bedUpdatePatient",this.bedChangeRecordObj).then((v)=>{
+          this.$message({
+            type: 'success',
+            message: '更改成功'
+          });
+          this.closePatientShiftBedTK();//关闭修改病床弹框
+          this.bedSelectByWdId(this.bedObj.wdId);//查询当前表格病床数据
+          this.wardArrInit();//重新加载页面数据
+        }).catch((data)=>{
+
+        });
+      },
+      //清除转换病床数据
+      patientUpdateBedReset(){
+        this.bedChangeRecordObj = {//病床转换对象
+           bcId:'',
+              bcCurrentBdId:'',//调换之前的病床编号
+              bcLaterBdId:'',//调换之后的病床编号
+              bcDate:'',
+              ptNo:'',
+              ptName:'',//病人名称
+              bdName:'',//病床名称
+              wdId:'',//病房编号
+              bdId:'',//病床编号
+              sName: '',//管理护士名称
+              wdObj:{},//病房对象
+          bedObjs:{},
+          ksName:''//科室名称
+        };
+        this.wardChangeRecordArr = [];//病房数组
+        this.bedChangeRecordArr = [];//病床数组
+      },
+
+
+
 
       //===========================================================================住院登记信息及方法
       //打开住院登记信息表
@@ -508,7 +681,7 @@
         this.isShowPatient = true;
         this.PatientXZBedObj = patient.row;
         this.PatientXZBedObj.bdPrice = patient.row.bdPrice;
-        this.PatientXZBedObj.pdId = patient.row.bdId;
+        this.PatientXZBedObj.bdId = patient.row.bdId;
       },
       //关闭住院登记信息表
       closePatientTK(){
@@ -573,6 +746,7 @@
       },
       //新增病床入住信息以及修改病人病床信息 bdId病床编号  ptNo住院编号
       PatientAddBedText(bdId,ptNo,price){
+		    alert("s")
         this.axios.post("patientAndBedUpdate",{bdId:bdId,ptNo:ptNo,price:price}).then((v)=>{
           console.log(v.data)
           return v.data;

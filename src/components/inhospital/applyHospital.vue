@@ -181,6 +181,7 @@
 	     
 	    data(){
 	        return {
+	            staff:'',
 	            baseFormRules: {  
 					idCardNo: [
 						{ required: true, message: '身份证号不能为空', trigger: 'blur' },
@@ -320,9 +321,13 @@
 	        this.baseInfo.birthplace = this.area[iden.substring(0,2)];
 	        console.log(this.baseInfo)
 	      }
-	    }
-	
-	}
+	    },
+    created() {
+	      this.staff = this.$store.state.token;
+	      console.log(this.staff)
+    }
+
+  }
 </script>
 
 <style>
