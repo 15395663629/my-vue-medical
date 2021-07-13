@@ -149,8 +149,9 @@
       //编辑
       bj(row){
         //回传值给页面
+        console.log(row)
         this.ksName=row.ksName
-        this.value=row.deName
+        this.value=row.dept.deName
         this.deId=row.deId
         //给对象赋值
         this.ks.ksId=row.ksId
@@ -167,7 +168,7 @@
     }
 		},
     created() {
-    console.log(this.dplist.deId)
+
 		  this.getData()
     }
   }
