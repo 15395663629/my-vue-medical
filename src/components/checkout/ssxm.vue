@@ -3,22 +3,22 @@
 		<el-form label-width="100px" style="padding-top: 10px">
 			<el-col :span="9">
 				<el-form-item label="结果：" label-width="60px">
-					<span>2</span>条
+					<span>{{ ssproject.length }}</span>条
 				</el-form-item>
 			</el-col>
 			<el-col :span="5">
-				<el-form-item  label="手术信息" label-width="100px">
+				<el-form-item  label="手术信息:" label-width="100px">
 					<el-input style="width: 200px;" v-model="input" placeholder="请输入你要查询的手术" ></el-input>
 				</el-form-item>
 			</el-col>
 			<el-col :span="5">
-				<el-form-item label="" label-width="18px">
+				<el-form-item label="" label-width="50px">
 					<el-button type="primary" icon="el-icon-search">查询</el-button>
 					</el-form-item>
 			</el-col>
 			<el-col :span="5" >
-				<el-form-item label="" label-width="800px">
-				<el-button type="primary"  @click="ssEdit()">新增</el-button>	
+				<el-form-item label="" label-width="600px">
+				<el-button type="primary"  @click="ssInser()">新增</el-button>
 				</el-form-item>
 			</el-col>
 		</el-form>
@@ -100,17 +100,17 @@
 			  </el-form-item>
 		</el-form>
 	</el-dialog>
-	<el-dialog title="手术" v-model="xgss" width="50%" center  ><!-- 弹窗      -=-=-=-=-=-=-==-=-=-=-=--=-=-=-=-=-=-修改======================================= -->
-		<el-form  status-icon :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
+	<el-dialog :title="option" v-model="xgss" width="50%" center  ><!-- 弹窗      -=-=-=-=-=-=-==-=-=-=-=--=-=-=-=-=-=-新增修改======================================= -->
+		<el-form   ref="ssForm" v-model="ssdx" label-width="100px" class="demo-ruleForm">
 			<el-row>
-								<el-col :span="6">
-									<el-form-item label="手术编号:" prop="name">
-									<el-input></el-input>
+								<el-col :span="7">
+									<el-form-item  label="手术编号:" prop="name">
+									<el-input v-model="ssdx.projectNumber" :disabled="true"></el-input>
 									</el-form-item>
 								</el-col>
-								<el-col :span="6" :offset="4">
+								<el-col :span="7" :offset="3">
 									<el-form-item label="科室:" prop="name">
-                    <el-select v-model="ks" placeholder="请选择">
+                    <el-select v-model="ssdx.ksId" placeholder="请选择">
                       <el-option
                           v-for="item in department"
                           :key="item.value"
@@ -122,79 +122,80 @@
 								</el-col>
 			</el-row>
 			  <el-row>
-					<el-col :span="6">
+					<el-col :span="7">
 						<el-form-item label="手术名称:" prop="name">
-						<el-input></el-input>
+						<el-input v-model="ssdx.projectName"></el-input>
 						</el-form-item>
 					</el-col>
-					<el-col :span="6" :offset="4">
+					<el-col :span="7" :offset="3">
 						<el-form-item label="手术类型:" prop="name">
-						<el-input></el-input>
+						<el-input v-model="ssdx.projectType"></el-input>
 						</el-form-item>
 					</el-col>
 			  </el-row>
 			<el-row>
-					<el-col :span="6">
+					<el-col :span="7">
 							<el-form-item label="手术位置:" prop="name">
-							<el-input></el-input>
+							<el-input v-model="ssdx.swz"></el-input>
               </el-form-item>
           </el-col>
-					<el-col :span="6" :offset="4">
+					<el-col :span="7" :offset="3">
 						<el-form-item label="手术价格:" prop="name">
-						<el-input></el-input>
+						<el-input v-model="ssdx.projectPay"></el-input>
 						</el-form-item>
 					</el-col>
 			</el-row>
 			<el-row>
-				<el-col :span="8">
+				<el-col :span="9">
 					<el-form-item label="适应症:" prop="name">
 					<el-input
 					  type="textarea"
 					  :rows="2"
 					  placeholder="请输入内容"
-					  v-model="ssjj">
+					  v-model="ssdx.projectIndication">
 					</el-input>
 					</el-form-item>
 				</el-col>
-				<el-col :span="12" :offset="2">
+				<el-col :span="9" :offset="1">
 						<el-form-item label="所需麻醉:" prop="name">
-						<el-select v-model="ana" multiple placeholder="请选择" style="width: 300px;">
+						<el-select v-model="ssdx.ssAn" multiple placeholder="请选择" style="width: 230px;">
 						    <el-option
 						      v-for="item in mazui"
-						      :key="item.value"
-						      :label="item.label"
-						      :value="item.operationAnaesthesia">
-						    </el-option>
+						      :key="item.anaesthesiaId"
+                  :label="item.operationAnaesthesia"
+						      :value="item.anaesthesiaId">
+
+                </el-option>
 						  </el-select>
 
 						</el-form-item>
 					</el-col>
 			</el-row>
 			<el-row>
-								<el-col :span="8">
+								<el-col :span="9">
 									<el-form-item label="手术禁忌:" prop="name">
 									  <el-input
 									  type="textarea"
 									  :rows="2"
 									  placeholder="请输入内容"
-									  v-model="ssjj">
+									  v-model="ssdx.projectTaboo">
 									</el-input>
 									</el-form-item>
 								</el-col>
-								<el-col :span="8" :offset="2">
+								<el-col :span="11" :offset="1">
 									<el-form-item label="注意事项:" prop="name">
 									<el-input
 									  type="textarea"
 									  :rows="2"
 									  placeholder="请输入内容"
-									  v-model="ssjj">
+									  v-model="ssdx.projectMatters">
 									</el-input>
 									</el-form-item>
 								</el-col>
 			</el-row>
 			  <el-form-item>
 				  <el-col :span="1" :offset="8">
-				<el-button @click="ssForm('ruleForm')">确定</el-button>
+				<el-button @click="ssForm('ssForm')">确定</el-button>
 				</el-col>
 			  </el-form-item>
 		</el-form>
@@ -204,7 +205,7 @@
 		<el-table
 		    :data="sproject"
 		    tooltip-effect="dark"
-			  height="600"
+			  height="450"
 		    style="width: 100%">
 		    <el-table-column
 		      label="编号"
@@ -240,7 +241,7 @@
 					  </el-button>
 			        <el-button
 			          size="mini"
-			          @click="ssEdit(scope.$index, scope.row)">修改</el-button>
+			          @click="ssEdit(scope.row)">修改</el-button>
 			        <el-button
 			          size="mini"
 			          type="danger"
@@ -267,6 +268,8 @@
 	export default {
 	    data () {
 	      return {
+	        // 弹框标题
+          option:'',
           sproject:[],
           ssproject:[],
           mzproject:[],
@@ -276,14 +279,27 @@
           size:5,
           projectId:'',
           mazui: [],
+          // 手术项目对象？、
+          ssdx:{
+            projectNumber:'',
+            ksId: '',
+            projectPay:'',
+            projectName:'',
+            projectMatters:'',
+            projectTaboo:'',
+            projectIndication:'',
+            projectPosition:'',
+
+            projectType:''
+          },
+          ssAn: '',
 
 
-          ana: '',
-          ks: '',
 
 			    isShow:false,
 			    xgss:false,
 			    input: '',
+          today: '',
 			    sstime: '',
 	        radio1: '查看全部',
 			    ruleForm: {
@@ -317,6 +333,7 @@
           this.mzproject = res.data;
         }).catch()
 			},
+      //删除
       ssptDelete(row){
         this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
           confirmButtonText: '确定',
@@ -335,6 +352,7 @@
           });
         });
       },
+      //手术详情
       scprjt(row){
         this.axios.post('http://localhost:8089/delet-sprot', qs.stringify({projectId:row.projectId}))
             .then((v)=>{
@@ -347,9 +365,20 @@
 
         })
       },
-			ssEdit(index, row) {
-				this.xgss = true;
+      // 新增
+			ssInser() {
+        this.option='新增手术';
+        this.today=new Date().getFullYear()+new Date().getDay();
+          this.ssdx.projectNumber=("SS"+this.today+Math.round(Math.random()*1000))
+          this.xgss = true;
 			},
+      // 修改
+      ssEdit(row) {
+          this.option='修改手术';
+          this.ssdx.projectNumber=row.projectNumber
+          this.xgss = true;
+
+      },
 			submitForm(formName) {
 				this.$refs[formName].validate((valid) => {
 				  if (valid) {
@@ -360,13 +389,13 @@
 				  }
 				});
 			},
-			resetForm(formName) {
-				this.isShow = false
-				this.$refs[formName].resetFields();
-			},
-			ssForm() {
+      //确定新增
+			ssForm(form) {
+        console.log(this.ssdx.ssAn)
+        this.axios.post("http://localhost:8089/addOrUpdataProj",{proj:this.ssdx,ssAn:this.ssdx.ssAn}).then((res)=>{
+          this.getData();
+        }).catch()
 				this.xgss = false;
-				this.$refs[formName].resetFields();
 			}
 		},
     created() {

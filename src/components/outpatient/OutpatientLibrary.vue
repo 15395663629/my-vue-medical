@@ -7,31 +7,27 @@
 		</el-col>
 	</el-row>
 <el-table
-	@row-dblclick="drawer = true"
-    :data="tableData"
-    border
-	height="677"
-    style="width: 100%">
+	@row-dblclick="drawer = true" :data="tableData" border height="530" style="width: 100% ; margin-top: 10px">
     <el-table-column
       fixed
       prop="date"
       label="日期"
-      width="150">
+      width="120">
     </el-table-column>
     <el-table-column
       prop="name"
       label="姓名"
-      width="120">
+      width="100">
     </el-table-column>
     <el-table-column
       prop="province"
       label="省份"
-      width="120">
+      width="100">
     </el-table-column>
     <el-table-column
       prop="city"
       label="市区"
-      width="120">
+      width="100">
     </el-table-column>
     <el-table-column
       prop="address"

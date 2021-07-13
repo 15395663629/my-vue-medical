@@ -1,6 +1,6 @@
 <template>
 	<el-row class="row-one">		
-		<el-col :span="12" >
+		<el-col :span="20" >
 			<i class="el-icon-wind-power"></i>
 			体检人员信息：<el-input class="my-tjss" v-model="input" placeholder="请输入你要查询的体检人员" ></el-input>  
 			<el-button type="primary" icon="el-icon-search">查询</el-button>
@@ -122,7 +122,7 @@
 	<!-- ==================================================体检人员表================================================== -->
 	<el-row>
 		<el-col>
-			<el-table :data="tjry" height="620" style="width: 100%;">
+			<el-table :data="tjry" height="450" style="width: 100%;">
 			    <el-table-column
 			      label="编号"
 				  prop="empId"
@@ -150,6 +150,7 @@
 				</el-table-column>
 				<el-table-column
 				  prop="empSalary"
+          width="200px"
 				  label="操作">
 				<el-button size="mini" type="primary">通过审批</el-button>
 				<el-button size="mini"   type="danger">取消预约</el-button>
@@ -159,7 +160,6 @@
 			  </el-table>
 			  <!--分页插件-->
 			 				  <el-pagination
-			 				 					style="text-align: center;"
 			 				       @size-change="totalCut"
 			 				       @current-change="pageCut"
 			 				       :current-page="1"
@@ -167,7 +167,7 @@
 			 				       :page-size="size"
 			 				       layout="total, sizes, prev, pager, next, jumper"
 			 				       :total="total">
-			 				     </el-pagination>
+                </el-pagination>
 		</el-col>
 	</el-row>
 	

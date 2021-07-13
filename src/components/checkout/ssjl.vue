@@ -140,7 +140,7 @@
 		    ref="multipleTable"
 		    :data="ssTa"
 		    tooltip-effect="dark"
-			height="650"
+			height="450"
 		    style="width: 100%"
 		    @selection-change="handleSelectionChange">
 		    <el-table-column

@@ -1,14 +1,14 @@
 <template>
-	<el-row> 
+	<el-row style="height: 40px">
 		<el-form  status-icon  ref="ruleForm" label-width="100px" class="demo-ruleForm">
 			<el-col>
-				<el-form-item label-width="0px">
-					<el-input style="width: 300px;" placeholder="请输入你要查询的卡信息,或持有人信息"></el-input>
+				<el-form-item  label-width="0px">
+					<el-input size="small" style="width: 300px;" placeholder="请输入你要查询的卡信息,或持有人信息"></el-input>
 				</el-form-item>
 			</el-col>
 			<el-col>
 				<el-form-item label-width="0px">
-					<el-button type="primary" icon="el-icon-search">查询</el-button>
+					<el-button  size="small" type="primary" icon="el-icon-search">查询</el-button>
 				</el-form-item>
 			</el-col>
 		</el-form>
@@ -17,7 +17,7 @@
 	  <el-radio-button label="诊卡充值退款"></el-radio-button> 
 	  <el-radio-button label="充值退款记录"></el-radio-button><!-- 当这里切换到退款记录时不能显示操作按钮 -->
 	</el-radio-group>
-	<el-table :data="rightTableData2" style="width: 100%" height="571" >
+	<el-table :data="rightTableData2" style="width: 100%" height="460"  >
 		<el-table-column label="日期" width="180">
 		  <template #default="scope">
 			<i class="el-icon-time"></i>
@@ -54,10 +54,10 @@
 		</el-table-column>
 		
 		<el-table-column prop="tag" label="标签"
-		width="120" :filters="[{ text: '诊疗卡退款', value: '诊疗卡退款' }, { text: '诊疗卡充值', value: '诊疗卡充值' }]"
-		:filter-method="filterTag"  filter-placement="bottom-end">
-			<template #default="scope">
-				<el-tag :type="scope.row.tag === '诊疗卡退款' ? 'primary' : 'success'" disable-transitions>
+		width="120"  :filters="[{ text: '诊疗卡退款', value: '诊疗卡退款' }, { text: '诊疗卡充值', value: '诊疗卡充值' }]"
+		:filter-method="filterTag"  filter-placement="bottom-end" >
+			<template #default="scope" >
+				<el-tag size="mini" :type="scope.row.tag === '诊疗卡退款' ? 'primary' : 'success'" disable-transitions>
 				{{scope.row.tag}}
 				</el-tag>
 			</template>

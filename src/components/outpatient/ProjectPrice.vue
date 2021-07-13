@@ -1,5 +1,5 @@
 <template >
-	<el-row>
+	<el-row style="height: 45px">
 		<el-form  status-icon  ref="ruleForm" label-width="150px" class="demo-ruleForm">
 			<el-col >
 				<el-form-item label-width="0px">
@@ -14,19 +14,31 @@
 		</el-form>
 	</el-row>
 
-	<el-table  height="662" row-key="date"  :data="tableData" style="width: 100%">
-		<el-table-column fixed  label="药品名称"  width="120"></el-table-column>
-		<el-table-column fixed  label="计量"  width="120"></el-table-column>
-		<el-table-column fixed  label="单位"  width="120"></el-table-column>
-		<el-table-column fixed  label="频次"  width="120"></el-table-column>
-		<el-table-column fixed  label="用法"  width="120"></el-table-column>
-		<el-table-column fixed  label="是否皮试"  width="120"></el-table-column>
-		<el-table-column fixed  label="输液分组"  width="120"></el-table-column>
-		<el-table-column fixed  label="嘱托"  width="130" align="center"></el-table-column>
-		<el-table-column fixed  label="单价"  width="120"></el-table-column>
-		<el-table-column fixed  label="计数"  width="120"></el-table-column>
-		<el-table-column fixed  label="总量"  width="120"></el-table-column>
-		<el-table-column fixed  label="金额"  width="120"></el-table-column>
+	<el-table  height="530" row-key="date"  :data="tableData" style="width: 100%">
+    <el-table-column fixed  label="药品名称"  width="100"></el-table-column>
+    <el-table-column fixed  label="计量"  width="60"></el-table-column>
+    <el-table-column fixed  label="单位"  width="60"></el-table-column>
+    <el-table-column fixed  label="频次"  width="60"></el-table-column>
+    <el-table-column fixed  label="是否皮试"  width="100"></el-table-column>
+    <el-table-column fixed  label="输液分组"  width="100"></el-table-column>
+    <el-table-column label="嘱托" width="200">
+      <template #default="scope">
+        <el-popover effect="light" trigger="hover" placement="top">
+          <template #default>
+            <p>嘱托详情: {{ scope.row.address }}</p>
+          </template>
+          <template #reference>
+            <div  class="name-wrapper">
+              <el-tag  size="mini">{{ scope.row.address }}</el-tag>
+            </div>
+          </template>
+        </el-popover>
+      </template>
+    </el-table-column>
+    <el-table-column fixed  label="单价"  width="60"></el-table-column>
+    <el-table-column fixed  label="计数"  width="130"></el-table-column>
+    <el-table-column fixed  label="总量"  width="100"></el-table-column>
+    <el-table-column fixed  label="金额"  width="100"></el-table-column>
 		<el-table-column fixed  label="操作"  width="120">
 			<template #default="scope">
 			  <el-button
@@ -39,7 +51,7 @@
 		width="100" :filters="[{ text: '药品缴费', value: '药品缴费' }, { text: '项目缴费', value: '项目缴费' }]"
 		:filter-method="filterTag"  filter-placement="bottom-end">
 			<template #default="scope">
-		        <el-tag :type="scope.row.tag === '项目缴费' ? 'primary' : 'success'" disable-transitions>
+		        <el-tag size="mini" :type="scope.row.tag === '项目缴费' ? 'primary' : 'success'" disable-transitions>
 				{{scope.row.tag}}
 				</el-tag>
 			</template>

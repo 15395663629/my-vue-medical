@@ -1,81 +1,95 @@
 <template><!-- 药品缴费 -->
 	<el-row>
-		<el-form  status-icon  ref="ruleForm" label-width="150px" class="demo-ruleForm">
+		<el-form  status-icon  ref="ruleForm" label-width="100px" class="demo-ruleForm">
 			<el-col :span="5">
 				<el-form-item  label="缴费单号：">
-					<el-input disabled></el-input>
+					<el-input size="mini" disabled></el-input>
 				</el-form-item>
 			</el-col>
 			<el-col :span="5">
 				<el-form-item label="姓名：">
-					<el-input disabled></el-input>
+					<el-input size="mini" disabled></el-input>
 				</el-form-item>
 			</el-col>
 			<el-col :span="5">
 				<el-form-item label="性别：">
-					<el-input disabled></el-input>
+					<el-input size="mini" disabled></el-input>
 				</el-form-item>
 			</el-col>
 			<el-col :span="5">
 				<el-form-item label="年龄：">
-					<el-input disabled></el-input>
+					<el-input size="mini" disabled></el-input>
 				</el-form-item>
 			</el-col >
 			<el-row :span="4">
 				<el-form-item >
-					<el-button @click="centerDialogVisible = true" type="primary">选择收费</el-button>
+					<el-button size="mini" @click="centerDialogVisible = true" type="primary">选择收费</el-button>
 				</el-form-item>
 			</el-row>
 		</el-form>
 	</el-row>
 	<el-row >
-		<el-form  status-icon  ref="ruleForm" label-width="150px" class="demo-ruleForm">
+		<el-form  status-icon  ref="ruleForm" label-width="100px" class="demo-ruleForm">
 			<el-col :span="5">
 				<el-form-item  label="科室：">
-					<el-input disabled></el-input>
+					<el-input size="mini" disabled></el-input>
 				</el-form-item>
 			</el-col>
 			<el-col :span="5">
 				<el-form-item label="诊断医生：">
-					<el-input disabled></el-input>
+					<el-input size="mini" disabled></el-input>
 				</el-form-item>
 			</el-col>
 			<el-col :span="5">
 				<el-form-item label="电话：">
-					<el-input disabled></el-input>
+					<el-input size="mini" disabled></el-input>
 				</el-form-item>
 			</el-col>
 			<el-col :span="5">
 				<el-form-item label="挂号费：">
-					<el-input disabled></el-input>
+					<el-input size="mini" disabled></el-input>
 				</el-form-item>
 			</el-col >
 			<el-row :span="4">
 				<el-form-item >
-					<el-button  type="primary" @click="dialogVisible = true">收费打印</el-button>
+					<el-button size="mini"  type="primary" @click="dialogVisible = true">收费打印</el-button>
 				</el-form-item>
 			</el-row>
 		</el-form>
 	</el-row>
 	
-	<el-table show-summary height="580" row-key="date"  :data="tableData" style="width: 100%">
-		<el-table-column fixed  label="药品名称"  width="120"></el-table-column>
-		<el-table-column fixed  label="计量"  width="120"></el-table-column>
-		<el-table-column fixed  label="单位"  width="120"></el-table-column>
-		<el-table-column fixed  label="频次"  width="120"></el-table-column>
-		<el-table-column fixed  label="用法"  width="120"></el-table-column>
-		<el-table-column fixed  label="是否皮试"  width="120"></el-table-column>
-		<el-table-column fixed  label="输液分组"  width="120"></el-table-column>
-		<el-table-column fixed  label="嘱托"  width="260" align="center"></el-table-column>
-		<el-table-column fixed  label="单价"  width="120"></el-table-column>
-		<el-table-column fixed  label="计数"  width="120"></el-table-column>
-		<el-table-column fixed  label="总量"  width="120"></el-table-column>
-		<el-table-column fixed  label="金额"  width="120"></el-table-column>
-		<el-table-column prop="drugType" label="标签"
-		width="100" :filters="[{ text: '西药', value: '西药' }, { text: '检验', value: '检验' },{text:'中药',value:'中药'}]"
+	<el-table show-summary height="450" row-key="date" :data="tableData" >
+		<el-table-column fixed  label="药品名称"  width="100"></el-table-column>
+		<el-table-column fixed  label="计量"  width="60"></el-table-column>
+		<el-table-column fixed  label="单位"  width="60"></el-table-column>
+		<el-table-column fixed  label="频次"  width="60"></el-table-column>
+		<el-table-column fixed  label="用法"  width="60"></el-table-column>
+		<el-table-column fixed  label="是否皮试"  width="100"></el-table-column>
+		<el-table-column fixed  label="输液分组"  width="100"></el-table-column>
+    <el-table-column label="嘱托" width="200">
+      <template #default="scope">
+        <el-popover effect="light" trigger="hover" placement="top">
+          <template #default>
+            <p>嘱托详情: {{ scope.row.address }}</p>
+          </template>
+          <template #reference>
+            <div  class="name-wrapper">
+              <el-tag  size="mini">{{ scope.row.address }}</el-tag>
+            </div>
+          </template>
+        </el-popover>
+      </template>
+    </el-table-column>
+
+		<el-table-column fixed  label="单价"  width="60"></el-table-column>
+		<el-table-column fixed  label="计数"  width="130"></el-table-column>
+		<el-table-column fixed  label="总量"  width="100"></el-table-column>
+		<el-table-column fixed  label="金额"  width="100"></el-table-column>
+		<el-table-column prop="drugType" label="标签" align="center"
+		width="166" :filters="[{ text: '西药', value: '西药' }, { text: '检验', value: '检验' },{text:'中药',value:'中药'}]"
 		:filter-method="filterTag2"  filter-placement="bottom-end">
 			<template #default="scope">
-		        <el-tag :type="scope.row.drugType === '检验' ? 'primary' : (scope.row.drugType === '中药'?'success':'danger')" disable-transitions>
+		        <el-tag size="mini" :type="scope.row.drugType === '检验' ? 'primary' : (scope.row.drugType === '中药'?'success':'danger')" disable-transitions>
 				{{scope.row.drugType}}
 				</el-tag>
 			</template>

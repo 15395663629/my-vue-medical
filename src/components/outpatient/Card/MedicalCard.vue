@@ -1,101 +1,26 @@
 <template>
-	<el-row> <!-- 选择挂号================== -->
+	<el-row style="height: 40px"> <!-- 选择操作人员================== -->
 		<el-form  status-icon  ref="ruleForm" label-width="100px" class="demo-ruleForm">
 			<el-col>
-				<el-form-item label-width="0px">
-					<el-input   style="width: 300px;" placeholder="请输入你要查询的卡信息,或持有人信息"></el-input>
+				<el-form-item  label-width="0px">
+					<el-input size="small" v-model="mzSickTest"  style="width: 300px;" placeholder="请输入你要查询的卡信息,或持有人信息"></el-input>
 				</el-form-item>
 			</el-col>
 			<el-col>
 				<el-form-item label-width="0px">
-					<el-button type="primary" icon="el-icon-search">查询</el-button>
+					<el-button size="small" type="primary" icon="el-icon-search" @click="likeMcSikc(mzSickTest)">查询</el-button>
 				</el-form-item>
 			</el-col>
-
-			
 		</el-form>
 	</el-row>
 	<el-radio-group v-model="radio2" class=" my-radio-group"  size="mini">
-	  <el-radio-button label="诊卡操作"></el-radio-button>
-	  <el-radio-button label="挂失记录"></el-radio-button>
+	  <el-radio-button label="诊卡操作" @click="isShowTable(1)"></el-radio-button>
+	  <el-radio-button label="挂失记录" @click="isShowTable(2)"></el-radio-button>
 	</el-radio-group>
-	<!-- 表格是得切换的 -->
-	<el-table 
-		:data="rightTableData1.slice((wardCurrentPage-1)*wardPageSize,wardCurrentPage*wardPageSize)"
-		style="width: 100%"
-		height="571"
-		>
-		<el-table-column
-		  label="就诊卡号"
-		  width="180">
-		  <template #default="scope">
-			<i class="el-icon-time"></i>
-			<span style="margin-left: 10px">{{ scope.row.date }}</span>
-		  </template>
-		</el-table-column>
-		<el-table-column label="姓名" width="180">
-		  <template #default="scope">
-			<el-popover effect="light" trigger="hover" placement="top">
-			  <template #default>
-				<p>姓名: {{ scope.row.name }}</p>
-				<p>住址: {{ scope.row.address }}</p>
-			  </template>
-			  <template #reference>
-				<div class="name-wrapper">
-				  <el-tag size="medium">{{ scope.row.name }}</el-tag>
-				</div>
-			  </template>
-			</el-popover>
-		  </template>
-		</el-table-column>
-		
-		<el-table-column
-		  label="身份证"
-		  width="180">
-		</el-table-column>
-		
-		<el-table-column
-		  label="电话"
-		  width="180">
-		</el-table-column>
-		
-		<el-table-column
-		  label="余额"
-		  width="180">
-		</el-table-column>
-		
-		<el-table-column label="操作" min-width="200px" align="center" ><!-- 这里得做个判断，如果是挂失记录查询就不显示操作 -->
-		  <template #default="scope">
-			<el-button
-			size="mini"
-			type="primary"
-			@click="isShow3=!isShow3">修改密码</el-button>
-			<el-button
-			size="mini"
-			type="danger"
-			@click="handleEdit(scope.$index, scope.row)"> 挂失</el-button>
-		  </template>
-		</el-table-column>
-		<el-table-column prop="tag" label="标签"
-		width="100" :filters="[{ text: '卡号挂失', value: '卡号挂失' }, { text: '密码修改', value: '密码修改' }]"
-		:filter-method="filterTag"  filter-placement="bottom-end">
-			<template #default="scope">
-				<el-tag :type="scope.row.tag === '密码修改' ? 'primary' : 'success'" disable-transitions>
-				{{scope.row.tag}}
-				</el-tag>
-			</template>
-		</el-table-column>
-	  </el-table>
-  <!--分页插件-->
-  <el-pagination  @size-change="wardHandleSizeChange" @current-change="wardHandleCurrentChange"
-                 style="text-align: center; margin-top: 10px"
-                 :current-page="wardCurrentPage"
-                 :page-sizes="[2,4,6,8]"
-                 :page-size="wardPageSize"
-                 layout="total, sizes, prev, pager, next, jumper"
-                 :total="rightTableData1.length">
-  </el-pagination>
-	  
+  <!-- 表格是得切换的 -->
+  <cardTable1 :mzSickList="mzSickList" v-if="isShow1"></cardTable1>
+  <cardTable2 :mzSickList="mzSickList" v-if="isShow2"></cardTable2>
+
 	<el-dialog title="提示" v-model="isShow3" width="20%" center  ><!-- 密码修改 -->
 		<el-row><!-- :rules="rules" -->
 			<el-form  status-icon  ref="ruleForm" label-width="100px" class="demo-ruleForm">
@@ -127,11 +52,16 @@
 </template>
 
 <script>
-	export default{
+	import {ElMessage} from "element-plus";
+
+  export default{
 		data(){
 			return{
-				isShow3:false,
-				radio2:"诊卡操作",
+        isShow1:true,//复选框切换
+        isShow2:false,
+				isShow3:false,//修改密码弹窗
+        mzSickTest:'',//模糊查询
+        radio2:"诊卡操作",
         wardCurrentPage:1,
         wardPageSize:4,
 				rightTableData1: [{
@@ -179,18 +109,48 @@
         this.wardCurrentPage = currentPage;
         console.log(this.currentPage) //点击第几页allDescSick
       },
-      //
-      // allDescSick(){
-      //   this.axios({url:'allDescCard'}).then((v)=>{
-      //     if(v.data!=null){
-      //         this.mzSickList=v.data.list;
-      //     }
-      //   }).catch();
-      // },
+      isShowTable(index){ //复选框切换
+			  console.log(index)
+        if(index==2){
+          this.isShow1=false;
+          this.isShow2=true;
+        }else{
+          this.isShow1=true;
+          this.isShow2=false;
+        }
+      },
+      allDescSick(){//查询界面
+        this.axios({
+          url:'allDescCard',
+          params:{mzSickTest:this.mzSickTest}
+        }).then((v)=>{
+           this.mzSickList=v.data;
+        }).catch();
+      },
+      likeMcSikc(test){
+			  console.log("sssssss")
+			  console.log(test)
+        this.axios({
+          url:'allDescCard',
+          params:{mzSickTest:this.mzSickTest}
+        }).then((v)=>{
+          console.log(v.data)
+          this.mzSickList=v.data;
+          if(v.data.length <= 0){
+            console.log("11111111111")
+            ElMessage.warning({
+              message: '没有找到相应的内容~',
+              type: 'warning'
+            });
+          }
+        }).catch(function(){
+
+        })
+      }
 
 		},
     created() {
-      // this.allDescSick();
+      this.allDescSick();//刷新界面
     }
   }
 </script>

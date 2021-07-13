@@ -20,7 +20,7 @@
 				</el-select>
 			</el-col>
 			<el-col >
-				<el-input style="width:240px" class="my-el-input" v-model="input" placeholder="请输入你要查询的病理或医生信息" ></el-input>
+				<el-input style="width:250px" class="my-el-input" v-model="input" placeholder="请输入你要查询的病理或医生信息" ></el-input>
 				<el-button type="primary" icon="el-icon-search">查询</el-button>
 			</el-col>
 			<el-col>
