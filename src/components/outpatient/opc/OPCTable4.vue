@@ -3,7 +3,7 @@
 	<el-table
 		:data="rightTableData4"
 		style="width: 100%"
-		height="570"
+		height="450"
 		>
 		 <el-table-column type="selection" width="55">
 		</el-table-column>
@@ -31,7 +31,7 @@
 			</el-popover>
 		  </template>
 		</el-table-column>
-		<el-table-column label="操作">
+		<el-table-column align="center" label="操作">
 		  <template #default="scope">
 			<el-button
 			  size="mini"
@@ -75,12 +75,5 @@
 </script>
 
 <style>
-    table{
-        margin-top: 20px;
-    }
-    td{
-        text-align: center;
-        width: 100px;
-    }
 </style>
 

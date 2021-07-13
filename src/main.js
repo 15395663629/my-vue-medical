@@ -24,6 +24,9 @@ import opcTable1 from "./components/outpatient/opc/OPCTable1.vue"
 import opcTable2 from "./components/outpatient/opc/OPCTable2.vue"
 import opcTable3 from "./components/outpatient/opc/OPCTable3.vue"
 import opcTable4 from "./components/outpatient/opc/OPCTable4.vue"
+import cardTable1 from "./components/outpatient/Card/CardTable1.vue"
+import cardTable2 from "./components/outpatient/Card/CardTable2.vue"
+
 
 //统一的跨域前缀--------------------------------
 axios.defaults.baseURL = 'http://localhost:8089/';
@@ -41,5 +44,7 @@ createApp(App)
 .component("opcTable2",opcTable2)
 .component("opcTable3",opcTable3)
 .component("opcTable4",opcTable4)
+.component("cardTable1",cardTable1)
+.component("cardTable2",cardTable2)
 .component('crumb',crumb)
 .mount('#app')
