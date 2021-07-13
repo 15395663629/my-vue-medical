@@ -72,7 +72,8 @@
 					        <span>住院管理</span>
 						</template>
 						<el-menu-item-group>
-							<el-menu-item @click="pushUrl('/hospital')" index="/hospital"><i class="el-icon-s-management"></i>住院登记</el-menu-item>
+              <el-menu-item @click="pushUrl('/applyhospital')" index="/applyhospital"><i class="el-icon-office-building"></i>住院申请</el-menu-item>
+              <el-menu-item @click="pushUrl('/hospital')" index="/hospital"><i class="el-icon-s-management"></i>住院登记</el-menu-item>
 							<el-menu-item @click="pushUrl('/paymanage')" index="/g"><i class="el-icon-edit-outline"></i>缴费管理</el-menu-item>
 							<el-menu-item @click="pushUrl('/discharge')" index="/e"><i class="el-icon-office-building"></i>出院结算</el-menu-item>
 						</el-menu-item-group>
