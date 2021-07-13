@@ -28,12 +28,12 @@
 		</el-header>
 	    <el-container style="max-height: 100%;overflow: hidden;">
 			<!-- 左边 -->
-	        <el-aside width="200px" style="background-color: #D3DCE6;color: #333;">
+	        <el-aside width="200px" style="background-color:white;color: #333;">
 				<el-menu
 				 :uniqueOpened="true"
 				      default-active="2"
 				      class="el-menu-vertical-demo"
-					  style="height: 100%">
+					  >
 					  <el-submenu index="1">
 					  	<template #title>
 					          <i class="el-icon-s-home"></i>
