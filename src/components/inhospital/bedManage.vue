@@ -1,7 +1,7 @@
 <template>
 
 	<!--=============================================新增修改床位弹框===================================-->
-	<el-dialog @close="bedAddOrUpdateReset('bedForm')" v-model="isShowAddBed" title="新增床位">
+	<el-dialog width="50%" @close="bedAddOrUpdateReset('bedForm')" v-model="isShowAddBed" title="新增床位">
 		<el-form ref="bedForm"  :model="bedObj">
 			<el-row>
 				<el-col :span="9">
@@ -79,13 +79,13 @@
 		</el-form>
 		
 		<template #footer>
-				<el-button @click="bedAddOrUpdate()" type="primary">确定</el-button>
-				<el-button @click="isShowAddBed = false" type="danger">取消</el-button>
+				<el-button @click="bedAddOrUpdate()" size="small" type="primary">确定</el-button>
+				<el-button @click="isShowAddBed = false" size="small" type="danger">取消</el-button>
 		</template>
 	</el-dialog>
 
   <!--=============================================新增修改病房弹框===================================-->
-  <el-dialog width="40%" v-model="isWradShow" @close="wardAddOrUpdateReset('wardForm')" :title="titleWard">
+  <el-dialog width="50%" v-model="isWradShow" @close="wardAddOrUpdateReset('wardForm')" :title="titleWard">
     <el-form ref="wardForm"  :model="wardObj">
       
       <el-row >
@@ -125,8 +125,8 @@
     </el-form>
 
     <template #footer>
-      <el-button @click="wardaddOrUpdate('wardForm')" type="primary">确定</el-button>
-      <el-button @click="wardAddOrUpdateReset('wardForm')" type="danger">取消</el-button>
+      <el-button size="small" @click="wardaddOrUpdate('wardForm')" type="primary">确定</el-button>
+      <el-button size="small" @click="wardAddOrUpdateReset('wardForm')" type="danger">取消</el-button>
     </template>
 
   </el-dialog>
@@ -137,10 +137,10 @@
 	<el-row>
     <el-col :span="9"></el-col>
 		<el-col :span="5">
-		 <el-input @blur="wardArrInit" placeholder="病房名称或者护士名称搜索" v-model="wardSearchText"></el-input>
+		 <el-input @blur="wardArrInit" size="small" placeholder="病房名称或者护士名称搜索" v-model="wardSearchText"></el-input>
 		</el-col>
     <el-col :span="1">
-      <el-button  @click="wardArrInit" icon="el-icon-search" type="primary" ></el-button>
+      <el-button  size="small" @click="wardArrInit" icon="el-icon-search" type="primary" ></el-button>
     </el-col>
     <el-col :span="9"></el-col>
 	</el-row>
@@ -152,7 +152,7 @@
       <el-table
           ref="multipleTable"
           highlight-current-row
-          height="600px"
+          height="550px"
           :header-cell-style="{background:'#F4F4F4'}"
           @cell-click="openBedDrawer"
           :data="wardArr.slice((wardCurrentPage-1)*wardPageSize,wardCurrentPage*wardPageSize)"
@@ -175,9 +175,9 @@
              label="病床数量">
            <template #default="r">
 <!--             {{r.row.listBed.length == 0 ? '暂无病床' : '病床数量：'+ r.row.listBed.length}}-->
-             <el-tag type="danger" v-if="r.row.listBed.length == 0 ">暂无病床</el-tag>
+             <el-tag size="small" type="danger" v-if="r.row.listBed.length == 0 ">暂无病床</el-tag>
 
-             <el-tag v-if="r.row.listBed.length != 0">病床数量：{{r.row.listBed.length}}</el-tag>
+             <el-tag size="small" v-if="r.row.listBed.length != 0">病床数量：{{r.row.listBed.length}}</el-tag>
            </template>
          </el-table-column>
 
@@ -185,11 +185,11 @@
              label="入住病人数量">
            <template #default="r">
 
-             <el-tag type="success" v-if="r.row.bedCount == 0 || r.row.bedCount == null">暂无入住病人</el-tag>
+             <el-tag size="small" type="success" v-if="r.row.bedCount == 0 || r.row.bedCount == null">暂无入住病人</el-tag>
 
-             <el-tag v-if="r.row.bedCount != 0 && r.row.bedCount != null">入住人数：{{r.row.bedCount}}</el-tag>
+             <el-tag size="small" v-if="r.row.bedCount != 0 && r.row.bedCount != null">入住人数：{{r.row.bedCount}}</el-tag>
 
-             <el-tag v-if="r.row.bedCount != 0 && r.row.bedCount != null && r.row.bedCount == r.row.listBed.length ">病床已满</el-tag>
+             <el-tag size="small" v-if="r.row.bedCount != 0 && r.row.bedCount != null && r.row.bedCount == r.row.listBed.length ">病床已满</el-tag>
            </template>
          </el-table-column>
 
@@ -226,7 +226,7 @@
       :title="bedDrawerTitle"
       v-model="bedDrawerIsShow"
       direction="btt"
-      size="50%"
+      size="60%"
       :before-close="handleClose" destroy-on-close>
 
     <!--=============================================床位信息表格===================================-->
@@ -287,20 +287,20 @@
             </template>
             <template  #default="r">
               <el-button v-if="r.row.bdIs != 3 && r.row.bdIs == 2"
-                         @click="openisBdId(r,1)" type="success" size="mini">恢复使用</el-button>
+                         @click="openisBdId(r,1)" type="success" plain size="mini">恢复使用</el-button>
 
               <el-button v-if="r.row.bdIs != 3 && r.row.bdIs != 2"
-                  @click="openBedTk(r)" size="mini">修改</el-button>
+                  @click="openBedTk(r)" type="primary" plain size="mini">修改</el-button>
 
 
               <el-button v-if="r.row.bdIs == 3"
-                         @click="openPatientShiftBedTK(r.row)" type="primary" size="mini">转病床</el-button>
+                         @click="openPatientShiftBedTK(r.row)" plain type="primary" size="mini">转病床</el-button>
 
               <el-button v-if="r.row.bdIs != 3 && r.row.bdIs != 2"
-                         @click="openPatient(r)" size="mini">入住病人</el-button>
+                         @click="openPatient(r)" type="primary" plain size="mini">入住病人</el-button>
 
               <el-button v-if="r.row.bdIs != 3 && r.row.bdIs != 2"
-                         @click="openisBdId(r,2)" type="danger" size="mini">停用</el-button>
+                         @click="openisBdId(r,2)" type="danger" plain size="mini">停用</el-button>
 
 
             </template>
@@ -325,11 +325,11 @@
 
 
   <!--=============================================选择住院申请病人弹框===================================-->
-  <el-dialog title="选择住院申请病人" v-model="isShowPatient" @close="closePatientTK">
+  <el-dialog width="60%" title="选择住院申请病人" v-model="isShowPatient" @close="closePatientTK">
     <el-table
         ref="multipleTable"
         :data="patientBaseArr.slice((patientCurrent-1)*patientSize,patientCurrent*patientSize)"
-        height="500px"
+        height="400px"
         tooltip-effect="dark"
         style="width: 100%"
         @selection-change="handleSelectionChange">
@@ -452,8 +452,8 @@
 
 
     <template #footer>
-      <el-button @click="patientUpdateBed('bedChangeForm')" type="primary">确定</el-button>
-      <el-button @click="closePatientShiftBedTK('bedChangeForm')" type="danger">取消</el-button>
+      <el-button size="small" @click="patientUpdateBed('bedChangeForm')" type="primary">确定</el-button>
+      <el-button size="small" @click="closePatientShiftBedTK('bedChangeForm')" type="danger">取消</el-button>
     </template>
 
   </el-dialog>

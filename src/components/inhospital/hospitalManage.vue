@@ -1,46 +1,49 @@
 <template>
-	<h1 style="margin-bottom: 15px;font-size: 26px;">住院登记</h1>
-	
+
 	<!--=============================================选择住院申请病人弹框===================================-->
 	<el-dialog title="选择住院申请病人" v-model="isShowXZBR">
 		<el-table
 		    ref="multipleTable"
-		    :data="empArr"
+		    :data="InhospitalApplyArr.slice((hospitalCurrent-1)*hospitalSize,hospitalCurrent*hospitalSize)"
 		    tooltip-effect="dark"
 		    style="width: 100%"
 		    @selection-change="handleSelectionChange">
 		    <el-table-column
-		      label="病人编号"
-			  prop="empId"
+		      label="病人名称"
+			  prop="sick.sickName"
 		      >
 		    </el-table-column>
 		    <el-table-column
-		      prop="empName"
+            width="140px"
+		      prop="inApplyDate"
 		      label="申请住院日期">
 		    </el-table-column>
 		    <el-table-column
-		      prop="empDate"
+		      prop="inDiagnosis"
 		      label="诊断结果">
 		    </el-table-column>
+      <el-table-column
+      prop="ksName"
+      label="科室">
+      </el-table-column>
+
 			<el-table-column
-			  prop="empSalary"
+			  prop="staff.sname"
 			  label="申请人">
 			</el-table-column>
 			
 			
-			<el-table-column width="200px"
+			<el-table-column width="120px"
 			      align="right">
 			      <template  #header>
-			        <el-input
-			          v-model="fromSearch"
-						prefix-icon="el-icon-search"
-			          size="small"
+			        <el-input	v-model="fromSearch" prefix-icon="el-icon-search"
+			          size="mini"
 			          placeholder="病人名称搜索"/>
 			      </template>
 				  
 				  <!--这里放操作按钮-->
 				  <template  #default='scope'>
-				  	<el-button type="danger" icon="el-icon-delete" @click="delEmp(scope.row)" circle>删除</el-button>
+				  	<el-button type="success" @click="hospitalXZ(scope.row)" size="mini" >选择</el-button>
 				  </template>
 			    </el-table-column>
 			
@@ -48,13 +51,13 @@
 		  <!--分页插件-->
 		   <el-pagination
 		  					style="text-align: center;"
-		        @size-change="totalCut"
-		        @current-change="pageCut"
-		        :current-page="1"
+		        @size-change="hospitalHandleSizeChange"
+		        @current-change="hospitalHandleCurrentChange"
+		        :current-page="hospitalCurrent"
 		        :page-sizes="[2,4,6,8,10]"
-		        :page-size="size"
+		        :page-size="hospitalSize"
 		        layout="total, sizes, prev, pager, next, jumper"
-		        :total="total">
+		        :total="InhospitalApplyArr.length">
 		      </el-pagination>
 	</el-dialog>
 	
@@ -62,12 +65,12 @@
 	
 	
 	<!--=============================================新增住院申请信息弹框===================================-->
-	<el-dialog title="住院申请" v-model="isShowZY">
-		<el-form>
+	<el-dialog title="住院登记" @close="PatientClear" v-model="isShowZY">
+		<el-form v-model="patientBaseObj">
 			<el-row>
 				<el-col :span="8">
 					<el-form-item label="姓名" label-width="80px">
-						<el-input></el-input>
+						<el-input disabled v-model="patientBaseObj.ptName"></el-input>
 					</el-form-item>
 				</el-col>
 				<el-col :span="3">
@@ -76,7 +79,7 @@
 				
 				<el-col :offset="1" :span="9">
 					<el-form-item label="门诊诊断" label-width="80px">
-						<el-input></el-input>
+						<el-input disabled v-model="patientBaseObj.ptDiagnoseName"></el-input>
 					</el-form-item>
 				</el-col>
 			</el-row>
@@ -84,8 +87,8 @@
 			<el-row>
 				<el-col :span="9">
 					<el-form-item label="性别" label-width="80px">
-					 <el-radio-group v-model="isSex">
-					    <el-radio label="男">男</el-radio>
+					 <el-radio-group v-model="patientBaseObj.ptSex">
+					    <el-radio  label="男">男</el-radio>
 					    <el-radio label="女">女</el-radio>
 					  </el-radio-group>
 					</el-form-item>
@@ -95,7 +98,7 @@
 				
 				<el-col  :span="9">
 					<el-form-item label="预交金额" label-width="80px">
-						<el-input></el-input>
+						<el-input v-model="patientBaseObj.ptPayMoney"></el-input>
 					</el-form-item>
 				</el-col>
 				
@@ -105,45 +108,45 @@
 			<el-row>
 				<el-col :span="8">
 					<el-form-item label="年龄" label-width="80px">
-						<el-input></el-input>
-					</el-form-item>
-				</el-col>
-				<el-col :span="4">
-				</el-col>
-				
-				
-				<el-col  :span="9">
-					<el-form-item label="治疗医生" label-width="80px">
-						<el-select v-model="isSex" placeholder="请选择">
-						    <el-option
-								key="s"
-						      label="item.label"
-						      value="item.value">
-						    </el-option>
-							<el-option
-							key="ss"
-							  label="item.label"
-							  value="item.value">
-							</el-option>
-						  </el-select>
-					</el-form-item>
-				</el-col>
-			</el-row>
-			
-			<el-row>
-				<el-col :span="8">
-					<el-form-item label="地址" label-width="80px">
-						<el-input></el-input>
+						<el-input v-model="patientBaseObj.ptAge"></el-input>
 					</el-form-item>
 				</el-col>
 				<el-col :span="4">
 				</el-col>
 
         <el-col :span="9">
-          <el-form-item label="身份证" label-width="80px">
-            <el-input></el-input>
+          <el-form-item label="科室" label-width="80px">
+            <el-select v-model="patientBaseObj.ksId" @change="ksChangeStaff" placeholder="请选择">
+              <el-option v-for="ks in ksArr"
+                  :label="ks.ksName"
+                  :value="ks.ksId">
+              </el-option>
+            </el-select>
           </el-form-item>
         </el-col>
+
+			</el-row>
+			
+			<el-row>
+				<el-col :span="8">
+					<el-form-item label="地址" label-width="80px">
+						<el-input v-model="patientBaseObj.ptHomeAdder"></el-input>
+					</el-form-item>
+				</el-col>
+				<el-col :span="4">
+				</el-col>
+
+        <el-col  :span="9">
+          <el-form-item label="治疗医生" label-width="80px">
+            <el-select v-model="patientBaseObj.sId" placeholder="请选择">
+              <el-option v-for="st in staffArr"
+                         :label="st.sname"
+                         :value="st.sid">
+              </el-option>
+            </el-select>
+          </el-form-item>
+        </el-col>
+
 			</el-row>
 			
 			
@@ -151,28 +154,18 @@
 			<el-row>
 				<el-col :span="8">
 					<el-form-item label="电话" label-width="80px">
-						<el-input></el-input>
+						<el-input v-model="patientBaseObj.ptIphone"></el-input>
 					</el-form-item>
 				</el-col>
-				<el-col :span="2">
+				<el-col :span="4">
 				</el-col>
-				
-				<el-col :offset="2" :span="12">
-					<el-form-item label="科室" label-width="80px">
-						<el-select v-model="isSex" placeholder="请选择">
-						    <el-option
-								key="s"
-						      label="item.label"
-						      value="item.value">
-						    </el-option>
-							<el-option
-							key="ss"
-							  label="item.label"
-							  value="item.value">
-							</el-option>
-						  </el-select>
-					</el-form-item>
-				</el-col>
+
+        <el-col :span="9">
+          <el-form-item label="身份证" label-width="80px">
+            <el-input disabled v-model="patientBaseObj.ptCapacityNo"></el-input>
+          </el-form-item>
+        </el-col>
+
 			</el-row>
 		</el-form>
 		
@@ -181,88 +174,97 @@
 				<el-row>
 					<el-col :span="18"></el-col>
 					<el-col :span="2">
-						<el-button @click="addEmp('empFrom')" type="primary">确定</el-button>
+						<el-button @click="addPatientFunction('empFrom')" size="small" type="primary">确定</el-button>
 					</el-col>
 					<el-col :span="1"></el-col>
 					<el-col :span="2">
-						<el-button @click="isShowZY = false" type="danger">取消</el-button>
+						<el-button @click="isShowZY = false" size="small" type="danger">取消</el-button>
 					</el-col>
 					<el-col :span="1"></el-col>
 				</el-row>
 		</template>
 	</el-dialog>
 	
-	<el-row>
-		<el-col :span="2">
-			<el-button @click="isShowZY = true" type="primary">新增</el-button>
-		</el-col>
-	</el-row>
-	
+
 	<!--=============================================住院登记表格===================================-->
 	<el-row>
 		<el-col>
 			<el-table
-			    :data="InhospitalApplyArr"
+			    :data="patientBaseArr.slice((patientCurrent-1)*patientSize,patientCurrent*patientSize)"
 			    tooltip-effect="dark"
+          height="470px"
 			    style="width: 100%"
 				>
-			    <el-table-column
-			      label="住院号"
-				  prop="empId"
-			      >
-			    </el-table-column>
-			    <el-table-column
-			      prop="empName"
-			      label="姓名">
-			    </el-table-column>
-			    <el-table-column
-			      prop="empDate"
-			      label="性别">
-			    </el-table-column>
-				<el-table-column
-				  prop="empSalary"
-				  label="年龄">
-				</el-table-column>
-				<el-table-column
-				  prop="empSalary"
-				  label="电话">
-				</el-table-column>
-				<el-table-column
-				  prop="empSalary"
-				  label="地址">
-				</el-table-column>
-				<el-table-column
-				  prop="empSalary"
-				  label="身份证">
-				</el-table-column>
-				<el-table-column
-				  prop="empSalary"
-				  label="入院日期">
-				</el-table-column>
-				<el-table-column
-				  prop="empSalary"
-				  label="科室">
-				</el-table-column>
-				<el-table-column
-				  prop="empSalary"
-				  label="医生">
-				</el-table-column>
-				<el-table-column
-				  prop="empSalary"
-				  label="床位">
-				</el-table-column>
-				<el-table-column width="200px"
+
+        <el-table-column align="center" label="住院病人信息">
+
+
+          <el-table-column
+              label="住院号"
+              prop="ptNo"
+          >
+          </el-table-column>
+          <el-table-column
+              label="姓名">
+
+            <template #default="scope" >
+              <el-popover width="300" effect="light"   trigger="hover" placement="top">
+                <template #default >
+                  <p>姓名: {{ scope.row.ptName }}</p>
+                  <p>年龄: {{ scope.row.ptAge }}</p>
+                  <p>性别: {{ scope.row.ptSex }}</p>
+                  <p>电话: {{ scope.row.ptIphone }}</p>
+                  <p>住址: {{ scope.row.ptHomeAdder }}</p>
+                </template>
+                <template #reference>
+                  <div class="name-wrapper">
+                    <el-tag size="medium">{{ scope.row.ptName }}</el-tag>
+                  </div>
+                </template>
+              </el-popover>
+            </template>
+
+          </el-table-column>
+          <el-table-column
+              prop="ptInDate"
+              label="入院日期">
+          </el-table-column>
+          <el-table-column
+              prop="ksName"
+              label="科室">
+          </el-table-column>
+          <el-table-column
+              prop="staff.sname"
+              label="主治医生">
+          </el-table-column>
+          <el-table-column
+              label="床位名称">
+
+            <template #default="obj">
+              <el-tag v-if="obj.row.bed.bdName == null" type="danger">未分配</el-tag>
+
+              <el-tag v-if="obj.row.bed.bdName != null" type="success">{{obj.row.bed.bdName}}</el-tag>
+            </template>
+
+          </el-table-column>
+
+
+
+        </el-table-column>
+
+
+				<el-table-column width="130px"
 				      align="right">
 				      <template  #header>
-				        <el-input
-				          v-model="fromSearch"
-							prefix-icon="el-icon-search"
-				          size="small"
-				          placeholder="病人名称搜索"/>
+                <el-row>
+                  <el-col>
+                    <el-button @click="isShowZY = true" size="mini" type="primary">添加</el-button>
+                  </el-col>
+                </el-row>
 				      </template>
 
               <template  #default='scope'>
-                <el-button icon="el-icon-edit" type="primary" @click="" circle>转科</el-button>
+                <el-button icon="el-icon-edit" type="success" @click="" size="mini" >转科</el-button>
               </template>
 				    </el-table-column>
 			  </el-table>
@@ -271,26 +273,29 @@
 			  <!--分页插件-->
 			   <el-pagination
 					style="text-align: center;"
-			        @size-change="totalCut"
-			        @current-change="pageCut"
-			        :current-page="1"
+			        @size-change="patientHandleSizeChange"
+			        @current-change="patientHandleCurrentChange"
+			        :current-page="patientCurrent"
 			        :page-sizes="[2,4,6,8,10]"
-			        :page-size="size"
+			        :page-size="patientSize"
 			        layout="total, sizes, prev, pager, next, jumper"
-			        :total="total">
+			        :total="patientBaseArr.length">
 			      </el-pagination>
 		</el-col>
 	</el-row>
+
+
 </template>
 
 <script>
 	export default{
 		data(){
 			return{
-				InhospitalApplyArr:[
+			  //=====================================================住院申请
+				InhospitalApplyArr:[//住院申请数组
 					
 				],
-				InhospitalApplyObj:{
+				InhospitalApplyObj:{//住院申请对象
 					ptNo:'',
 					sickNumber:'',
 					ptSex:'',
@@ -307,14 +312,143 @@
 				csrq:'',
 				isShowXZBR:false,//选择住院病人弹框
 				isShowZY:false,//住院申请弹框
+        hospitalCurrent:1,//住院申请当前页
+        hospitalSize:4,//住院申请页大小
 				isSex:'',
-				fromSearch:''
+				fromSearch:'',
+
+        //========================================================住院登记数据
+        patientBaseObj:{//住院登记实体类
+          ptNo:'',
+          ptInDate:'',
+          ptName:'',
+          ptSex:'',
+          ptBirthDate:'',
+          ptCapacityNo:'',
+          ptHomeAdder:'',
+          ksId:'',
+          sId:'',
+          ptIphone:'',
+          ptDiagnoseName:'',
+          bdId:'',
+          ptAge:'',
+          ptPayMoney:'',
+          inId:'',
+          ptPrice:''
+        },
+        patientBaseArr:[],//住院登记数组
+        patientCurrent:1,//住院登记分页当前页
+        patientSize:8,//住院登记分页页大小
+
+        //====================================科室数据
+        ksArr:[],//科室数组
+
+
+
+        //======================================医生数据
+        staffArr:[]
 			}
 		},
 		methods:{
-			
-		}
-	}
+		  //==========================================初始化住院登记信息以及住院申请信息
+      patientBaseInit(){
+        this.axios({url:'patientAll'}).then((v)=>{//查询所有病人登记信息
+          console.log(v.data)
+          this.patientBaseArr = v.data;
+        }).catch((date)=>{
+        });
+        this.axios({url:'selectNoHspApply'}).then((v)=>{//查询所有病人登记信息
+          console.log(v.data)
+          this.InhospitalApplyArr = v.data;
+        }).catch((date)=>{
+        });
+        //查询所有科室
+        this.axios.post("ks-list").then((v)=>{
+          console.log(v.data);
+          this.ksArr = v.data;
+        }).catch((data)=>{
+        });
+      },
+
+
+      //======================================================住院申请方法
+
+      //选择住院申请
+      hospitalXZ(obj){
+        console.log(obj)
+            this.patientBaseObj.ptName = obj.sick.sickName;//病人名称
+            this.patientBaseObj.ptSex = obj.sick.sickSex;//性别
+            this.patientBaseObj.ptBirthDate = obj.sick.sickTime;//出生日期
+            this.patientBaseObj.ptCapacityNo = obj.sick.sickIdCard;//身份证
+            this.patientBaseObj.ptHomeAdder= obj.sick.sickSite;//住址
+            this.patientBaseObj.ksId = obj.ksId;//科室编号
+            this.patientBaseObj.ptIphone= obj.sick.sickPhone;//电话
+            this.patientBaseObj.ptDiagnoseName = obj.inDiagnosis;//诊断结果
+            this.patientBaseObj.ptAge= obj.sick.sickAge;//年龄
+            this.patientBaseObj.inId = obj.inId;//住院申请编号
+        this.ksChangeStaff(obj.ksId);//调用查询员工
+        this.isShowXZBR = false;
+      },
+      //更改科室后调用
+      ksChangeStaff(ksId){
+        this.patientBaseObj.sId = '';
+        this.axios({url:"select-staff-all",params:{ksId:ksId}}).then((v)=>{//查询所有病房
+          console.log(v.data)
+          this.staffArr = v.data;
+        }).catch((data)=>{
+
+        });
+      },
+      //清空住院登记方法
+      PatientClear(){
+        this.isShowZY = false;
+        this.patientBaseObj = {};
+        this.staffArr = [];
+      },
+
+
+      //========================================住院登记方法
+
+      //新增住院方法
+      addPatientFunction(form){
+        console.log(this.patientBaseObj)
+        this.axios.post("addPatient",this.patientBaseObj).then((v)=>{
+        this.PatientClear();
+        this.patientBaseInit();
+          this.$message({
+            type: 'success',
+            message: '登记成功       请尽快分配床位'
+          });
+        }).catch((data)=>{
+
+        });
+      },
+
+
+
+      //========================分页方法
+      // 住院登记size变了调用
+      patientHandleSizeChange: function(size) {
+        this.patientSize = size;
+      },
+      //住院登记Current变了调用
+      patientHandleCurrentChange: function(currentPage) {
+        this.patientCurrent = currentPage;
+      },
+      // 住院申请size变了调用
+      hospitalHandleSizeChange: function(size) {
+        this.hospitalSize = size;
+      },
+      //住院申请Current变了调用
+      hospitalHandleCurrentChange: function(currentPage) {
+        this.hospitalCurrent = currentPage;
+      }
+
+		},
+    created() {
+      this.patientBaseInit();
+    }
+  }
 </script>
 
 <style>
