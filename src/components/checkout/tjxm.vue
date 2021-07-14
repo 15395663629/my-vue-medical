@@ -202,7 +202,7 @@
 		</el-form>
 	</el-dialog>
 	
-	<el-dialog title="检查项目" v-model="jcxm" width="50%" center  ><!-- 弹窗      -=-=-=-=-=-=-==-=-=-=-=--=-=-=-=-=-=-医疗项目======================================= -->
+	<el-dialog :title="tilt" v-model="jcxm" width="50%" center  ><!-- 弹窗      -=-=-=-=-=-=-==-=-=-=-=--=-=-=-=-=-=-医疗项目======================================= -->
 		<el-form  status-icon :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
 			<el-row>
 								<el-col :span="6">
@@ -322,42 +322,41 @@
 
 	<!-- ============================================下表格============================================ -->
 	<el-row > 
-		<el-table :data="yldate" style="width: 100%;height: 200px;" v-if="isShow!==null">
-			<el-table-column label="编号" width="180">
-				<template #default="scope">
-					<span style="margin-left: 10px">{{ scope.row.date }}</span>
-				</template>
+		<el-table :data="tjpro.slice((currentPage-1)*psize,currentPage*psize)"
+              style="width: 100%;height: 220px;" v-if="isShow!==null">
+			<el-table-column label="编号" width="180" prop="checkId">
 			</el-table-column>
 			
-		    <el-table-column label="医疗项目名称" >
+		    <el-table-column label="医疗项目名称" prop="checkName" >
 				<template #default="scope">
 				<el-popover effect="light" trigger="hover"  placement="top">
 					<template #default>
-						<p>项目名称: {{ scope.row.name }}</p>
+						<p>项目名称: {{ scope.row.checkName }}</p>
 					</template>
 					<template #reference>
 		            <div class="name-wrapper">
-		              <el-tag size="medium">{{ scope.row.name }}</el-tag>
+		              <el-tag size="medium">{{ scope.row.checkName }}</el-tag>
 		            </div>
 		          </template>
 				</el-popover>
 		      </template>
 		    </el-table-column>
-			<el-table-column label="价格">
-				<template #default="scope">
-					<span style="margin-left: 10px">{{ scope.row.price }}</span>
-				</template>
+			<el-table-column label="价格" prop="checkPay">
 			</el-table-column>
-			<el-table-column label="指标">
-				<template #default="scope">
-					<span style="margin-left: 10px">{{ scope.row.lx }}</span>
-				</template>
+			<el-table-column label="指标" prop="indexName">
+        <template #default="scope">
+          <el-popover effect="light" trigger="hover"  placement="top">
+            <template #default>
+              <p>指标意义: {{ scope.row.indexSignificance }}</p>
+            </template>
+            <template #reference>
+              <div class="name-wrapper">
+                <el-tag size="medium">{{ scope.row.indexName }}</el-tag>
+              </div>
+            </template>
+          </el-popover>
+        </template>
 			</el-table-column>
-		    <el-table-column label="指标意义">
-				<template #default="scope">
-					<span style="margin-left: 10px">{{ scope.row.zbyy }}</span>
-				</template>
-		    </el-table-column>
 			<el-table-column width="180" label="操作">
 			  <template #default="scope">
 			    <el-button
@@ -375,7 +374,7 @@
 						  align="right">
 						  <template  #header>
 							<el-input
-							  v-model="ssss"
+							  v-model="seach"
 								prefix-icon="el-icon-search"
 							  size="small"
 							  placeholder="项目搜索"/>
@@ -385,14 +384,14 @@
 		 <!--分页插件-->
 						  <el-pagination
 						 					style="text-align: center;"
-						       @size-change="totalCut"
-						       @current-change="pageCut"
+						       @size-change="handleSizeChange"
+						       @current-change="handleCurrentChange"
 						       :current-page="1"
 						       :page-sizes="[2,4,6,8,10]"
-						       :page-size="size"
+						       :page-size="psize"
 						       layout="total, sizes, prev, pager, next, jumper"
-						       :total="total">
-						     </el-pagination>
+						       :total="tjpro.length">
+              </el-pagination>
 	</el-row>
 	
 </template>
@@ -400,59 +399,13 @@
 <script>
 	export default {
 	    data () {
-			var checkAge = (rule, value, callback) => {
-        if (!value) {
-          return callback(new Error('年龄不能为空'));
-        }
-        setTimeout(() => {
-          if (!Number.isInteger(value)) {
-            callback(new Error('请输入数字值'));
-          } else {
-            if (value < 18) {
-              callback(new Error('必须年满18岁'));
-            } else {
-              callback();
-            }
-          }
-        }, 1000);
-      };
-      var validatePass = (rule, value, callback) => {
-        if (value === '') {
-          callback(new Error('请输入密码'));
-        } else {
-          if (this.ruleForm.checkPass !== '') {
-            this.$refs.ruleForm.validateField('checkPass');
-          }
-          callback();
-        }
-      };
-      var validatePass2 = (rule, value, callback) => {
-        if (value === '') {
-          callback(new Error('请再次输入密码'));
-        } else if (value !== this.ruleForm.pass) {
-          callback(new Error('两次输入密码不一致!'));
-        } else {
-          callback();
-        }
-      }
 	      return {
-			  zhib: [{
-			            value: '选项1',
-			            label: '头部'
-			          }, {
-			            value: '选项2',
-			            label: '腰部'
-			          }, {
-			            value: '选项3',
-			            label: '腹部'
-			          }, {
-			            value: '选项4',
-			            label: '肩部'
-			          }, {
-			            value: '选项5',
-			            label: '腿部'
-			          }],
-			options: [{
+	        tilt:'',//弹框标题
+          seach: '',//搜索
+          currentPage: 1, //初始页
+          psize:2, //每页的数据
+        tjpro:[],//检查项目集合
+			    options: [{
 			          value: '选项1',
 			          label: '入职体检'
 			        }, {
@@ -481,73 +434,66 @@
 				price:'233',
 				lx:'入职体检'
 			}],
-			yldate:[{
-				date: '123',
-				name: 'ct',
-				price:'233',
-				lx:'腹部',
-				zbyy:'adsf asdsadf ad'
-			},
-			{
-				date: '123',
-				name: 'ct',
-				price:'233',
-				lx:'阿斯蒂芬',
-				zbyy:'adsf asdsadf ad'
-			}],
 			ruleForm: {
 			          pass: '',
 			          checkPass: '',
 			          age: ''
-			},
-			rules: {
-				pass: [
-			            { validator: validatePass, trigger: 'blur' }
-			    ],
-			    checkPass: [
-			            { validator: validatePass2, trigger: 'blur' }
-			    ],
-			   age: [
-			            { validator: checkAge, trigger: 'blur' }
-			   ]
 			}
-			      
-	      }
-		  
+        }
 	    },
 		methods: {
-			jcxmEdit(index, row) {
-				this.jcxm = true;
-			},
-			tjtcEdit(index, row) {
-				this.tjtc = true;
-			},
-			tcxqEdit(index, row) {
-				this.tcxq = true;
-			},
-			submitForm(formName) {
-				this.$refs[formName].validate((valid) => {
-				  if (valid) {
-					alert('submit!');
-				  } else {
-					console.log('error submit!!');
-					return false;
-				  }
-				});
-			},
-			jcxmForm(formName) {
-				this.jcxm = false
-				this.$refs[formName].resetFields();
-			},
-			tjtcForm(formName) {
-				this.tjtc = false
-				this.$refs[formName].resetFields();
-			},
-			tcxqForm(formName) {
-				this.tcxq = false
-				this.$refs[formName].resetFields();
-			}
-		},
+      // 初始页currentPage、初始每页数据数pagesize和数据data
+      handleSizeChange: function(size) {
+        this.psize = size;
+        console.log(this.psize) //每页下拉显示数据
+      },
+      handleCurrentChange: function(currentPage) {
+        this.currentPage = currentPage;
+        console.log(this.currentPage) //点击第几页
+      },
+        getData(){
+          this.axios.get("http://localhost:8089/allDescTjpro",{params:{seach:this.seach}}).then((res)=>{
+            this.tjpro = res.data;
+          }).catch()
+          this.axios.get("http://localhost:8089/ks-list").then((res)=>{
+            this.department = res.data;
+          }).catch()
+
+        },
+        jcxmEdit(index, row) {
+          this.jcxm = true;
+        },
+        tjtcEdit(index, row) {
+          this.tjtc = true;
+        },
+        tcxqEdit(index, row) {
+          this.tcxq = true;
+        },
+        submitForm(formName) {
+          this.$refs[formName].validate((valid) => {
+            if (valid) {
+            alert('submit!');
+            } else {
+            console.log('error submit!!');
+            return false;
+            }
+          });
+        },
+        jcxmForm(formName) {
+          this.jcxm = false
+          this.$refs[formName].resetFields();
+        },
+        tjtcForm(formName) {
+          this.tjtc = false
+          this.$refs[formName].resetFields();
+        },
+        tcxqForm(formName) {
+          this.tcxq = false
+          this.$refs[formName].resetFields();
+        }
+      },created() {
+        this.getData()
+      }
 	  }
 </script>
 
