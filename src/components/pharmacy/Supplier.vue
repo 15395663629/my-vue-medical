@@ -4,7 +4,7 @@
     <el-col>
       <!-- 新增弹窗 -->
       <el-button type="primary" @click="dialogFormVisible = true">新增供应商</el-button>
-      <el-dialog  title="供应商" v-model="dialogFormVisible" width="20%">
+      <el-dialog  title="供应商" v-model="dialogFormVisible" width="40%">
         <el-form :model="formSipplier">
           <el-form-item label="供应商编号" :label-width="formLabelWidth">
             <el-input v-model="formSipplier.supplierId" autocomplete="off" style="width: 200px;"></el-input>
@@ -32,7 +32,7 @@
 
       <!--修改弹窗-->
 
-      <el-dialog  title="供应商" v-model="handleEdit" width="20%">
+      <el-dialog  title="供应商" v-model="handleEdit" width="40%">
         <el-form :model="formSipplier">
           <el-row :gutter="0">
            <el-col :span="0">
@@ -66,24 +66,24 @@
   </el-row>
   <!-- 供应商表格 -->
   <el-table :data="tableData.filter(data => !search || data.supplierName.toLowerCase().includes(search.toLowerCase()))"
-            style="width: 100%">
-    <el-table-column label="供应商编号" prop="supplierId">
+            style="width: 100%"  height="500">
+    <el-table-column label="供应商编号" prop="supplierId" >
     </el-table-column>
-    <el-table-column label="供应商名称" prop="supplierName">
+    <el-table-column label="供应商名称" prop="supplierName" >
     </el-table-column>
-    <el-table-column label="供应商地址" prop="supplierSite">
+    <el-table-column label="供应商地址" prop="supplierSite" >
     </el-table-column>
-    <el-table-column label="供应商电话" prop="supplierPhone">
+    <el-table-column label="供应商电话" prop="supplierPhone" >
     </el-table-column>
-    <el-table-column label="供应商联系人" prop="supplierLinkman">
+    <el-table-column label="供应商联系人" prop="supplierLinkman" >
     </el-table-column>
-    <el-table-column align="right">
+    <el-table-column align="right"  width="200">
       <template #header>
         <el-input v-model="search" size="mini" placeholder="输入关键字搜索" />
       </template>
-      <template #default="scope">
-        <el-button size="mini" @click="editSupplier(scope.row)">编辑供应商</el-button>
-        <el-button size="mini" type="danger" @click="handleDelete">删除供应商</el-button>
+      <template #default="scope" >
+        <el-button size="mini" type="primary" plain @click="editSupplier(scope.row)">编辑</el-button>
+        <el-button size="mini" type="danger" plain @click="handleDelete">删除</el-button>
       </template>
     </el-table-column>
   </el-table>
@@ -131,6 +131,7 @@ export default {
     handleCurrentChange(val) {
       console.log(`当前页: ${val}`);
     },
+    //查询
     getData(){
       this.axios({
         url:'http://localhost:8089/gys-all',
@@ -139,7 +140,6 @@ export default {
         console.log(v)
         this.tableData = v.data;
       }).catch(function (){
-
       })
     },
     //新增

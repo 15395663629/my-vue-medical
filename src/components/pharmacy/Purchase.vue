@@ -10,7 +10,7 @@
 		</el-col>
 		<el-col :span="1" :offset="10">
 			<!-- 新增弹窗 -->
-			<el-button round @click="dialogFormVisible = true">新增采购计划</el-button>
+			<el-button type="primary" @click="dialogFormVisible = true">新增采购计划</el-button>
 			<el-dialog title="采购计划" v-model="dialogFormVisible">
         <button round @click="open = true">添加药品</button>
 				<el-form>
@@ -28,10 +28,14 @@
 						</el-select>
 					</el-form-item>
 				</el-form>
-			    <el-table :data="gridData">
+			    <el-table :data="gridData" height="200">
             <el-table-column type="selection" width="55"></el-table-column>
               <el-table-column property="date" label="药品名" ></el-table-column>
-              <el-table-column property="name" label="数量" ></el-table-column>
+              <el-table-column label="数量" >
+                <template>
+                  <el-input-number property="name" size="mini"></el-input-number>
+                </template>
+              </el-table-column>
               <el-table-column property="address" label="单价"></el-table-column>
             <el-table-column property="xj" label="小计"></el-table-column>
             </el-table>
@@ -76,9 +80,8 @@
 					</el-table-column>
 				<el-table-column fixed="right" label="操作">
 					<template #default="scope">
-						<el-button type="text" size="small">查看</el-button>
-						<el-button type="text" size="small">编辑</el-button>
-						<el-button type="text" size="small">打印计划</el-button>
+						<el-button type="primary" plain size="small">编辑</el-button>
+            <el-button type="info" plain size="small">打印计划</el-button>
 					</template>
 				</el-table-column>
 			</el-table>

@@ -9,7 +9,7 @@
 			<el-button type="primary" icon="el-icon-search">搜索</el-button>
 		</el-col>
 		<el-col :span="1" :offset="10">
-			<el-button round @click="dialogFormVisible = true">新增出库信息</el-button>
+			<el-button type="primary" @click="dialogFormVisible = true">新增出库信息</el-button>
 			<el-dialog title="药品出库" v-model="dialogFormVisible">
 			  <el-form>
 			    <el-form-item label="药品批次" :label-width="formLabelWidth">
@@ -71,30 +71,30 @@
 	<el-row>
 		<el-col>
 			<el-table :data="tableData" border style="width: 100%;">
-				<el-table-column prop="drug" label="批次">
+				<el-table-column prop="drug" label="批次" width="150">
 					</el-table-column>
-				<el-table-column prop="date" label="日期" >
+				<el-table-column prop="date" label="日期" width="150">
 					</el-table-column>
-				<el-table-column prop="name" label="药品名">
+				<el-table-column prop="name" label="药品名" width="150">
 					</el-table-column>
-				<el-table-column prop="province" label="入库数量">
+				<el-table-column prop="province" label="入库数量" width="150">
 					</el-table-column>
-				<el-table-column prop="dan" label="采购价格">
+				<el-table-column prop="dan" label="采购价格" width="150">
 					</el-table-column>
-				<el-table-column prop="city" label="单位">
+				<el-table-column prop="city" label="单位" width="150">
 					</el-table-column>	
-				<el-table-column prop="cang" label="出库仓库">
+				<el-table-column prop="cang" label="出库仓库" width="150">
 					</el-table-column>	
-				<el-table-column prop="address" label="经手人">
+				<el-table-column prop="address" label="经手人" width="150">
 					</el-table-column>
-				<el-table-column prop="qu" label="去向">
+				<el-table-column prop="qu" label="去向" width="150">
 					</el-table-column>
-				<el-table-column prop="zip" label="备注">
+				<el-table-column prop="zip" label="备注" width="150">
 					</el-table-column>
-				<el-table-column fixed="right" label="操作">
+				<el-table-column fixed="right" label="操作" width="150">
 					<template #default="scope">
-						<el-button @click="handleClick(scope.row)" type="text" size="small">查看</el-button>
-						<el-button type="text" size="small">编辑</el-button>
+						<el-button @click="handleClick(scope.row)" type="primary" plain size="small">查看</el-button>
+						<el-button type="success" plain size="small">编辑</el-button>
 					</template>
 				</el-table-column>
 			</el-table>

@@ -52,26 +52,26 @@
 	<el-row>
 		<el-col>
 			<el-table :data="tableData" border style="width: 100%;">
-				<el-table-column prop="drug" label="批次">
+				<el-table-column prop="drug" label="批次" width="150">
 					</el-table-column>
-				<el-table-column prop="date" label="日期" >
+				<el-table-column prop="date" label="日期" width="150">
 					</el-table-column>
-				<el-table-column prop="name" label="药品名">
+				<el-table-column prop="name" label="药品名" width="150">
 					</el-table-column>
-				<el-table-column prop="province" label="销毁数量">
+				<el-table-column prop="province" label="销毁数量" width="150">
 					</el-table-column>
-				<el-table-column prop="city" label="生产厂家">
+				<el-table-column prop="city" label="生产厂家" width="150">
 					</el-table-column>	
-				<el-table-column prop="address" label="经手人">
+				<el-table-column prop="address" label="经手人" width="150">
 					</el-table-column>
-				<el-table-column prop="yuan" label="销毁原因">
+				<el-table-column prop="yuan" label="销毁原因" width="150">
 					</el-table-column>
-				<el-table-column prop="zip" label="备注">
+				<el-table-column prop="zip" label="备注" width="150">
 					</el-table-column>
-				<el-table-column fixed="right" label="操作">
+				<el-table-column fixed="right" label="操作" width="200">
 					<template #default="scope">
-						<el-button type="text" size="small">打印销毁记录</el-button>
-						<el-button type="text" size="small">编辑</el-button>
+						<el-button type="success" plain size="small">打印销毁记录</el-button>
+						<el-button type="primary" plain size="small">编辑</el-button>
 					</template>
 				</el-table-column>
 			</el-table>

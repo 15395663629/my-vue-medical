@@ -4,7 +4,7 @@
       style="width: 100%"
       height="460" >
     <el-table-column
-        label="222就诊卡号"
+        label="就诊卡号"
         width="180">
       <template #default="scope">
         <span >{{ scope.row.mcCard}}</span>
@@ -12,7 +12,7 @@
     </el-table-column>
     <el-table-column label="姓名" width="180">
       <template #default="scope">
-        <el-popover effect="light" trigger="hover" placement="top">
+        <el-popover width="300" effect="light" trigger="hover" placement="top">
           <template #default>
             <p>姓名: {{ scope.row.mzSick.sickName }}</p>
             <p>住址: {{ scope.row.mzSick.sickSite }}</p>

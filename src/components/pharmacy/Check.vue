@@ -1,7 +1,7 @@
 <template>
 	<h1>药品盘点</h1>
 	<el-row>
-		<el-col :offset="10">
+		<el-col>
 			<!-- 新增弹窗 -->
 			<el-button type="primary" @click="dialogFormVisible = true">新增记录</el-button>
 			<el-dialog  title="药房发药" v-model="dialogFormVisible">
@@ -49,13 +49,13 @@
 		</el-table-column>
 		<el-table-column label="上月库存" prop="shangyue">
 		</el-table-column>
-		<el-table-column align="right">
+		<el-table-column align="right" width="200">
 			<template #header>
 				<el-input v-model="search" size="mini" placeholder="输入关键字搜索" />
 			</template>
 			<template #default="scope">
-				<el-button size="mini" @click="handleEdit(scope.$index, scope.row)">Edit</el-button>
-				<el-button size="mini" type="danger" @click="handleDelete(scope.$index, scope.row)">Delete</el-button>
+				<el-button size="mini" type="primary" plain @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
+				<el-button size="mini" type="danger" plain @click="handleDelete(scope.$index, scope.row)">删除</el-button>
 			</template>
 		</el-table-column>
 	</el-table>
