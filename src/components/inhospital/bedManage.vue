@@ -152,7 +152,7 @@
       <el-table
           ref="multipleTable"
           highlight-current-row
-          height="700px"
+          height="600px"
           :header-cell-style="{background:'#F4F4F4'}"
           @cell-click="openBedDrawer"
           :data="wardArr.slice((wardCurrentPage-1)*wardPageSize,wardCurrentPage*wardPageSize)"
@@ -171,8 +171,30 @@
              prop="staff.sname"
              label="管理护士">
          </el-table-column>
+         <el-table-column
+             label="病床数量">
+           <template #default="r">
+<!--             {{r.row.listBed.length == 0 ? '暂无病床' : '病床数量：'+ r.row.listBed.length}}-->
+             <el-tag type="danger" v-if="r.row.listBed.length == 0 ">暂无病床</el-tag>
+
+             <el-tag v-if="r.row.listBed.length != 0">病床数量：{{r.row.listBed.length}}</el-tag>
+           </template>
+         </el-table-column>
+
+         <el-table-column
+             label="入住病人数量">
+           <template #default="r">
+
+             <el-tag type="success" v-if="r.row.bedCount == 0 || r.row.bedCount == null">暂无入住病人</el-tag>
+
+             <el-tag v-if="r.row.bedCount != 0 && r.row.bedCount != null">入住人数：{{r.row.bedCount}}</el-tag>
+
+             <el-tag v-if="r.row.bedCount != 0 && r.row.bedCount != null && r.row.bedCount == r.row.listBed.length ">病床已满</el-tag>
+           </template>
+         </el-table-column>
+
         </el-table-column>
-        <el-table-column width="100px"
+        <el-table-column width="130px"
                          align="right">
           <template  #header>
             <el-button @click.stop="openWardTk(1)" type="primary" size="mini">新增病房</el-button>
@@ -215,6 +237,7 @@
             :data="bedArr.slice((bedCurrentPage-1)*bedPageSize,bedCurrentPage*bedPageSize)"
             :header-cell-style="{background:'#F4F4F4'}"
             tooltip-effect="dark"
+            height="340px"
             style="width: 100%"
             @selection-change="handleSelectionChange">
             <el-table-column
@@ -269,7 +292,7 @@
                          @click="openBedTk(r)" type="primary" size="mini">转病床</el-button>
 
               <el-button v-if="r.row.bdIs != 3 && r.row.bdIs != 2"
-                         @click="openBedTk(r)" size="mini">入住病人</el-button>
+                         @click="openPatient(r)" size="mini">入住病人</el-button>
 
               <el-button v-if="r.row.bdIs != 3 && r.row.bdIs != 2"
                          @click="openisBdId(r,2)" type="danger" size="mini">停用</el-button>
@@ -297,32 +320,32 @@
 
 
   <!--=============================================选择住院申请病人弹框===================================-->
-  <el-dialog title="选择住院申请病人" v-model="isShowPatient">
+  <el-dialog title="选择住院申请病人" v-model="isShowPatient" @close="closePatientTK">
     <el-table
         ref="multipleTable"
-        :data="empArr"
+        :data="patientBaseArr.slice((patientCurrent-1)*patientSize,patientCurrent*patientSize)"
+        height="500px"
         tooltip-effect="dark"
         style="width: 100%"
         @selection-change="handleSelectionChange">
       <el-table-column
-          label="病人编号"
-          prop="pdId"
-      >
+          label="住院号"
+          prop="ptNo">
+      </el-table-column>
+
+      <el-table-column label="病人名称" prop="ptName"></el-table-column>
+
+      <el-table-column label="科室名称" prop="ksName"></el-table-column>
+
+      <el-table-column
+          prop="ptInDate"
+          label="入院日期">
       </el-table-column>
       <el-table-column
-          prop="empName"
-          label="申请住院日期">
-      </el-table-column>
-      <el-table-column
-          prop="empDate"
+          prop="ptDiagnoseName"
           label="诊断结果">
       </el-table-column>
-      <el-table-column
-          prop="empSalary"
-          label="申请人">
-      </el-table-column>
-
-
+      <el-table-column prop="ksName" label="科室名称"></el-table-column>
       <el-table-column width="200px"
                        align="right">
         <template  #header>
@@ -335,7 +358,7 @@
 
         <!--这里放操作按钮-->
         <template  #default='scope'>
-          <el-button type="danger" icon="el-icon-delete" @click="delEmp(scope.row)" circle>删除</el-button>
+          <el-button type="success" size="mini" @click="selectPatient(scope)">选择</el-button>
         </template>
       </el-table-column>
 
@@ -343,13 +366,13 @@
     <!--分页插件-->
     <el-pagination
         style="text-align: center;"
-        @size-change="totalCut"
-        @current-change="pageCut"
-        :current-page="1"
+        @size-change="patientSizeChange"
+        @current-change="patientCurrentChange"
+        :current-page="patientCurrent"
         :page-sizes="[2,4,6,8,10]"
-        :page-size="size"
+        :page-size="patientSize"
         layout="total, sizes, prev, pager, next, jumper"
-        :total="total">
+        :total="patientBaseArr.length">
     </el-pagination>
   </el-dialog>
 
@@ -361,27 +384,34 @@
 	export default{
 		data(){
 			return{
-			  //================================病人信息及病人表格数据操作
+			  //=====================================================================病人信息及病人表格数据操作
         isShowPatient:false,//是否显示申请病人弹框
-        inHospitalApplyObj:{//病人申请信息对象
-          inId:'',
-          sickNumber:'',
-          inDiagnosis:'',
-          inApplyDate:'',
+        patientBaseObj:{//病人申请信息对象
+          ptNo:'',
+          ptInDate:'',
+          PtName:'',
+          ptSex:'',
+          ptBirthDate:'',
+          ptCapacityNo:'',
+          ptHomeAdder:'',
           ksId:'',
-          ksName:'',
-          inProposer:'',
-          sId:'',
-          inIs:''
+          ptDiagnoseName:'',
+          bdId:'',
+          ptOutDate:'',
+          ptAge:'',
+          ptPayMoney:'',
+          ptPrice:''
         },
-        inHospitalApplyArr:[//病人申请信息数组
+        patientBaseArr:[//病人申请信息数组
 
         ],
+        PatientXZBedObj:{},//被选中的病床数据
+        patientSize:4,//分页页大小
+        patientCurrent:1,//当前页
 
 
 
-
-			  //=================================病房抽屉、新增修改病床
+			  //===============================================================================病房抽屉、新增修改病床
         bedDrawerIsShow:false,//是否显示病床抽屉
         bedDrawerTitle:'',//病床抽屉标题
         //病床
@@ -392,6 +422,7 @@
           wdObj:'',//病房对象
           bdPrice:'',
           bdIs:'',
+          ksName:'',//科室名称
           ptNo:'',
           ksId:'',//科室编号
           sName:''//护士名称
@@ -409,7 +440,7 @@
 
 
 
-        //==============================病房
+        //======================================================================================病房
         wardSearchText:'',//病房搜索值
         isBedZT:'',
         wardObj:{//病房对象
@@ -424,13 +455,13 @@
 
 
 
-        //=================科室
+        //==============================================================科室
         xzKsId:'',//选择科室编号
         ksArr:[//科室集合
 
         ],
 
-        //=========================员工
+        //====================================================================员工
         xzStaffId:'',//选择员工编号
         staffArr:[//员工集合
 
@@ -443,11 +474,19 @@
 			}
 		},
 		methods:{
-			//===========================初始化病房信息方法
+			//==========================================================================初始化病房信息，住院登记信息及科室方法
 		  wardArrInit(){
-			  this.axios({url:"zyWard",params:{search:this.wardSearchText}}).then((v)=>{//查询所有病房
+        //查询所有病房
+			  this.axios({url:"zyWard",params:{search:this.wardSearchText}}).then((v)=>{
 			    console.log(v.data)
             this.wardArr = v.data;
+        }).catch((data)=>{
+
+        });
+
+			  //查询所有住院登记信息为分配病床的病人信息
+        this.axios.post("selectPBNoBed").then((v)=>{
+          this.patientBaseArr = v.data;
         }).catch((data)=>{
 
         });
@@ -461,7 +500,89 @@
         });
       },
 
-      //================================病床
+
+      //===========================================================================住院登记信息及方法
+      //打开住院登记信息表
+      openPatient(patient){
+		    console.log(patient);
+        this.isShowPatient = true;
+        this.PatientXZBedObj = patient.row;
+        this.PatientXZBedObj.bdPrice = patient.row.bdPrice;
+        this.PatientXZBedObj.pdId = patient.row.bdId;
+      },
+      //关闭住院登记信息表
+      closePatientTK(){
+        this.PatientXZBedObj = {};
+      },
+      //选择登记信息新增病床入住信息
+      selectPatient(Patient){
+        let is =false;//是否新增成功
+        console.log(this.PatientXZBedObj)
+        if(this.bedObj.ksId != Patient.row.ksId){
+          this.$confirm("病人需住院科室 【"+Patient.row.ksName+"】 与当前选择科室【"+this.bedObj.ksName+"】  不符,确定要转入？", '提示信息', {
+            distinguishCancelAndClose: true,
+            confirmButtonText: "确定转入",
+            cancelButtonText: "取消转入"
+          }).then(() => {
+            alert("s")
+            is =  this.PatientAddBedText(this.PatientXZBedObj.bdId,Patient.row.ptNo,this.PatientXZBedObj.bdPrice);//调用新增入住信息方法
+            if(is){
+              this.$message({
+                type: 'success',
+                message: '转入成功'
+              });
+            }else{
+              this.$message({
+                type: 'warning',
+                message: '转入失败'
+              });
+            }
+          }).catch(action => {
+            this.$message({
+              type: 'warning',
+              message:'取消转入'
+            })
+          });
+        }else{
+
+          this.$confirm("是否将【"+Patient.row.ptName+"】 转入【"+this.bedObj.bdName+"】 病床",'确认信息', {
+            distinguishCancelAndClose: true,
+            confirmButtonText: "确定转入",
+            cancelButtonText: "取消转入"
+          }).then(() => {
+            is =   this.PatientAddBedText(this.PatientXZBedObj.bdId,Patient.row.ptNo,this.PatientXZBedObj.bdPrice);//调用新增入住信息方法
+            if(is){
+              this.$message({
+                type: 'success',
+                message: '转入成功'
+              });
+            }else{
+              this.$message({
+                type: 'warning',
+                message: '转入失败'
+              });
+            }
+          }).catch(action => {
+            this.$message({
+              type: 'warning',
+              message:'取消转入'
+            })
+          });
+        }
+
+      },
+      //新增病床入住信息以及修改病人病床信息 bdId病床编号  ptNo住院编号
+      PatientAddBedText(bdId,ptNo,price){
+        this.axios.post("patientAndBedUpdate",{bdId:bdId,ptNo:ptNo,price:price}).then((v)=>{
+          console.log(v.data)
+          return v.data;
+        }).catch((data)=>{
+
+        });
+      },
+
+
+      //========================================================================病床
       //打开病床抽屉方法
       openBedDrawer(row){
 		    this.bedDrawerIsShow = true;//打开drawer弹框
@@ -473,6 +594,7 @@
         this.bedObj.wdId = row.wdId;//将病房编号放入病床对象里面
         this.bedObj.wdObj = row;//将病房对象放入病房
         this.bedObj.sName = row.staff.sname;//将管理护士名称传入病床对象
+        this.bedObj.ksName = row.ksName;//将科室名称传入病床对象
       },
       //添加病床  科室改变的时候将被调用
       bedKsChangeFunction(is,wdId){
@@ -503,8 +625,8 @@
           console.log(v.data);
           this.bedAddOrUpdateReset("bedForm");//清空数据
           this.bedSelectByWdId(this.bedObj.wdId);//查询当前表格病床数据
+          this.wardArrInit();//重新加载页面数据
         }).catch((data)=>{
-
         });
       },
       //清除病房新增或者修改弹框的表单方法
@@ -576,6 +698,7 @@
 
 
 
+
       ///==========================病房
       //打开新增或者修改弹框
       //is参数用来判断是新增还是修改 1是新增  2是修改
@@ -614,16 +737,8 @@
       },
       //清空病房弹框数据
       wardClear(){
-			  this.wardObj = {//病房对象
-          // wdId:'',//病房编号
-          // wdName:'',//病房名称
-          // ksId:'',//科室编号
-          // sId:'',//员工编号
-          // listBed:[//病床数组
-          //
-          // ],
-          // staff: {}//员工对象
-        }
+			  this.wardObj = {};//病房对象
+        this.staffArr = [];//员工对象
       },
       //选择科室值发生改变是触发
       ksChangeFunction(is){
@@ -664,7 +779,16 @@
       bedHandleCurrentChange: function(currentPage) {
         this.bedCurrentPage = currentPage;
         console.log(this.currentPage) //点击第几页
-      }
+      },
+
+      //当size发生改变是触发
+      patientSizeChange: function(size){
+        this.patientSize = size;
+      },
+      //当current发生改变触发
+      oatientCurrentChange:function (currentPage){
+		    this.patientCurrent = currentPage;
+      },
 
 
       // //点击病房表格将病房表格数据放入病床表格方法
@@ -686,7 +810,7 @@
   .el-drawer__header{
     margin-bottom: 0px;
   }
-  .tabless /deep/{
+  /deep/.tabless{
     /*.el-table__row:hover>td{*/
     /*  cursor: pointer;*/
     /*}*/
