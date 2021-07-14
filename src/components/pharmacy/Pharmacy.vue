@@ -8,9 +8,10 @@
 			<el-button type="primary" icon="el-icon-search">搜索</el-button>
 		</el-col>
 		
-		<el-col :span="1" :offset="1">
-			<el-button 	 type="primary" @click="dialogFormVisible = true">新增药品</el-button>
-			<!-- 药品新增弹窗 -->
+		<el-col :span="1" :offset="10">
+			  <el-button type="primary"  @click="dialogFormVisible = true" >新增药品</el-button>
+    </el-col>
+      <!-- 药品新增弹窗 -->
 			<el-dialog title="新增药品" v-model="dialogFormVisible" width="500px">
 			  <el-form :model="form">
 			    <el-form-item label="药品名称" :label-width="formLabelWidth">
@@ -96,7 +97,6 @@
 			    </span>
 			  </template>
 			</el-dialog>
-		</el-col>
 	</el-row>
 	<el-row>
 		<el-col>
@@ -143,10 +143,9 @@
 				<el-table-column
 				  label="操作">
 					<template #default="scope">
-						<el-button type="success" size="small" @click="xiugai = true">编辑药品信息</el-button>
-						<router-link :to="{path:'/CG'}">
-							<el-button type="warning" size="small">药品订购</el-button>
-						</router-link>
+						<el-button type="primary" plain size="mini" @click="xiugai = true">编辑药品信息</el-button>
+
+            <el-button type="success" plain size="mini" @click="cg">药品订购</el-button>
 					</template>
 				</el-table-column>
 			</el-table>
@@ -180,6 +179,9 @@
 			handleCurrentChange(val) {
 				console.log(`当前页: ${val}`);
 			},
+      cg() {
+        this.$router.push('/CG')
+      }
 		},
 
 		data() {
@@ -190,9 +192,8 @@
 				          address: '1/包',
 				          shop: '一天三次',
 				          shopId: '感冒冲剂',
-						  sl:50,
-						  yj:10
-						  
+                  sl:50,
+                  yj:10
 				        }, {
 				          id: '复方颗粒',
 				          name: '15',
@@ -237,7 +238,7 @@
 					},
 				formLabelWidth: '',
 				value1: '',
-			}
+      }
 		}
 	}
 </script>

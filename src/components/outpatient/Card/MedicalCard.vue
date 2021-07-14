@@ -4,49 +4,20 @@
 			<el-col>
 				<el-form-item  label-width="0px">
 					<el-input size="small" v-model="mzSickTest"  style="width: 300px;" placeholder="请输入你要查询的卡信息,或持有人信息"></el-input>
-				</el-form-item>
-			</el-col>
-			<el-col>
-				<el-form-item label-width="0px">
-					<el-button size="small" type="primary" icon="el-icon-search" @click="likeMcSikc(mzSickTest)">查询</el-button>
-				</el-form-item>
+          <el-button size="small" type="primary" icon="el-icon-search" @click="likeMcSikc(mzSickTest)">查询</el-button>
+        </el-form-item>
 			</el-col>
 		</el-form>
 	</el-row>
 	<el-radio-group v-model="radio2" class=" my-radio-group"  size="mini">
-	  <el-radio-button label="诊卡操作" @click="isShowTable(1)"></el-radio-button>
-	  <el-radio-button label="挂失记录" @click="isShowTable(2)"></el-radio-button>
+	  <el-radio-button label="诊疗卡操作" @click="isShowTable(1)"></el-radio-button>
+	  <el-radio-button label="修改挂失记录" @click="isShowTable(2)"></el-radio-button>
 	</el-radio-group>
   <!-- 表格是得切换的 -->
   <cardTable1 :mzSickList="mzSickList" v-if="isShow1"></cardTable1>
   <cardTable2 :mzSickList="mzSickList" v-if="isShow2"></cardTable2>
 
-	<el-dialog title="提示" v-model="isShow3" width="20%" center  ><!-- 密码修改 -->
-		<el-row><!-- :rules="rules" -->
-			<el-form  status-icon  ref="ruleForm" label-width="100px" class="demo-ruleForm">
-				<el-col>
-					<el-form-item label="原密码:" >
-						<el-input></el-input>
-					</el-form-item>
-				</el-col>
-				<el-col>
-					<el-form-item label="新密码:" >
-						<el-input></el-input>
-					</el-form-item>
-				</el-col>
-			</el-form>
-		</el-row>
-		<el-row>
-			<el-form  status-icon ref="ruleForm" label-width="153px" style="margin-top: 30px;" class="demo-ruleForm">
-				<el-col>
-					<el-form-item>
-						<el-button type="primary" @click="submitForm('ruleForm')">提交</el-button>
-						<el-button @click="resetForm('ruleForm')">取消</el-button>
-					</el-form-item>
-				</el-col>
-			</el-form>
-		</el-row>
-	</el-dialog>
+
 	
 	
 </template>
@@ -59,35 +30,10 @@
 			return{
         isShow1:true,//复选框切换
         isShow2:false,
-				isShow3:false,//修改密码弹窗
         mzSickTest:'',//模糊查询
-        radio2:"诊卡操作",
+        radio2:"诊疗卡操作",
         wardCurrentPage:1,
         wardPageSize:4,
-				rightTableData1: [{
-				          date: '2016-05-02',
-				          name: '王小虎',
-				          address: '上海市普陀区金沙江路 1518 弄',
-						  tag:"密码修改",
-				},
-				{
-				          date: '2016-05-02',
-				          name: '王小虎',
-				          address: '上海市普陀区金沙江路 1518 弄',
-						  tag:"卡号挂失",
-				},
-				{
-				          date: '2016-05-02',
-				          name: '王小虎',
-				          address: '上海市普陀区金沙江路 1518 弄',
-						  tag:"密码修改",
-				},
-				{
-				          date: '2016-05-02',
-				          name: '王小虎',
-				          address: '上海市普陀区金沙江路 1518 弄',
-						  tag:"卡号挂失",
-				}],
         mzSickList:[],
         maSickArr:{
 
@@ -109,7 +55,7 @@
         this.wardCurrentPage = currentPage;
         console.log(this.currentPage) //点击第几页allDescSick
       },
-      isShowTable(index){ //复选框切换
+      isShowTable(index){ //复选框切换=======================================================
 			  console.log(index)
         if(index==2){
           this.isShow1=false;
@@ -127,7 +73,7 @@
            this.mzSickList=v.data;
         }).catch();
       },
-      likeMcSikc(test){
+      likeMcSikc(test){//模糊查询
 			  console.log("sssssss")
 			  console.log(test)
         this.axios({
@@ -146,8 +92,7 @@
         }).catch(function(){
 
         })
-      }
-
+      },
 		},
     created() {
       this.allDescSick();//刷新界面
