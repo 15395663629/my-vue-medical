@@ -187,7 +187,7 @@ const routes = [
 					name:'YF',
 					path:'/YF',
 					component:()=>import("/src/components/pharmacy/Pharmacy.vue"),
-					meta:{title:'药房', noCache: true },
+					meta:{title:'药品信息管理', noCache: true },
 				},
 				{
 					name:'MZ',

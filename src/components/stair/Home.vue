@@ -112,7 +112,7 @@
 					        <span>药房药库管理</span>
 						</template>
 						<el-menu-item-group>
-							<el-menu-item @click="pushUrl('/YF')" index="/YF"><i class="el-icon-first-aid-kit"></i>药库</el-menu-item>
+							<el-menu-item @click="pushUrl('/YF')" index="/YF"><i class="el-icon-first-aid-kit"></i>药品信息管理</el-menu-item>
 							<el-menu-item @click="pushUrl('/MZ')" index="/XH"><i class="el-icon-folder-remove"></i>发药</el-menu-item>
 							<el-menu-item @click="pushUrl('/CG')" index="/CG"><i class="el-icon-s-shop"></i>药品采购</el-menu-item>
 							<el-menu-item @click="pushUrl('/RK')" index="/RK"><i class="el-icon-folder-add"></i>入库</el-menu-item>
