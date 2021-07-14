@@ -65,16 +65,16 @@
 	<el-dialog title="住院申请" v-model="isShowZY">
 		<el-form>
 			<el-row>
-				<el-col :span="9">
+				<el-col :span="8">
 					<el-form-item label="姓名" label-width="80px">
 						<el-input></el-input>
 					</el-form-item>
 				</el-col>
-				<el-col :span="2">
+				<el-col :span="3">
 					<el-button @click="isShowXZBR = true" type="primary" icon="el-icon-user-solid"></el-button>
 				</el-col>
 				
-				<el-col :offset="1" :span="12">
+				<el-col :offset="1" :span="9">
 					<el-form-item label="门诊诊断" label-width="80px">
 						<el-input></el-input>
 					</el-form-item>
@@ -90,10 +90,10 @@
 					  </el-radio-group>
 					</el-form-item>
 				</el-col>
-				<el-col :span="1">
+				<el-col :span="3">
 				</el-col>
 				
-				<el-col :offset="2" :span="12">
+				<el-col  :span="9">
 					<el-form-item label="预交金额" label-width="80px">
 						<el-input></el-input>
 					</el-form-item>
@@ -108,11 +108,11 @@
 						<el-input></el-input>
 					</el-form-item>
 				</el-col>
-				<el-col :span="2">
+				<el-col :span="4">
 				</el-col>
 				
 				
-				<el-col :offset="2" :span="12">
+				<el-col  :span="9">
 					<el-form-item label="治疗医生" label-width="80px">
 						<el-select v-model="isSex" placeholder="请选择">
 						    <el-option
@@ -136,18 +136,14 @@
 						<el-input></el-input>
 					</el-form-item>
 				</el-col>
-				<el-col :span="2">
+				<el-col :span="4">
 				</el-col>
-				
-				<el-col :offset="2" :span="12">
-					<el-form-item label="出生日期" label-width="80px">
-						 <el-date-picker
-						      v-model="csrq"
-						      type="date"
-						      placeholder="选择日期">
-						    </el-date-picker>
-					</el-form-item>
-				</el-col>
+
+        <el-col :span="9">
+          <el-form-item label="身份证" label-width="80px">
+            <el-input></el-input>
+          </el-form-item>
+        </el-col>
 			</el-row>
 			
 			
@@ -177,18 +173,6 @@
 						  </el-select>
 					</el-form-item>
 				</el-col>
-			</el-row>
-			
-			
-			<el-row>
-				<el-col :span="8">
-					<el-form-item label="身份证" label-width="80px">
-						<el-input></el-input>
-					</el-form-item>
-				</el-col>
-				<el-col :span="2">
-				</el-col>
-				
 			</el-row>
 		</el-form>
 		
@@ -267,11 +251,6 @@
 				  prop="empSalary"
 				  label="床位">
 				</el-table-column>
-				<el-table-column label="操作">
-					<template  #default='scope'>
-						 <el-button icon="el-icon-edit" type="primary" @click="" circle>转科</el-button>
-					</template>
-				</el-table-column>
 				<el-table-column width="200px"
 				      align="right">
 				      <template  #header>
@@ -281,6 +260,10 @@
 				          size="small"
 				          placeholder="病人名称搜索"/>
 				      </template>
+
+              <template  #default='scope'>
+                <el-button icon="el-icon-edit" type="primary" @click="" circle>转科</el-button>
+              </template>
 				    </el-table-column>
 			  </el-table>
 			  
@@ -307,7 +290,7 @@
 				InhospitalApplyArr:[
 					
 				],
-				InhospitalApply:{
+				InhospitalApplyObj:{
 					ptNo:'',
 					sickNumber:'',
 					ptSex:'',

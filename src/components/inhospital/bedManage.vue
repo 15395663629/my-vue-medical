@@ -682,6 +682,7 @@
         this.PatientXZBedObj = patient.row;
         this.PatientXZBedObj.bdPrice = patient.row.bdPrice;
         this.PatientXZBedObj.bdId = patient.row.bdId;
+        this.PatientXZBedObj.bdName = patient.row.bdName;
       },
       //关闭住院登记信息表
       closePatientTK(){
@@ -689,6 +690,7 @@
       },
       //选择登记信息新增病床入住信息
       selectPatient(Patient){
+		    console.log(this.bedObj)
         let is =false;//是否新增成功
         console.log(this.PatientXZBedObj)
         if(this.bedObj.ksId != Patient.row.ksId){
@@ -697,19 +699,7 @@
             confirmButtonText: "确定转入",
             cancelButtonText: "取消转入"
           }).then(() => {
-            alert("s")
             is =  this.PatientAddBedText(this.PatientXZBedObj.bdId,Patient.row.ptNo,this.PatientXZBedObj.bdPrice);//调用新增入住信息方法
-            if(is){
-              this.$message({
-                type: 'success',
-                message: '转入成功'
-              });
-            }else{
-              this.$message({
-                type: 'warning',
-                message: '转入失败'
-              });
-            }
           }).catch(action => {
             this.$message({
               type: 'warning',
@@ -717,24 +707,13 @@
             })
           });
         }else{
-
-          this.$confirm("是否将【"+Patient.row.ptName+"】 转入【"+this.bedObj.bdName+"】 病床",'确认信息', {
+          alert(is == "true")
+          this.$confirm("是否将【"+Patient.row.ptName+"】 转入【"+this.PatientXZBedObj.bdName+"】 病床",'确认信息', {
             distinguishCancelAndClose: true,
             confirmButtonText: "确定转入",
             cancelButtonText: "取消转入"
           }).then(() => {
-            is =   this.PatientAddBedText(this.PatientXZBedObj.bdId,Patient.row.ptNo,this.PatientXZBedObj.bdPrice);//调用新增入住信息方法
-            if(is){
-              this.$message({
-                type: 'success',
-                message: '转入成功'
-              });
-            }else{
-              this.$message({
-                type: 'warning',
-                message: '转入失败'
-              });
-            }
+            this.PatientAddBedText(this.PatientXZBedObj.bdId,Patient.row.ptNo,this.PatientXZBedObj.bdPrice);//调用新增入住信息方法
           }).catch(action => {
             this.$message({
               type: 'warning',
@@ -742,14 +721,25 @@
             })
           });
         }
-
       },
       //新增病床入住信息以及修改病人病床信息 bdId病床编号  ptNo住院编号
       PatientAddBedText(bdId,ptNo,price){
-		    alert("s")
         this.axios.post("patientAndBedUpdate",{bdId:bdId,ptNo:ptNo,price:price}).then((v)=>{
           console.log(v.data)
-          return v.data;
+          if(v.data){
+            this.$message({
+              type: 'success',
+              message: '转入成功'
+            });
+            this.isShowPatient = false;
+            this.bedSelectByWdId(this.bedObj.wdId);//查询当前表格病床数据
+            this.wardArrInit();//重新加载页面数据
+          }else {
+            this.$message({
+              type: 'warning',
+              message: '转入失败'
+            });
+          }
         }).catch((data)=>{
 
         });
@@ -846,6 +836,7 @@
               this.axios.post("bedUpdateBdIs",{bdIs:is,bdId:row.row.bdId}).then((v)=>{
                 console.log(v)
                 this.bedSelectByWdId(this.bedObj.wdId);
+                this.wardArrInit();
               }).catch((data)=>{
               });
               this.$message({
