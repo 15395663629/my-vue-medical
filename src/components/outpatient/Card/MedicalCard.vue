@@ -1,21 +1,12 @@
 <template>
 	<el-row style="height: 40px"> <!-- 选择操作人员================== -->
 		<el-form  status-icon  ref="ruleForm" label-width="100px" class="demo-ruleForm">
-			<el-col :span="14">
+			<el-col>
 				<el-form-item  label-width="0px">
 					<el-input size="small" v-model="mzSickTest"  style="width: 300px;" placeholder="请输入你要查询的卡信息,或持有人信息"></el-input>
-				</el-form-item>
-			</el-col>
-			<el-col>
-				<el-form-item label-width="0px">
-					<el-button size="small" type="primary" icon="el-icon-search" @click="likeMcSikc(mzSickTest)">查询</el-button>
-				</el-form-item>
-			</el-col>
-      <el-col>
-        <el-form-item label-width="20px">
-          <el-button size="small" type="primary" icon="el-icon-circle-plus-outline" @click="">补办诊疗卡</el-button>
+          <el-button size="small" type="primary" icon="el-icon-search" @click="likeMcSikc(mzSickTest)">查询</el-button>
         </el-form-item>
-      </el-col>
+			</el-col>
 		</el-form>
 	</el-row>
 	<el-radio-group v-model="radio2" class=" my-radio-group"  size="mini">
@@ -43,30 +34,6 @@
         radio2:"诊疗卡操作",
         wardCurrentPage:1,
         wardPageSize:4,
-				rightTableData1: [{
-				          date: '2016-05-02',
-				          name: '王小虎',
-				          address: '上海市普陀区金沙江路 1518 弄',
-						  tag:"密码修改",
-				},
-				{
-				          date: '2016-05-02',
-				          name: '王小虎',
-				          address: '上海市普陀区金沙江路 1518 弄',
-						  tag:"卡号挂失",
-				},
-				{
-				          date: '2016-05-02',
-				          name: '王小虎',
-				          address: '上海市普陀区金沙江路 1518 弄',
-						  tag:"密码修改",
-				},
-				{
-				          date: '2016-05-02',
-				          name: '王小虎',
-				          address: '上海市普陀区金沙江路 1518 弄',
-						  tag:"卡号挂失",
-				}],
         mzSickList:[],
         maSickArr:{
 
@@ -88,7 +55,7 @@
         this.wardCurrentPage = currentPage;
         console.log(this.currentPage) //点击第几页allDescSick
       },
-      isShowTable(index){ //复选框切换
+      isShowTable(index){ //复选框切换=======================================================
 			  console.log(index)
         if(index==2){
           this.isShow1=false;
@@ -126,11 +93,6 @@
 
         })
       },
-      //卡号挂失
-      cardReportTheLoss(){
-
-      },
-
 		},
     created() {
       this.allDescSick();//刷新界面
