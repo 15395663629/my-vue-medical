@@ -19,6 +19,7 @@
 		},
 		created() {
       this.token = this.$store.state.token
+
     }
   }
 </script>

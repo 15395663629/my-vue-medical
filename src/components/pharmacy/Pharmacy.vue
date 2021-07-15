@@ -1,5 +1,5 @@
 <template>
-	<h1>药库</h1>
+	<h1>药品信息管理</h1>
 	<el-row >
 		<el-col :span="4">
 			<el-input placeholder="请输入药品名" v-model="input" clearable></el-input>
@@ -181,7 +181,19 @@
 			},
       cg() {
         this.$router.push('/CG')
-      }
+      },
+      getData(){
+			  this.axios({
+          url:'http://localhost:8089/yp-all',
+          params:{}
+        }).then((v)=>{
+          console.log(v)
+          this.tableData = v.data
+        }).catch(function (){
+
+        })
+      },
+
 		},
 
 		data() {
