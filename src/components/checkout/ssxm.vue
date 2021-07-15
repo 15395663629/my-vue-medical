@@ -3,18 +3,19 @@
 		<el-form label-width="100px" style="padding-top: 10px">
 			<el-col :span="9">
 				<el-form-item label="结果：" label-width="60px">
-					<span>{{ ssproject.length }}</span>条
+					{{ sproject.length }}条
 				</el-form-item>
 			</el-col>
 			<el-col :span="5">
 				<el-form-item  label="手术信息:" label-width="100px">
-					<el-input style="width: 200px;" v-model="input" placeholder="请输入你要查询的手术" ></el-input>
+					<el-input  @blur="getData" style="width: 200px;" v-model="input" placeholder="请输入你要查询的手术" ></el-input>
 				</el-form-item>
 			</el-col>
 			<el-col :span="5">
 				<el-form-item label="" label-width="50px">
-					<el-button type="primary" icon="el-icon-search">查询</el-button>
+					<el-button @click="getData" type="primary" icon="el-icon-search">查询</el-button>
 					</el-form-item>
+
 			</el-col>
 			<el-col :span="5" >
 				<el-form-item label="" label-width="600px">
@@ -136,7 +137,7 @@
 			<el-row>
 					<el-col :span="7">
 							<el-form-item label="手术位置:" prop="name">
-							<el-input v-model="ssdx.swz"></el-input>
+							<el-input v-model="ssdx.projectPosition"></el-input>
               </el-form-item>
           </el-col>
 					<el-col :span="7" :offset="3">
@@ -203,8 +204,9 @@
 	
 	<el-row > <!--======= ============================================================表格 ==================================================-->
 		<el-table
-		    :data="sproject"
+		    :data="sproject.slice((currentPage-1)*pagesize,currentPage*pagesize)"
 		    tooltip-effect="dark"
+
 			  height="450"
 		    style="width: 100%">
 		    <el-table-column
@@ -227,7 +229,11 @@
 			<el-table-column
 			  prop="ksName"
 			      width="180"
+        :filters="[{ text: '内科', value: '内科' }, { text: '外科', value: '外科' },{ text: 'qq', value: '脑科' }]"
+        :filter-method="ksScree"
+        filter-placement="bottom-end"
 			  label="科室">
+
 			</el-table-column>
 			<el-table-column
 			  prop="projectPosition"
@@ -237,10 +243,12 @@
 			      <template #default="scope">
 					<el-button
 					  size="mini"
+            type="info"
 					  @click="handleEdit(scope.row)">手术详情
 					  </el-button>
 			        <el-button
 			          size="mini"
+                type="primary"
 			          @click="ssEdit(scope.row)">修改</el-button>
 			        <el-button
 			          size="mini"
@@ -251,14 +259,14 @@
 		</el-table>
 		<el-pagination
 				 					style="text-align: center;"
-				       @size-change="totalCut"
-				       @current-change="pageCut"
+				       @size-change="handleSizeChange"
+				       @current-change="handleCurrentChange"
 				       :current-page="1"
 				       :page-sizes="[2,4,6,8,10]"
-				       :page-size="size"
+				       :page-size="pagesize"
 				       layout="total, sizes, prev, pager, next, jumper"
-				       :total="total">
-				     </el-pagination>
+				       :total="sproject.length">
+    </el-pagination>
 	</el-row>
 	
 </template>
@@ -268,9 +276,13 @@
 	export default {
 	    data () {
 	      return {
+          currentPage: 1, //初始页
+          pagesize: 5, //    每页的数据
 	        // 弹框标题
           option:'',
+          //表格数据
           sproject:[],
+          ss:[],
           ssproject:[],
           mzproject:[],
           department:[],
@@ -281,23 +293,39 @@
           mazui: [],
           // 手术项目对象？、
           ssdx:{
+            //手术主键
+            projectId:'0',
+            // 手术编号
             projectNumber:'',
+            // 科室编号
             ksId: '',
+            // 手术价格
             projectPay:'',
+            // 手术名称
             projectName:'',
+            // 手术注意事项
             projectMatters:'',
+            // 手术禁忌
             projectTaboo:'',
+            // 手术适应症
             projectIndication:'',
+            // 手术位置
             projectPosition:'',
-
+            //手术麻醉对象
+            ssAn: '',
+            //手术等级
             projectType:''
           },
-          ssAn: '',
-
+          //删筛选科室
+          kssx:[{
+            text:'',
+            value:''
+          }],
 
 
 			    isShow:false,
 			    xgss:false,
+          // 搜索框
 			    input: '',
           today: '',
 			    sstime: '',
@@ -310,8 +338,17 @@
 	       }
 	    },
 		methods: {
+      // 初始页currentPage、初始每页数据数pagesize和数据data
+      handleSizeChange: function(size) {
+        this.pagesize = size;
+        console.log(this.pagesize) //每页下拉显示数据
+      },
+      handleCurrentChange: function(currentPage) {
+        this.currentPage = currentPage;
+        console.log(this.currentPage) //点击第几页
+      },
       getData(){
-        this.axios.get("http://localhost:8089/sprot").then((res)=>{
+        this.axios.get("http://localhost:8089/allDescSpro",{params:{input:this.input}}).then((res)=>{
           this.sproject = res.data;
         }).catch()
         this.axios.get("http://localhost:8089/mzproject").then((res)=>{
@@ -322,6 +359,11 @@
         }).catch()
 
       },
+      ksScree(value, row){
+
+        return row.ksName===value;
+      },
+      // 手术详情
 			handleEdit(row) {
         this.projectId=row.projectId;
         console.log(this.projectId)
@@ -352,7 +394,7 @@
           });
         });
       },
-      //手术详情
+      //删除
       scprjt(row){
         this.axios.post('http://localhost:8089/delet-sprot', qs.stringify({projectId:row.projectId}))
             .then((v)=>{
@@ -375,7 +417,24 @@
       // 修改
       ssEdit(row) {
           this.option='修改手术';
-          this.ssdx.projectNumber=row.projectNumber
+        this.projectId=row.projectId;
+        console.log(this.projectId)
+        this.axios.get("http://localhost:8089/alone-pro",{params:{projectId:this.projectId}}).then((res)=>{
+          var dx=[];//定义一个集合用于接受
+          dx = res.data;
+          this.ssdx=dx[0]
+          console.log(dx)
+          this.xgss = true;
+        }).catch()
+        this.axios.get("http://localhost:8089/mzprot",{params:{projectId:this.projectId}}).then((res)=>{
+          this.ssdx.ssAn = res.data;
+          var ss=[];
+          res.data.forEach(function(x){
+              ss.push(x.anaesthesiaId)
+          });
+          this.ssdx.ssAn=ss
+          console.log(ss)
+        }).catch()
           this.xgss = true;
 
       },
@@ -389,11 +448,21 @@
 				  }
 				});
 			},
+      resetForm(formName) {
+        this.isShow = false
+        this.$refs[formName].resetFields();
+      },
+      //清除手术弹框数据
+      opertClear(){
+        this.ssdx = {
+        }
+      },
       //确定新增
 			ssForm(form) {
         console.log(this.ssdx.ssAn)
         this.axios.post("http://localhost:8089/addOrUpdataProj",{proj:this.ssdx,ssAn:this.ssdx.ssAn}).then((res)=>{
           this.getData();
+          this.opertClear();
         }).catch()
 				this.xgss = false;
 			}
