@@ -11,7 +11,7 @@
 				
 				<el-col :offset="2" :span="9">
 					<el-form-item label="操作人" label-width="80px">
-						<el-input v-model="staff.sname" disabled></el-input>
+						<el-input v-model="staff" disabled></el-input>
 					</el-form-item>
 				</el-col>
 			</el-row>
@@ -228,8 +228,8 @@
 		},
     created() {
 	      this.patientAndPayInit();
-        this.staff = this.$store.state.token[0].list;//将登录存入的值在取出来
-        console.log(this.$store.state.token[0].list)
+        this.staff = this.$store.state.token[0] == null ? null : this.$store.state.token[0].list;//将登录存入的值在取出来
+        // console.log(this.$store.state.token[0].list)
     }
   }
 </script>

@@ -7,6 +7,7 @@
 		    :data="InhospitalApplyArr.slice((hospitalCurrent-1)*hospitalSize,hospitalCurrent*hospitalSize)"
 		    tooltip-effect="dark"
 		    style="width: 100%"
+        height="340px"
 		    @selection-change="handleSelectionChange">
 		    <el-table-column
 		      label="病人名称"
