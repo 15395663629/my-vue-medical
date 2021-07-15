@@ -249,6 +249,7 @@ export default{
               });
               this.resetForm()//刷新主界面的校验提示
               this.$parent.allDescSick();//刷新主界面的表格
+              console.log("22222222222")
             }
           }).catch(function(){
 
@@ -272,7 +273,6 @@ export default{
                 message: '卡号挂失成功~退出余额：'+this.cardArr.mcBalance+"元！请注意查收。",
                 type: 'error'
               });
-
               this.resetForm()//刷新主界面的校验提示
               this.$parent.allDescSick();//刷新主界面的表格
               console.log("挂失退额1111")
@@ -327,12 +327,16 @@ export default{
     resetForm() {//刷新修改密码表单
       this.isShowPawd=false;
       this.isShowCard=false;
-      this.cardArr='';
+      console.log("==============")
+      this.cardArr={
+        mzSick:'',
+      };
       this.ruleForm.checkPass='';
       this.ruleForm.pass='';
       this.ruleForm.pawd='';
       this.ruleForm.mcNumberCard='';
       this.$refs['ruleForm'].resetFields();
+
     },
     resetForm2() {//刷新修改密码表单
       this.ruleForm.checkPass='';
@@ -360,9 +364,9 @@ export default{
         console.log(v.data)
         if(v.data=='ok'){
           console.log("11111111111")
-          ElMessage.success({
+          ElMessage.warning({
             message: '密码重置成功！初始化密码为身份证后6位~',
-            type: 'success'
+            type: 'warning'
           });
           this.$parent.allDescSick();//刷新主界面的表格
         }
