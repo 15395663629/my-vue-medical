@@ -2,39 +2,80 @@
 	<div>
 		员工管理
 	</div>
+	
 	<div class="xxx">
 		<el-button type="primary" @click="dialogVisible1 = true">新增员工</el-button>
 		<!-- <el-button type="primary">编辑员工</el-button> -->
-		<el-button type="primary">离职</el-button>
-		<el-button type="primary">重置密码</el-button>
+		<el-button type="primary" @click="cs">重置密码</el-button>
 		<span class="name">
 			姓名：<el-input style="width: 120px;" v-model="name" value=""></el-input>
 			<el-button type="primary" icon="el-icon-orange" style="margin-left: 20px;">查询</el-button>
 		</span>
 	</div>
 
-	<el-table ref="multipleTable" :data="tableData" tooltip-effect="dark" style="width: 100%"
+	<el-table ref="multipleTable" :data="funs.slice((page-1)*size,page*size)" tooltip-effect="dark" style="width: 100%"
 		@selection-change="handleSelectionChange" class="dome">
-		<el-table-column type="selection" width="55">
+		<el-table-column type="selection">
 		</el-table-column>
-		<el-table-column label="日期" width="120">
-			<template #default="scope">{{ scope.row.date }}</template>
+    <el-table-column prop="sid" label="员工编号">
+    </el-table-column>
+		<el-table-column prop="sname" label="姓名" >
 		</el-table-column>
-		<el-table-column prop="name" label="姓名" width="120">
+<!--    <el-table-column label="姓名" width="180">-->
+<!--      <template #default="scope" >-->
+<!--        <el-popover width="300" effect="light"   trigger="hover" placement="top">-->
+<!--          <template #default >-->
+<!--            <p>姓名: {{ scope.row.mzSick.sickName }}</p>-->
+<!--            <p>住址: {{ scope.row.mzSick.sickSite }}</p>-->
+<!--            <p>建立日期: {{ scope.row.mzSick.sickTime }}</p>-->
+<!--          </template>-->
+<!--          <template #reference>-->
+<!--            <div class="name-wrapper">-->
+<!--              <el-tag size="medium">{{ scope.row.mzSick.sickName }}</el-tag>-->
+<!--            </div>-->
+<!--          </template>-->
+<!--        </el-popover>-->
+<!--      </template>-->
+<!--    </el-table-column>-->
+		<el-table-column prop="ssore" label="身份证" >
 		</el-table-column>
-		<el-table-column prop="address" label="地址" width="540">
-		</el-table-column>
-		<el-table-column label="操作">
+    <el-table-column prop="sphone" label="联系电话" >
+    </el-table-column>
+    <el-table-column prop="sdate" label="入职日期" >
+    </el-table-column>
+    <el-table-column prop="user.uname" label="用户名" >
+    </el-table-column>
+    <el-table-column prop="ks.ksName" label="所属科室" >
+    </el-table-column>
+    <el-table-column prop="t.tname" label="职称" >
+    </el-table-column>
+	<el-table-column prop="szt" label="状态" >
+		<template v-slot="scope">
+			<p v-if="scope.row.szt==0">在职</p>
+			<p v-if="scope.row.szt==1">离职</p>
+		</template>
+	</el-table-column >
+		<el-table-column label="操作" width="250px">
 			<template v-slot:default="r">
-				<el-button type="primary" @click="dialogVisible1 = true">编辑</el-button>
+				<el-button type="primary" size="mini">授权</el-button>
+				<el-button type="primary" @click="dialogVisible1 = true" size="mini">编辑</el-button>
+				<el-button type="primary" size="mini">离职</el-button>
+				
 			</template>
 		</el-table-column>
 
 	</el-table>
 	<!--分页插件-->
-	<el-pagination style="text-align: center;" @size-change="totalCut" @current-change="pageCut" :current-page="1"
-		:page-sizes="[2,4,6,8,10]" :page-size="size" layout="total, sizes, prev, pager, next, jumper" :total="total">
-	</el-pagination>
+  <el-pagination
+      style="text-align: center;margin-top: 10px"
+      @size-change="HandleSizeChange"
+      @current-change=" "
+      :current-page="page"
+      :page-sizes="[2,4,6,8,10]"
+      :page-size="size"
+      layout="total, sizes, prev, pager, next, jumper"
+      :total="funs.length">
+  </el-pagination>
 	<el-dialog title="员工信息" v-model="dialogVisible1" width="30%" :before-close="handleClose">
 		<el-form>
 			员工姓名：<el-input type="text" style="width: 40%;"></el-input><br />
@@ -71,102 +112,57 @@
 	export default {
 		data() {
 			return {
-				name: '',
-				dialogVisible1: false,
-				currentPage1: 5,
-				currentPage2: 5,
-				currentPage3: 5,
-				currentPage4: 4,
-				tableData: [{
-					date: '2016-05-03',
-					name: '王小虎',
-					address: '上海市普陀区金沙江路 1518 弄'
-				}, {
-					date: '2016-05-02',
-					name: '王小虎',
-					address: '上海市普陀区金沙江路 1518 弄'
-				}, {
-					date: '2016-05-04',
-					name: '王小虎',
-					address: '上海市普陀区金沙江路 1518 弄'
-				}, {
-					date: '2016-05-01',
-					name: '王小虎',
-					address: '上海市普陀区金沙江路 1518 弄'
-				}, {
-					date: '2016-05-08',
-					name: '王小虎',
-					address: '上海市普陀区金沙江路 1518 弄'
-				}, {
-					date: '2016-05-06',
-					name: '王小虎',
-					address: '上海市普陀区金沙江路 1518 弄'
-				}, {
-					date: '2016-05-07',
-					name: '王小虎',
-					address: '上海市普陀区金沙江路 1518 弄'
-				}],
-				multipleSelection: [],
-				dialogTableVisible: false,
-				formLabelWidth: '120px',
-				options: [{
-					value: '选项1',
-					label: '护理科'
-				}, {
-					value: '选项2',
-					label: '五官科'
-				}],
-				value: '',
-				optionss: [{
-					value2: '选项1',
-					label2: '门诊部'
-				}, {
-					value2: '选项2',
-					label2: '内勤部'
-				}],
-				value2: '',
-				axio: [{
-					value1: '选项1',
-					label1: '医生'
-				}, {
-					value1: '选项2',
-					label1: '护士'
-				}],
-				value1: '',
+			  funs:[],
+        size:4,
+        page:1,
+		multipleSelection:[],
+		uid:''
+
 			}
 		},
 
 		methods: {
-
+      getData(){
+        this.axios.get("selectall-staff").then((res)=>{
+          this.funs = res.data
+          console.log(this.funs)
+        }).catch()
+      },
+      //初始每页数据数size和数据data
+      HandleSizeChange: function(size) {
+        this.size = size;
+        console.log(this.pagesize) //每页下拉显示数据
+      },
+      //初始页page
+      HandleCurrentChange: function(currentPage) {
+        this.page = currentPage;
+        console.log(this.currentPage) //点击第几页
+      },
 			handleSelectionChange(val) {
 				this.multipleSelection = val;
-				// alert(123)
+				if(this.multipleSelection.length==1){
+					console.log(this.uid)
+				}else if(this.multipleSelection.length==0){
+					alert("请先选择一条数据")
+					this.multipleSelection=[]
+				}else{
+					alert("只能选中一条")
+					this.multipleSelection=[]
+				}
+				console.log(this.multipleSelection)
+				this.multipleSelection.forEach(m=>{
+					this.uid=m.user.uid
+				})
 			},
-			open() {
-				this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
-					confirmButtonText: '确定',
-					cancelButtonText: '取消',
-					type: 'warning'
-				}).then(() => {
-					this.$message({
-						type: 'success',
-						message: '删除成功!'
-					});
-				}).catch(() => {
-					this.$message({
-						type: 'info',
-						message: '已取消删除'
-					});
-				});
+			cs(){
+				
 			},
-			handleSizeChange(val) {
-				console.log(`每页 ${val} 条`);
-			},
-			handleCurrentChange(val) {
-				console.log(`当前页: ${val}`);
-			}
-		}
-	}
+			
+		},
+    created() {
+		  this.getData()
+    }
+  }
 </script>
 
 

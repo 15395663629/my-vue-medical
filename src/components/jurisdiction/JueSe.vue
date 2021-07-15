@@ -25,15 +25,15 @@
 	<el-dialog title="角色管理" v-model="dialogVisible1" width="30%" :before-close="handleClose">
 
 		请输入角色名称：<el-input type="text" style="width: 40%;" v-model="rolename"></el-input><br />
-		请选择所属部门：<el-select v-model="value" placeholder="请选择"
+		请选择父级名称：<el-select v-model="value" placeholder="请选择"
 			style="width: 20%;margin-top:20px;"  @change="dome($event)">
-			<el-option v-for="item in dept" :key="item.deId" :label="item.deName" :value="item.deId">
+			<el-option v-for="item in role" :key="item.rid" :label="item.rname" :value="item.rid">
 			</el-option>
 		</el-select><br />
 		<template #footer>
 			<span class="dialog-footer">
 				<el-button @click="dialogVisible1 = false">取 消</el-button>
-				<el-button type="primary" @click="dialogVisible1 = false">确 定</el-button>
+				<el-button type="primary" @click="addRole">确 定</el-button>
 			</span>
 		</template>
 	</el-dialog>
@@ -68,6 +68,13 @@ import  qs from 'qs'
         funs:[],
         //已授权权限
         rolefuns:[],
+		//新增角色
+		rolelist:{
+			rid:0,
+			rname:'',
+			roid:''
+		},
+		roid:'',
         roleId:'',
         size:4,
         page:1,
@@ -122,8 +129,9 @@ import  qs from 'qs'
         this.page = currentPage;
         console.log(this.currentPage) //点击第几页
       },
+	  //获取角色父级编号
       dome(event){
-        console.log(event)
+        this.roid=event
       },
       saveGrant(){
         var funs=this.$refs.tree.getCheckedKeys();
@@ -135,7 +143,25 @@ import  qs from 'qs'
           this.getData();
         }).catch()
 
-      }
+      },
+	  //新增角色
+	  addRole(){
+		  this.rolelist.rname=this.rolename
+		  this.rolelist.roid=this.roid
+		  this.axios.post("add-role",this.rolelist).then((v)=>{
+			 if(v.data==1){
+				 this.clear()
+				 this.getData()
+				 this.dialogVisible1=false
+			 }else{
+				 console.log(v.data)
+			 }
+		  }).catch()
+	  },
+	  clear(){
+		  this.rolename=""
+		  this.roid=""
+	  }
 		},
     created() {
 		  this.getData()
