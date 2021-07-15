@@ -12,7 +12,7 @@
 		</el-table-column>
 		<el-table-column label="操作">
 			<template v-slot:default="r">
-				<el-button type="primary" @click="dialogVisible= true">角色授权</el-button>
+				<el-button type="primary" @click="getRoleFuns(r.row)">角色授权</el-button>
 			</template>
 		</el-table-column>
 
@@ -56,6 +56,7 @@
 </template>
 
 <script>
+import  qs from 'qs'
 	export default {
 		data() {
 			return {
@@ -65,6 +66,9 @@
         dept:[],
         //权限
         funs:[],
+        //已授权权限
+        rolefuns:[],
+        roleId:'',
         size:4,
         page:1,
         dialogVisible:false,
@@ -94,7 +98,18 @@
         }).catch()
         this.axios.get("http://localhost:8089/func-list").then((v)=>{
           this.funs=v.data
-          console.log(this.funs)
+
+
+        }).catch()
+      },
+      getRoleFuns(row){
+        this.roleId=row.rid
+        this.axios.get("role-funs",{params:{roleId:this.roleId}}).then((res)=>{
+          this.rolefuns = res.data;
+          this. dialogVisible =true
+          this.$nextTick(function() {
+            this.$refs.tree.setCheckedKeys(this.rolefuns)
+          })
         }).catch()
       },
       //初始每页数据数size和数据data
@@ -112,7 +127,14 @@
       },
       saveGrant(){
         var funs=this.$refs.tree.getCheckedKeys();
-        console.log(funs)
+        var grant = JSON.stringify({roleId:this.roleId,funs:funs})
+        this.axios.post("save-grant",qs.stringify({grant:grant})).then((res)=>{
+          this.funs = res.data;
+          this.dialogVisible = false;
+          this.roleId = '';
+          this.getData();
+        }).catch()
+
       }
 		},
     created() {
