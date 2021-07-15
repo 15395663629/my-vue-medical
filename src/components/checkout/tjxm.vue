@@ -5,10 +5,10 @@
 				<el-form-item label="类型：" label-width="60px">
 					<el-select style="width: 120px" v-model="value" placeholder="请选择">
 						<el-option
-						  v-for="item in options"
+						  v-for="item in tjmeal"
 						  :key="item.value"
-						  :label="item.label"
-						  :value="item.value">
+						  :label="item.checkIndex"
+						  :value="item.codeType">
 						</el-option>
 					</el-select>
 				</el-form-item>
@@ -203,46 +203,40 @@
 	</el-dialog>
 	
 	<el-dialog :title="tilt" v-model="jcxm" width="50%" center  ><!-- 弹窗      -=-=-=-=-=-=-==-=-=-=-=--=-=-=-=-=-=-医疗项目======================================= -->
-		<el-form  status-icon :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
+		<el-form  status-icon v-model="jcdx" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
 			<el-row>
-								<el-col :span="6">
-									<el-form-item label="编号:" prop="name">
-									<el-input></el-input>
-									</el-form-item>
-								</el-col>
-								<el-col :span="6" :offset="4">
+								<el-col :span="7" >
 									<el-form-item label="项目名称:" prop="name">
-									<el-input></el-input>
+									<el-input v-model="jcdx.checkName"></el-input>
 									</el-form-item>
 								</el-col>
+        <el-col :span="7" :offset="4">
+          <el-form-item label="价格:" prop="name">
+            <el-input v-model="jcdx.checkPay"></el-input>
+          </el-form-item>
+        </el-col>
 			</el-row>
 			<el-row>
-					<el-col :span="6">
-									<el-form-item label="价格:" prop="name">
-									<el-input></el-input>
-									</el-form-item>
-					</el-col>
-					<el-col :span="6" :offset="4">
+          <el-col :span="7">
+          <el-form-item label="指标:" prop="name">
+            <el-input v-model="jcdx.tjCodeIndex.indexName"></el-input>
+          </el-form-item>
+          </el-col>
+					<el-col :span="7" :offset="4">
 						<el-form-item label="指标意义:" prop="name">
-						<el-input></el-input>
+						<el-input v-model="jcdx.tjCodeIndex.indexSignificance"
+                      type="textarea"
+                      :rows="2"
+                      placeholder="请输入内容"></el-input>
 						</el-form-item>
 					</el-col>
 			</el-row>
 			<el-row>
-				<el-form-item label="指标:" prop="name">
-				 <el-select v-model="value" placeholder="请选择">
-				    <el-option
-				      v-for="item in zhib"
-				      :key="item.value"
-				      :label="item.label"
-				      :value="item.value">
-				    </el-option>
-				  </el-select>
-				</el-form-item>
+
 			</el-row>
 			<el-form-item>
 							  <el-col :span="1" :offset="8">
-							<el-button @click="jcxmForm('ruleForm')">确定</el-button>
+							<el-button type="primary" @click="jcxmForm('ruleForm')">确定</el-button>
 							</el-col>
 			</el-form-item>
 		</el-form>
@@ -251,10 +245,10 @@
 	
 
 	<el-row > <!-- ==================================================================上表格 ==================================================================-->
-		<el-table :data="tableData" style="width: 100%;height:200px;" v-if="isShow!==null">
+		<el-table :data="tjmeal" style="width: 100%;height:200px;" v-if="isShow!==null">
 			<el-table-column label="编号" width="180">
 				<template #default="scope">
-					<span style="margin-left: 10px">{{ scope.row.date }}</span>
+					<span style="margin-left: 10px">{{ scope.row.codeId }}</span>
 				</template>
 			</el-table-column>
 			
@@ -262,11 +256,11 @@
 				<template #default="scope">
 				<el-popover effect="light" trigger="hover"  placement="top">
 					<template #default>
-						<p>套餐名称: {{ scope.row.name }}</p>
+						<p>套餐名称: {{ scope.row.codeName }}</p>
 					</template>
 					<template #reference>
 		            <div class="name-wrapper">
-		              <el-tag size="medium">{{ scope.row.name }}</el-tag>
+		              <el-tag size="medium">{{ scope.row.codeName }}</el-tag>
 		            </div>
 		          </template>
 				</el-popover>
@@ -274,12 +268,12 @@
 		    </el-table-column>
 			<el-table-column label="价格">
 				<template #default="scope">
-					<span style="margin-left: 10px">{{ scope.row.price }}</span>
+					<span style="margin-left: 10px">{{ scope.row.codePay }}</span>
 				</template>
 			</el-table-column>
 			<el-table-column label="体检类型">
 				<template #default="scope">
-					<span style="margin-left: 10px">{{ scope.row.lx }}</span>
+					<span style="margin-left: 10px">{{ scope.row.checkIndex }}</span>
 				</template>
 			</el-table-column>
 		    <el-table-column label="操作">
@@ -316,7 +310,7 @@
 
 		<el-row>
 			<el-col  style="padding-bottom: 5px" :span="3" :offset="19">
-					<el-button type="primary" @click=jcxmEdit()>新增项目</el-button>
+					<el-button type="primary" @click=jcxmEdit(1)>新增项目</el-button>
 			</el-col>
 		</el-row>
 
@@ -347,11 +341,11 @@
         <template #default="scope">
           <el-popover effect="light" trigger="hover"  placement="top">
             <template #default>
-              <p>指标意义: {{ scope.row.indexSignificance }}</p>
+              <p>指标意义: {{ scope.row.tjCodeIndex.indexSignificance }}</p>
             </template>
             <template #reference>
               <div class="name-wrapper">
-                <el-tag size="medium">{{ scope.row.indexName }}</el-tag>
+                <el-tag size="medium">{{ scope.row.tjCodeIndex.indexName }}</el-tag>
               </div>
             </template>
           </el-popover>
@@ -361,10 +355,11 @@
 			  <template #default="scope">
 			    <el-button
 			      size="mini"
-			      @click="jcxmEdit()">修改
+			      @click="jcxmEdit('1',scope.row)">修改
 				  </el-button>
 				  <el-button
 				    size="mini"
+            @click="tprojDelete(scope.row)"
 					type="danger">删除
 				    </el-button>
 			  </template>
@@ -374,6 +369,7 @@
 						  align="right">
 						  <template  #header>
 							<el-input
+                  @change="getData"
 							  v-model="seach"
 								prefix-icon="el-icon-search"
 							  size="small"
@@ -397,30 +393,36 @@
 </template>
 
 <script>
-	export default {
+	import qs from "qs";
+
+  export default {
 	    data () {
 	      return {
+          tjmeal:[],//体检套餐集合
 	        tilt:'',//弹框标题
           seach: '',//搜索
           currentPage: 1, //初始页
           psize:2, //每页的数据
-        tjpro:[],//检查项目集合
-			    options: [{
-			          value: '选项1',
-			          label: '入职体检'
-			        }, {
-			          value: '选项2',
-			          label: '君安高端'
-			        }, {
-			          value: '选项3',
-			          label: 'vip体检套餐'
-			        }, {
-			          value: '选项4',
-			          label: '中老年体检'
-			        }, {
-			          value: '选项5',
-			          label: '孕检/备孕'
-			        }],
+          tjpro:[],//检查项目集合
+          xmzb:[],//指标集合
+          jcdx:{//检查项目对象
+            //检查主键
+            checkId:'',
+            // 名称
+            checkName:'',
+            // 价格
+            checkPay: '',
+            // 指标编号
+            indexId:'',
+            tjCodeIndex:{
+              // 指标编号
+              indexId:'',
+              // 指标
+              indexName:'',
+              // 指标意义
+              indexSignificance:''
+            }
+          },
 			        value: '',
 			isShow:false,
 			tjtc:false,
@@ -451,16 +453,38 @@
         this.currentPage = currentPage;
         console.log(this.currentPage) //点击第几页
       },
+      // 检查项目基础参数
         getData(){
           this.axios.get("http://localhost:8089/allDescTjpro",{params:{seach:this.seach}}).then((res)=>{
             this.tjpro = res.data;
           }).catch()
-          this.axios.get("http://localhost:8089/ks-list").then((res)=>{
-            this.department = res.data;
+          this.axios.get("http://localhost:8089/allIndex").then((res)=>{
+            this.xmzb = res.data;
           }).catch()
 
         },
-        jcxmEdit(index, row) {
+      // 检查项目基础参数
+      getMeal(){
+        this.axios.get("http://localhost:8089/allMeal",{params:{search:this.search}}).then((res)=>{
+          this.tjmeal = res.data;
+        }).catch()
+        this.axios.get("http://localhost:8089/allIndex").then((res)=>{
+          this.xmzb = res.data;
+        }).catch()
+
+      },
+        jcxmEdit(is, row) {
+          this.tilt = is = 1 ? '新增检查项目' : '修改检查项目';//设置弹框标题
+          if(row != undefined){//判断是否有值
+            this.jcdx.checkId= row.checkId;
+            this.jcdx.checkName= row.checkName;
+            this.jcdx.checkPay= row.checkPay;
+            this.jcdx.indexId= row.indexId;
+            this.jcdx.tjCodeIndex.indexId=row.tjCodeIndex.indexId
+            this.jcdx.tjCodeIndex.indexName=row.tjCodeIndex.indexName
+            this.jcdx.tjCodeIndex.indexSignificance=row.tjCodeIndex.indexSignificance
+
+          }
           this.jcxm = true;
         },
         tjtcEdit(index, row) {
@@ -479,9 +503,53 @@
             }
           });
         },
+      //删除
+      tprojDelete(row){
+        this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          this.sctproj(row)
+          this.$message({
+            type: 'success',
+            message: '删除成功!'
+          });
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          });
+        });
+      },
+      //删除
+      sctproj(row){
+        this.axios.post('http://localhost:8089/delet-troj', qs.stringify({index:row.indexId}))
+            .then((v)=>{
+              if(v.data == 'ok'){
+                this.getData()
+              }else{
+                alert(v.data);
+              }
+            }).catch(function(){
+
+        })
+      },
+      //清除修改与删除检查项目弹框
+      inspectClear(formName){
+        this.jcdx = {
+          tjCodeIndex:'',
+        }
+        this.$refs[formName].resetFields();
+      },
+      //修改与新增检查项目确认按钮
         jcxmForm(formName) {
+          console.log(this.jcdx)
+          this.axios.post("http://localhost:8089/addOrUpdataTroj",{troj:this.jcdx}).then((res)=>{
+            this.getData();
+            this.inspectClear(formName);
+          }).catch()
           this.jcxm = false
-          this.$refs[formName].resetFields();
         },
         tjtcForm(formName) {
           this.tjtc = false
@@ -493,11 +561,12 @@
         }
       },created() {
         this.getData()
+        this.getMeal()
       }
 	  }
 </script>
 
-<style>
+<style scoped>
 	.my-el-tc{
 		padding-top: 5px;
 		width: 200px;
