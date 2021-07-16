@@ -281,7 +281,8 @@ export default{
                 type: 'success'
               });
               this.resetForm2()//刷新主界面的校验提示
-              this.$parent.allDescSick();//刷新主界面的表格
+              this.$parent.allAlterLose();//刷新主界面的表格
+              this.$parent.allDescSick();
             }
           }).catch(function(){
 
@@ -307,6 +308,7 @@ export default{
               });
               this.resetForm2()//刷新主界面的校验提示
               this.$parent.allDescSick();//刷新主界面的表格
+              this.$parent.allAlterLose()
               console.log("挂失退额1111")
             }
           }).catch(function(){
@@ -347,6 +349,7 @@ export default{
               });
               this.resetForm1()//刷新主界面的校验提示
               this.$parent.allDescSick();//刷新主界面的表格
+              this.$parent.allAlterLose()
             }
           }).catch(function(){
 
@@ -394,6 +397,7 @@ export default{
             type: 'warning'
           });
           this.$parent.allDescSick();//刷新主界面的表格
+
         }
       }).catch(function(){
 

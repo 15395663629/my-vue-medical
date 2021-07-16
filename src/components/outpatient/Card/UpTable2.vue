@@ -1,6 +1,6 @@
 <template>
   <el-table
-      :data="mzSickList.slice((wardCurrentPage2-1)*wardPageSize2,wardCurrentPage2*wardPageSize2)"
+      :data="upList.slice((wardCurrentPage2-1)*wardPageSize2,wardCurrentPage2*wardPageSize2)"
       style="width: 100%"
       height="460" >
     <el-table-column
@@ -63,14 +63,14 @@
                   :page-sizes="[2,4,6,8]"
                   :page-size="wardPageSize2"
                   layout="total, sizes, prev, pager, next, jumper"
-                  :total="mzSickList.length">
+                  :total="upList.length">
   </el-pagination>
 </template>
 
 <script>
 export default{
   props:{
-    mzSickList:{
+    upList:{
       type:Array,
       required:true
     },

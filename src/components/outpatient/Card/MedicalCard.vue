@@ -40,9 +40,6 @@
       }
 		},
 		methods:{
-			filterTag(value, row) {/* 复诊初诊标签方法 */
-				return row.tag === value;
-			},
       // 初始病房每页数据数wardpagesize和数据data
       wardHandleSizeChange: function(size) {
         this.wardPageSize = size;
@@ -117,7 +114,7 @@
       likeMcLose(mzSickTest){
         this.axios({
           url:'likeAlterLose',
-          params:{mzSickTest:mzSickTest}
+          params:{like:mzSickTest}
         }).then((v)=>{
           console.log("table2")
           console.log(v.data)
