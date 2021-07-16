@@ -31,7 +31,6 @@
       </el-dialog>
 
       <!--修改弹窗-->
-
       <el-dialog  title="供应商" v-model="handleEdit" width="40%">
         <el-form :model="formSipplier">
           <el-row :gutter="0">
@@ -88,6 +87,7 @@
     </el-table-column>
   </el-table>
   <!-- 分页插件 -->
+
   <el-pagination
       style="text-align: center;"
       @size-change="handleSizeChange"
@@ -109,7 +109,7 @@ export default {
         supplierName:'',
         supplierSite:'',
         supplierPhone:'',
-        supplierLinkman:''
+        supplierLinkman:'',
       },
       tableData: [],
       search: '',
@@ -118,7 +118,7 @@ export default {
       // 修改弹窗
       handleEdit:false,
       formLabelWidth: '',
-      currentPage4: 4
+      currentPage4: 4,
     }
   },
   methods: {

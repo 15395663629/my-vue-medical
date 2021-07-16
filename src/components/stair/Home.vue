@@ -69,9 +69,10 @@ export default{
 		},
     getMenus(){
       let userId = this.$store.state.token.uid;
-      console.log(userId)
+      console.log(this.$store.state.token.uid)
       this.axios.get("home-menus",{params:{userId:userId}}).then((res)=>{
       this.menus = res.data
+
         console.log(this.menus)
   }).catch()
 }
