@@ -84,7 +84,7 @@
 					</el-form-item>
 				</el-col>
 			</el-row>
-			
+
 			<el-row>
 				<el-col :span="9">
 					<el-form-item label="性别" label-width="80px">
@@ -168,6 +168,22 @@
         </el-col>
 
 			</el-row>
+
+      <el-row>
+        <el-col :offset="1">
+            <el-tag style="margin-right: 10px"
+                :key="cts"
+                v-for="(cts,index) in this.patientBaseObj.listContacts"
+                closable
+                @click="updateContacts(index,cts)"
+                :disable-transitions="false"
+                @close="deleteContacts(index)">
+             关系：{{cts.ctsRelation}}  &nbsp;&nbsp;姓名：{{cts.ctsName}}
+            </el-tag>
+
+            <el-button type="primary" @click="isShowAddCts = true" size="mini">添加联系人</el-button>
+        </el-col>
+      </el-row>
 		</el-form>
 		
 		
@@ -179,15 +195,66 @@
 					</el-col>
 					<el-col :span="1"></el-col>
 					<el-col :span="2">
-						<el-button @click="isShowZY = false" size="small" type="danger">取消</el-button>
+						<el-button @click="PatientClear" size="small" type="danger">取消</el-button>
 					</el-col>
 					<el-col :span="1"></el-col>
 				</el-row>
 		</template>
 	</el-dialog>
-	
+
+  <!--=============================================添加病人联系人弹框===================================-->
+  <el-dialog top="160px" width="40%" title="添加联系人" @close="closeAddContacts" v-model="isShowAddCts">
+
+    <el-form v-model="contacts">
+
+      <el-row>
+        <el-col  :span="11">
+          <el-form-item label="姓名" label-width="90px">
+            <el-input v-model="contacts.ctsName"></el-input>
+          </el-form-item>
+        </el-col>
+
+        <el-col :offset="1" :span="11">
+          <el-form-item label="联系电话" label-width="90px">
+            <el-input v-model="contacts.ctsIphone"></el-input>
+          </el-form-item>
+        </el-col>
+      </el-row>
+
+      <el-row>
+        <el-col  :span="11">
+          <el-form-item label="关系" label-width="90px">
+            <el-input v-model="contacts.ctsRelation"></el-input>
+          </el-form-item>
+        </el-col>
+      </el-row>
+
+    </el-form>
+
+    <template #footer>
+      <el-row>
+        <el-col :span="18"></el-col>
+        <el-col :span="2">
+          <el-button @click="addContacts" size="small" type="primary">确定</el-button>
+        </el-col>
+        <el-col :span="1"></el-col>
+        <el-col :span="2">
+          <el-button @click="closeAddContacts" size="small" type="danger">取消</el-button>
+        </el-col>
+        <el-col :span="1"></el-col>
+      </el-row>
+    </template>
+  </el-dialog>
+
+
+
 
 	<!--=============================================住院登记表格===================================-->
+  <el-row>
+    <el-col>
+      <el-button @click="isShowZY = true" size="mini" type="primary">添加</el-button>
+    </el-col>
+  </el-row>
 	<el-row>
 		<el-col>
 			<el-table
@@ -226,6 +293,30 @@
             </template>
 
           </el-table-column>
+
+<!--          <el-table-column label="联系人">-->
+<!--            <template #default="scope">-->
+
+<!--              <el-badge style="position: absolute;top: 10px" :value="scope.row.listContacts[0].ctsName == null ? '暂无' :  scope.row.listContacts.length">-->
+<!--                <el-popover-->
+<!--                    placement="right"-->
+<!--                    :width="330"-->
+<!--                    trigger="click"-->
+<!--                >-->
+<!--                  <template #reference>-->
+<!--                    <el-button size="mini">联系人</el-button>-->
+<!--                  </template>-->
+<!--                  <el-table size="mini" height="200px" :data="scope.row.listContacts">-->
+<!--                    <el-table-column width="100" property="ctsName" label="姓名"></el-table-column>-->
+<!--                    <el-table-column width="130" property="ctsIphone" label="联系电话"></el-table-column>-->
+<!--                    <el-table-column width="100" property="ctsRelation" label="与患者关系"></el-table-column>-->
+<!--                  </el-table>-->
+<!--                </el-popover>-->
+<!--              </el-badge>-->
+
+<!--            </template>-->
+<!--          </el-table-column>-->
+
           <el-table-column
               prop="ptInDate"
               label="入院日期">
@@ -254,23 +345,9 @@
         </el-table-column>
 
 
-				<el-table-column width="130px"
-				      align="right">
-				      <template  #header>
-                <el-row>
-                  <el-col>
-                    <el-button @click="isShowZY = true" size="mini" type="primary">添加</el-button>
-                  </el-col>
-                </el-row>
-				      </template>
-
-              <template  #default='scope'>
-                <el-button icon="el-icon-edit" type="success" @click="" size="mini" >转科</el-button>
-              </template>
-				    </el-table-column>
 			  </el-table>
-			  
-			  
+
+
 			  <!--分页插件-->
 			   <el-pagination
 					style="text-align: center;"
@@ -283,8 +360,8 @@
 			        :total="patientBaseArr.length">
 			      </el-pagination>
 		</el-col>
-	</el-row>
 
+	</el-row>
 
 </template>
 
@@ -318,6 +395,20 @@
 				isSex:'',
 				fromSearch:'',
 
+
+        //============================================患者联系人数据
+        contacts:{
+          ctsId:'',
+          ctsName:'',
+          ctsIphone:'',
+          ctsRelation:''
+        },
+        contactsIndex:null,//下标用来修改
+        isShowAddCts:false,//是否显示添加患者联系人弹框
+
+
+
+
         //========================================================住院登记数据
         patientBaseObj:{//住院登记实体类
           ptNo:'',
@@ -334,6 +425,7 @@
           bdId:'',
           ptAge:'',
           ptPayMoney:'',
+          listContacts:[],//病人联系人数组
           inId:'',
           ptPrice:''
         },
@@ -372,6 +464,46 @@
       },
 
 
+      //================================病人关系联系人方法
+      //确定添加联系人方法
+      addContacts(){
+        console.log(this.contactsIndex);
+        if(this.contactsIndex != null){
+          this.patientBaseObj.listContacts.splice(this.contactsIndex,1,this.contacts);
+        }else{
+          this.patientBaseObj.listContacts.push(this.contacts);
+        }
+        this.closeAddContacts();
+        console.log(this.patientBaseObj)
+      },
+      //取消添加联系人方法
+      closeAddContacts(){
+        this.isShowAddCts = false;
+        this.contactsIndex = null;
+        this.contacts = {
+              ctsId:'',
+              ctsName:'',
+              ctsIphone:'',
+              ctsRelation:''
+        };
+      },
+      //删除联系人方法
+      deleteContacts(row){
+        console.log(row)
+        this.patientBaseObj.listContacts.splice(row,1);
+      },
+      //修改联系人方法
+      updateContacts(index,row){
+        console.log(row)
+        this.contacts.ctsName = row.ctsName;
+        this.contacts.ctsIphone = row.ctsIphone;
+        this.contacts.ctsRelation = row.ctsRelation;
+        this.isShowAddCts = true;
+        this.contactsIndex = index;
+      },
+
+
+
       //======================================================住院申请方法
 
       //选择住院申请
@@ -403,7 +535,25 @@
       //清空住院登记方法
       PatientClear(){
         this.isShowZY = false;
-        this.patientBaseObj = {};
+        this.patientBaseObj = {//住院登记实体类
+          ptNo:'',
+          ptInDate:'',
+          ptName:'',
+          ptSex:'',
+          ptBirthDate:'',
+          ptCapacityNo:'',
+          ptHomeAdder:'',
+          ksId:'',
+          sId:'',
+          ptIphone:'',
+          ptDiagnoseName:'',
+          bdId:'',
+          ptAge:'',
+          ptPayMoney:'',
+          listContacts:[],//病人联系人数组
+          inId:'',
+          ptPrice:''
+        };
         this.staffArr = [];
       },
 

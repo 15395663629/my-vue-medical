@@ -280,9 +280,9 @@
 	.works{
 		padding: 15px;
 	}
-	.el-dialog__body{
-		padding: 20px 60px;
-		padding-left:100px ;
-		text-align: center;
-	}
+	/*.el-dialog__body{*/
+	/*	padding: 20px 60px;*/
+	/*	padding-left:100px ;*/
+	/*	text-align: center;*/
+	/*}*/
 </style>

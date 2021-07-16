@@ -1,17 +1,17 @@
 <template>
 	<!--=============================================新增病人缴费单弹框===================================-->
-	<el-dialog title="新增缴费" v-model="isPayShow">
+	<el-dialog title="新增缴费" @close="closePayBt" v-model="isPayShow">
 		<el-form>
 			<el-row>
 				<el-col :offset="2" :span="9">
 					<el-form-item label="缴费金额" label-width="80px">
-						<el-input></el-input>
+						<el-input v-model="payObj.pyPrice"></el-input>
 					</el-form-item>
 				</el-col>
 				
 				<el-col :offset="2" :span="9">
 					<el-form-item label="操作人" label-width="80px">
-						<el-input v-model="staff" disabled></el-input>
+						<el-input v-model="staff.sname" disabled></el-input>
 					</el-form-item>
 				</el-col>
 			</el-row>
@@ -21,7 +21,7 @@
 				<el-row>
 					<el-col :span="18"></el-col>
 					<el-col :span="2">
-						<el-button @click="addEmp('empFrom')" type="primary">确定</el-button>
+						<el-button @click="addPayFunction('empFrom')" type="primary">确定</el-button>
 					</el-col>
 					<el-col :span="1"></el-col>
 					<el-col :span="2">
@@ -32,7 +32,7 @@
 		</template>
 	</el-dialog>
 	
-	<!--=============================================新增病人缴费单弹框===================================-->
+	<!--=============================================费用明细===================================-->
 	<el-dialog title="费用明细" v-model="isPayRecordShow">
 		
 		<el-table
@@ -81,6 +81,7 @@
 			    :data="patientPayArr"
 			    border
           size="small"
+          @cell-click="openPayDetails"
 				height="470px"
 			    style="width: 100%">
 			    <el-table-column
@@ -106,7 +107,7 @@
 
 				  <el-table-column label="操作" width="200px">
 				  	<template  #default='scope'>
-						<el-button size="mini" type="primary" @click.stop="isPayShow = true" >缴费</el-button>
+						<el-button size="mini" type="primary" @click.stop="openPayBt(scope.row)" >缴费</el-button>
 				  		 <el-button size="mini" type="primary" @click.stop="isPayRecordShow = true" >查看费用明细</el-button>
 				  	</template>
 				  </el-table-column>
@@ -132,47 +133,39 @@
   <el-dialog title="病人缴费详细" v-model="isShowPayDetail">
 
     <el-table
-        :data="tableData"
+        :data="payArr.slice((payCurrent-1)*paySize,payCurrent*paySize)"
         border
-        height="320px"
+        height="340px"
         style="width: 100%">
-      <el-table-column
-          prop="date"
-          :label="jfText"
-          align="center"
-          width="180">
-
         <el-table-column
-            prop="name"
+            prop="pyId"
             label="缴费编号"
             width="180">
         </el-table-column>
-        <el-table-column
+        <el-table-column prop="pyPrice"
             label="缴费金额">
         </el-table-column>
         <el-table-column
-            prop="address"
+            prop="pyDate"
             label="缴费时间">
         </el-table-column>
-        <el-table-column
-            label="操作人">
-        </el-table-column>
+        <el-table-column prop="staff.sname"
+            label="操作护士">
       </el-table-column>
     </el-table>
     <!--分页插件-->
     <el-pagination
         style="text-align: right;"
-        @size-change="totalCut"
-        @current-change="pageCut"
-        :current-page="1"
+        @size-change="paySizeChange"
+        @current-change="payCurrentChange"
+        :current-page="payCurrent"
         :page-sizes="[2,4,6,8,10]"
-        :page-size="size"
+        :page-size="paySize"
         layout="total, sizes, prev, pager, next, jumper"
-        :total="total">
+        :total="payArr.length">
     </el-pagination>
 
   </el-dialog>
-	
 
 </template>
 
@@ -185,24 +178,33 @@
 
           },
           patientPayArr:[],
+          patientPayCurrent:1,//病人信息当前页
+          patientPaySize:8,//病人信息页大小
+
+
+          //=================缴费详细
+          payObj:{//缴费实体类
+            pyId:'',
+            pyPrice:'',
+            pyDate:'',
+            ptNo:'',
+            ptName:'',
+            sId:''
+          },
+          payArr:[],//缴费数组
+          payCurrent:1,//缴费详细当前页
+          paySize:6,//缴费详细页大小
 
 
 
+          //=====================================病人缴费详情数据
+          payArr:[],
           isShowPayDetail:false,//是否显示病人缴费详细
 
 
           //===========================当前登录人信息
           staff:{},//员工对象
 
-	        ZYPatientBaseArr: [{
-	          ptNo: '101',//住院号
-	          ptName: '张三',//病人名称
-            bdId:'201',//病床编号
-            ptSex: '男',//病人性别
-            deptId:'骨科',//科室编号
-            ptAge:'50',
-			  
-	        }],
 			    isPayShow:false,//显示新增缴费单
 			    isPayRecordShow:false,//显示病人费用明细表
 			    jfText:'缴费记录'
@@ -221,15 +223,66 @@
 
       },
 
+      //=============================新增缴费方法
+      addPayFunction(form){
+        this.payObj.sId = this.staff.sid;
+        this.axios.post('addPay',this.payObj).then((v)=>{//新增缴费记录
+          this.$message({
+            type: 'success',
+            message: '成功向 【'+this.payObj.ptName+"】 缴入 【"+this.payObj.pyPrice+"】元"
+          });
+          this.patientAndPayInit();
+          this.closePayBt();
+        }).catch((data)=>{
 
+        });
+      },
+
+      //==============================病人缴费详情方法
+      openPayDetails(row){
+        console.log(row)
+        this.isShowPayDetail = true;
+        this.payArr = row.listPay;
+      },
+
+      //打开缴费弹框方法
+      openPayBt(row){
+        this.isPayShow = true;
+        this.payObj.ptNo = row.ptNo;
+        this.payObj.ptName = row.ptName;
+      },
+      //关闭缴费弹框
+      closePayBt(){
+        this.isPayShow =false;
+        this.payObj = {//缴费实体类
+              pyId:'',
+              pyPrice:'',
+              pyDate:'',
+              ptNo:'',
+              ptName: '',
+              sId:''
+        };
+      },
 			valueBRObj(row){
 				this.jfText = '缴费记录（'+row.ptName+'）'
-			}
+			},
+
+
+      // 住院申请size变了调用
+      paySizeChange: function(size) {
+        this.paySize = size;
+      },
+      //住院申请Current变了调用
+      payCurrentChange: function(currentPage) {
+        this.payCurrent = currentPage;
+      }
+
+
 		},
     created() {
 	      this.patientAndPayInit();
-        this.staff = this.$store.state.token[0] == null ? null : this.$store.state.token[0].list;//将登录存入的值在取出来
-        // console.log(this.$store.state.token[0].list)
+        this.staff = this.$store.state.token.list;//将登录存入的值在取出来
+        console.log(this.$store.state.token.list)
     }
   }
 </script>
