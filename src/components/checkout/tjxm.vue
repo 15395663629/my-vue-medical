@@ -3,7 +3,7 @@
 		<el-form label-width="100px" >
 			<el-col :span="9">
 				<el-form-item label="类型：" label-width="60px">
-					<el-select style="width: 120px" v-model="value" placeholder="请选择">
+					<el-select style="width: 120px" v-model="codeType" placeholder="请选择">
 						<el-option
 						  v-for="item in tjmeal"
 						  :key="item.value"
@@ -124,28 +124,28 @@
 	
 	
 	<el-dialog title="套餐详情" v-model="tcxq" width="50%" center  ><!-- 弹窗      -=-=-=-=-=-=-==-=-=-=-=--=-=-=-=-=-=-套餐详情======================================= -->
-		<el-form  status-icon :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
+		<el-form  :modal="tcdx" label-width="100px" class="demo-ruleForm">
 			<el-row>
 								<el-col :span="6">
 									<el-form-item label="编号:" prop="name">
-									1232
+                    {{ tcdx.codeId }}
 									</el-form-item>
 								</el-col>
 								<el-col :span="12" :offset="4">
 									<el-form-item label="套餐名称:" prop="name">
-									套餐名称: 爱康君安【中枢神经系统体检套餐】
+                    {{ tcdx.codeName }}
 									</el-form-item>
 								</el-col>
 			</el-row>
 			<el-row>
 					<el-col :span="6">
 							<el-form-item label="体检类型:" prop="name">
-							 工作体检
+                {{ tcdx.checkIndex }}
 							</el-form-item>
 						</el-col>
 								<el-col :span="6" :offset="4">
 						<el-form-item label="套餐价格:" prop="name">
-						390
+              {{ tcdx.codePay }}
 						</el-form-item>
 					</el-col>
 			</el-row>
@@ -155,43 +155,33 @@
 				</el-col>
 			</el-row>
 			<el-row > <!-- ============================================所含项目表格============================================ -->
-				<el-table :data="yldate" style="width: 100%;height: 300px;">
-					<el-table-column label="编号" width="70">
-						<template #default="scope">
-							<span style="margin-left: 10px">{{ scope.row.date }}</span>
-						</template>
-					</el-table-column>
-					
-				    <el-table-column label="医疗项目名称" width="120">
-						<template #default="scope">
-							<span style="margin-left: 10px">{{ scope.row.name }}</span>
-						</template>
-				    </el-table-column>
-					<el-table-column label="价格" width="80">
-						<template #default="scope">
-							<span style="margin-left: 10px">{{ scope.row.price }}</span>
-						</template>
-					</el-table-column>
-					<el-table-column label="指标" width="100">
-						<template #default="scope">
-							<span style="margin-left: 10px">{{ scope.row.lx }}</span>
-						</template>
-					</el-table-column>
-				    <el-table-column label="指标意义">
-						<template #default="scope">
-							<span style="margin-left: 10px">{{ scope.row.zbyy }}</span>
-						</template>
-				    </el-table-column>
-					<el-table-column width="150px"
-								  align="right">
-								  <template  #header>
-									<el-input
-									  v-model="ssss"
-										prefix-icon="el-icon-search"
-									  size="small"
-									  placeholder="项目搜索"/>
-								  </template>
-					</el-table-column>
+				<el-table :data="tjprox" style="width: 100%;height: 300px;">
+          <el-table-column label="编号" width="180" prop="checkId">
+          </el-table-column>
+
+          <el-table-column label="医疗项目名称" prop="checkName" >
+            <template #default="scope">
+              <el-popover effect="light" trigger="hover"  placement="top">
+                <template #default>
+                  <p>项目名称: {{ scope.row.checkName }}</p>
+                </template>
+                <template #reference>
+                  <div class="name-wrapper">
+                    <el-tag size="medium">{{ scope.row.checkName }}</el-tag>
+                  </div>
+                </template>
+              </el-popover>
+            </template>
+          </el-table-column>
+          <el-table-column label="价格" prop="checkPay">
+          </el-table-column>
+          <el-table-column label="指标" prop="tag">
+            <template #default="scope">
+                  <div class="name-wrapper">
+                    <el-tag size="medium">{{ scope.row.indexName }}</el-tag>
+                  </div>
+            </template>
+          </el-table-column>
 				</el-table>
 			</el-row>
 			  <el-form-item>
@@ -245,7 +235,7 @@
 	
 
 	<el-row > <!-- ==================================================================上表格 ==================================================================-->
-		<el-table :data="tjmeal" style="width: 100%;height:200px;" v-if="isShow!==null">
+		<el-table :data="tjmeal.slice((currentPage1-1)*psize1,currentPage1*psize1)" style="width: 100%;height:200px;" v-if="isShow!==null">
 			<el-table-column label="编号" width="180">
 				<template #default="scope">
 					<span style="margin-left: 10px">{{ scope.row.codeId }}</span>
@@ -279,8 +269,9 @@
 		    <el-table-column label="操作">
 		      <template #default="scope">
 				  <el-button
+              type="primary" plain
 				    size="mini"
-				    @click="tcxqEdit(scope.$index, scope.row)">套餐详情
+				    @click="tcxqEdit(scope.row)">套餐详情
 				    </el-button>
 		        <el-button
 		          size="mini"
@@ -295,16 +286,16 @@
 		    </el-table-column>
 		</el-table>
  <!--分页插件-->
-				<el-pagination
-								 					style="text-align: center;"
-								       @size-change="totalCut"
-								       @current-change="pageCut"
-								       :current-page="1"
-								       :page-sizes="[2,4,6,8,10]"
-								       :page-size="size"
-								       layout="total, sizes, prev, pager, next, jumper"
-								       :total="total">
-								     </el-pagination>
+    <el-pagination
+        style="text-align: center;"
+        @size-change="handleSizeChange1"
+        @current-change="handleCurrentChange1"
+        :current-page="1"
+        :page-sizes="[2,4,6,8,10]"
+        :page-size="psize1"
+        layout="total, sizes, prev, pager, next, jumper"
+        :total="tjmeal.length">
+    </el-pagination>
 	</el-row>
 	
 
@@ -398,11 +389,15 @@
   export default {
 	    data () {
 	      return {
+	        tjprol:[],//体检套餐所含项目集合
+          tjprox:[],//体检套餐详情集合
           tjmeal:[],//体检套餐集合
 	        tilt:'',//弹框标题
           seach: '',//搜索
           currentPage: 1, //初始页
           psize:2, //每页的数据
+          currentPage1: 1, //初始页
+          psize1:2, //套餐每页的数据
           tjpro:[],//检查项目集合
           xmzb:[],//指标集合
           jcdx:{//检查项目对象
@@ -423,7 +418,14 @@
               indexSignificance:''
             }
           },
-			        value: '',
+          //体检套餐对象
+          tcdx:{
+            codeId:'',
+            codeName:'',
+            codePay:'',
+            checkIndex:''
+          },
+      codeType:'',
 			isShow:false,
 			tjtc:false,
 			tcxq:false,
@@ -453,6 +455,17 @@
         this.currentPage = currentPage;
         console.log(this.currentPage) //点击第几页
       },
+
+      // 初始页currentPage、初始每页数据数pagesize和数据data
+      handleSizeChange1: function(size) {
+        this.psize1 = size;
+        console.log(this.psize1) //每页下拉显示数据
+      },
+      handleCurrentChange1: function(currentPage) {
+        this.currentPage1 = currentPage;
+        console.log(this.currentPage1) //点击第几页
+      },
+
       // 检查项目基础参数
         getData(){
           this.axios.get("http://localhost:8089/allDescTjpro",{params:{seach:this.seach}}).then((res)=>{
@@ -490,7 +503,16 @@
         tjtcEdit(index, row) {
           this.tjtc = true;
         },
-        tcxqEdit(index, row) {
+      //套餐详情弹框
+        tcxqEdit(row) {
+        this.tcdx.codeId=row.codeId;
+        this.tcdx.codeName=row.codeName;
+        this.tcdx.codePay=row.codePay;
+        this.tcdx.checkIndex=row.checkIndex
+          this.axios.get("http://localhost:8089/aloneProt",{params:{codeId:row.codeId}}).then((res)=>{
+            this.tjprox = res.data;
+            console.log(this.tjprox)
+          }).catch()
           this.tcxq = true;
         },
         submitForm(formName) {
@@ -555,9 +577,9 @@
           this.tjtc = false
           this.$refs[formName].resetFields();
         },
-        tcxqForm(formName) {
+      // 关闭体检详情
+        tcxqForm() {
           this.tcxq = false
-          this.$refs[formName].resetFields();
         }
       },created() {
         this.getData()
