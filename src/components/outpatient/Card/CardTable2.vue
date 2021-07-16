@@ -15,6 +15,7 @@
         <el-popover width="300" effect="light" trigger="hover" placement="top">
           <template #default>
             <p>姓名: {{ scope.row.mzSick.sickName }}</p>
+            <p>电话: {{ scope.row.mzSick.sickPhone}}</p>
             <p>住址: {{ scope.row.mzSick.sickSite }}</p>
             <p>建立日期: {{ scope.row.mzSick.sickTime }}</p>
           </template>
@@ -32,14 +33,7 @@
         <span >{{ scope.row.mcIdCard}}</span>
       </template>
     </el-table-column>
-
-    <el-table-column label="电话" width="180">
-      <template #default="scope">
-        <span >{{ scope.row.mzSick.sickPhone}}</span>
-      </template>
-    </el-table-column>
-
-    <el-table-column label="余额" width="180">
+    <el-table-column label="操作金额" width="180">
       <template #default="scope">
         <span >{{ scope.row.mcBalance}}</span>
       </template>
