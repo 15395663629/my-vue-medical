@@ -72,7 +72,7 @@ import  qs from 'qs'
 		//新增角色
 		rolelist:{
 			rid:0,
-			rName:'',
+			rname:'',
 			roId:0,
 		},
 		rosid:'',
@@ -132,7 +132,7 @@ import  qs from 'qs'
       },
 	  //获取角色父级编号
       dome(event){
-        this.roid=event
+        this.rosid=event
       },
       saveGrant(){
         var funs=this.$refs.tree.getCheckedKeys();
@@ -147,22 +147,23 @@ import  qs from 'qs'
       },
 	  //新增角色
 	  addRole(){
-		  this.rolelist.rName=this.rolename
+		  this.rolelist.rname=this.rolename
 		  this.rolelist.roId=this.rosid
+      console.log(this.rolelist)
 		  this.axios.post("add-role",this.rolelist).then((v)=>{
 		    console.log(v.data)
-			 // if(v.data==1){
-				//  this.clear()
-				//  this.getData()
-				//  this.dialogVisible1=false
-			 // }else{
-				//  console.log(v.data)
-			 // }
+			 if(v.data==1){
+				 this.clear()
+				 this.getData()
+				 this.dialogVisible1=false
+			 }else{
+				 console.log(v.data)
+			 }
 		  }).catch()
 	  },
 	  clear(){
 		  this.rolename=""
-		  this.roid=""
+		  this.rosid=""
 	  }
 		},
     created() {
