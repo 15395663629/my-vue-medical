@@ -1,21 +1,23 @@
 <template>
 	<el-dialog title="新增申请住院信息" v-model="isShowXZBR">
-		
+
 		<el-form :model="InhospitalApplyObj" ref="baseForm" :rules="baseFormRules" >
 			
 			<el-row>
 				<el-col :span="1"></el-col>
 				
-				<el-col :span="9">
-					<el-form-item prop="name" label="诊疗编号" label-width="70px" >
+				<el-col :span="6">
+					<el-form-item prop="name" label="诊疗编号" label-width="80px" >
 						<el-input v-model="InhospitalApplyObj.name"></el-input>
 					</el-form-item>
 				</el-col>
 				
-				<el-col :span="2"></el-col>
+        <el-col :span="4">
+          <el-button @click="isShowXZBR = true" type="primary" icon="el-icon-user-solid"></el-button>
+        </el-col>
 				
-				<el-col :span="9">
-					<el-form-item prop="zdxx" label="诊断信息" label-width="70px">
+				<el-col :span="8">
+					<el-form-item prop="zdxx" label="诊断信息" label-width="80px">
 						<el-input disabled v-model="InhospitalApplyObj.zdxx"></el-input>
 					</el-form-item>
 				</el-col>
@@ -26,7 +28,7 @@
 			<el-row>
 				<el-col :span="1"></el-col>
 				
-				<el-col :span="9">
+				<el-col :span="8">
 					<el-form-item prop="idCardNo" label="病人姓名" label-width="80px" >
 						<el-input v-model="InhospitalApplyObj.idCardNo" disabled></el-input>
 					</el-form-item>
@@ -34,8 +36,8 @@
 				
 				<el-col :span="2"></el-col>
 				
-				<el-col :span="9">
-					<el-form-item label="科室" label-width="70px">
+				<el-col :span="8">
+					<el-form-item label="科室" label-width="80px">
 						<el-input disabled model-value="当前登录科室"></el-input>
 					</el-form-item>
 				</el-col>
@@ -47,16 +49,16 @@
 			<el-row>
 				<el-col :span="1"></el-col>
 				
-				<el-col :span="9">
-					<el-form-item label="性别" label-width="70px" >
+				<el-col :span="8">
+					<el-form-item label="性别" label-width="80px" >
 						<el-input v-model="InhospitalApplyObj.sex" disabled></el-input>
 					</el-form-item>
 				</el-col>
 				
 				<el-col :span="2"></el-col>
 				
-				<el-col :span="9">
-					<el-form-item label="身份证" label-width="70px">
+				<el-col :span="8">
+					<el-form-item label="身份证" label-width="80px">
 						<el-input v-model="InhospitalApplyObj.birthday" disabled></el-input>
 					</el-form-item>
 				</el-col>
@@ -67,17 +69,17 @@
 			<el-row>
 				<el-col :span="1"></el-col>
 				
-				<el-col :span="9">
-					<el-form-item label="年龄" label-width="70px" >
+				<el-col :span="8">
+					<el-form-item label="年龄" label-width="80px" >
 						<el-input v-model="InhospitalApplyObj.age" disabled ></el-input>
 					</el-form-item>
 				</el-col>
 				
 				<el-col :span="2"></el-col>
 				
-				<el-col :span="9">
-					<el-form-item label="出生日期" label-width="70px">
-						<el-input v-model="InhospitalApplyObj.birthplace" disabled ></el-input>
+				<el-col :span="8">
+					<el-form-item label="出生日期" label-width="80px">
+						<el-input v-model="InhospitalApplyObj.birthplace" readonly="true" ></el-input>
 					</el-form-item>
 				</el-col>
 				
@@ -107,7 +109,9 @@
 			<el-button size="mini" @click="isShowXZBR = true" type="primary">新增</el-button>
 		</el-col>
 	</el-row>
-	
+
+
+
 	<el-row>
 		<el-col>
 			<!--=============================================住院申请病人表格===================================-->

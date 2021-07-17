@@ -76,27 +76,27 @@
   </el-pagination>
   <!-- ================================================密码修改================================================ -->
   <el-dialog :close-on-click-modal="false" :close-on-press-escape="false"
-             :before-close="resetForm" title="提示" v-model="isShowPawd" width="27%" center  >
-    <el-form :model="ruleForm" status-icon :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
+             :before-close="resetForm1" title="提示" v-model="isShowPawd" width="27%" center  >
+    <el-form :model="ruleForm1" status-icon :rules="rules1" ref="ruleForm1" label-width="100px" class="demo-ruleForm">
       <el-form-item label="密码" prop="pass">
-        <el-input size="small" type="password" v-model="ruleForm.pass" style="width: 200px" autocomplete="off"></el-input>
+        <el-input size="small" type="password" v-model="ruleForm1.pass" style="width: 200px" autocomplete="off"></el-input>
       </el-form-item>
       <el-form-item label="新密码" prop="pawd">
-        <el-input size="small" type="password" v-model="ruleForm.pawd" style="width: 200px" autocomplete="off"></el-input>
+        <el-input size="small" type="password" v-model="ruleForm1.pawd" style="width: 200px" autocomplete="off"></el-input>
       </el-form-item>
       <el-form-item label="确认密码" prop="checkPass">
-        <el-input size="small" type="password" v-model="ruleForm.checkPass" style="width: 200px" autocomplete="off"></el-input>
+        <el-input size="small" type="password" v-model="ruleForm1.checkPass" style="width: 200px" autocomplete="off"></el-input>
       </el-form-item>
       <el-form-item >
-          <el-button size="mini" type="primary" @click="submitFormPawd('ruleForm')">提交</el-button>
-          <el-button size="mini" @click="resetForm">取消</el-button>
+          <el-button size="mini" type="primary" @click="submitFormPawd('ruleForm1')">提交</el-button>
+          <el-button size="mini" @click="resetForm1">取消</el-button>
       </el-form-item>
     </el-form>
   </el-dialog>
   <!-- ================================================挂失补办================================================ -->
   <el-dialog :close-on-click-modal="false" :close-on-press-escape="false"
-               :before-close="resetForm" title="提示" v-model="isShowCard" width="32%" center  >
-    <el-form :model="ruleForm" status-icon :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
+               :before-close="resetForm2" title="提示" v-model="isShowCard" width="32%" center  >
+    <el-form :model="ruleForm2" status-icon :rules="rules2" ref="ruleForm2" label-width="100px" class="demo-ruleForm">
       <el-radio-group v-model="radio1" class=" my-radio-group"  size="mini">
         <el-radio-button label="挂失补办" @click="isShowTable(1)"></el-radio-button>
         <el-radio-button label="挂失退额" @click="isShowTable(2)"></el-radio-button>
@@ -104,16 +104,16 @@
 
       <div v-if="isShow1" style="margin-top: 30px"> <!--挂失补办-->
         <el-form-item label="密码" prop="pass">
-          <el-input size="small" type="password" v-model="ruleForm.pass" style="width: 200px" autocomplete="off"></el-input>
+          <el-input size="small" type="password" v-model="ruleForm2.pass" style="width: 200px" autocomplete="off"></el-input>
         </el-form-item>
         <el-form-item  prop="mcNumberCard" label="诊疗卡卡号:"  >
-          <el-input class="te" size="small"  v-model="ruleForm.mcNumberCard" style="width: 200px ;margin-right: 3px " disabled></el-input>
-          <el-button type="primary" @click="submitMedicalCard('mzSickArr')" icon="el-icon-paperclip" size="mini">生成诊疗卡</el-button>
+          <el-input class="te" size="small"  v-model="ruleForm2.mcNumberCard" style="width: 200px ;margin-right: 3px " disabled></el-input>
+          <el-button type="primary" @click="submitMedicalCard()" icon="el-icon-paperclip" size="mini">生成诊疗卡</el-button>
         </el-form-item>
         <el-form-item label-width="265px">
           <template #default="scope">
-            <el-button size="small" type="primary" @click="cardReset('ruleForm')">挂失补办</el-button>
-            <el-button size="small" @click="resetForm">取消</el-button>
+            <el-button size="small" type="primary" @click="cardReset('ruleForm2')">挂失补办</el-button>
+            <el-button size="small" @click="resetForm2">取消</el-button>
           </template>
         </el-form-item>
       </div>
@@ -131,12 +131,9 @@
           <span>{{cardArr.mcBalance}}</span>
         </el-form-item>
         <el-form-item label="密码：" prop="pass"  style="margin-top:20px; width:100% " >
-          <el-input size="small" type="password" v-model="ruleForm.pass" style="width: 150px;margin-right: 30px" autocomplete="off"></el-input>
-          <el-button size="mini" type="primary" @click="cardReturn('ruleForm')">退额打印</el-button>
-          <el-button size="mini" @click="resetForm">取消</el-button>
-        </el-form-item>
-        <el-form-item>
-
+          <el-input size="small" type="password" v-model="ruleForm2.pass" style="width: 150px;margin-right: 30px" autocomplete="off"></el-input>
+          <el-button size="mini" type="primary" @click="cardReturn('ruleForm2')">退额打印</el-button>
+          <el-button size="mini" @click="resetForm2">取消</el-button>
         </el-form-item>
       </div>
 
@@ -156,6 +153,19 @@ export default{
     },
   },
   data(){
+    var validatePassbkgs = (rule, value, callback) => { //补卡密码校验
+      if (value === '') {
+        callback(new Error('请输入密码'));
+      }else if(value !=this.cardArr.mcPawd){
+        console.log(1+"--"+value)
+        callback(new Error('您输入的密码错误'));
+      }else {
+        if (this.ruleForm2.checkPass !== '') {
+          this.$refs.ruleForm2.validateField('checkPass');
+        }
+        callback();
+      }
+    };
     var validatePass = (rule, value, callback) => { //密码校验
       if (value === '') {
         callback(new Error('请输入密码'));
@@ -163,8 +173,8 @@ export default{
         console.log(1+"--"+value)
         callback(new Error('您输入的密码错误'));
       }else {
-        if (this.ruleForm.checkPass !== '') {
-          this.$refs.ruleForm.validateField('checkPass');
+        if (this.ruleForm1.checkPass !== '') {
+          this.$refs.ruleForm1.validateField('checkPass');
         }
         callback();
       }
@@ -173,8 +183,8 @@ export default{
       if (value === '') {
         callback(new Error('请输入密码'));
       }else {
-        if (this.ruleForm.checkPass !== '') {
-          this.$refs.ruleForm.validateField('checkPass');
+        if (this.ruleForm1.checkPass !== '') {
+          this.$refs.ruleForm1.validateField('checkPass');
         }
         callback();
       }
@@ -182,7 +192,7 @@ export default{
     var validatePass2 = (rule, value, callback) => {//密码校验
       if (value === '') {
         callback(new Error('请再次输入密码'));
-      } else if (value !== this.ruleForm.pawd) {
+      } else if (value !== this.ruleForm1.pawd) {
         callback(new Error('两次输入密码不一致!'));
       } else {
         callback();
@@ -191,13 +201,16 @@ export default{
     return {
       radio1:"挂失补办",
       cardArr:'',//密码修改的集合
-      ruleForm: { //密码修改校验数组
+      ruleForm1: { //密码修改校验数组
         pass: '',
         pawd:'',
         checkPass: '',
+      },
+      ruleForm2: { //密码修改校验数组
+        pass: '',
         mcNumberCard:''
       },
-      rules: {//密码校验
+      rules1: {//密码校验
         pass: [
           { validator: validatePass, trigger: 'blur' }
         ],
@@ -207,6 +220,11 @@ export default{
         checkPass: [
           { validator: validatePass2, trigger: 'blur' }
         ],
+      },
+      rules2: {//密码校验
+        pass: [
+          { validator: validatePassbkgs, trigger: 'blur' }
+        ],
         mcNumberCard:[{required: true, message: "请生成诊疗卡", trigger: 'blur'}],
       },
       isShowCard:false,//修改密码弹窗
@@ -215,6 +233,7 @@ export default{
       wardPageSize:4,
       isShow1:true,//复选框切换
       isShow2:false,
+      token:[],
     }
   },
   methods:{
@@ -227,7 +246,22 @@ export default{
         this.isShow1=true;
         this.isShow2=false;
       }
-      this.resetForm2()
+      this.resetForms()
+    },
+    resetForms() {//切换的时候数值关闭
+      this.ruleForm2.pass='';
+      this.ruleForm2.mcNumberCard='';
+      this.$refs['ruleForm2'].resetFields();
+    },
+    resetForm2() {//刷新修改密码表单
+      console.log("22222s")
+      this.isShowCard=false;
+      this.cardArr={
+        mzSick:'',
+      };
+      this.ruleForm2.pass='';
+      this.ruleForm2.mcNumberCard='';
+      this.$refs['ruleForm2'].resetFields();
     },
     isCard(row){
       this.isShowCard=true;
@@ -239,17 +273,16 @@ export default{
     cardReset(formName){//挂失补办
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          this.axios.post('cardState',{mcNumber:this.cardArr.mcNumber,mcCard:this.ruleForm.mcNumberCard}).then((v)=>{
+          this.axios.post('cardState',{mcNumber:this.cardArr.mcNumber,mcCard:this.ruleForm2.mcNumberCard,userId:this.token.uid}).then((v)=>{
             console.log(v.data)
             if(v.data=='ok'){
-              console.log("11111111111")
               ElMessage.success({
-                message: '挂失补办成功~新的卡号为：'+this.ruleForm.mcNumberCard,
+                message: '挂失补办成功~新的卡号为：'+this.ruleForm2.mcNumberCard,
                 type: 'success'
               });
-              this.resetForm()//刷新主界面的校验提示
-              this.$parent.allDescSick();//刷新主界面的表格
-              console.log("22222222222")
+              this.resetForm2()//刷新主界面的校验提示
+              this.$parent.allAlterLose();//刷新主界面的表格
+              this.$parent.allDescSick();
             }
           }).catch(function(){
 
@@ -265,7 +298,7 @@ export default{
       this.$refs[formName].validate((valid) => {
         console.log("挂失退额")
         if (valid) {
-          this.axios.post('cardQuit',{mcNumber:this.cardArr.mcNumber}).then((v)=>{
+          this.axios.post('cardQuit',{mcNumber:this.cardArr.mcNumber,userId:this.token.uid}).then((v)=>{
             console.log(v.data)
             if(v.data=='ok'){
               console.log("挂失退额")
@@ -273,8 +306,9 @@ export default{
                 message: '卡号挂失成功~退出余额：'+this.cardArr.mcBalance+"元！请注意查收。",
                 type: 'error'
               });
-              this.resetForm()//刷新主界面的校验提示
+              this.resetForm2()//刷新主界面的校验提示
               this.$parent.allDescSick();//刷新主界面的表格
+              this.$parent.allAlterLose()
               console.log("挂失退额1111")
             }
           }).catch(function(){
@@ -286,10 +320,10 @@ export default{
         }
       });
     },
-    submitMedicalCard(formName) { // 生成诊疗卡卡号
+    submitMedicalCard() { // 生成诊疗卡卡号
       this.axios.post("inserMedicalCard").then((res) => {
         console.log(res.data)
-        this.ruleForm.mcNumberCard=res.data
+        this.ruleForm2.mcNumberCard=res.data
         ElMessage.success({
           message: '恭喜你，生成成功~',
           type: 'success'
@@ -302,17 +336,20 @@ export default{
       this.cardArr=row;
     },
     submitFormPawd(formName) { //修改密码
+      console.log("sssss")
       this.$refs[formName].validate((valid) => {
+        console.log("sssss1111")
         if (valid) {
-          this.axios.post('updatePawd',{mcNumber:this.cardArr.mcNumber,pawd1:this.ruleForm.checkPass}).then((v)=>{
+          this.axios.post('updatePawd',{mcNumber:this.cardArr.mcNumber,pawd1:this.ruleForm1.checkPass,userId:this.token.uid}).then((v)=>{
             console.log(v.data)
             if(v.data=='ok'){
               ElMessage.success({
                 message: '修改成功~',
                 type: 'success'
               });
-              this.resetForm()//刷新主界面的校验提示
+              this.resetForm1()//刷新主界面的校验提示
               this.$parent.allDescSick();//刷新主界面的表格
+              this.$parent.allAlterLose()
             }
           }).catch(function(){
 
@@ -324,26 +361,17 @@ export default{
       });
     },
 
-    resetForm() {//刷新修改密码表单
+    resetForm1() {//刷新修改密码表单
+      console.log("111111")
       this.isShowPawd=false;
-      this.isShowCard=false;
-      console.log("==============")
-      this.cardArr={
-        mzSick:'',
-      };
-      this.ruleForm.checkPass='';
-      this.ruleForm.pass='';
-      this.ruleForm.pawd='';
-      this.ruleForm.mcNumberCard='';
-      this.$refs['ruleForm'].resetFields();
-
-    },
-    resetForm2() {//刷新修改密码表单
-      this.ruleForm.checkPass='';
-      this.ruleForm.pass='';
-      this.ruleForm.pawd='';
-      this.ruleForm.mcNumberCard='';
-      this.$refs['ruleForm'].resetFields();
+        this.cardArr={
+          mzSick:'',
+        };
+      this.ruleForm1.checkPass='';
+      this.ruleForm1.pass='';
+      this.ruleForm1.pawd='';
+      this.ruleForm1.mcNumberCard='';
+      this.$refs['ruleForm1'].resetFields();
     },
     // 初始病房每页数据数wardpagesize和数据data-----------------------分页方法------------------------------
     wardHandleSizeChange: function(size) {
@@ -369,14 +397,17 @@ export default{
             type: 'warning'
           });
           this.$parent.allDescSick();//刷新主界面的表格
+
         }
       }).catch(function(){
 
       })
     },
-
-
+  },
+  created() {
+    this.token= this.$store.state.token == null ? null : this.$store.state.token.list;//将登录存入的值在取出来
   }
+
 
 }
 </script>

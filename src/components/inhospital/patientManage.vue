@@ -258,58 +258,133 @@
 	  		</el-row>
 	  </template>
 	</el-dialog>
-	
-	
-	<el-table
-		height="70%"
-		:data="patientArr"
-		tooltip-effect="dark"
-		style="width: 100%">
-		
-		<el-table-column align="center" label="病人列表">
-			
-			<el-table-column label="住院号"></el-table-column>
-			
-			<el-table-column label="病人名称"></el-table-column>
-			
-			<el-table-column label="年龄"></el-table-column>
-			
-			<el-table-column label="性别"></el-table-column>
-			
-			<el-table-column label="科室"></el-table-column>
-			
-			<el-table-column label="床位"></el-table-column>
-			
-			<el-table-column label="总金额"></el-table-column>
-			
-			<el-table-column label="余额"></el-table-column>
-			
-			<el-table-column label="操作" width="300px" >
-				<template #default="obj">
-						<el-row>
-							<el-col :span="5"><el-button @click="isCYShow = true " size="mini" type="success">申请出院</el-button></el-col>
-						
-							<el-col :offset="3" :span="5"><el-button @click="isZKShow = true" size="mini" type="danger">转科</el-button></el-col>
-							
-							<el-col :offset="1" :span="5"><el-button size="mini" @click="isSSShow = true" type="primary">手术申请</el-button></el-col>
-						</el-row>
-				</template>
-			</el-table-column>
-			
-		</el-table-column>
-		
-	</el-table>
-	
-	
+
+
+  <el-row>
+    <el-col>
+      <el-table
+          :data="patientBaseArr"
+          tooltip-effect="dark"
+          height="470px"
+          style="width: 100%"
+      >
+
+        <el-table-column align="center" label="住院病人信息">
+
+
+          <el-table-column
+              label="住院号"
+              prop="ptNo"
+          >
+          </el-table-column>
+          <el-table-column
+              label="姓名">
+
+            <template #default="scope" >
+              <el-popover width="300" effect="light"   trigger="hover" placement="top">
+                <template #default >
+                  <p>姓名: {{ scope.row.ptName }}</p>
+                  <p>年龄: {{ scope.row.ptAge }}</p>
+                  <p>性别: {{ scope.row.ptSex }}</p>
+                  <p>电话: {{ scope.row.ptIphone }}</p>
+                  <p>住址: {{ scope.row.ptHomeAdder }}</p>
+                </template>
+                <template #reference>
+                  <div class="name-wrapper">
+                    <el-tag size="medium">{{ scope.row.ptName }}</el-tag>
+                  </div>
+                </template>
+              </el-popover>
+            </template>
+
+          </el-table-column>
+
+          <el-table-column label="联系人">
+            <template #default="scope">
+
+              <el-badge style="position: absolute;top: 10px" :value="scope.row.listContacts[0].ctsName == null ? '暂无' :  scope.row.listContacts.length">
+                <el-popover
+                    placement="right"
+                    :width="330"
+                    trigger="click"
+                >
+                  <template #reference>
+                    <el-button size="mini">联系人</el-button>
+                  </template>
+                  <el-table size="mini" height="200px" :data="scope.row.listContacts">
+                    <el-table-column width="100" property="ctsName" label="姓名"></el-table-column>
+                    <el-table-column width="130" property="ctsIphone" label="联系电话"></el-table-column>
+                    <el-table-column width="100" property="ctsRelation" label="与患者关系"></el-table-column>
+                  </el-table>
+                </el-popover>
+              </el-badge>
+
+            </template>
+          </el-table-column>
+
+          <el-table-column
+              prop="ptInDate"
+              label="入院日期">
+          </el-table-column>
+          <el-table-column
+              prop="ksName"
+              label="科室">
+          </el-table-column>
+          <el-table-column
+              prop="staff.sname"
+              label="主治医生">
+          </el-table-column>
+          <el-table-column
+              label="床位名称">
+
+            <template #default="obj">
+              <el-tag v-if="obj.row.bed.bdName == null" type="danger">未分配</el-tag>
+
+              <el-tag v-if="obj.row.bed.bdName != null" type="success">{{obj.row.bed.bdName}}</el-tag>
+            </template>
+
+          </el-table-column>
+
+          <el-table-column label="操作" width="300px" >
+            <template #default="obj">
+              <el-row>
+                <el-col :span="5"><el-button @click="isCYShow = true " size="mini" type="success">申请出院</el-button></el-col>
+
+                <el-col :offset="3" :span="5"><el-button @click="isZKShow = true" size="mini" type="danger">转科</el-button></el-col>
+
+                <el-col :offset="1" :span="5"><el-button size="mini" @click="isSSShow = true" type="primary">手术申请</el-button></el-col>
+              </el-row>
+            </template>
+          </el-table-column>
+
+        </el-table-column>
+
+
+      </el-table>
+
+
+      <!--分页插件-->
+      <el-pagination
+          style="text-align: center;"
+          @size-change="patientHandleSizeChange"
+          @current-change="patientHandleCurrentChange"
+          :current-page="patientCurrent"
+          :page-sizes="[2,4,6,8,10]"
+          :page-size="patientSize"
+          layout="total, sizes, prev, pager, next, jumper"
+          :total="patientBaseArr.length">
+      </el-pagination>
+    </el-col>
+  </el-row>
+
+
 </template>
 
 <script>
 	export default{
 		data(){
 			return{
-				patientArr:[
-					{},
-					{}
+        patientBaseArr:[
 				],
 				tableData: [{
 					date: '开膛',
@@ -345,9 +420,18 @@
 			}
 		},
 		methods:{
-			
-		}
-	}
+      patientBaseInit() {
+        this.axios({url: 'patientAll'}).then((v) => {//查询所有病人登记信息
+          console.log(v.data)
+          this.patientBaseArr = v.data;
+        }).catch((date) => {
+        });
+      }
+		},
+    created() {
+		  this.patientBaseInit();
+    }
+  }
 </script>
 
 <style>
