@@ -51,12 +51,12 @@
             size="mini"
             type="primary"
             plain
-            @click="isShow1=!isShow1">充值</el-button>
+            @click="">诊卡充值</el-button>
         <el-button
             size="mini"
             type="danger"
             plain
-            @click="isShow2=!isShow2">退款</el-button>
+            @click="">诊卡退款</el-button>
       </template>
     </el-table-column>
   </el-table>
@@ -70,8 +70,8 @@
                   :total="upList.length">
   </el-pagination>
 
-
-  <el-dialog title="提示" v-model="isShow1" width="37%" center  ><!-- 诊疗卡充值窗口 -->
+  <!-- ================================================充值================================================ -->
+  <el-dialog title="提示" v-model="isUpTable1" width="37%" center  ><!-- 诊疗卡充值窗口 -->
     <el-row><!-- :rules="rules" -->
       <el-form  status-icon  ref="ruleForm" label-width="100px" class="demo-ruleForm">
         <el-col>
@@ -97,9 +97,8 @@
       </el-form>
     </el-row>
   </el-dialog>
-
-
-  <el-dialog title="提示" v-model="isShow2" width="37%" center  ><!-- 诊疗卡退款 -->
+  <!-- ================================================退取钱================================================ -->
+  <el-dialog title="提示" v-model="isUpTable2" width="37%" center  ><!-- 诊疗卡退款 -->
     <el-row><!-- :rules="rules" -->
       <el-form  status-icon  ref="ruleForm" label-width="100px" class="demo-ruleForm">
         <el-col>
@@ -142,6 +141,8 @@ export default{
   },
   data(){
     return {
+      isUpTable1:false,//充值
+      isUpTable2:false,//退钱
       wardCurrentPage:1,//分页属性
       wardPageSize:4,
       token:[],

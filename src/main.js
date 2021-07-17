@@ -26,6 +26,8 @@ import opcTable3 from "./components/outpatient/opc/OPCTable3.vue"
 import opcTable4 from "./components/outpatient/opc/OPCTable4.vue"
 import cardTable1 from "./components/outpatient/Card/CardTable1.vue"
 import cardTable2 from "./components/outpatient/Card/CardTable2.vue"
+import upTable1 from "./components/outpatient/Card/UpTable1.vue"
+import upTable2 from "./components/outpatient/Card/UpTable2.vue"
 
 
 //统一的跨域前缀--------------------------------
@@ -46,5 +48,7 @@ createApp(App)
 .component("opcTable4",opcTable4)
 .component("cardTable1",cardTable1)
 .component("cardTable2",cardTable2)
+.component("upTable1",upTable1)
+.component("upTable2",upTable2)
 .component('crumb',crumb)
 .mount('#app')

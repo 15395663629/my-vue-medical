@@ -199,7 +199,7 @@ export default{
       }
     };
     return {
-      radio1:"挂失补办",
+      radio1:"挂失补办",//补卡挂失弹窗后的再度分页
       cardArr:'',//密码修改的集合
       ruleForm1: { //密码修改校验数组
         pass: '',
@@ -227,7 +227,7 @@ export default{
         ],
         mcNumberCard:[{required: true, message: "请生成诊疗卡", trigger: 'blur'}],
       },
-      isShowCard:false,//修改密码弹窗
+      isShowCard:false,//修改card弹窗
       isShowPawd:false,//修改密码弹窗
       wardCurrentPage:1,//分页属性
       wardPageSize:4,

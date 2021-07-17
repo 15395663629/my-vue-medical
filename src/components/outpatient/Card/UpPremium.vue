@@ -1,62 +1,124 @@
 <template>
 	<el-row style="height: 40px">
-		<el-form  status-icon  ref="ruleForm" label-width="100px" class="demo-ruleForm">
+		<el-form  status-icon   label-width="100px" class="demo-ruleForm">
 			<el-col>
 				<el-form-item  label-width="0px">
-					<el-input size="small" style="width: 300px;" placeholder="请输入你要查询的卡信息,或持有人信息"></el-input>
-				</el-form-item>
-			</el-col>
-			<el-col>
-				<el-form-item label-width="0px">
-					<el-button  size="small" type="primary" icon="el-icon-search">查询</el-button>
-				</el-form-item>
+					<el-input size="small" v-model="like" style="width: 300px;" placeholder="请输入你要查询的卡信息,或持有人身份证"></el-input>
+          <el-button @click="likeTable(like)"  size="small" type="primary" icon="el-icon-search">查询</el-button>
+        </el-form-item>
 			</el-col>
 		</el-form>
 	</el-row>
 	<el-radio-group v-model="radio1" class=" my-radio-group"  size="mini">
-	  <el-radio-button label="诊卡充值退款" ></el-radio-button>
-	  <el-radio-button label="充值退款记录"></el-radio-button><!-- 当这里切换到退款记录时不能显示操作按钮 -->
+	  <el-radio-button label="诊卡充值退款" @click="isShowTable(1)" ></el-radio-button>
+	  <el-radio-button label="充值退款记录" @click="isShowTable(1)"></el-radio-button><!-- 当这里切换到退款记录时不能显示操作按钮 -->
 	</el-radio-group>
-
-	
+  <!-- 表格是得切换的 -->
+  <upTable1 :upList="upList1" v-if="isShow1"></upTable1>
+<!--  <upTable2 :upList="upList2" v-if="isShow2"></upTable2>-->
 </template>
 
 <script>
-	export default{
-		data(){
+  import {ElMessage} from "element-plus";
+  export default{
+    data(){
 			return{
-				isShow1: false,
+				isShow1: true,//复选框切换
 				isShow2: false,
+        isTable:1,
 				radio1:"诊卡充值退款",
-				rightTableData2: [{
-				          date: '2016-05-02',
-				          name: '王小虎',
-				          address: '上海市普陀区金沙江路 1518 弄',
-						  tag:"诊疗卡退款",
-				},
-				{
-				          date: '2016-05-02',
-				          name: '王小虎',
-				          address: '上海市普陀区金沙江路 1518 弄',
-						  tag:"诊疗卡充值",
-				},
-				{
-				          date: '2016-05-02',
-				          name: '王小虎',
-				          address: '上海市普陀区金沙江路 1518 弄',
-						  tag:"诊疗卡退款",
-				},
-				{
-				          date: '2016-05-02',
-				          name: '王小虎',
-				          address: '上海市普陀区金沙江路 1518 弄',
-						  tag:"诊疗卡充值",
-				}]
+        like:'',//模糊查询
+        upList1:[],
+        upList2:[],
 			}
 		},
 		methods:{
+      isShowTable(index){ //================复选框切换=======================================================
+        console.log(index)
+        if(index==2){
+          this.isShow1=false;
+          this.isShow2=true;
+          this.isTable=2;
+          console.log(this.isTable)
+        }else{
+          this.isShow1=true;
+          this.isShow2=false;
+          this.isTable=1;
+          console.log(this.isTable)
+        }
+      },
+      allDescSick(){//查询界面================table1插槽查询界面=======================================================
+        this.axios({
+          url:'allDescCard'
+        }).then((v)=>{
+          console.log("table1")
+          console.log(v.data)
+          this.upList1=v.data;
+        }).catch();
+      },
+      likeMcSikc(mzSickTest){//模糊查询病人信息
+        console.log("table1")
+        this.axios({
+          url:'allDescCard',
+          params:{mzSickTest:mzSickTest}
+        }).then((v)=>{
+          console.log(v.data)
+          this.upList1=v.data;
+          if(v.data.length <= 0){
+            ElMessage.warning({
+              message: '没有找到相应的操作内容~',
+              type: 'warning'
+            });
+          }
+        }).catch(function(){
 
-		}
+        })
+      },
+      likeTable(mzSickTest){// 分类选项 like查询
+        console.log("1111")
+        if(this.isTable==1){
+          this.likeMcSikc(mzSickTest);
+          console.log("111table")
+        }else if(this.isTable==2){
+          this.likeMzMcRecharge(mzSickTest);
+          console.log("222table")
+        }
+      },
+      //查询界面================table2插槽查询界面=======================================================
+      allMzMcRecharge(){
+        this.axios({
+          url:'allMzMcRecharge'
+        }).then((v)=>{
+          console.log("table2")
+          console.log(v.data)
+          this.upList1=v.data;
+        }).catch();
+      },
+      likeMzMcRecharge(mzSickTest){
+        this.axios({
+          url:'allMzMcRecharge',
+          params:{like:mzSickTest}
+        }).then((v)=>{
+          console.log("table2")
+          console.log(v.data)
+          this.upList2=v.data;
+          if(v.data.length <= 0){
+            ElMessage.warning({
+              message: '没有找到相应的挂失记录~',
+              type: 'warning'
+            });
+          }
+        }).catch(function(){
+
+        })
+      },
+
+		},
+    created() {
+      this.allDescSick();//刷新界面table1
+      this.allMzMcRecharge();//刷新界面table2
+      this.token = this.$store.state.token//获取用户当前系统操作人员
+    }
 	}
 </script>
 
