@@ -5,11 +5,12 @@
 		@selection-change="handleSelectionChange" class="dome">
 		<el-table-column type="selection" >
 		</el-table-column>
-
 		<el-table-column prop="rid" label="姓名">
 		</el-table-column>
-		<el-table-column prop="rname" label="地址" >
-		</el-table-column>
+      <el-table-column prop="rname" label="角色名" >
+      </el-table-column>
+    <el-table-column prop="roles.rname" label="父级角色" >
+    </el-table-column>
 		<el-table-column label="操作">
 			<template v-slot:default="r">
 				<el-button type="primary" @click="getRoleFuns(r.row)">角色授权</el-button>
@@ -27,7 +28,7 @@
 		请输入角色名称：<el-input type="text" style="width: 40%;" v-model="rolename"></el-input><br />
 		请选择父级名称：<el-select v-model="value" placeholder="请选择"
 			style="width: 20%;margin-top:20px;"  @change="dome($event)">
-			<el-option v-for="item in role" :key="item.rid" :label="item.rname" :value="item.rid">
+			<el-option v-for="item in dept" :key="item.rid" :label="item.rname" :value="item.rid">
 			</el-option>
 		</el-select><br />
 		<template #footer>
@@ -71,10 +72,10 @@ import  qs from 'qs'
 		//新增角色
 		rolelist:{
 			rid:0,
-			rname:'',
-			roid:''
+			rName:'',
+			roId:0,
 		},
-		roid:'',
+		rosid:'',
         roleId:'',
         size:4,
         page:1,
@@ -89,6 +90,7 @@ import  qs from 'qs'
           label: 'fctionAssembly',
           children: 'list'
         },
+        dage:[] 
 			}
 		},
 
@@ -96,10 +98,9 @@ import  qs from 'qs'
       getData(){
         this.axios.post("http://localhost:8089/role-list").then((v)=>{
           this.role=v.data
-          // console.log(this.role)
         }).catch()
         //查询部门
-        this.axios.get("http://localhost:8089/bm-list").then((v)=>{
+        this.axios.get("http://localhost:8089/roles-list").then((v)=>{
           this.dept=v.data
 
         }).catch()
@@ -146,16 +147,17 @@ import  qs from 'qs'
       },
 	  //新增角色
 	  addRole(){
-		  this.rolelist.rname=this.rolename
-		  this.rolelist.roid=this.roid
+		  this.rolelist.rName=this.rolename
+		  this.rolelist.roId=this.rosid
 		  this.axios.post("add-role",this.rolelist).then((v)=>{
-			 if(v.data==1){
-				 this.clear()
-				 this.getData()
-				 this.dialogVisible1=false
-			 }else{
-				 console.log(v.data)
-			 }
+		    console.log(v.data)
+			 // if(v.data==1){
+				//  this.clear()
+				//  this.getData()
+				//  this.dialogVisible1=false
+			 // }else{
+				//  console.log(v.data)
+			 // }
 		  }).catch()
 	  },
 	  clear(){
