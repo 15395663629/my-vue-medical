@@ -114,7 +114,7 @@
     </el-row>
   </el-dialog>
   <!-- ================================================退取钱================================================ -->
-  <el-dialog  :close-on-click-modal="false" :before-close="resetForm2" :close-on-press-escape="false" title="提示" v-model="isUpTable2" width="43%" center  ><!-- 诊疗卡退款 -->
+  <el-dialog  :close-on-click-modal="false" :before-close="resetForm2"  :close-on-press-escape="false" title="提示" v-model="isUpTable2" width="43%" center  ><!-- 诊疗卡退款 -->
     <el-row><!-- :rules="rules" -->
       <el-form :model="ruleForm2"  status-icon :rules="rules2"  ref="ruleForm2" label-width="100px" class="demo-ruleForm">
         <el-col>
@@ -160,28 +160,54 @@ export default{
     },
   },
   data(){
-    var validate1 = (rule, value, callback) => { //密码校验
+    var validate1 = (rule, value, callback) => { //table1 校验
       if (value === '') {
         callback(new Error('请输入密码'));
       }else if(value !=this.cardArr.mcPawd){
         console.log(1+"--"+value)
         callback(new Error('您输入的密码错误'));
       }else {
-        if (this.ruleForm1.checkPass !== '') {
-          this.$refs.ruleForm1.validateField('checkPass');
+        if (this.ruleForm1.pass !== '') {
+          this.$refs.ruleForm1.validateField('pass');
         }
         callback();
       }
     };
-    var validate2 = (rule, value, callback) => { //密码校验
+    var validate2 = (rule, value, callback) => { //table2 校验
       if (value === '') {
         callback(new Error('请输入金额'));
       }else if(value <= 0){
         console.log(1+"--"+value)
         callback(new Error('你输入的金额有误~'));
       }else {
-        if (this.ruleForm1.checkPass !== '') {
-          this.$refs.ruleForm1.validateField('checkPass');
+        if (this.ruleForm1.upPrice !== '') {
+          this.$refs.ruleForm1.validateField('upPrice');
+        }
+        callback();
+      }
+    };
+    var validate3 = (rule, value, callback) => { //table2 校验
+      if (value === '') {
+        callback(new Error('请输入密码'));
+      }else if(value !=this.cardArr.mcPawd){
+        console.log(1+"--"+value)
+        callback(new Error('您输入的密码错误'));
+      }else {
+        if (this.ruleForm2.pass !== '') {
+          this.$refs.ruleForm2.validateField('pass');
+        }
+        callback();
+      }
+    };
+    var validate4 = (rule, value, callback) => { //table2 校验
+      if (value === '') {
+        callback(new Error('请输入金额'));
+      }else if(value <= 0 && value > 1){
+        console.log(1+"--"+value)
+        callback(new Error('请输入正确的金额~'));
+      }else {
+        if (this.ruleForm2.upPrice !== '') {
+          this.$refs.ruleForm2.validateField('upPrice');
         }
         callback();
       }
@@ -194,12 +220,12 @@ export default{
       token:[],
       cardArr:'',//共用的数组
       ruleForm1:{
-        pass:"",
+        pass:'',
         payment:'',
         upPrice:'',
       },
       ruleForm2:{
-        pass:"",
+        pass:'',
         upPrice:'',
       },
       rules1: {//密码校验
@@ -215,10 +241,10 @@ export default{
       },
       rules2: {//密码校验
         pass: [
-          { validator: validate1, trigger: 'blur' }
+          { validator: validate3, trigger: 'blur' }
         ],
         upPrice: [
-          { validator: validate2, trigger: 'blur' }
+          { validator: validate4, trigger: 'blur' }
         ],
       },
     }

@@ -61,7 +61,7 @@
                      width="140" :filters="[{ text: '诊卡充值', value: '诊卡充值' },{ text: '诊卡退款', value: '诊卡退款' }]"
                      :filter-method="filterTag"  filter-placement="bottom-end">
       <template #default="scope">
-        <el-tag  size="mini"  :type="scope.row.alCause === '诊卡充值' ? 'primary' : 'danger'" disable-transitions>
+        <el-tag  size="mini"  :type="scope.row.mcrcState === '诊卡充值' ? 'primary' : 'danger'" disable-transitions>
           {{scope.row.mcrcState}}
         </el-tag>
       </template>
@@ -94,7 +94,7 @@ export default{
   },
   methods:{
     filterTag(value, row) {/* 复诊初诊标签方法 */
-      return row.alCause === value;
+      return row.mcrcState === value;
     },
     // 初始病房每页数据数wardpagesize2和数据data
     wardHandleSizeChange2: function(size) {

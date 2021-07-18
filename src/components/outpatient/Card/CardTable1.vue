@@ -160,8 +160,8 @@ export default{
         console.log(1+"--"+value)
         callback(new Error('您输入的密码错误'));
       }else {
-        if (this.ruleForm2.checkPass !== '') {
-          this.$refs.ruleForm2.validateField('checkPass');
+        if (this.ruleForm2.pass !== '') {
+          this.$refs.ruleForm2.validateField('pass');
         }
         callback();
       }
@@ -183,8 +183,8 @@ export default{
       if (value === '') {
         callback(new Error('请输入密码'));
       }else {
-        if (this.ruleForm1.checkPass !== '') {
-          this.$refs.ruleForm1.validateField('checkPass');
+        if (this.ruleForm1.pawd !== '') {
+          this.$refs.ruleForm1.validateField('pawd');
         }
         callback();
       }
