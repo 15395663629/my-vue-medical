@@ -4,10 +4,10 @@
 			<el-col >
 				<el-select v-model="value" style="width: 140px;" placeholder="请选择科室">
 					<el-option
-					  v-for="item in options"
-					  :key="item.value"
-					  :label="item.label"
-					  :value="item.value">
+					  v-for="item in options1"
+					  :key="item.ksId"
+					  :label="item.ksName"
+					  :value="item.ksId">
 					</el-option>
 				</el-select>
 				<el-select v-model="value" style="width: 155px;" disabled placeholder="请选择看诊内容">
@@ -38,7 +38,6 @@
 			  <div class="block" style="margin-top: 8px;">
 			    <el-date-picker
 			      v-model="date1"
-				  
 			      type="date"
 			      placeholder="选择日期"
 			      format="YYYY 年 MM 月 DD 日">
@@ -423,6 +422,7 @@ import { ElMessage } from 'element-plus'
 				input:"",
 				radio1:"星期一",
 				radio2:"查看全部",
+        options1:[],
 				options: [{
 				  value: '选项1',
 				  label: '黄金糕'
@@ -469,7 +469,7 @@ import { ElMessage } from 'element-plus'
 
 
 
-        //加入后台的部分----------------------------------------
+        //加入后台的部分------------------------------------------------------------------------------------------------------------------------
         mzSickList:[],
         mzSickArr:{
           sickNumber:0,
@@ -562,8 +562,14 @@ import { ElMessage } from 'element-plus'
         this.isShow3 = false
 				this.$refs[formName].resetFields();
 			},
-
-
+      allAepartmentKs(){//科室列表
+        this.axios({
+          url:'allAepartmentKs'
+        }).then((v)=>{
+          console.log(v.data)
+          this.options1=v.data;
+        }).catch();
+      },
 
 
 
@@ -590,9 +596,13 @@ import { ElMessage } from 'element-plus'
 				return defaultDate;
 				this.$set(this.info, "stockDate", defaultDate);
 			},
+
 		},
-		
-	};
+    created() {
+      this.allAepartmentKs();
+    },
+
+  };
 </script>
 
 <style scoped>
