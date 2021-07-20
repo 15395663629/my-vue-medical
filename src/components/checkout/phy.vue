@@ -1,6 +1,166 @@
 <template>
-	
-	<el-dialog title="体检详情" v-model="tjjl" width="50%" center  ><!-- 弹窗      -=-=-=-=-=-=-==-=-=-=-=--=-=-=-=-=-=-体检表格 -->
+  <el-tabs v-model="activeName" type="card" @tab-click="handleClick">
+    <el-tab-pane label="检查结果" name="first">
+      <!--=============================================体检人员表格===================================-->
+      <el-row>
+        <el-col>
+          <el-table
+              ref="multipleTable"
+              :data="tjry"
+              tooltip-effect="dark"
+              height="530"
+              style="width: 100%"
+              @selection-change="handleSelectionChange">
+            <el-table-column
+                label="编号"
+                prop="empId"
+            >
+            </el-table-column>
+            <el-table-column
+                prop="empName"
+                label="姓名">
+            </el-table-column>
+            <el-table-column
+                prop="empDate"
+                label="性别">
+            </el-table-column>
+            <el-table-column
+                prop="empSalary"
+                label="健康等级">
+            </el-table-column>
+            <el-table-column
+                prop="empSalary"
+                label="身份证">
+            </el-table-column>
+            <el-table-column
+                prop="empSalary"
+                label="体检项目">
+            </el-table-column>
+            <el-table-column
+                prop="empSalary"
+                label="操作" width="200px">
+              <template #default="scope">
+                <el-button type="primary" plain size="mini"  @click="tjjlEdit(scope.$index, scope.row)">体检详情
+                </el-button>
+                <el-button size="mini"  type="primary">打印</el-button>
+              </template>
+
+            </el-table-column>
+
+            <el-table-column width="320px"
+                             align="right">
+              <template  #header>
+                <el-row>
+                  <el-col :span="10">
+
+                    <el-input
+                        v-model="fromSearch"
+                        prefix-icon="el-icon-search"
+                        size="small"
+                        placeholder="体检人员名称"/>
+
+                  </el-col>
+                </el-row>
+              </template>
+            </el-table-column>
+
+          </el-table>
+          <!--分页插件-->
+          <el-pagination
+
+              @size-change="totalCut"
+              @current-change="pageCut"
+              :current-page="1"
+              :page-sizes="[2,4,6,8,10]"
+              :page-size="size"
+              layout="total, sizes, prev, pager, next, jumper"
+              :total="total">
+          </el-pagination>
+        </el-col>
+      </el-row>
+    </el-tab-pane>
+    <el-tab-pane label="结果填写" name="second">
+
+      <!--=============================================体检人员表格===================================-->
+      <el-row>
+        <el-col>
+          <el-table
+              ref="multipleTable"
+              :data="tjry"
+              tooltip-effect="dark"
+              height="530"
+              style="width: 100%"
+              @selection-change="handleSelectionChange">
+            <el-table-column
+                label="编号"
+                prop="empId"
+            >
+            </el-table-column>
+            <el-table-column
+                prop="empName"
+                label="姓名">
+            </el-table-column>
+            <el-table-column
+                prop="empDate"
+                label="性别">
+            </el-table-column>
+            <el-table-column
+                prop="empSalary"
+                label="健康等级">
+            </el-table-column>
+            <el-table-column
+                prop="empSalary"
+                label="身份证">
+            </el-table-column>
+            <el-table-column
+                prop="empSalary"
+                label="体检项目">
+            </el-table-column>
+            <el-table-column
+                prop="empSalary"
+                label="操作" width="200px">
+              <template #default="scope">
+                <el-button type="primary" size="mini"  @click="tjjlEdit(scope.$index, scope.row)">结果填写
+                </el-button>
+                <el-button size="mini"  type="primary">打印</el-button>
+              </template>
+
+            </el-table-column>
+
+            <el-table-column width="320px"
+                             align="right">
+              <template  #header>
+                <el-row>
+                  <el-col :span="10">
+
+                    <el-input
+                        v-model="fromSearch"
+                        prefix-icon="el-icon-search"
+                        size="small"
+                        placeholder="体检人员名称"/>
+
+                  </el-col>
+                </el-row>
+              </template>
+            </el-table-column>
+
+          </el-table>
+          <!--分页插件-->
+          <el-pagination
+              @size-change="totalCut"
+              @current-change="pageCut"
+              :current-page="1"
+              :page-sizes="[2,4,6,8,10]"
+              :page-size="size"
+              layout="total, sizes, prev, pager, next, jumper"
+              :total="total">
+          </el-pagination>
+        </el-col>
+      </el-row>
+    </el-tab-pane>
+  </el-tabs>
+
+	<el-dialog title="体检详情" v-model="tjjl" width="50%" center  ><!-- 弹窗      -=-=-=-=-=-=-==-=-=-=-=--=-=-=-=-=-=-体检人员表格 -->
 		<el-form  status-icon :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
 			<el-row>
 								<el-col :span="6">
@@ -75,112 +235,41 @@
 	</el-dialog>
 	
 	
-	<!--=============================================体检人员表格===================================-->
-	<el-row>
-		<el-col>
-			<el-table
-			    ref="multipleTable"
-			    :data="tjry"
-			    tooltip-effect="dark"
-				height="700"
-			    style="width: 100%"
-			    @selection-change="handleSelectionChange">
-			    <el-table-column
-			      label="编号"
-				  prop="empId"
-			      >
-			    </el-table-column>
-			    <el-table-column
-			      prop="empName"
-			      label="姓名">
-			    </el-table-column>
-			    <el-table-column
-			      prop="empDate"
-			      label="性别">
-			    </el-table-column>
-				<el-table-column
-				  prop="empSalary"
-				  label="健康等级">
-				</el-table-column>
-				<el-table-column
-				  prop="empSalary"
-				  label="身份证">
-				</el-table-column>
-				<el-table-column
-				  prop="empSalary"
-				  label="体检项目">
-				</el-table-column>
-				<el-table-column
-				  prop="empSalary"
-				  label="操作" width="200px">
-				  <template #default="scope">
-				  	<el-button size="mini"  @click="tjjlEdit(scope.$index, scope.row)">手术详情
-				  					  </el-button>
-					<el-button size="mini"  type="primary">打印</el-button>
-				  </template>
-				 
-				</el-table-column>
-				
-				<el-table-column width="320px"
-				      align="right">
-					   <template  #header>
-					  <el-row>
-						  <el-col :span="10">
-							 
-							    <el-input
-							      v-model="fromSearch"
-							  							prefix-icon="el-icon-search"
-							      size="small"
-							      placeholder="体检人员名称"/>
-							  						  
-						  </el-col>
-					  </el-row>
-				      </template>
-				    </el-table-column>
-				
-			  </el-table>
-			  <!--分页插件-->
-			  <el-pagination
-			  				 					style="text-align: center;"
-			  				       @size-change="totalCut"
-			  				       @current-change="pageCut"
-			  				       :current-page="1"
-			  				       :page-sizes="[2,4,6,8,10]"
-			  				       :page-size="size"
-			  				       layout="total, sizes, prev, pager, next, jumper"
-			  				       :total="total">
-			  				     </el-pagination>
-		</el-col>
-	</el-row>
+
 </template>
 
 <script>
 	export default {
 	    data () {
 	      return {
-			sfmy:"",
-			tjry:[{
-				ssId: '11',
-				ssName: '20202',
-				sscard: ' 15183456789',
-				ssbed: '复诊',
-				sstime: '2121-2-2',
-				ssdemo:'开颅',
-			},
-			{
-				ssId: '12',
-				ssName: '20202',
-				sscard: ' 15183456789',
-				ssbed: '复诊',
-				sstime: '2121-2-1',
-				ssdemo:'开膛'
-			}],
-			value: '',
-			tjjl:false,
-	        radio1: '查看全部',    
-			}
-		},
+	        //卡片modle
+          activeName:'first',
+          sfmy:"",
+          tjry:[{
+            ssId: '11',
+            ssName: '20202',
+            sscard: ' 15183456789',
+            ssbed: '复诊',
+            sstime: '2121-2-2',
+            ssdemo:'开颅',
+          },
+          {
+            ssId: '12',
+            ssName: '20202',
+            sscard: ' 15183456789',
+            ssbed: '复诊',
+            sstime: '2121-2-1',
+            ssdemo:'开膛'
+          }],
+          value: '',
+          tjjl:false,
+              radio1: '查看全部',
+          }
+        },
 		methods: {
+      handleClick(tab, event) {
+        console.log(tab, event);
+      },
 			tjjlEdit(index, row) {
 				this.tjjl = true;
 			},
