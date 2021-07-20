@@ -4,7 +4,6 @@
 			</el-tab-pane>
       <el-tab-pane label="修改挂失" name="/MedicalCard"><!-- 修改挂失 -->
       </el-tab-pane>
-
 	  </el-tabs>
 	  <div>
 			<router-view  ></router-view>
