@@ -34,80 +34,17 @@
 	</el-row>
 	<el-row :gutter="10"> <!-- 左边第一个表格 -->
 		<el-col :span="12">
-      <regDialog1 :isShow="isShow1" :newDate="date1" :list="leftTable" :getNowTime="getNowTime"></regDialog1>
+      <regDialog1  :newDate="date1" :list="leftTable" :getNowTime="getNowTime"></regDialog1>
 		</el-col>
-		
-		
+
+
 		<el-col :span="12"> <!-- 右边表格 -->
-			<el-radio-group v-model="radio2" class=" my-radio-group"  size="mini" style="margin-top: 20px;">
-			  <el-radio-button label="查看全部"></el-radio-button>
-			  <el-radio-button label="当天挂号"></el-radio-button>
-			  <el-radio-button label="预约挂号"></el-radio-button>
-			</el-radio-group>
-			
-			<el-table
-          size="mini"
-          height="490"
-			   :data="tableData2"
-			   style="width: 100%">
-			   <el-table-column
-			     label="日期"
-			     width="180">
-			     <template #default="scope">
-			       <i class="el-icon-time"></i>
-			       <span style="margin-left: 10px">{{ scope.row.date }}</span>
-			     </template>
-			   </el-table-column>
-			   <el-table-column
-			     label="姓名"
-			     width="180">
-			     <template #default="scope">
-			       <el-popover effect="light" trigger="hover" placement="top">
-			         <template #default>
-			           <p>姓名: {{ scope.row.name }}</p>
-			           <p>住址: {{ scope.row.address }}</p>
-			         </template>
-			         <template #reference>
-			           <div class="name-wrapper">
-			             <el-tag size="medium">{{ scope.row.name }}</el-tag>
-			           </div>
-			         </template>
-			       </el-popover>
-			     </template>
-			   </el-table-column>
-			   <el-table-column prop="tag" label="标签" 
-			   width="100" :filters="[{ text: '复诊', value: '复诊' }, { text: '初诊', value: '初诊' }]"
-			   :filter-method="filterTag"  filter-placement="bottom-end">
-			   	<template #default="scope" >
-			   		<el-tag :type="scope.row.tag === '复诊' ? 'primary' : 'success'" disable-transitions>
-			   		{{scope.row.tag}}
-			   		</el-tag>
-			   	</template>
-			   </el-table-column>
-			   <el-table-column label="操作">
-			     <template #default="scope">
-			       <el-button
-			         size="mini"
-					 type="success"
-			         @click="handleEdit(scope.$index, scope.row)">打印小票</el-button>
-			     </template>
-			   </el-table-column>
-			 </el-table>
-			 <el-pagination
-			  		style="text-align: center; margin-top: 10px;"
-			        @size-change="totalCut"
-			        @current-change="pageCut"
-			        :current-page="1"
-			        :page-sizes="[2,4,6,8,10]"
-			        :page-size="size"
-			        layout="total, sizes, prev, pager, next, jumper"
-			        :total="total">
-			 </el-pagination>
+      <regDialog2 :list="rightTable"></regDialog2>
 		</el-col>
 	</el-row>
 
 
-  <regDialog2 :isShow="isShow2"></regDialog2>
+
 <!--  <regDialog3 :list="" :isShow="isShow3"></regDialog3>-->
   <el-dialog title="提示"  :close-on-click-modal="false" :before-close="resetFormSick"  :close-on-press-escape="false"  v-model="isShow3" width="45%" center  ><!-- 病人新增 -->
     <el-row><!-- :rules="rules" -->
@@ -162,7 +99,7 @@
         <el-col>
           <el-form-item label-width="455px">
             <el-button type="primary" @click="submitMzSick('mzSickArr')">提交</el-button>
-            <el-button @click="resetForm('mzSickArr')">取消</el-button>
+            <el-button @click="resetFormSick">取消</el-button>
           </el-form-item>
         </el-col>
       </el-form>
@@ -177,7 +114,8 @@ import { ElMessage } from 'element-plus'
 	export default {
 		data() {
 			return {
-				date1: this.getNowTime(),/* 日期选择器 */
+        // 挂号***************************************************************************************************************************
+        date1: this.getNowTime(),/* 日期选择器 */
 				isShow3:false,//弹窗 - 病人新增
 				input:"",//查询搜索框
 				radio2:"查看全部",
@@ -196,10 +134,9 @@ import { ElMessage } from 'element-plus'
             sType:'教授',
             sPrice:'29',
           },],
-        sOverKsName:'',
-        //加入后台的部分------------------------------------------------------------------------------------------------------------------------
-        mzSickList:[], //病人新增************************************************************************
-        mzSickArr:{
+        sOverKsName:'',//选择科室value
+        //病人新增***************************************************************************************************************************
+        mzSickArr:{//病人新增的对象
           sickNumber:0,
           sickIdCard:"",
           sickName:"",
@@ -226,37 +163,20 @@ import { ElMessage } from 'element-plus'
           mcNumberCard:[{required: true, message: "请生成诊疗卡", trigger: 'blur'}],
 
         },
-        // 挂号***************************************************************************************************************************
         options1:[],//科室选择
-
-
+        //挂号记录查询***************************************************************************************************************************
+        rightTable:[],
 			}
 		},
 		 methods: {
-       filterTag(value, row) {/* 复诊初诊标签方法 */
-         return row.tag === value;
-       },
-       handleEdit(index, row) {/* 表格的选择方法 */
-         console.log(index, row);
-       },
-       handleDelete(index, row) {
-         console.log(index, row);
-       },
-       submitForm(formName) {
-         this.$refs[formName].validate((valid) => {
-           if (valid) {
-             alert('submit!');
-           } else {
-             console.log('error submit!!');
-             return false;
-           }
-         });
-       },
-       resetForm(formName) {//取消
-         this.isShow1 = false
-         this.isShow2 = false
-         this.isShow3 = false
-         this.$refs[formName].resetFields();
+       //挂号记录查询***************************************************************************************************************************
+       allRightTable(){
+         this.axios({
+           url:'selectReg'
+         }).then((v)=>{
+           console.log(v.data)
+           this.options1=v.data;
+         }).catch();
        },
        // 挂号***************************************************************************************************************************
        allAepartmentKs(){//科室列表
@@ -274,8 +194,7 @@ import { ElMessage } from 'element-plus'
              this.axios.post("addMzSick", this.mzSickArr).then((res) => {
                console.log(res.data)
                if (res.data == 'ok') {
-                 this.$refs[formName].resetFields();//注意这里只能刷新加了prop的
-                 this.resetMzSick()
+                 this.resetFormSick()
                  console.log("ssssss")
                }
              }).catch(() => {
@@ -283,19 +202,9 @@ import { ElMessage } from 'element-plus'
            }
          });
        },
-       resetMzSick(){
-         this.isShow3=false;
-         this.mzSickArr.sickNumber=0;
-         this.mzSickArr.sickIdCard="";
-         this.mzSickArr.sickName="";
-         this.mzSickArr.sickPhone="";
-         this.mzSickArr.sickAge='';
-         this.mzSickArr.sickSex="";
-         this.mzSickArr.sickSite="";
-         this.mzSickArr.mcNumberCard='';
-       },
        resetFormSick(){ //X关闭按钮
          this.isShow3=false;
+         this.mzSickArr.sickSite="";
          this.$refs['mzSickArr'].resetFields();
        },
        submitMedicalCard(formName) { // 生成诊疗卡卡号
@@ -336,7 +245,6 @@ import { ElMessage } from 'element-plus'
          let myDate = new Date();
          let month = myDate.getMonth() + 1;
          let day = myDate.getDate();
-
 
          if(idCard.length===18){
            age = myDate.getFullYear() - idCard.substring(6, 10) - 1;

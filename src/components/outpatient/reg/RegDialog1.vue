@@ -18,7 +18,7 @@
   <el-table
       size="mini"
       height="490"
-      :data="list"
+      :data="list.slice((wardCurrentPage-1)*wardPageSize,wardCurrentPage*wardPageSize)"
       style="width: 100%">
     <el-table-column
         label="日期"
@@ -78,15 +78,13 @@
     </el-table-column>
   </el-table>
   <!--分页插件-->
-  <el-pagination
-      style="text-align: center; margin-top: 10px;"
-      @size-change="totalCut"
-      @current-change="pageCut"
-      :current-page="1"
-      :page-sizes="[2,4,6,8,10]"
-      :page-size="size"
-      layout="total, sizes, prev, pager, next, jumper"
-      :total="total">
+  <el-pagination  @size-change="wardHandleSizeChange" @current-change="wardHandleCurrentChange"
+                  style="text-align: center; margin-top: 10px"
+                  :current-page="wardCurrentPage"
+                  :page-sizes="[2,4,6,8]"
+                  :page-size="wardPageSize"
+                  layout="total, sizes, prev, pager, next, jumper"
+                  :total="list.length">
   </el-pagination>
 
 
@@ -276,6 +274,8 @@ import { ElMessage } from 'element-plus'
         }
       };
       return{
+        wardCurrentPage:1,//分页属性
+        wardPageSize:4,
         token:[],//操作人员
         isShow1:false,//弹窗 - 挂号
         isShow2:false,//弹窗 - 预约挂号
@@ -425,6 +425,16 @@ import { ElMessage } from 'element-plus'
         }).catch(function(){
 
         })
+      },
+      // 初始病房每页数据数wardpagesize和数据data-----------------------分页方法------------------------------
+      wardHandleSizeChange: function(size) {
+        this.wardPageSize = size;
+        console.log(this.pagesize) //每页下拉显示数据
+      },
+      //初始页病房wardcurrentPage
+      wardHandleCurrentChange: function(currentPage) {
+        this.wardCurrentPage = currentPage;
+        console.log(this.currentPage) //点击第几页allDescSick
       },
     },
     created() {
