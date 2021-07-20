@@ -146,7 +146,81 @@
       </el-form>
     </el-row>
   </el-dialog>
-
+  <el-dialog title="当天挂号"  v-model="isShow1" width="44%" center  ><!-- 第一个弹窗普通挂号 -->
+    <el-row><!-- :rules="rules" -->
+      <el-form :rules="rules"  status-icon :model="regArr" ref="regArr" label-width="100px" size="small" class="demo-ruleForm">
+        <el-col>
+          <el-form-item label="挂号日期：">
+            <el-date-picker
+                style="width: 350px; font-size: 15px;"
+                v-model="leftTables.sDate"
+                type="date"
+                disabled
+                format="YYYY 年 MM 月 DD 日">
+            </el-date-picker>
+          </el-form-item>
+        </el-col>
+        <el-col >
+          <el-form-item label="卡号：" prop="mcCard">
+            <el-input class="te"  v-model="regArr.mcCard"></el-input>
+          </el-form-item>
+        </el-col>
+        <el-col>
+          <el-form-item label="就诊：" prop="rtClass">
+            <el-select class="te"   v-model="regArr.rtClass" placeholder="请选择" style="width: 188px;">
+              <el-option
+                  v-for="item in optionsRge2"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value">
+              </el-option>
+            </el-select>
+          </el-form-item>
+        </el-col>
+        <el-col>
+          <el-form-item label="姓名：" >
+            <el-input class="te"  v-model="regArr.sickName" disabled></el-input>
+          </el-form-item>
+        </el-col>
+        <!--				<el-col >-->
+        <!--					<el-form-item label="问诊诊室" >-->
+        <!--						<el-input></el-input>-->
+        <!--					</el-form-item>-->
+        <!--				</el-col>-->
+        <el-col>
+          <el-form-item label="科室：" >
+            <el-input class="te"  v-model="leftTables.sOverKsName" disabled></el-input>
+          </el-form-item>
+        </el-col>
+        <el-col >
+          <el-form-item label="诊断医生：" >
+            <el-input class="te"  v-model="leftTables.sDoctor"  disabled></el-input>
+          </el-form-item>
+        </el-col>
+        <el-col>
+          <el-form-item label="医生职位：" >
+            <el-input class="te"  v-model="leftTables.sType" disabled></el-input>
+          </el-form-item>
+        </el-col>
+        <el-col >
+          <el-form-item label="挂号类型：" >
+            <el-input class="te"  v-model="leftTables.sScience" disabled></el-input>
+          </el-form-item>
+        </el-col>
+        <el-col >
+          <el-form-item label="挂号费：" >
+            <el-input class="te" v-model="leftTables.sPrice" disabled></el-input>
+          </el-form-item>
+        </el-col>
+        <el-col>
+          <el-form-item label-width="455px">
+            <el-button type="primary" @click="submitFormReg('regArr')">提交</el-button>
+            <el-button @click="resetForm">取消</el-button>
+          </el-form-item>
+        </el-col>
+      </el-form>
+    </el-row>
+  </el-dialog>
 </template>
 
 <script>
@@ -292,7 +366,6 @@ export default{
       this.ruleForm1.pass='';
       this.$refs['ruleForm1'].resetFields();
     },
-
     cardRefund(row){//退钱---------------------------------------------------------------
       this.isUpTable2=true;
       this.cardArr=row;

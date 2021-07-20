@@ -58,21 +58,21 @@ const routes = [
 						},]
 				},
 				{
-					name:'Card',
-					path:'/Card',
+					name:'card',
+					path:'/card',
 					component:()=>import("/src/components/outpatient/Card.vue"),
 					meta:{title:'医疗卡管理', noCache: true },
 					children:[//门诊问诊三级路由------------------
 						{
 								name:'MedicalCard',
 								path:'/MedicalCard',
-								component:()=>import("/src/components/outpatient/Card/MedicalCard.vue"),
+								component:()=>import("/src/components/outpatient/card/MedicalCard.vue"),
 								meta:{title:'修改挂失', noCache: true },
 						},
 						{
 								name:'UpPremium',
 								path:'/UpPremium',
-								component:()=>import("/src/components/outpatient/Card/UpPremium.vue"),
+								component:()=>import("/src/components/outpatient/card/UpPremium.vue"),
 								meta:{title:'充值退费', noCache: true },
 						},]
 				},

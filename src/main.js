@@ -19,15 +19,19 @@ import 'element-plus/lib/theme-chalk/index.css'
 import locale from "element-plus/lib/locale/lang/zh-cn"
 
 //引入opc的对应表格
-import newDateOPC from "./components/outpatient/newDate.vue"
-import opcTable1 from "./components/outpatient/opc/OPCTable1.vue"
+import newDateOPC from "./components/outpatient/newDate.vue"// 时间
+import opcTable1 from "./components/outpatient/opc/OPCTable1.vue"// 问诊
 import opcTable2 from "./components/outpatient/opc/OPCTable2.vue"
 import opcTable3 from "./components/outpatient/opc/OPCTable3.vue"
 import opcTable4 from "./components/outpatient/opc/OPCTable4.vue"
-import cardTable1 from "./components/outpatient/Card/CardTable1.vue"
-import cardTable2 from "./components/outpatient/Card/CardTable2.vue"
-import upTable1 from "./components/outpatient/Card/UpTable1.vue"
-import upTable2 from "./components/outpatient/Card/UpTable2.vue"
+import cardTable1 from "./components/outpatient/card/CardTable1.vue"// 诊疗卡
+import cardTable2 from "./components/outpatient/card/CardTable2.vue"
+import upTable1 from "./components/outpatient/card/UpTable1.vue"
+import upTable2 from "./components/outpatient/card/UpTable2.vue"
+import regDialog1 from "./components/outpatient/reg/RegDialog1.vue"// 挂号
+import regDialog2 from "./components/outpatient/reg/RegDialog2.vue"
+import regDialog3 from "./components/outpatient/reg/RegDialog3.vue"
+
 
 
 //统一的跨域前缀--------------------------------
@@ -51,4 +55,8 @@ createApp(App)
 .component("upTable1",upTable1)
 .component("upTable2",upTable2)
 .component('crumb',crumb)
+.component("regDialog1",regDialog1)
+.component("regDialog2",regDialog2)
+.component("regDialog3",regDialog3)
+
 .mount('#app')
