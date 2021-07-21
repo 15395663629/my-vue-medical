@@ -1,135 +1,146 @@
 <template>
-  <el-dialog  title="预约挂号" v-model="isShow" width="43%" center  ><!-- 弹窗预约挂号新增 -->
-    <el-row><!-- :rules="rules" -->
-      <el-form size="small" status-icon :model="regArr1" ref="regArr1" label-width="100px" class="demo-ruleForm">
-        <el-col>
-          <el-form-item label="挂号日期" >
-            <el-date-picker
-                style="width: 252px;"
-                v-model="date1"
-                type="date"
-                disabled
-                format="YYYY 年 MM 月 DD 日">
-            </el-date-picker>
-          </el-form-item>
-        </el-col>
-        <el-col >
-          <el-form-item label="卡号" >
-            <el-input v-model="regArr1.mcCard"></el-input>
-          </el-form-item>
-        </el-col>
-        <el-col>
-          <el-form-item label="姓名" >
-            <el-input v-model="regArr1.sickName"></el-input>
-          </el-form-item>
-        </el-col>
-        <el-col>
-          <el-form-item label="挂号类型" >
-            <el-select v-model="regArr1.rtType" placeholder="请选择" style="width: 188px;">
-              <el-option
-                  v-for="item in optionsRge1"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value">
-              </el-option>
-            </el-select>
-          </el-form-item>
-        </el-col>
-        <el-col>
-          <el-form-item label="就诊" >
-            <el-select  v-model="regArr1.rtClass" placeholder="请选择" style="width: 188px;">
-              <el-option
-                  v-for="item in optionsRge2"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value">
-              </el-option>
-            </el-select>
-          </el-form-item>
-        </el-col>
+  <el-radio-group v-model="radio2" class=" my-radio-group"  size="mini" style="margin-top: 20px;">
+    <el-radio-button label="查看全部"></el-radio-button>
+    <el-radio-button label="当天挂号"></el-radio-button>
+    <el-radio-button label="预约挂号"></el-radio-button>
+  </el-radio-group>
 
-        <!--				<el-col >-->
-        <!--					<el-form-item label="问诊诊室" >-->
-        <!--						<el-input></el-input>-->
-        <!--					</el-form-item>-->
-        <!--				</el-col>-->
+  <el-table
+      size="mini"
+      height="490"
+      :data="list.slice((wardCurrentPage2-1)*wardPageSize2,wardCurrentPage2*wardPageSize2)"
+      style="width: 100%">
+    <el-table-column
+        label="挂号时间"
+        width="180">
+      <template #default="scope">
+        <i class="el-icon-time"></i>
+        <span style="margin-left: 10px">{{ scope.row.rtTime }}</span>
+      </template>
+    </el-table-column>
 
-        <el-col>
-          <el-form-item label="科室" >
-            <el-input v-model="regArr1.rtOverKsName" disabled></el-input>
-          </el-form-item>
-        </el-col>
-        <el-col >
-          <el-form-item label="诊断医生" >
-            <el-input v-model="regArr1.rtDoctor"  disabled></el-input>
-          </el-form-item>
-        </el-col>
-        <el-col >
-          <el-form-item label="学术" >
-            <el-input v-model="regArr1.rtScience" disabled></el-input>
-          </el-form-item>
-        </el-col>
-        <el-col >
-          <el-form-item label="挂号费" >
-            <el-input class="te" v-model="regArr1.rtPrice" disabled></el-input>
-          </el-form-item>
-        </el-col>
-        <el-col>
-          <el-form-item label-width="455px">
-            <el-button type="primary" @click="submitFormReg('regArr')">提交</el-button>
-            <el-button @click="resetForm('regArr')">取消</el-button>
-          </el-form-item>
-        </el-col>
-      </el-form>
-    </el-row>
-  </el-dialog>
+    <el-table-column label="挂号卡号" width="150">
+      <template #default="scope">
+        <el-popover effect="light" trigger="hover" placement="top">
+          <template #default>
+            <p>姓名: {{ scope.row.cardObject.mzSick.sickName}}</p>
+            <p>身份证: {{ scope.row.cardObject.mcIdCard }}</p>
+            <p>电话: {{ scope.row.cardObject.mzSick.sickPhone}}</p>
+            <p>住址: {{ scope.row.cardObject.mzSick.sickSite}}</p>
+          </template>
+          <template #reference>
+            <div class="name-wrapper">
+              <el-tag size="medium">{{ scope.row.cardObject.mcCard}}</el-tag>
+            </div>
+          </template>
+        </el-popover>
+      </template>
+    </el-table-column>
+
+    <el-table-column
+        label="姓名"
+        width="110">
+      <template #default="scope">
+        <el-popover effect="light" trigger="hover" placement="top">
+          <template #default>
+            <p>医生: {{ scope.row.rtDoctor }}</p>
+            <p>职位: {{ scope.row.rtType }}</p>
+            <p>所属科室: {{ scope.row.rtOverKsName }}</p>
+          </template>
+          <template #reference>
+            <div class="name-wrapper">
+              <el-tag size="medium">{{ scope.row.rtDoctor}}</el-tag>
+            </div>
+          </template>
+        </el-popover>
+      </template>
+    </el-table-column>
+
+    <el-table-column
+        label="挂号类型"
+        width="100">
+      <template #default="scope">
+        <el-popover effect="light" trigger="hover" placement="top">
+          <template #default>
+            <p>挂号费: {{ scope.row.rtPrice }}</p>
+            <p>挂号科室: {{ scope.row.rtType }}</p>
+            <p>初复诊: {{ scope.row.rtClass }}</p>
+            <p>操作人: {{ scope.row.staffObject.sname }}</p>
+          </template>
+          <template #reference>
+            <div class="name-wrapper">
+              <el-tag size="medium">{{ scope.row.rtScience}}</el-tag>
+            </div>
+          </template>
+        </el-popover>
+      </template>
+    </el-table-column>
+
+    <el-table-column prop="rtState" label="标签"
+                     width="100" :filters="[{ text: '当天挂号', value: '当天挂号' }, { text: '预约挂号', value: '预约挂号' }]"
+                     :filter-method="filterTag"  filter-placement="bottom-end">
+      <template #default="scope" >
+        <el-tag :type="scope.row.rtState === '当天挂号' ? 'success' : 'warning'" disable-transitions>
+          {{scope.row.rtState}}
+        </el-tag>
+      </template>
+    </el-table-column>
+
+<!--    <el-table-column label="操作">-->
+<!--      <template #default="scope">-->
+<!--        <el-button-->
+<!--            size="mini"-->
+<!--            type="success"-->
+<!--            @click="handleEdit(scope.row)">打印小票</el-button>-->
+<!--      </template>-->
+<!--    </el-table-column>-->
+  </el-table>
+  <!--分页插件-->
+  <el-pagination  @size-change="wardHandleSizeChange2" @current-change="wardHandleCurrentChange2"
+                  style="text-align: center; margin-top: 10px"
+                  :current-page="wardCurrentPage2"
+                  :page-sizes="[2,4,6,8]"
+                  :page-size="wardPageSize2"
+                  layout="total, sizes, prev, pager, next, jumper"
+                  :total="list.length">
+  </el-pagination>
 </template>
 
 <script>
 import { ElMessage } from 'element-plus'
   export default {
     props:{
-      isShow:{
-        type:Boolean,
-        required: true,
+      list:{
+        type:Array,
+        required:true,
       },
-      // list:{
-      //   type:Array,
-      //   required:true,
-      // }
     },
     data(){
       return{
-        optionsRge1:[{//选项列表1
-            value: '1',
-            label: '普通门诊'
-          },{
-            value: '2',
-            label: '专家门诊'
-          },
-          ],
-        optionsRge2: [{
-          value: '选项1',
-          label: '初诊'
-        }, {
-          value: '选项2',
-          label: '复诊'
-        }],
-        regArr1:{
-          mcCard:'',
-          sickName:'',
-          rtType:'',
-          rtClass:'',
-          rtOverKsName:'',
-          rtDoctor:'',
-          rtScience:'',
-          rtPrice:'',
-        }
+        radio2:"查看全部",
+        wardCurrentPage2:1,
+        wardPageSize2:4,
       }
     },
     methods:{
+      filterTag(value, row) {/* 复诊初诊标签方法 */
+        return row.rtState === value;
+      },
+      // 初始病房每页数据数wardpagesize2和数据data
+      wardHandleSizeChange2: function(size) {
+        this.wardPageSize2 = size;
+        console.log(this.pagesize) //每页下拉显示数据
+      },
+      //初始页病房wardcurrentPage2
+      wardHandleCurrentChange2: function(currentPage) {
+        this.wardCurrentPage2 = currentPage;
+        console.log(this.currentPage) //点击第几页allDescSick
+      },
+    },
+    created() {
 
     }
+
   }
 </script>
 
