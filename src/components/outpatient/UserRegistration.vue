@@ -2,22 +2,22 @@
 	<el-row :gutter="10" > <!-- 选择挂号================== -->
 		<el-form  status-icon  ref="ruleForm" label-width="100px" class="demo-ruleForm">
 			<el-col >
-				<el-select v-model="value" style="width: 140px;" placeholder="请选择科室">
+				<el-select v-model="sOverKsName" style="width: 140px;" placeholder="请选择科室">
 					<el-option
-					  v-for="item in options"
-					  :key="item.value"
-					  :label="item.label"
-					  :value="item.value">
+					  v-for="item in options1"
+					  :key="item.ksId"
+					  :label="item.ksName"
+					  :value="item.ksId">
 					</el-option>
 				</el-select>
-				<el-select v-model="value" style="width: 155px;" disabled placeholder="请选择看诊内容">
-					<el-option
-					  v-for="item in options"
-					  :key="item.value"
-					  :label="item.label"
-					  :value="item.value">
-					</el-option>
-				</el-select>
+<!--				<el-select v-model="value2" style="width: 155px;" disabled placeholder="请选择看诊内容">-->
+<!--					<el-option-->
+<!--					  v-for="item in options"-->
+<!--					  :key="item.value"-->
+<!--					  :label="item.label"-->
+<!--					  :value="item.value">-->
+<!--					</el-option>-->
+<!--				</el-select>-->
 			</el-col>
 			<el-col >
 				<el-input style="width:250px" class="my-el-input" v-model="input" placeholder="请输入你要查询的病理或医生信息" ></el-input>
@@ -25,7 +25,6 @@
 			</el-col>
 			<el-col>
 				<el-button  type="primary" @click="isShow3 = true" icon="el-icon-circle-plus-outline" class="my-radio-group" >添加病人信息</el-button>
-				<el-button @click="isShow2 = true" type="primary" icon="el-icon-circle-plus-outline" class="my-radio-group" >预约挂号</el-button>
 			</el-col>
 			<el-col >
 				<el-input style="width:220px" class="my-el-input" v-model="input" placeholder="请输入你要查询的挂号信息" ></el-input>
@@ -35,73 +34,7 @@
 	</el-row>
 	<el-row :gutter="10"> <!-- 左边第一个表格 -->
 		<el-col :span="12">
-			  <div class="block" style="margin-top: 8px;">
-			    <el-date-picker
-			      v-model="date1"
-				  
-			      type="date"
-			      placeholder="选择日期"
-			      format="YYYY 年 MM 月 DD 日">
-			    </el-date-picker>
-			  </div>
-			
-			 <el-table
-				height="490"
-			    :data="tableData1"
-			    style="width: 100%">
-			    <el-table-column
-			      label="日期"
-			      width="180">
-			      <template #default="scope">
-			        <i class="el-icon-time"></i>
-			        <span style="margin-left: 10px">{{ scope.row.date }}</span>
-			      </template>
-			    </el-table-column>
-			    <el-table-column
-			      label="姓名"
-			      width="180">
-			      <template #default="scope">
-			        <el-popover effect="light" trigger="hover" placement="top">
-			          <template #default>
-			            <p>姓名: {{ scope.row.name }}</p>
-			            <p>住址: {{ scope.row.address }}</p>
-			          </template>
-			          <template #reference>
-			            <div class="name-wrapper">
-			              <el-tag size="medium">{{ scope.row.name }}</el-tag>
-			            </div>
-			          </template>
-			        </el-popover>
-			      </template>
-			    </el-table-column>
-				<el-table-column
-				  label="挂号费"
-				  width="180">
-				  <template #default="scope">
-				    <span style="margin-left: 10px">12</span>
-				  </template>
-				</el-table-column>
-				
-			    <el-table-column label="操作">
-			      <template #default="scope">
-			        <el-button
-			          size="mini"
-					  type="success"
-			          @click="isShow = true">选择</el-button>
-			      </template>
-			    </el-table-column>
-			  </el-table>
-			  <!--分页插件-->
-			  <el-pagination
-			   		style="text-align: center; margin-top: 10px;"
-			         @size-change="totalCut"
-			         @current-change="pageCut"
-			         :current-page="1"
-			         :page-sizes="[2,4,6,8,10]"
-			         :page-size="size"
-			         layout="total, sizes, prev, pager, next, jumper"
-			         :total="total">
-			  </el-pagination>
+      <regDialog1 :isShow="isShow1" :newDate="date1" :list="leftTable" :getNowTime="getNowTime"></regDialog1>
 		</el-col>
 		
 		
@@ -113,7 +46,8 @@
 			</el-radio-group>
 			
 			<el-table
-				height="490"
+          size="mini"
+          height="490"
 			   :data="tableData2"
 			   style="width: 100%">
 			   <el-table-column
@@ -171,306 +105,93 @@
 			 </el-pagination>
 		</el-col>
 	</el-row>
-	
-	<el-dialog title="提示" v-model="isShow" width="55%" center  ><!-- 第一个弹窗普通挂号 -->
-		<el-row><!-- :rules="rules" -->
-			<el-form  status-icon  ref="ruleForm" label-width="100px" class="demo-ruleForm">
-				<el-col >
-					<el-form-item label="卡号" >
-						<el-input ></el-input>
-					</el-form-item>
-				</el-col>
-				<el-col>
-					<el-form-item label="姓名" >
-						<el-input></el-input>
-					</el-form-item>
-				</el-col>
-				<el-col>
-					<el-form-item label="挂号类型" >
-						  <el-select v-model="value2" placeholder="请选择" style="width: 202px;">
-						    <el-option
-						      v-for="item in options2"
-						      :key="item.value2"
-						      :label="item.label"
-						      :value="item.value">
-						    </el-option>
-						  </el-select>
-					</el-form-item>
-				</el-col>
-				<el-col>
-					<el-form-item label="就诊" >
-						  <el-select v-model="value2" placeholder="请选择" style="width: 202px;">
-						    <el-option
-						      v-for="item in options2"
-						      :key="item.value2"
-						      :label="item.label"
-						      :value="item.value">
-						    </el-option>
-						  </el-select>
-					</el-form-item>
-				</el-col>
-				
-				<el-col >
-					<el-form-item label="问诊诊室" >
-						<el-input></el-input>
-					</el-form-item>
-				</el-col>
-				<el-col>
-					<el-form-item label="科室" >
-						  <el-input ></el-input>
-					</el-form-item>
-				</el-col>
-				
-				<el-col >
-					<el-form-item label="挂号费" >
-						<el-input ></el-input>
-					</el-form-item>
-				</el-col>
-				<el-col >
-					<el-form-item label="诊断医生" >
-						<el-input ></el-input>
-					</el-form-item>
-				</el-col>
-				<el-col >
-					<el-form-item label="学术" >
-						<el-input ></el-input>
-					</el-form-item>
-				</el-col>
-			</el-form>
-		</el-row>
-		<el-row>
-			<el-form  status-icon ref="ruleForm" label-width="430px" style="margin-top: 30px;" class="demo-ruleForm">
-				<el-col>
-					<el-form-item>
-						<el-button type="primary" @click="submitForm('ruleForm')">提交</el-button>
-						<el-button @click="resetForm('ruleForm')">取消</el-button>
-					</el-form-item>
-				</el-col>
-			</el-form>
-		</el-row>
-	</el-dialog>
-	
-	<el-dialog title="提示" v-model="isShow2" width="55%" center  ><!-- 弹窗预约挂号新增 -->
-		<el-row><!-- :rules="rules" -->
-			<el-form  status-icon  ref="ruleForm" label-width="100px" class="demo-ruleForm">
-				<el-col>
-					<el-form-item label="日期" >
-						  <el-date-picker
-							style="width: 202px;"
-							v-model="date1"
-							type="date"
-							placeholder="选择日期"
-							format="YYYY 年 MM 月 DD 日">
-						  </el-date-picker>
-					</el-form-item>
-				</el-col>
-				<el-col >
-					<el-form-item label="卡号" >
-						<el-input ></el-input>
-					</el-form-item>
-				</el-col>
-				<el-col>
-					<el-form-item label="姓名" >
-						<el-input></el-input>
-					</el-form-item>
-				</el-col>
-				<el-col>
-					<el-form-item label="就诊" >
-						  <el-select v-model="value2" placeholder="请选择"  style="width: 202px;">
-						    <el-option
-						      v-for="item in options2"
-						      :key="item.value2"
-						      :label="item.label"
-						      :value="item.value">
-						    </el-option>
-						  </el-select>
-					</el-form-item>
-				</el-col>
-				
-				<el-col >
-					<el-form-item label="性别" >
-						<el-select v-model="value2" placeholder="请选择" style="width: 202px;" >
-						  <el-option
-						    v-for="item in options2"
-						    :key="item.value2"
-						    :label="item.label"
-						    :value="item.value">
-						  </el-option>
-						</el-select>
-					</el-form-item>
-				</el-col>
-				<el-col>
-					<el-form-item label="身份证" >
-						<el-input></el-input>
-					</el-form-item>
-				</el-col>
-				<el-col>
-					<el-form-item label="科室">
-						  <el-select v-model="value2" placeholder="请选择"  style="width: 202px;" >
-						    <el-option
-						      v-for="item in options2"
-						      :key="item.value2"
-						      :label="item.label"
-						      :value="item.value">
-						    </el-option>
-						  </el-select>
-					</el-form-item>
-				</el-col>
-				
-				<el-col >
-					<el-form-item label="挂号费" >
-						<el-input ></el-input>
-					</el-form-item>
-				</el-col>
-				<el-col >
-					<el-form-item label="诊断医生" >
-						<el-select v-model="value2" placeholder="请选择"  style="width: 202px;">
-						  <el-option
-						    v-for="item in options2"
-						    :key="item.value2"
-						    :label="item.label"
-						    :value="item.value">
-						  </el-option>
-						</el-select>
-					</el-form-item>
-				</el-col>
-			</el-form>
-		</el-row>
-		<el-row>
-			<el-form  status-icon ref="ruleForm" label-width="430px" style="margin-top: 30px;" class="demo-ruleForm">
-				<el-col>
-					<el-form-item>
-						<el-button type="primary" @click="submitForm('ruleForm')">提交</el-button>
-						<el-button @click="resetForm('ruleForm')">取消</el-button>
-					</el-form-item>
-				</el-col>
-			</el-form>
-		</el-row>
-	</el-dialog>
-	
-	<el-dialog title="提示" v-model="isShow3" width="55%" center  ><!-- 病人新增 -->
-		<el-row><!-- :rules="rules" -->
-			<el-form ref="mzSickArr" :model="mzSickArr" :rules="rules" label-width="100px" class="demo-ruleForm">
-				<el-col>
-					<el-form-item prop="sickName" label="姓名" >
-						<el-input v-model="mzSickArr.sickName"></el-input>
-					</el-form-item>
-				</el-col>
-				<el-col>
-					<el-form-item prop="sickPhone" label="电话" >
-						<el-input v-model="mzSickArr.sickPhone"></el-input>
-					</el-form-item>
-				</el-col>
-				<el-col>
-					<el-form-item prop="sickAge"  label="年龄" >
-						<el-input  v-model="mzSickArr.sickAge"></el-input>
-					</el-form-item>
-				</el-col>
-				<el-col >
-					<el-form-item prop="sickSex" label="性别" >
-						<el-select v-model="mzSickArr.sickSex" placeholder="请选择" style="width: 202px;" >
-						  <el-option
-						    v-for="item in optionsSex"
-						    :key="item.value"
-						    :label="item.label"
-						    :value="item.label">
-						  </el-option>
-						</el-select>
-					</el-form-item>
-				</el-col>
-				<el-col>
-					<el-form-item prop="sickIdCard" label="身份证" >
-						<el-input v-model="mzSickArr.sickIdCard"></el-input>
-					</el-form-item>
-				</el-col>
-				<el-col>
-					<el-form-item  label="家庭地址" >
-						<el-input v-model="mzSickArr.sickSite"></el-input>
-					</el-form-item>
-				</el-col>
-				<el-col>
-					<el-form-item  prop="mcNumberCard" label="诊疗卡卡号:"  >
-						<el-input class="te" v-model="mzSickArr.mcNumberCard"  disabled></el-input>
-					</el-form-item>
-				</el-col>
-				<el-col>
-					<el-form-item  label-width="10px">
-						<el-button type="primary" @click="submitMedicalCard('mzSickArr')" icon="el-icon-paperclip" size="small">生成诊疗卡</el-button>
-					</el-form-item>
-				</el-col>
+
+
+  <regDialog2 :isShow="isShow2"></regDialog2>
+<!--  <regDialog3 :list="" :isShow="isShow3"></regDialog3>-->
+  <el-dialog title="提示"  :close-on-click-modal="false" :before-close="resetFormSick"  :close-on-press-escape="false"  v-model="isShow3" width="45%" center  ><!-- 病人新增 -->
+    <el-row><!-- :rules="rules" -->
+      <el-form  size="small" ref="mzSickArr" :model="mzSickArr" :rules="rules" label-width="100px" class="demo-ruleForm">
         <el-col>
-          <el-form-item label-width="287px">
+          <el-form-item prop="sickName" label="姓名" >
+            <el-input v-model="mzSickArr.sickName"></el-input>
+          </el-form-item>
+        </el-col>
+        <el-col>
+          <el-form-item prop="sickPhone" label="电话" >
+            <el-input v-model="mzSickArr.sickPhone"></el-input>
+          </el-form-item>
+        </el-col>
+        <el-col>
+          <el-form-item prop="sickIdCard" label="身份证" >
+            <el-input @change="getInfo(mzSickArr.sickIdCard)" v-model="mzSickArr.sickIdCard"></el-input>
+          </el-form-item>
+        </el-col>
+        <el-col>
+          <el-form-item prop="sickAge"  label="年龄" >
+            <el-input  v-model="mzSickArr.sickAge"></el-input>
+          </el-form-item>
+        </el-col>
+        <el-col >
+          <el-form-item prop="sickSex" label="性别" >
+            <el-select v-model="mzSickArr.sickSex" placeholder="请选择"  style="width: 188px">
+              <el-option
+                  v-for="item in optionsSex"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.label">
+              </el-option>
+            </el-select>
+          </el-form-item>
+        </el-col>
+        <el-col>
+          <el-form-item  label="家庭地址" >
+            <el-input v-model="mzSickArr.sickSite"></el-input>
+          </el-form-item>
+        </el-col>
+        <el-col>
+          <el-form-item  prop="mcNumberCard" label="诊疗卡卡号:"  >
+            <el-input class="te" v-model="mzSickArr.mcNumberCard"  disabled></el-input>
+          </el-form-item>
+        </el-col>
+        <el-col>
+          <el-form-item  label-width="10px">
+            <el-button type="primary" @click="submitMedicalCard('mzSickArr')" icon="el-icon-paperclip" size="small">生成诊疗卡</el-button>
+          </el-form-item>
+        </el-col>
+        <el-col>
+          <el-form-item label-width="455px">
             <el-button type="primary" @click="submitMzSick('mzSickArr')">提交</el-button>
             <el-button @click="resetForm('mzSickArr')">取消</el-button>
           </el-form-item>
         </el-col>
       </el-form>
-		</el-row>
-	</el-dialog>
-	
+    </el-row>
+  </el-dialog>
+
 </template>
 
 <script>
-import { defineComponent } from 'vue'
+import { defineComponent } from 'vue' //时间加年月
 import { ElMessage } from 'element-plus'
 	export default {
 		data() {
 			return {
 				date1: this.getNowTime(),/* 日期选择器 */
-				isShow:false,
-				isShow2:false,
-				isShow3:false,
-				input:"",
-				radio1:"星期一",
+				isShow3:false,//弹窗 - 病人新增
+				input:"",//查询搜索框
 				radio2:"查看全部",
-				options: [{
-				  value: '选项1',
-				  label: '黄金糕'
-				}, 
-				{
-				  value: '选项2',
-				  label: '双皮奶'
-				}],
-				value: '',
-				
-				 tableData1: [{  /* 表格部分1 */
-				  date: '2016-05-02',
-				  name: '王小虎',
-				  address: '上海市普陀区金沙江路 1518 弄',
-				  tag:"复诊"
-				}, {
-				  date: '2016-05-04',
-				  name: '王小虎',
-				  address: '上海市普陀区金沙江路 1517 弄',
-				  tag:"初诊"
-				}],
-				tableData2: [{  /* 表格部分2 */
-					date: '2016-05-04',
-					name: '王小虎',
-					address: '上海市普陀区金沙江路 1517 弄',
-					tag:"复诊"
-				}, {
-					date: '2016-05-04',
-					name: '王小虎',
-					address: '上海市普陀区金沙江路 1517 弄',
-					tag:"初诊"
-				}],
-				options2: [{
-				          value: '选项1',
-				          label: '初诊'
-				        }, {
-				          value: '选项2',
-				          label: '复诊'
-				        }, {
-				          value: '选项3',
-				          label: '急诊'
-				        }],
-				value2: '',
-
-
-
-        //加入后台的部分----------------------------------------
-        mzSickList:[],
+        leftTable: [{  /* 表格部分1 */
+				  sDate: '2021-08-01',
+          sOverKsName:'妇科',
+          sDoctor:'徐宏🐟',
+          sScience:'普通号',
+          sType:'主任医师',
+          sPrice:'19',
+				},],
+        sOverKsName:'',
+        //加入后台的部分------------------------------------------------------------------------------------------------------------------------
+        mzSickList:[], //病人新增************************************************************************
         mzSickArr:{
           sickNumber:0,
           sickIdCard:"",
@@ -498,10 +219,48 @@ import { ElMessage } from 'element-plus'
           mcNumberCard:[{required: true, message: "请生成诊疗卡", trigger: 'blur'}],
 
         },
-			}
+        // 挂号***************************************************************************************************************************
+        options1:[],//科室选择
 
+
+			}
 		},
 		 methods: {
+       filterTag(value, row) {/* 复诊初诊标签方法 */
+         return row.tag === value;
+       },
+       handleEdit(index, row) {/* 表格的选择方法 */
+         console.log(index, row);
+       },
+       handleDelete(index, row) {
+         console.log(index, row);
+       },
+       submitForm(formName) {
+         this.$refs[formName].validate((valid) => {
+           if (valid) {
+             alert('submit!');
+           } else {
+             console.log('error submit!!');
+             return false;
+           }
+         });
+       },
+       resetForm(formName) {//取消
+         this.isShow1 = false
+         this.isShow2 = false
+         this.isShow3 = false
+         this.$refs[formName].resetFields();
+       },
+       // 挂号***************************************************************************************************************************
+       allAepartmentKs(){//科室列表
+         this.axios({
+           url:'allAepartmentKs'
+         }).then((v)=>{
+           console.log(v.data)
+           this.options1=v.data;
+         }).catch();
+       },
+       //病人新增************************************************************************************************************************
        submitMzSick(formName) { // 确定病人新增
          this.$refs[formName].validate((valid) => {
            if (valid) {
@@ -520,8 +279,17 @@ import { ElMessage } from 'element-plus'
        resetMzSick(){
          this.isShow3=false;
          this.mzSickArr.sickNumber=0;
+         this.mzSickArr.sickIdCard="";
+         this.mzSickArr.sickName="";
+         this.mzSickArr.sickPhone="";
          this.mzSickArr.sickAge='';
+         this.mzSickArr.sickSex="";
          this.mzSickArr.sickSite="";
+         this.mzSickArr.mcNumberCard='';
+       },
+       resetFormSick(){ //X关闭按钮
+         this.isShow3=false;
+         this.$refs['mzSickArr'].resetFields();
        },
        submitMedicalCard(formName) { // 生成诊疗卡卡号
          this.axios.post("inserMedicalCard").then((res) => {
@@ -535,46 +303,6 @@ import { ElMessage } from 'element-plus'
          }).catch(() => {})
 
        },
-
-
-			 filterTag(value, row) {/* 复诊初诊标签方法 */
-			 				return row.tag === value;
-			 },
-			 handleEdit(index, row) {/* 表格的选择方法 */
-				console.log(index, row);
-			 },
-			handleDelete(index, row) {
-				console.log(index, row);
-			},
-			submitForm(formName) {
-				this.$refs[formName].validate((valid) => {
-				  if (valid) {
-					alert('submit!');
-				  } else {
-					console.log('error submit!!');
-					return false;
-				  }
-				});
-			},
-			resetForm(formName) {//取消
-				this.isShow1 = false
-        this.isShow2 = false
-        this.isShow3 = false
-				this.$refs[formName].resetFields();
-			},
-
-
-
-
-
-
-
-
-
-
-
-
-
 			//处理默认选中当前日期
 			getNowTime() {
 				var now = new Date();
@@ -587,12 +315,57 @@ import { ElMessage } from 'element-plus'
 				date = date.toString().padStart(2, "0");
 				var defaultDate = `${year}-${month}-${date}${hour}`;
 				console.log(defaultDate)
+
 				return defaultDate;
-				this.$set(this.info, "stockDate", defaultDate);
+				// this.$set(this.info, "stockDate", defaultDate);
 			},
+       //身份证日期获取
+       getInfo(idCard) {
+         console.log("11111111111")
+         let sex = null;
+         let birth = null;
+         let age = null;
+
+         let myDate = new Date();
+         let month = myDate.getMonth() + 1;
+         let day = myDate.getDate();
+
+
+         if(idCard.length===18){
+           age = myDate.getFullYear() - idCard.substring(6, 10) - 1;
+           sex = idCard.substring(16,17);
+           birth = idCard.substring(6,10)+"-"+idCard.substring(10,12)+"-"+idCard.substring(12,14);
+           if (idCard.substring(10, 12) < month || idCard.substring(10, 12) === month && idCard.substring(12, 14) <= day) age++;
+
+         }
+         if(idCard.length===15){
+           age = myDate.getFullYear() - idCard.substring(6, 8) - 1901;
+           sex = idCard.substring(13,14);
+           birth = "19"+idCard.substring(6,8)+"-"+idCard.substring(8,10)+"-"+idCard.substring(10,12);
+           if (idCard.substring(8, 10) < month || idCard.substring(8, 10) === month && idCard.substring(10, 12) <= day) age++;
+         }
+
+         if(sex%2 === 0)
+           sex = '女';  // 性别代码 1代表男，0代表女，暂时不涉及其他类型性别
+         else
+           sex = '男';
+
+         this.mzSickArr.sickSex=sex;
+         this.mzSickArr.sickAge=age;
+
+         if(this.mzSickArr.sickIdCard==''){
+           this.mzSickArr.sickSex='';
+           this.mzSickArr.sickAge='';
+         }
+         return  {age , sex, birth}
+       },
 		},
-		
-	};
+    created() {
+      this.allAepartmentKs();
+      this.token = this.$store.state.token//获取用户当前系统操作人员
+    },
+
+  };
 </script>
 
 <style scoped>

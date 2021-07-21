@@ -6,7 +6,7 @@
 			</el-tab-pane>
 
 	  </el-tabs>
-	  <div class="works">
+	  <div>
 			<router-view  ></router-view>
 	  </div>
 </template>

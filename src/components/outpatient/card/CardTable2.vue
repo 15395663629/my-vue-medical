@@ -1,6 +1,6 @@
 <template>
   <el-table
-      :data="upList.slice((wardCurrentPage2-1)*wardPageSize2,wardCurrentPage2*wardPageSize2)"
+      :data="mzSickList.slice((wardCurrentPage2-1)*wardPageSize2,wardCurrentPage2*wardPageSize2)"
       style="width: 100%"
       height="460" >
     <el-table-column
@@ -17,7 +17,7 @@
         <span >{{ scope.row.alTime}}</span>
       </template>
     </el-table-column>
-    <el-table-column label="姓名" width="180">
+    <el-table-column label="姓名" width="250">
       <template #default="scope">
         <el-popover width="300" effect="light" trigger="hover" placement="top">
           <template #default>
@@ -35,7 +35,7 @@
       </template>
     </el-table-column>
 
-    <el-table-column label="身份证" width="280">
+    <el-table-column label="身份证" width="300">
       <template #default="scope">
         <span >{{ scope.row.sickObject.sickIdCard}}</span>
       </template>
@@ -47,7 +47,8 @@
     </el-table-column>
 
     <el-table-column prop="alCause" label="标签"
-                     width="100" :filters="[{ text: '挂失补办', value: '挂失补办' }, { text: '挂失退额', value: '挂失退额'},{ text: '密码修改', value: '密码修改' }]"
+                     align="center"
+                     width="200" :filters="[{ text: '挂失补办', value: '挂失补办' }, { text: '挂失退额', value: '挂失退额'},{ text: '密码修改', value: '密码修改' }]"
                      :filter-method="filterTag"  filter-placement="bottom-end">
       <template #default="scope">
         <el-tag  size="mini"  :type="scope.row.alCause === '密码修改' ? 'primary' : (scope.row.alCause === '挂失补办' ? 'success' :'danger')" disable-transitions>
@@ -63,14 +64,14 @@
                   :page-sizes="[2,4,6,8]"
                   :page-size="wardPageSize2"
                   layout="total, sizes, prev, pager, next, jumper"
-                  :total="upList.length">
+                  :total="mzSickList.length">
   </el-pagination>
 </template>
 
 <script>
 export default{
   props:{
-    upList:{
+    mzSickList:{
       type:Array,
       required:true
     },
