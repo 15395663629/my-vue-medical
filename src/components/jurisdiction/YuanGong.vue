@@ -21,22 +21,6 @@
     </el-table-column>
 		<el-table-column prop="sname" label="姓名" >
 		</el-table-column>
-<!--    <el-table-column label="姓名" width="180">-->
-<!--      <template #default="scope" >-->
-<!--        <el-popover width="300" effect="light"   trigger="hover" placement="top">-->
-<!--          <template #default >-->
-<!--            <p>姓名: {{ scope.row.mzSick.sickName }}</p>-->
-<!--            <p>住址: {{ scope.row.mzSick.sickSite }}</p>-->
-<!--            <p>建立日期: {{ scope.row.mzSick.sickTime }}</p>-->
-<!--          </template>-->
-<!--          <template #reference>-->
-<!--            <div class="name-wrapper">-->
-<!--              <el-tag size="medium">{{ scope.row.mzSick.sickName }}</el-tag>-->
-<!--            </div>-->
-<!--          </template>-->
-<!--        </el-popover>-->
-<!--      </template>-->
-<!--    </el-table-column>-->
 		<el-table-column prop="ssore" label="身份证" >
 		</el-table-column>
     <el-table-column prop="sphone" label="联系电话" >
@@ -57,7 +41,7 @@
 	</el-table-column >
 		<el-table-column label="操作" width="250px">
 			<template v-slot:default="r">
-				<el-button type="primary" size="mini" @click="dialogVisible=true">授权</el-button>
+				<el-button type="primary" size="mini" @click="getRoleFuns(r.row)">授权</el-button>
 				<el-button type="primary" @click="bianji(r.row)" size="mini">编辑</el-button>
 				<el-button type="primary" size="mini">离职</el-button>
 				
@@ -79,28 +63,30 @@
 	<el-dialog title="员工信息" v-model="dialogVisible1" width="40%" :before-close="handleClose">
 			员工姓名：<el-input type="text" style="width: 30%;" v-model="sname"></el-input>
       用户名：<el-input type="text" style="width: 30%" v-model="uname"></el-input><br>
+
       密&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;码：<el-input type="password" style="width: 30%;margin-top:20px;" v-model="upass"></el-input>
-			科&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;室：<el-select v-model="yuangong" placeholder="请选择"
-				style="width: 25%;margin-top:20px;" @change="seksId($event)">
-				<el-option v-for="item in deptks" :key="item.ksId" :label="item.ksName" :value="item.ksId">
-				</el-option>
-			</el-select><br>
+    职&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;称：<el-select v-model="tile" placeholder="请选择" style="width: 25%;margin-top:20px;" @change="selTiId($event)">
+    <el-option v-for="item1 in title" :key="item1.tid" :label="item1.tname" :value="item1.tid">
+    </el-option>
+  </el-select><br>
+
 			部&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;门：<el-select v-model="dept" placeholder="请选择"
 				style="width: 25%;margin-top:20px;" @change="ksDeId($event)">
 				<el-option v-for="item in dplist" :key="item.deId" :label="item.deName" :value="item.deId">
 				</el-option>
 			</el-select>
-      <span style="margin-left: 25px"></span>
-      角&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;色：<el-select v-model="jusei" placeholder="请选择" style="width: 25%;margin-top:20px;" @change="selRoId($event)">
-      <el-option v-for="item1 in roles" :key="item1.rid" :label="item1.rname" :value="item1.rid">
-      </el-option>
-    </el-select><br />
+    <span style="margin-left: 20px"></span>
+    科&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;室：<el-select v-model="yuangong" placeholder="请选择"
+                                                            style="width: 25%;margin-top:20px;" @change="seksId($event)">
+    <el-option v-for="item in deptks" :key="item.ksId" :label="item.ksName" :value="item.ksId">
+    </el-option>
+  </el-select><br>
+<!--      角&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;色：<el-select v-model="jusei" placeholder="请选择" style="width: 25%;margin-top:20px;" @change="selRoId($event)">-->
+<!--      <el-option v-for="item1 in roles" :key="item1.rid" :label="item1.rname" :value="item1.rid">-->
+<!--      </el-option>-->
+<!--    </el-select><br />-->
 
-      职&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;称：<el-select v-model="tile" placeholder="请选择" style="width: 25%;margin-top:20px;" @change="selTiId($event)">
-      <el-option v-for="item1 in title" :key="item1.tid" :label="item1.tname" :value="item1.tid">
-      </el-option>
-    </el-select>
-      <span style="margin-left: 25px"></span>
+
 			身份证&nbsp;&nbsp;&nbsp;：<el-input type="text" style="width: 40%;margin-top:20px;" v-model="ssore"></el-input><br />
 			联系电话：<el-input type="text" style="width: 40%; margin-top: 20px;" v-model="phone"></el-input>
 		<template #footer>
@@ -113,10 +99,16 @@
 	</el-dialog>
   <!-- 角色授权弹框-->
   <el-dialog title="角色授权" v-model="dialogVisible" width="30%" style="height: 50%">
-<!--    <el-tree ref="tree" :data="funs" node-key="fctionId"-->
-<!--             :props="props" show-checkbox  default-expand-all-->
-<!--             @check-change="checkChange">-->
-<!--    </el-tree>-->
+    <el-tree ref="tree" :data="roles" node-key="rid"
+             :props="props" show-checkbox  default-expand-all
+             @check-change="checkChange">
+    </el-tree>
+    <template #footer>
+			<span class="dialog-footer">
+				<el-button @click="dialogVisible = false">取 消</el-button>
+				<el-button type="primary" @click="saveGrant()">确 定</el-button>
+			</span>
+    </template>
   </el-dialog>
 </template>
 
@@ -128,6 +120,11 @@ import qs from 'qs'
 			  funs:[],
         size:4,
         page:1,
+        cs:'',
+        props: {
+          id:'rid',
+          label: 'rname',
+        },
        /*
        员工表字段
         */
@@ -159,7 +156,10 @@ import qs from 'qs'
       dplist:[],
         title:[],
         deptks:[],
+        //授权角色
         roles:[],
+        //已授权
+        rols:[],
 
         yuangong:'',
         jusei:'',
@@ -182,7 +182,8 @@ import qs from 'qs'
         //查询员工
         this.axios.get("selectall-staff").then((res)=>{
           this.funs = res.data
-          console.log(this.funs)
+          this.cs=this.funs.sid
+          console.log(this.cs)
         }).catch()
         //查询部门
         this.axios.get("http://localhost:8089/bm-list").then((v)=>{
@@ -190,7 +191,7 @@ import qs from 'qs'
               //查询科室
         }).catch()
         //查询角色
-        this.axios.get("http://localhost:8089/role-list").then((v)=>{
+        this.axios.get("http://localhost:8089/staff-menus").then((v)=>{
           this.roles=v.data
         }).catch()
         //查询职称
@@ -243,7 +244,7 @@ import qs from 'qs'
          // this.axios.post('add-staff',qs.stringify(data)).then().catch()
          this.axios({
            url:"add-staff",
-           params:{staff:this.staff,user:this.user,rId:this.rId}
+           params:{staff:this.staff,user:this.user}
          }).then((v)=>{
            this.getData()
            this.qingchu()
@@ -283,7 +284,7 @@ import qs from 'qs'
         this.ssore=row.ssore
         this.phone=row.sphone
         this.yuangong=row.ks.ksName
-        this.jusei=row.role.rname
+        // this.jusei=row.role.rname
         this.tile=row.t.tname
         this.dept=row.dept.deName
         this.user.uid=row.user.uid
@@ -298,20 +299,29 @@ import qs from 'qs'
         this.staff.tid=row.t.tid
         this.user.uname=this.uname
         this.user.upswd=this.upass
+        console.log(this.staff)
+        console.log(this.user)
       },
-      //员工授权
-      getRoles(row){
-        this.uid=row.user.uid
-        console.log(this.uid)
-        this. dialogVisible =true
-        // this.axios.get("role-funs",{params:{roleId:this.roleId}}).then((res)=>{
-        //   this.rolefuns = res.data;
-        //   this. dialogVisible =true
-        //   this.$nextTick(function() {
-        //     this.$refs.tree.setCheckedKeys(this.rolefuns)
-        //   })
-        // }).catch()
+      getRoleFuns(row){
+        this.rId=row.user.uid
+        this.axios.get("staff-funs",{params:{rId:this.rId}}).then((res)=>{
+          this.rols = res.data;
+          this. dialogVisible =true
+          this.$nextTick(function() {
+            this.$refs.tree.setCheckedKeys(this.rols)
+          })
+        }).catch()
       },
+      saveGrant(){
+        var funs=this.$refs.tree.getCheckedKeys();
+        var grant = JSON.stringify({rId:this.rId,funs:funs})
+        this.axios.post("save-staff",qs.stringify({grant:grant})).then((res)=>{
+          this.funs = res.data;
+          this.dialogVisible = false;
+          this.roleId = '';
+          this.getData();
+        }).catch()
+      }
 
 			
 		},
