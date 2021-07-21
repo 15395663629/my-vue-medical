@@ -5,11 +5,12 @@
 		@selection-change="handleSelectionChange" class="dome">
 		<el-table-column type="selection" >
 		</el-table-column>
-
 		<el-table-column prop="rid" label="姓名">
 		</el-table-column>
-		<el-table-column prop="rname" label="地址" >
-		</el-table-column>
+      <el-table-column prop="rname" label="角色名" >
+      </el-table-column>
+    <el-table-column prop="roles.rname" label="父级角色" >
+    </el-table-column>
 		<el-table-column label="操作">
 			<template v-slot:default="r">
 				<el-button type="primary" @click="getRoleFuns(r.row)">角色授权</el-button>
@@ -25,15 +26,15 @@
 	<el-dialog title="角色管理" v-model="dialogVisible1" width="30%" :before-close="handleClose">
 
 		请输入角色名称：<el-input type="text" style="width: 40%;" v-model="rolename"></el-input><br />
-		请选择所属部门：<el-select v-model="value" placeholder="请选择"
+		请选择父级名称：<el-select v-model="value" placeholder="请选择"
 			style="width: 20%;margin-top:20px;"  @change="dome($event)">
-			<el-option v-for="item in dept" :key="item.deId" :label="item.deName" :value="item.deId">
+			<el-option v-for="item in dept" :key="item.rid" :label="item.rname" :value="item.rid">
 			</el-option>
 		</el-select><br />
 		<template #footer>
 			<span class="dialog-footer">
 				<el-button @click="dialogVisible1 = false">取 消</el-button>
-				<el-button type="primary" @click="dialogVisible1 = false">确 定</el-button>
+				<el-button type="primary" @click="addRole">确 定</el-button>
 			</span>
 		</template>
 	</el-dialog>
@@ -68,6 +69,13 @@ import  qs from 'qs'
         funs:[],
         //已授权权限
         rolefuns:[],
+		//新增角色
+		rolelist:{
+			rid:0,
+			rname:'',
+			roId:0,
+		},
+		rosid:'',
         roleId:'',
         size:4,
         page:1,
@@ -82,6 +90,7 @@ import  qs from 'qs'
           label: 'fctionAssembly',
           children: 'list'
         },
+        dage:[] 
 			}
 		},
 
@@ -89,17 +98,14 @@ import  qs from 'qs'
       getData(){
         this.axios.post("http://localhost:8089/role-list").then((v)=>{
           this.role=v.data
-          // console.log(this.role)
         }).catch()
         //查询部门
-        this.axios.get("http://localhost:8089/bm-list").then((v)=>{
+        this.axios.get("http://localhost:8089/roles-list").then((v)=>{
           this.dept=v.data
 
         }).catch()
         this.axios.get("http://localhost:8089/func-list").then((v)=>{
           this.funs=v.data
-
-
         }).catch()
       },
       getRoleFuns(row){
@@ -122,8 +128,9 @@ import  qs from 'qs'
         this.page = currentPage;
         console.log(this.currentPage) //点击第几页
       },
+	  //获取角色父级编号
       dome(event){
-        console.log(event)
+        this.rosid=event
       },
       saveGrant(){
         var funs=this.$refs.tree.getCheckedKeys();
@@ -135,7 +142,27 @@ import  qs from 'qs'
           this.getData();
         }).catch()
 
-      }
+      },
+	  //新增角色
+	  addRole(){
+		  this.rolelist.rname=this.rolename
+		  this.rolelist.roId=this.rosid
+      console.log(this.rolelist)
+		  this.axios.post("add-role",this.rolelist).then((v)=>{
+		    console.log(v.data)
+			 if(v.data==1){
+				 this.clear()
+				 this.getData()
+				 this.dialogVisible1=false
+			 }else{
+				 console.log(v.data)
+			 }
+		  }).catch()
+	  },
+	  clear(){
+		  this.rolename=""
+		  this.rosid=""
+	  }
 		},
     created() {
 		  this.getData()

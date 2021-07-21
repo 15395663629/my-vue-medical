@@ -157,7 +157,6 @@
         this.ks.ksId=row.ksId
         this.ks.ksName=row.ksName
         this.ks.deId=row.deId
-
         this.dialogVisible1=true
       },
       //清空下拉框的值
