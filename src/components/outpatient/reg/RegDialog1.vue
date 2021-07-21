@@ -141,7 +141,7 @@
         </el-col>
         <el-col>
           <el-form-item label="医生职位：" >
-            <el-input class="te"  v-model="regArr.rtType" disabled></el-input>
+            <el-input class="te"  v-model="regArr.rtDoctorGenre" disabled></el-input>
           </el-form-item>
         </el-col>
         <el-col >
@@ -221,7 +221,7 @@
         </el-col>
         <el-col>
           <el-form-item label="医生职位：" >
-            <el-input class="te"  v-model="regArr.rtType" disabled></el-input>
+            <el-input class="te"  v-model="regArr.rtDoctorGenre" disabled></el-input>
           </el-form-item>
         </el-col>
         <el-col >
@@ -317,7 +317,7 @@ import { ElMessage } from 'element-plus'
           rtType:'',
           rtScience:'',
           rtPrice:0,
-          rtState:'',
+          rtDoctorGenre:'',
           sId:'',
           cardObject:'',
         },
@@ -338,11 +338,11 @@ import { ElMessage } from 'element-plus'
         this.regArr.rtTime =row.sDate;
         this.regArr.rtOverKsName=row.sOverKsName;
         this.regArr.rtDoctor=row.sDoctor
-        this.regArr.rtType=row.sType
+        this.regArr.rtDoctorGenre=row.sType
         this.regArr.rtScience=row.sScience
         this.price =row.sPrice;
         this.regArr.rtPrice=row.sPrice
-        this.regArr.rtState='当天挂号';
+        this.regArr.rtType='当天挂号';
         this.regArr.sId=this.token.uid;
         console.log(this.token)
       },
@@ -386,11 +386,11 @@ import { ElMessage } from 'element-plus'
         this.regArr.rtTime =row.sDate;
         this.regArr.rtOverKsName=row.sOverKsName;
         this.regArr.rtDoctor=row.sDoctor
-        this.regArr.rtType=row.sType
+        this.regArr.rtDoctorGenre=row.sType
         this.regArr.rtScience=row.sScience
         this.price =row.sPrice;
         this.regArr.rtPrice=row.sPrice
-        this.regArr.rtState='预约挂号';
+        this.regArr.rtType='预约挂号';
         this.regArr.sId=this.token.uid;
       },
       resetForm(){//取消

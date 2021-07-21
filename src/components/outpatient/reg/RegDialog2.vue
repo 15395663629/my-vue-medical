@@ -21,7 +21,7 @@
 
     <el-table-column label="挂号卡号" width="150">
       <template #default="scope">
-        <el-popover effect="light" trigger="hover" placement="top">
+        <el-popover effect="light" trigger="hover" placement="top" width="300">
           <template #default>
             <p>姓名: {{ scope.row.cardObject.mzSick.sickName}}</p>
             <p>身份证: {{ scope.row.cardObject.mcIdCard }}</p>
@@ -44,7 +44,7 @@
         <el-popover effect="light" trigger="hover" placement="top">
           <template #default>
             <p>医生: {{ scope.row.rtDoctor }}</p>
-            <p>职位: {{ scope.row.rtType }}</p>
+            <p>职位: {{ scope.row.rtDoctorGenre }}</p>
             <p>所属科室: {{ scope.row.rtOverKsName }}</p>
           </template>
           <template #reference>
@@ -63,7 +63,7 @@
         <el-popover effect="light" trigger="hover" placement="top">
           <template #default>
             <p>挂号费: {{ scope.row.rtPrice }}</p>
-            <p>挂号科室: {{ scope.row.rtType }}</p>
+            <p>挂号科室: {{ scope.row.rtOverKsName }}</p>
             <p>初复诊: {{ scope.row.rtClass }}</p>
             <p>操作人: {{ scope.row.staffObject.sname }}</p>
           </template>
@@ -76,12 +76,12 @@
       </template>
     </el-table-column>
 
-    <el-table-column prop="rtState" label="标签"
+    <el-table-column prop="rtType" label="标签"
                      width="100" :filters="[{ text: '当天挂号', value: '当天挂号' }, { text: '预约挂号', value: '预约挂号' }]"
                      :filter-method="filterTag"  filter-placement="bottom-end">
       <template #default="scope" >
-        <el-tag :type="scope.row.rtState === '当天挂号' ? 'success' : 'warning'" disable-transitions>
-          {{scope.row.rtState}}
+        <el-tag :type="scope.row.rtType === '当天挂号' ? 'success' : 'warning'" disable-transitions>
+          {{scope.row.rtType}}
         </el-tag>
       </template>
     </el-table-column>
@@ -124,7 +124,7 @@ import { ElMessage } from 'element-plus'
     },
     methods:{
       filterTag(value, row) {/* 复诊初诊标签方法 */
-        return row.rtState === value;
+        return row.rtType === value;
       },
       // 初始病房每页数据数wardpagesize2和数据data
       wardHandleSizeChange2: function(size) {
