@@ -8,7 +8,7 @@
 			</el-col>
 			<el-col :span="5">
 				<el-form-item  label="手术信息:" label-width="100px">
-					<el-input  @blur="getData" style="width: 200px;" v-model="input" placeholder="请输入你要查询的手术" ></el-input>
+					<el-input  @input="getData" style="width: 200px;" v-model="input" placeholder="请输入你要查询的手术" ></el-input>
 				</el-form-item>
 			</el-col>
 			<el-col :span="5">
@@ -411,8 +411,8 @@
 			ssInser() {
         this.option='新增手术';
         this.today=new Date().getFullYear()+new Date().getDay();
-          this.ssdx.projectNumber=("SS"+this.today+Math.round(Math.random()*1000))
-          this.xgss = true;
+        this.ssdx.projectNumber=("SS"+this.today+Math.round(Math.random()*1000))
+        this.xgss = true;
 			},
       // 修改
       ssEdit(row) {
