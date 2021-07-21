@@ -340,13 +340,10 @@
 
           </el-table-column>
 
-
-
         </el-table-column>
 
 
 			  </el-table>
-
 
 			  <!--分页插件-->
 			   <el-pagination
@@ -456,7 +453,7 @@
         }).catch((date)=>{
         });
         //查询所有科室
-        this.axios.post("ks-list").then((v)=>{
+        this.axios.post("zy-ks-list").then((v)=>{
           console.log(v.data);
           this.ksArr = v.data;
         }).catch((data)=>{

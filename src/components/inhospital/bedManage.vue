@@ -448,6 +448,16 @@
           </el-form-item>
         </el-col>
       </el-row>
+
+      <el-row>
+
+        <el-col :offset="1" :span="21">
+          <el-form-item label="调换原因" >
+            <el-input placeholder="请输入原因" type="textarea" v-model="bedChangeRecordObj.bcCause">
+            </el-input>
+          </el-form-item>
+        </el-col>
+      </el-row>
     </el-form>
 
 
@@ -503,6 +513,8 @@
           wdId:'',//病房编号
           bdId:'',//病床编号
           sName: '',//管理护士名称
+          sId:'',//当前登录的操作员（护士）
+          bcCause:'',//转病房原因
           wdObj:{},//病房对象
           bedObjs:{},
           ksName:''//科室名称
@@ -566,6 +578,7 @@
         ],
 
         //====================================================================员工
+        staff:'',//=======================================员工登录对象
         xzStaffId:'',//选择员工编号
         staffArr:[//员工集合
 
@@ -582,7 +595,7 @@
 		  wardArrInit(){
         //查询所有病房
 			  this.axios({url:"zyWard",params:{search:this.wardSearchText}}).then((v)=>{
-			    console.log(v.data)
+			    console.log(v.data);
             this.wardArr = v.data;
         }).catch((data)=>{
 
@@ -596,7 +609,7 @@
         });
 
         //查询所有科室
-        this.axios.post("ks-list").then((v)=>{
+        this.axios.post("zy-ks-list").then((v)=>{
           console.log(v.data);
           this.ksArr = v.data;
         }).catch((data)=>{
@@ -635,8 +648,10 @@
         this.bedChangeRecordObj.bdPrice = row.bdPrice;
         this.bedChangeRecordObj.bcLaterBdId = row.bdId;
       },
-      //修改病床方法
+      //=======================修改病床方法
       patientUpdateBed(){
+		    alert(this.staff.sname);
+        this.bedChangeRecordObj.sId = this.staff.sid;//将操作员的编号放入
         console.log(this.bedChangeRecordObj);
         this.axios.post("bedUpdatePatient",this.bedChangeRecordObj).then((v)=>{
           this.$message({
@@ -963,6 +978,7 @@
 		},
     created() {
 		  this.wardArrInit();
+      this.staff = this.$store.state.token.list;//将登录存入的值在取出来
     }
   }
 
