@@ -106,8 +106,6 @@ import  qs from 'qs'
         }).catch()
         this.axios.get("http://localhost:8089/func-list").then((v)=>{
           this.funs=v.data
-
-
         }).catch()
       },
       getRoleFuns(row){
