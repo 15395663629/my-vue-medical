@@ -29,7 +29,7 @@
 	    <el-container style="max-height: 100%;overflow: hidden;">
 			<!-- 左边 -->
         <el-aside width="200px">
-          <el-menu router
+          <el-menu router unique-opened
                    class="el-menu-vertical-demo">
             <el-submenu v-for="(menu,idx) in menus" :index="idx">
               <template #title>
