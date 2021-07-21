@@ -95,7 +95,7 @@
           <el-form-item label="挂号日期：">
             <el-date-picker
                   style="width: 350px; font-size: 15px;"
-                v-model="regArr.rtTime"
+                v-model="regArr.rtOnsetTime"
                 type="date"
                 disabled
                 format="YYYY 年 MM 月 DD 日">
@@ -104,7 +104,7 @@
         </el-col>
         <el-col >
           <el-form-item label="卡号：" prop="mcCard">
-            <el-input class="te"  v-model="regArr.mcCard"  @keyup="byIdCard(regArr.mcCard)"></el-input>
+            <el-input class="te"  onkeyup="value=value.replace(/[^\d]/g,'')"  v-model="regArr.mcCard"  @keyup="byIdCard(regArr.mcCard)"></el-input>
           </el-form-item>
         </el-col>
         <el-col>
@@ -175,7 +175,7 @@
           <el-form-item label="挂号日期：">
             <el-date-picker
                 style="width: 350px; font-size: 15px;"
-                v-model="regArr.rtTime"
+                v-model="regArr.rtOnsetTime"
                 type="date"
                 disabled
                 format="YYYY 年 MM 月 DD 日">
@@ -184,7 +184,7 @@
         </el-col>
         <el-col >
           <el-form-item label="卡号：" prop="mcCard">
-            <el-input class="te"  v-model="regArr.mcCard"  @keyup="byIdCard(regArr.mcCard)"></el-input>
+            <el-input class="te"  v-model="regArr.mcCard" onkeyup="value=value.replace(/[^\d]/g,'')"   @keyup="byIdCard(regArr.mcCard)"></el-input>
           </el-form-item>
         </el-col>
         <el-col>
@@ -261,7 +261,11 @@ import { ElMessage } from 'element-plus'
       getNowTime:{
         type:Function,
         required:true,
-      }
+      },
+      allRightTable:{
+        type:Function,
+        required:true,
+      },
     },
     data(){
       var validata = (rule, value, callback) => { //table2 校验
@@ -310,7 +314,7 @@ import { ElMessage } from 'element-plus'
           sickName:'',//这两个不在实体类里
           mcCard:'',
 
-          rtTime:'',
+          rtOnsetTime:'',
           rtClass:'',
           rtOverKsName:'',
           rtDoctor:'',
@@ -335,7 +339,7 @@ import { ElMessage } from 'element-plus'
     methods:{
       isDialog1(row){//挂号=======================================================================================
         this.isShow1 = true;
-        this.regArr.rtTime =row.sDate;
+        this.regArr.rtOnsetTime =row.sDate;
         this.regArr.rtOverKsName=row.sOverKsName;
         this.regArr.rtDoctor=row.sDoctor
         this.regArr.rtDoctorGenre=row.sType
@@ -363,6 +367,7 @@ import { ElMessage } from 'element-plus'
                     type: 'success'
                   });
                   this.resetForm()//刷新主界面的校验提示
+                  this.allRightTable()//刷新父组件的挂号记录表查询
                 }
               }).catch(function(){
 
@@ -383,7 +388,7 @@ import { ElMessage } from 'element-plus'
       },
       isDialog2(row){//预约挂号====================================================================================
         this.isShow2 = true;
-        this.regArr.rtTime =row.sDate;
+        this.regArr.rtOnsetTime =row.sDate;
         this.regArr.rtOverKsName=row.sOverKsName;
         this.regArr.rtDoctor=row.sDoctor
         this.regArr.rtDoctorGenre=row.sType

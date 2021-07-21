@@ -1,10 +1,10 @@
 <template>
   <el-radio-group v-model="radio2" class=" my-radio-group"  size="mini" style="margin-top: 20px;">
-    <el-radio-button label="查看全部"></el-radio-button>
-    <el-radio-button label="当天挂号"></el-radio-button>
-    <el-radio-button label="预约挂号"></el-radio-button>
+    <el-radio-button label="查看全部" @change="likeReg(null,null)"></el-radio-button>
+    <el-radio-button label="当天挂号"  @change="likeReg(null,1)"></el-radio-button>
+    <el-radio-button label="预约挂号"  @change="likeReg(null,2)"></el-radio-button>
   </el-radio-group>
-
+<!--  .native.prevent-->
   <el-table
       size="mini"
       height="490"
@@ -15,7 +15,7 @@
         width="180">
       <template #default="scope">
         <i class="el-icon-time"></i>
-        <span style="margin-left: 10px">{{ scope.row.rtTime }}</span>
+        <span style="margin-left: 10px">{{ scope.row.rtOnsetTime }}</span>
       </template>
     </el-table-column>
 
@@ -114,6 +114,10 @@ import { ElMessage } from 'element-plus'
         type:Array,
         required:true,
       },
+      likeReg:{
+        type:Function,
+        required: true,
+      }
     },
     data(){
       return{

@@ -28,18 +28,18 @@
 			</el-col>
 			<el-col >
 				<el-input style="width:220px" class="my-el-input" v-model="input2" placeholder="请输入你要查询的挂号信息" ></el-input>
-				<el-button type="primary" icon="el-icon-search" @click="likeReg(input2)">查询</el-button>
+				<el-button type="primary" icon="el-icon-search" @click="likeReg(input2,null)">查询</el-button>
 			</el-col>
 		</el-form>
 	</el-row>
 	<el-row :gutter="10"> <!-- 左边第一个表格 -->
 		<el-col :span="12">
-      <regDialog1  :newDate="date1" :list="leftTable" :getNowTime="getNowTime"></regDialog1>
+      <regDialog1 :allRightTable="allRightTable" :newDate="date1" :list="leftTable" :getNowTime="getNowTime"></regDialog1>
 		</el-col>
 
 
 		<el-col :span="12"> <!-- 右边表格 -->
-      <regDialog2 :list="rightTable"></regDialog2>
+      <regDialog2 :list="rightTable" :likeReg="likeReg"></regDialog2>
 		</el-col>
 	</el-row>
 
@@ -120,7 +120,7 @@ import { ElMessage } from 'element-plus'
 				input1:"",//查询搜索框
         input2:"",//查询搜索框
         leftTable: [{  /* 表格部分1 */
-				  sDate: '2021-08-01',
+				  sDate: '2021-07-23',
           sOverKsName:'妇科',
           sDoctor:'徐宏鱼',
           sScience:'普通号',
@@ -178,18 +178,20 @@ import { ElMessage } from 'element-plus'
            this.rightTable=v.data;
          }).catch();
        },
-       likeReg(test){
+       likeReg(test,index){//搜索框查询
          this.axios({
            url:'selectReg',
-           params:{reg:test}
+           params:{reg:test,index:index}
          }).then((v)=>{
            console.log(v.data)
            this.rightTable=v.data;
-           if(v.data.length <= 0){
-             ElMessage.warning({
-               message: '没有找到相应的挂失记录~',
-               type: 'warning'
-             });
+           if(test!=null && ''!=test){
+             if(v.data.length <= 0){
+               ElMessage.warning({
+                 message: '没有找到相应的挂失记录~',
+                 type: 'warning'
+               });
+             }
            }
          }).catch(function(){ })
 
