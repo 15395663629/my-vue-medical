@@ -20,15 +20,15 @@
 <!--				</el-select>-->
 			</el-col>
 			<el-col >
-				<el-input style="width:250px" class="my-el-input" v-model="input" placeholder="请输入你要查询的病理或医生信息" ></el-input>
+				<el-input style="width:250px" class="my-el-input" v-model="input1" placeholder="请输入你要查询的病理或医生信息" ></el-input>
 				<el-button type="primary" icon="el-icon-search">查询</el-button>
 			</el-col>
 			<el-col>
 				<el-button  type="primary" @click="isShow3 = true" icon="el-icon-circle-plus-outline" class="my-radio-group" >添加病人信息</el-button>
 			</el-col>
 			<el-col >
-				<el-input style="width:220px" class="my-el-input" v-model="input" placeholder="请输入你要查询的挂号信息" ></el-input>
-				<el-button type="primary" icon="el-icon-search">查询</el-button>
+				<el-input style="width:220px" class="my-el-input" v-model="input2" placeholder="请输入你要查询的挂号信息" ></el-input>
+				<el-button type="primary" icon="el-icon-search" @click="likeReg(input2)">查询</el-button>
 			</el-col>
 		</el-form>
 	</el-row>
@@ -117,8 +117,8 @@ import { ElMessage } from 'element-plus'
         // 挂号***************************************************************************************************************************
         date1: this.getNowTime(),/* 日期选择器 */
 				isShow3:false,//弹窗 - 病人新增
-				input:"",//查询搜索框
-				radio2:"查看全部",
+				input1:"",//查询搜索框
+        input2:"",//查询搜索框
         leftTable: [{  /* 表格部分1 */
 				  sDate: '2021-08-01',
           sOverKsName:'妇科',
@@ -175,8 +175,24 @@ import { ElMessage } from 'element-plus'
            url:'selectReg'
          }).then((v)=>{
            console.log(v.data)
-           this.options1=v.data;
+           this.rightTable=v.data;
          }).catch();
+       },
+       likeReg(test){
+         this.axios({
+           url:'selectReg',
+           params:{reg:test}
+         }).then((v)=>{
+           console.log(v.data)
+           this.rightTable=v.data;
+           if(v.data.length <= 0){
+             ElMessage.warning({
+               message: '没有找到相应的挂失记录~',
+               type: 'warning'
+             });
+           }
+         }).catch(function(){ })
+
        },
        // 挂号***************************************************************************************************************************
        allAepartmentKs(){//科室列表
@@ -276,7 +292,8 @@ import { ElMessage } from 'element-plus'
        },
 		},
     created() {
-      this.allAepartmentKs();
+		  this.allRightTable()//挂号记录表查询
+      this.allAepartmentKs();//科室查询
       this.token = this.$store.state.token//获取用户当前系统操作人员
     },
 
