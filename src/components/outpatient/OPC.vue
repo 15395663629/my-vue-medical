@@ -5,10 +5,10 @@
 		</el-header>
 		<el-container style="height: 100%;">
 			<el-aside width="400px" style="background-color: #D3DCE6;color: #333;"> <!-- 右边 -->
-				<el-row >
+				<el-row>
 					<el-col :span="24">
 						<el-button style="width: 100%;"> 刷新候诊病人 </el-button>
-					</el-col >
+					</el-col>
 					<el-col :span="12">
 						<el-button style="width: 100%;"> 呼叫病人 </el-button>
 					</el-col>
@@ -21,27 +21,29 @@
 						<h4>呼叫列表：</h4>
 					</el-col>
 					<el-col>
-						<el-table  style="width: 100%;" height="300">
-								<el-table-column fixed  label="排列序号"  width="90"></el-table-column>
-								<el-table-column fixed  label="姓名"  align="center" width="90"></el-table-column>
-                <el-table-column fixed  label="性别"  width="60"></el-table-column>
-                <el-table-column fixed  label="年龄"  width="60"></el-table-column>
-                <el-table-column prop="tag" label="标签" align="center"
-                  width="100" :filters="[{ text: '复诊', value: '复诊' }, { text: '初诊', value: '初诊' }]"
+						<el-table :data="leftTopTable" size="mini"  style="width: 100%;" height="300">
+								<el-table-column fixed prop="bnCount" label="序号"  width="50">
+                </el-table-column>
+								<el-table-column fixed prop="bnSickName" label="姓名"  align="center" width="100">
+                </el-table-column>
+                <el-table-column fixed prop="bnIdCard" label="身份证"  width="160">
+                </el-table-column>
+                <el-table-column prop="rtRegObject.rtClass" label="标签" align="center"
+                  width="90" :filters="[{ text: '复诊', value: '复诊' }, { text: '初诊', value: '初诊' }]"
                   :filter-method="filterTag"  filter-placement="bottom-end">
                     <template #default="scope">
-                      <el-tag :type="scope.row.tag === '复诊' ? 'primary' : 'success'" disable-transitions>
-                      {{scope.row.tag}}
+                      <el-tag :type="scope.row.rtRegObject.rtClass === '复诊' ? 'primary' : 'success'" disable-transitions>
+                      {{scope.row.rtRegObject.rtClass}}
                       </el-tag>
                     </template>
-                  </el-table-column>
+                </el-table-column>
             </el-table>
 					</el-col>
 					<el-col>
 						<h4>就诊列表：</h4>
 					</el-col>
 					<el-col>
-						<el-table  :data="bottom_tables" style="width: 100%" height="300">
+						<el-table size="mini" :data="bottom_tables" style="width: 100%" height="300">
 								<el-table-column fixed  label="排列序号"  width="120"></el-table-column>
 								<el-table-column fixed  label="姓名"  width="120"></el-table-column>
 								<el-table-column prop="tag" label="标签"
@@ -160,6 +162,8 @@
 				</el-header>
 				<el-main style="background-color: #E9EEF3;color: #333;padding: 5px;" ><!-- 主体页面========================================================================-->
 					<el-tabs type="border-card" >
+            <el-tab-pane label="病例填写" >
+            </el-tab-pane>
 					  <el-tab-pane label="西药处方" >
 						<opcTable1  :textarea1="textarea1" :rightTableData1="rightTableData1"></opcTable1>
 					  </el-tab-pane>
@@ -392,7 +396,8 @@
 		</el-container>
 	</el-container>
 </template>
-	
+
+
 <script>
 	export default{
 		data(){
@@ -403,7 +408,8 @@
 				centerDialogVisible3: false,
 				currentPage1: 5,
 				currentPage2: 5,
-				tableData:[{
+
+        tableData:[{
 					date: '2016-05-02',
 					name: '王小虎',
 					address: '上海市普陀区金沙江路 1518 弄'
@@ -462,37 +468,37 @@
 				          name: '王小虎',
 				          address: '上海市普陀区金沙江路 1518 弄'
 				},
-				{
-				          date: '2016-05-02',
-				          name: '王小虎',
-				          address: '上海市普陀区金沙江路 1518 弄'
-				},
-				{
-				          date: '2016-05-02',
-				          name: '王小虎',
-				          address: '上海市普陀区金沙江路 1518 弄'
-				},
-				{
-				          date: '2016-05-02',
-				          name: '王小虎',
-				          address: '上海市普陀区金沙江路 1518 弄'
-				},
-				{
-				          date: '2016-05-02',
-				          name: '王小虎',
-				          address: '上海市普陀区金沙江路 1518 弄'
-				},
-				{
-				          date: '2016-05-02',
-				          name: '王小虎',
-				          address: '上海市普陀区金沙江路 1518 弄'
-				}
 				],
-				
-				
+        //从这里开始加入后台写------------------------------------------------------------
+        token:[],//操作人员
+        // 排号表
+        leftTopTable:[]
 			}
 		},
 		methods: {
+		  // 加入后台部分-------------------------------------------------------------------
+      countLeftTopTable(){//查询单个科室今天挂号的总数
+        console.log(this.token)
+        this.axios.post('allMzOpcNumber',{ksName:this.token.ksId,science:this.token.tid}).then((v)=>{
+          console.log(v.data)
+          this.leftTopTable=v.data
+        }).catch(()=>{
+
+        })
+      },
+
+
+
+
+
+
+
+
+
+
+
+
+      //没有加入后台的部分-----------------------------------------------------------------------
 		      handleEdit(index, row) {
 		        console.log(index, row);
 		      },
@@ -500,7 +506,7 @@
 		        console.log(index, row);
 		      },
 			  filterTag(value, row) {/* 复诊初诊标签方法 */
-				return row.tag === value;
+				return row.rtRegObject.rtClass === value;
 			  },
 			  handleSizeChange1(val) {
 			  				console.log(`每页 ${val} 条`);
@@ -533,12 +539,14 @@
 				});
 				setTimeout(() => {
 				  loading.close();
-				}, 2000);
+				}, 1000);
 			}
 		},
 		created() {
-			console.log()
-		}
+      this.token= this.$store.state.token == null ? null : this.$store.state.token.list;//将登录存入的值在取出来
+      this.countLeftTopTable()
+      console.log(this.token.tid)
+    }
 	}
 </script>
 

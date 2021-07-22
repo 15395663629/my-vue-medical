@@ -30,7 +30,6 @@ import upTable1 from "./components/outpatient/card/UpTable1.vue"
 import upTable2 from "./components/outpatient/card/UpTable2.vue"
 import regDialog1 from "./components/outpatient/reg/RegDialog1.vue"// 挂号
 import regDialog2 from "./components/outpatient/reg/RegDialog2.vue"
-import regDialog3 from "./components/outpatient/reg/RegDialog3.vue"
 
 
 
@@ -57,6 +56,4 @@ createApp(App)
 .component('crumb',crumb)
 .component("regDialog1",regDialog1)
 .component("regDialog2",regDialog2)
-.component("regDialog3",regDialog3)
-
 .mount('#app')

@@ -3,7 +3,7 @@
 	<el-table
 		:data="rightTableData1"
 		style=" width: 100%;"
-		height="480px"
+		height="450px"
 		>
 		 <el-table-column type="selection" width="55">
 		</el-table-column>

@@ -19,7 +19,7 @@
       size="mini"
       height="490"
       :data="list.slice((wardCurrentPage-1)*wardPageSize,wardCurrentPage*wardPageSize)"
-      style="width: 100%">
+      style="width: 100%" >
     <el-table-column
         label="日期"
         width="180">
