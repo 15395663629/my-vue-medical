@@ -7,55 +7,78 @@
 			<el-aside width="400px" style="background-color: #D3DCE6;color: #333;"> <!-- 右边 -->
 				<el-row>
 					<el-col :span="24">
-						<el-button style="width: 100%;"> 刷新候诊病人 </el-button>
+						<el-button style="width: 100%;" type="primary" plain @click="countLeftTopTable"> 刷新候诊病人 </el-button>
 					</el-col>
-					<el-col :span="12">
-						<el-button style="width: 100%;"> 呼叫病人 </el-button>
+					<el-col :span="8">
+						<el-button style="width: 100%;" type="primary" plain @click="call"> 呼叫病人 </el-button>
 					</el-col>
-          <el-col :span="12">
-            <el-button style="width: 100%;"> 重复呼叫 </el-button>
+          <el-col :span="8">
+            <el-button style="width: 100%;" type="primary" plain @click="call"> 重复呼叫 </el-button>
+          </el-col>
+          <el-col :span="8">
+            <el-button style="width: 100%;"  type="primary" plain @click="jumpMark"> 跳号 </el-button>
           </el-col>
 				</el-row>
 				<el-row>
-					<el-col>
-						<h4>呼叫列表：</h4>
-					</el-col>
 					<el-col><!-- ================================================== 左上 第一个table ==================================================-->
-						<el-table highlight-current-row :data="leftTopTable" size="mini" @row-dblclick="addTopHeader"  style="width: 100%;" height="300">
-								<el-table-column fixed prop="bnCount" label="序号"  width="50">
-                </el-table-column>
-								<el-table-column fixed prop="bnSickName" label="姓名"  align="center" width="100">
-                </el-table-column>
-                <el-table-column fixed prop="bnIdCard" label="身份证"  width="160">
-                </el-table-column>
-                <el-table-column prop="rtRegObject.rtClass" label="标签" align="center"
-                  width="90" :filters="[{ text: '复诊', value: '复诊' }, { text: '初诊', value: '初诊' }]"
-                  :filter-method="filterTag"  filter-placement="bottom-end">
+            <el-tabs v-model="activeName" @tab-click=" " stretch >
+              <el-tab-pane label="呼叫列表" :key="0" name ="0">
+                <el-table highlight-current-row :data="leftTopTable" size="mini" @row-dblclick="addTopHeader" :row-class-name="tableRowClassName" style="width: 100%;" height="560">
+                  <el-table-column fixed prop="bnCount" label="序号"  width="50">
+                  </el-table-column>
+                  <el-table-column fixed prop="bnSickName" label="姓名"  align="center" width="100">
+                  </el-table-column>
+                  <el-table-column fixed prop="bnIdCard" label="身份证"  width="160">
+                  </el-table-column>
+                  <el-table-column prop="rtRegObject.rtClass" label="标签" align="center"
+                                   width="90" :filters="[{ text: '复诊', value: '复诊' }, { text: '初诊', value: '初诊' }]"
+                                   :filter-method="filterTag"  filter-placement="bottom-end">
                     <template #default="scope">
-                      <el-tag :type="scope.row.rtRegObject.rtClass === '复诊' ? 'primary' : 'success'" disable-transitions>
-                      {{scope.row.rtRegObject.rtClass}}
+                      <el-tag :type="scope.row.rtRegObject.rtClass === '复诊' ? 'primary' :(scope.row.rtRegObject.rtClass === '初诊' ? 'success' : 'danger') " disable-transitions>
+                        {{scope.row.rtRegObject.rtClass}}
                       </el-tag>
                     </template>
-                </el-table-column>
-            </el-table>
-					</el-col>
-					<el-col>
-						<h4>就诊列表：</h4>
-					</el-col>
-					<el-col><!-- ================================================== 左下 第二个table ==================================================-->
-						<el-table size="mini" :data="bottom_tables" style="width: 100%" height="300">
-								<el-table-column fixed  label="排列序号"  width="120"></el-table-column>
-								<el-table-column fixed  label="姓名"  width="120"></el-table-column>
-								<el-table-column prop="tag" label="标签"
-								width="100" :filters="[{ text: '复诊', value: '复诊' }, { text: '初诊', value: '初诊' }]"
-								:filter-method="filterTag"  filter-placement="bottom-end">
-									<template #default="scope">
-										<el-tag :type="scope.row.tag === '复诊' ? 'primary' : 'success'" disable-transitions>
-										{{scope.row.tag}}
-										</el-tag>
-									</template>
-								</el-table-column>
-						</el-table>
+                  </el-table-column>
+                </el-table>
+              </el-tab-pane>
+
+              <el-tab-pane label="就诊列表" :key="1" name="1">
+                <el-row>
+                  <el-col  :span="14">
+                    <el-input  placeholder="请输入病人姓名或者身份证" v-model="patientQueryText" size="mini" type="text"/>
+                  </el-col>
+                  <el-col :span="1" >
+                    <el-button  size="mini" @click="" icon="el-icon-search" type="primary" ></el-button>
+                  </el-col>
+                </el-row>
+                <el-col><!-- ================================================== 左下 第二个table ==================================================-->
+                  <el-table highlight-current-row size="mini" :row-class-name="tableRowClassName" :data="bottom_tables" style="width: 100%" height="530">
+                    <el-table-column fixed  label="序号"  width="50"></el-table-column>
+                    <el-table-column fixed  label="姓名"  width="100"></el-table-column>
+                    <el-table-column fixed prop="bnIdCard" label="身份证"  width="160">
+                    </el-table-column>
+                    <el-table-column prop="tag" label="标签"
+                                     width="90" :filters="[{ text: '复诊', value: '复诊' }, { text: '初诊', value: '初诊' }]"
+                                     :filter-method="filterTag"  filter-placement="bottom-end">
+                      <template #default="scope">
+                        <el-tag :type="scope.row.tag === '复诊' ? 'primary' : 'success'" disable-transitions>
+                          {{scope.row.tag}}
+                        </el-tag>
+                      </template>
+                    </el-table-column>
+                  </el-table>
+                </el-col>
+              </el-tab-pane>
+
+              <el-tab-pane label="就诊记录" :key="2" name="2">
+                <!-- ================================================== 左下 第三个table ==================================================-->
+
+              </el-tab-pane>
+
+            </el-tabs>
+
+
+
 					</el-col>
 				</el-row>
 			</el-aside>
@@ -248,6 +271,7 @@
                                :label="yf.yfDrcaName"
                                :value="yf.yfDrcaName">
                     </el-option>
+
                   </el-select>
                 </el-form-item>
               </el-col>
@@ -562,11 +586,22 @@
         selectDrugArr:[],//医生选中数据
         rightTableData1:[],//西药处方
         rightTableData2: [],//中药处方
-
+        activeName:'0',//切换默认值
+        patientQueryText:'',//呼叫列表搜索内容
 			}
 		},
 		methods: {
 		  // 加入后台部分-------------------------------------------------------------------
+
+      call(){ // 呼叫列表
+        console.log(this.leftTopTable[0])
+        for (let top of this.leftTopTable){
+
+        }
+      },
+      jumpMark(){ //跳号
+
+      },
       countLeftTopTable(){//查询单个科室今天挂号的总数
         this.axios.post('allMzOpcNumber',{ksName:this.token.ksId,science:this.token.tid}).then((v)=>{
           this.leftTopTable=v.data
@@ -707,8 +742,11 @@
         this.closeAddDrugFunction();
 
       },
-
-
+      tableRowClassName({row, rowIndex}) { // 暂时没用到
+        if (this.headerInput.bnCount == row.bnCount) {
+          return 'success';
+        }
+      },
 
 
 
