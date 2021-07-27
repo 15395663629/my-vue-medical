@@ -251,7 +251,6 @@
 </template>
 
 <script>
-import moment from 'moment'
 import qs from "qs";
 
 export default {
