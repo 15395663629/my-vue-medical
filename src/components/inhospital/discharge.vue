@@ -1,6 +1,4 @@
 <template>
-	<h1 style="margin-bottom: 15px;font-size: 26px;">出院结算</h1>
-	
 	<!--=============================================选择住院申请病人弹框===================================-->
 	<el-dialog title="选择出院申请病人" v-model="isShowXZBR">
 		<el-table
@@ -70,7 +68,7 @@
 	<el-dialog title="出院结算" v-model="isShowZY">
 		<el-form>
 			<el-row>
-				<el-col :span="6">
+				<el-col :offset="1" :span="6">
 					<el-form-item label="姓名" label-width="80px">
 						<el-input></el-input>
 					</el-form-item>
@@ -79,7 +77,7 @@
 					<el-button @click="isShowXZBR = true" type="primary" icon="el-icon-user-solid"></el-button>
 				</el-col>
 				
-				<el-col :offset="2" :span="9">
+				<el-col :offset="4" :span="8">
 					<el-form-item label="科室" label-width="80px">
 						<el-input></el-input>
 					</el-form-item>
@@ -87,32 +85,34 @@
 			</el-row>
 			
 			<el-row>
-				<el-col :span="6">
+				<el-col :offset="1" :span="8">
 					<el-form-item label="性别" label-width="80px">
 					 <el-input></el-input>
 					</el-form-item>
 				</el-col>
 				<el-col :span="2">
 				</el-col>
+
+        <el-col :offset="1" :span="8">
+          <el-form-item label="床位" label-width="80px">
+            <el-input></el-input>
+          </el-form-item>
+        </el-col>
 				
-				<el-col :offset="1" :span="9">
-					<el-form-item label="年龄" label-width="80px">
-						<el-input></el-input>
-					</el-form-item>
-				</el-col>
+
 			</el-row>
 			
 			
 			<el-row>
-				<el-col :span="6">
-					<el-form-item label="床位" label-width="80px">
-						<el-input></el-input>
-					</el-form-item>
-				</el-col>
+        <el-col :offset="1" :span="8">
+          <el-form-item label="年龄" label-width="80px">
+            <el-input></el-input>
+          </el-form-item>
+        </el-col>
 				<el-col :span="2">
 				</el-col>
 				
-				<el-col :offset="1" :span="9">
+				<el-col :offset="1" :span="8">
 					<el-form-item label="总金额" label-width="80px">
 					<el-input></el-input>
 					</el-form-item>
@@ -120,19 +120,21 @@
 			</el-row>
 			
 			<el-row>
-				<el-col :span="6">
+				<el-col :offset="1" :span="8">
 					<el-form-item label="已用" label-width="80px">
 						<el-input></el-input>
 					</el-form-item>
 				</el-col>
+
 				<el-col :span="2">
 				</el-col>
 				
-				<el-col :offset="1" :span="9">
+				<el-col :offset="1" :span="8">
 					<el-form-item label="余额" label-width="80px">
 						<el-input></el-input>
 					</el-form-item>
 				</el-col>
+
 			</el-row>
 			
 			
@@ -154,30 +156,42 @@
 	<!--=============================================住院登记表格===================================-->
 	<el-row>
 		<el-col>
-			<el-table
-			    :data="InhospitalApplyArr"
+			<el-table :data="InhospitalApplyArr"
 			    tooltip-effect="dark"
-			    style="width: 100%"
-				>
-			    <el-table-column
-			      prop="empName"
-			      label="姓名">
-			    </el-table-column>
+			    style="width: 100%">
+        <el-table-column
+            prop="empDate"
+            label="住院号">
+        </el-table-column>
+
+        <el-table-column label="姓名">
+          <template #default="scope" >
+            <el-popover width="300" effect="light"   trigger="hover" placement="top">
+              <template #default >
+                <p>姓名: {{ scope.row.ptName }}</p>
+                <p>年龄: {{ scope.row.ptAge }}</p>
+                <p>性别: {{ scope.row.ptSex }}</p>
+                <p>电话: {{ scope.row.ptIphone }}</p>
+                <p>住址: {{ scope.row.ptHomeAdder }}</p>
+              </template>
+              <template #reference>
+                <div class="name-wrapper">
+                  <el-tag size="medium">{{ scope.row.ptName }}</el-tag>
+                </div>
+              </template>
+            </el-popover>
+          </template>
+        </el-table-column>
+
+
+
 			    <el-table-column
 			      prop="empDate"
-			      label="性别">
+			      label="入院日期">
 			    </el-table-column>
 				<el-table-column
 				  prop="empSalary"
-				  label="年龄">
-				</el-table-column>
-				<el-table-column
-				  prop="empSalary"
-				  label="电话">
-				</el-table-column>
-				<el-table-column
-				  prop="empSalary"
-				  label="身份证">
+				  label="出院日期">
 				</el-table-column>
 				<el-table-column
 				  prop="empSalary"
@@ -185,45 +199,21 @@
 				</el-table-column>
 				<el-table-column
 				  prop="empSalary"
-				  label="医生">
+				  label="治疗医生">
 				</el-table-column>
-				<el-table-column
-				  prop="empSalary"
-				  label="床位">
-				</el-table-column>
-				<el-table-column
-				  prop="empSalary"
-				  label="入院日期">
-				</el-table-column>
-				<el-table-column
-				  prop="empSalary"
-				  label="出院日期" />
+
 				  <el-table-column
 				    prop="empSalary"
 				    label="预交款">
 				  </el-table-column>
-				  <el-table-column
-				    prop="empSalary"
-				    label="已用">
-				  </el-table-column>
+
+          <el-table-column prop="s" label="费用"></el-table-column>
+
 				  <el-table-column
 				    prop="empSalary"
 				    label="退款">
 				  </el-table-column>
-				  <el-table-column
-				    prop="empSalary"
-				    label="补交">
-				  </el-table-column>
-				<el-table-column width="150px"
-				      align="right">
-				      <template  #header>
-				        <el-input
-				          v-model="fromSearch"
-							prefix-icon="el-icon-search"
-				          size="small"
-				          placeholder="病人名称搜索"/>
-				      </template>
-				    </el-table-column>
+
 			  </el-table>
 			  
 			  

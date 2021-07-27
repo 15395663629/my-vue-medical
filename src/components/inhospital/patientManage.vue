@@ -324,26 +324,19 @@
 	</el-dialog>
 
 
+  <!--=============================================================================病人信息表格-->
   <el-row>
     <el-col>
       <el-table
           :data="patientBaseArr"
           tooltip-effect="dark"
           height="470px"
-          style="width: 100%"
-      >
-
+          style="width: 100%">
         <el-table-column align="center" label="住院病人信息">
 
 
-          <el-table-column
-              label="住院号"
-              prop="ptNo"
-          >
-          </el-table-column>
-          <el-table-column
-              label="姓名">
-
+          <el-table-column label="住院号" prop="ptNo"></el-table-column>
+          <el-table-column label="姓名">
             <template #default="scope" >
               <el-popover width="300" effect="light"   trigger="hover" placement="top">
                 <template #default >
@@ -360,51 +353,29 @@
                 </template>
               </el-popover>
             </template>
-
           </el-table-column>
 
           <el-table-column label="联系人">
             <template #default="scope">
-
               <el-badge style="position: absolute;top: 20px" :value="scope.row.listContacts[0].ctsName == null ? '暂无' :  scope.row.listContacts.length">
                     <el-button @click="openContactsText(scope.row)" size="mini">联系人</el-button>
               </el-badge>
-
             </template>
           </el-table-column>
-
-          <el-table-column
-              prop="ptInDate"
-              label="入院日期">
-          </el-table-column>
-          <el-table-column
-              prop="ksName"
-              label="科室">
-          </el-table-column>
-          <el-table-column
-              prop="staff.sname"
-              label="主治医生">
-          </el-table-column>
-
+          <el-table-column prop="ptInDate" label="入院日期"></el-table-column>
+          <el-table-column prop="ksName" label="科室"></el-table-column>
+          <el-table-column prop="staff.sname" label="主治医生"></el-table-column>
           <el-table-column label="门诊诊断">
-
             <template #default="pt">
               <el-button @click="openMzDiagnose(pt.row)" type="text">诊断信息</el-button>
             </template>
-
           </el-table-column>
-
-          <el-table-column
-              label="床位名称">
-
+          <el-table-column label="床位名称">
             <template #default="obj">
               <el-tag v-if="obj.row.bed.bdName == null" type="danger">未分配</el-tag>
-
               <el-tag v-if="obj.row.bed.bdName != null" type="success">{{obj.row.bed.bdName}}</el-tag>
             </template>
-
           </el-table-column>
-
           <el-table-column label="操作" width="300px" >
             <template #default="obj">
               <el-row v-if="obj.row.ptIs == 1">
@@ -425,11 +396,11 @@
       <!--分页插件-->
       <el-pagination
           style="text-align: center;"
-          @size-change="patientHandleSizeChange"
-          @current-change="patientHandleCurrentChange"
-          :current-page="patientCurrent"
+          @size-change="patientBaseSizeChange"
+          @current-change="patientBaseCurrentChange"
+          :current-page="patientBaseCurrent"
           :page-sizes="[2,4,6,8,10]"
-          :page-size="patientSize"
+          :page-size="patientBaseSize"
           layout="total, sizes, prev, pager, next, jumper"
           :total="patientBaseArr.length">
       </el-pagination>
@@ -560,6 +531,11 @@
 				],
 				isCYShow:false,//显示出院申请弹框
 				isSSShow:false,//显示手术弹框
+        patientBaseSize:8,//页大小
+        patientBaseCurrent:1,//当前页
+
+
+
 
         //===============================================门诊诊断信息数据
         mzDiagnoseIsShow:false,//显示门诊诊断弹框
@@ -861,7 +837,27 @@
             this.contactsArr = v.data;
         }).catch((data)=>{
         });
-      }
+      },
+
+
+
+
+
+
+
+
+
+      //==================================所有分页方法
+      patientBaseSizeChange: function(size) {
+        this.patientBaseSize = size;
+        console.log(this.pagesize) //每页下拉显示数据
+      },
+      //初始页病房wardcurrentPage
+      patientBaseCurrentChange: function(currentPage) {
+        this.patientBaseCurrent = currentPage;
+        console.log(this.currentPage) //点击第几页
+      },
+
     },
     created() {
       this.staff = this.$store.state.token.list;//将登录存入的值在取出来
