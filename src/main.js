@@ -16,7 +16,9 @@ import crumb from './components/utils/Breadcrumb.vue'
 import ElementUI from 'element-plus'
 import 'element-plus/lib/theme-chalk/index.css'
 //ElementUI改中文
+import 'dayjs/locale/zh-cn'
 import locale from "element-plus/lib/locale/lang/zh-cn"
+
 
 //引入opc的对应表格
 import newDateOPC from "./components/outpatient/newDate.vue"// 时间

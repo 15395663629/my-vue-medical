@@ -192,7 +192,7 @@
 				InhospitalApplyArr:[
 					{inId:'1',inDiagnosis:'骨质增生',inProposer:'小丽',inApplyDate:'2021-06-23',inName:"张三",ksName:'骨科'}
 				],
-	            baseInfo: {
+	      baseInfo: {
 					name:'',
 					zdxx:'',
 					idCardNo:'',

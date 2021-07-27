@@ -165,7 +165,6 @@
 						      :key="item.anaesthesiaId"
                   :label="item.operationAnaesthesia"
 						      :value="item.anaesthesiaId">
-
                 </el-option>
 						  </el-select>
 
@@ -206,7 +205,6 @@
 		<el-table
 		    :data="sproject.slice((currentPage-1)*pagesize,currentPage*pagesize)"
 		    tooltip-effect="dark"
-
 			  height="450"
 		    style="width: 100%">
 		    <el-table-column
@@ -329,12 +327,7 @@
 			    input: '',
           today: '',
 			    sstime: '',
-	        radio1: '查看全部',
-			    ruleForm: {
-			          pass: '',
-			          checkPass: '',
-			          age: ''
-			       }
+	        radio1: '查看全部'
 	       }
 	    },
 		methods: {

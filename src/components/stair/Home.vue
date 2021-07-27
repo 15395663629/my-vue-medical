@@ -13,7 +13,7 @@
 							<el-avatar shape="square" style="margin-top: 5px" :size="30" :src="squareUrl"></el-avatar>
 							<el-dropdown style="margin-left: 10px; padding-bottom: 20px; font-size: 15px;">
 								<span class="el-dropdown-link">
-									管理员您好<i class="el-icon-arrow-down el-icon--right"></i>
+									{{token.uname}}<i class="el-icon-arrow-down el-icon--right"></i>
 								</span>
 								<template #dropdown>
 									<el-dropdown-menu>

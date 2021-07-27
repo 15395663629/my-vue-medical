@@ -282,7 +282,7 @@
 	.works{
 		padding: 15px;
 	}
-	.el-table__row:hover>td{
+  /deep/ .el-table__row:hover>td{
 		cursor: pointer;
 		background-color: #D2FFF0!important
 	}

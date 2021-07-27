@@ -12,47 +12,83 @@
 			  <el-button type="primary"  @click="dialogFormVisible = true" >新增药品</el-button>
     </el-col>
       <!-- 药品新增弹窗 -->
-			<el-dialog title="药品信息" v-model="dialogFormVisible">
+			<el-dialog @close="fromdata" title="药品信息" v-model="dialogFormVisible">
 			  <el-form :model="form">
-			    <el-form-item label="药品名称">
-			      <el-input v-model="form.drugName" autocomplete="off" style="width: 215px;"></el-input>
-			    </el-form-item>
-          <el-form-item label="药品条形码">
-            <el-input v-model="form.drugBarCode" autocomplete="off" style="width: 215px;"></el-input>
-          </el-form-item>
-				<el-form-item label="药品价格">
-					<el-input-number v-model="form.drugPrice" @change="handleChange" :min="1" :max="1000" label="药品价格"></el-input-number>
-				</el-form-item>
-			    <el-form-item label="药品规格">
-			      <el-select  v-model="form.ykSpecId" placeholder="请选规格">
-			        <el-option v-for="spec in specfrom"
-                         :label="spec.specSpecification"
-                         :value="spec.specId">
-              </el-option>
-			      </el-select>
-			    </el-form-item>
-				<el-form-item label="药品生产厂家">
-				  <el-select v-model="form.ykSupplierId" placeholder="请选厂家">
-				    <el-option v-for="supp in suppfrom"
-                       :label="supp.supplierName"
-                       :value="supp.supplierId">
-            </el-option>
-				  </el-select>
-				</el-form-item>
-        <el-form-item label="药品类别">
-          <el-select  v-model="form.yfDrcaId" placeholder="请选类别">
-            <el-option v-for="drca in drcafrom"
-                       :label="drca.yfDrcaName"
-                       :value="drca.yfDrcaId">
-            </el-option>
-          </el-select>
-        </el-form-item>
-          <el-form-item label="药品备注">
-            <el-input v-model="form.drugRemark" autocomplete="off" style="width: 215px;"></el-input>
-          </el-form-item>
-          <el-form-item label="药品说明书">
-            <el-input v-model="form.drugSpecification" type="textarea" autocomplete="off" style="width: 215px;"></el-input>
-          </el-form-item>
+          <el-row>
+            <el-col :span="5">
+              <el-form-item label-width="80px" label="药品名称">
+                <el-input v-model="form.drugName" autocomplete="off" style="width: 215px;"></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="5" :offset="7">
+              <el-form-item label-width="100px" label="药品条形码">
+                <el-input v-model="form.drugBarCode" autocomplete="off" style="width: 215px;"></el-input>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="5">
+              <el-form-item label-width="80px" label="药品价格">
+                <el-input v-model="form.drugPrice" @change="handleChange" :min="1" :max="1000" style="width: 215px" label="药品价格"></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="10" :offset="7">
+              <el-form-item label-width="85px" label="药品规格">
+                <el-select  v-model="form.ykSpecId" placeholder="请选规格">
+                  <el-option v-for="spec in specfrom"
+                             :label="spec.specSpecification"
+                             :value="spec.specId">
+                  </el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="10">
+              <el-form-item label-width="80px" label="生产厂家">
+                <el-select v-model="form.ykSupplierId" placeholder="请选厂家">
+                  <el-option v-for="supp in suppfrom"
+                             :label="supp.supplierName"
+                             :value="supp.supplierId">
+                  </el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
+            <el-col :span="10" :offset="2">
+              <el-form-item label-width="85px" label="药品类别">
+                <el-select  v-model="form.yfDrcaId" placeholder="请选类别">
+                  <el-option v-for="drca in drcafrom"
+                             :label="drca.yfDrcaName"
+                             :value="drca.yfDrcaId">
+                  </el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="5">
+              <el-form-item label-width="80px" label="药品用法">
+                <el-input v-model="form.drugUsage" autocomplete="off" style="width: 215px;"></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="5" :offset="7">
+              <el-form-item label-width="100px" label="药品说明书">
+                <el-input v-model="form.drugSpecification" type="textarea" autocomplete="off" style="width: 215px;"></el-input>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="5">
+              <el-form-item label-width="80px" label="药品单位">
+                <el-input v-model="form.drugUnit" autocomplete="off" style="width: 215px;"></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="10" :offset="7">
+              <el-form-item label-width="85px" label="药品功效">
+                <el-input v-model="form.drugRemark" autocomplete="off" style="width: 215px;"></el-input>
+              </el-form-item>
+            </el-col>
+          </el-row>
 			  </el-form>
 			  <template #footer>
 			    <span class="dialog-footer">
@@ -82,8 +118,11 @@
                   <el-form-item style="color:cornflowerblue" label="药品说明书">
                     <span>{{props.row.drugSpecification}}</span>
                   </el-form-item>
-                  <el-form-item style="color:cornflowerblue" label="药品备注">
-                    <span>{{props.row.drugRemark}}</span>
+                  <el-form-item style="color:cornflowerblue" label="药品用法">
+                    <span>{{props.row.drugUsage}}</span>
+                  </el-form-item>
+                  <el-form-item style="color:cornflowerblue" label="药品单位">
+                    <span>{{props.row.drugUnit}}</span>
                   </el-form-item>
                 </el-form>
 			      </template>
@@ -104,10 +143,14 @@
 				  label="条形码"
 				  prop="drugBarCode">
 				</el-table-column>
+        <el-table-column
+            label="药品功效"
+            prop="drugRemark">
+        </el-table-column>
 				<el-table-column
 				  label="操作">
 					<template #default="scope">
-						<el-button type="primary" plain size="mini" @click="updatePharmacy(scope.row)">编辑药品信息</el-button>
+						<el-button type="primary" plain size="mini" @click="updatePharmacy(scope.row)">编辑</el-button>
             <el-button type="success" plain size="mini" @click="cg">药品订购</el-button>
 					</template>
 				</el-table-column>
@@ -147,7 +190,7 @@
           drugUpper:'',
           drugRemark:'',
           drugUnit:'',
-          yfDrcaId:'',//
+          yfDrcaId:'',
           ykSpecId:'',
           drugSpecification:'',
           supplierId:'',
@@ -176,7 +219,7 @@
       },
       /*查询所有药品数据*/
       getData(){
-			  this.axios.post("yp-all",this.drug).then((res)=>{
+			  this.axios.post("yp-all").then((res)=>{
 			    console.log(res)
 			    this.tableData = res.data;
         }).catch()
@@ -193,10 +236,6 @@
           this.drcafrom = res.data
           console.log(res.data)
         })
-      },
-      /*动态查询*/
-      select() {
-        this.getData();
       },
       /*新增药品*/
       addPharmacy(){
