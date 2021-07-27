@@ -1,45 +1,54 @@
 
 <template>
-	<el-table
-		:data="rightTableData1"
-		style=" width: 100%;"
-		height="480px"
-		>
-		 <el-table-column type="selection" width="55">
-		</el-table-column>
-		
-		<el-table-column
-		  label="日期"
-		  width="180">
+	<el-table :data="rightTableData1" style=" width: 100%;" height="450px" size="mini" >
+    <el-table-column fixed  label="药品名称" align="center"   width="120">
+      <template #default="scope">
+        <span>{{scope.row.drugName}}</span>
+      </template>
+    </el-table-column>
+    <el-table-column fixed  label="服用剂量" align="center"  width="130">
+      <template #default="scope">
+        <span>{{scope.row.drugSpecification }}</span>
+      </template>
+    </el-table-column>
+    <el-table-column fixed  label="单位" align="center"  width="60">
+      <template #default="scope">
+        <span>{{scope.row.specSpecification}}</span>
+      </template>
+    </el-table-column>
+    <el-table-column fixed  label="单价" align="center"  width="100">
+      <template #default="scope">
+        <span>{{scope.row.drugPrice}}</span>
+      </template>
+    </el-table-column>
+    <el-table-column fixed  label="总金额"  width="110" align="center">
+      <template #default="scope">
+        <span>{{scope.row.xpObject.rdCount*scope.row.drugPrice}}</span>
+      </template>
+    </el-table-column>
+    <el-table-column fixed  label="计数"  width="150" align="center">
+      <template #default="scope">
+        <el-input-number size="mini" v-model="scope.row.xpObject.rdCount"  :min="1" :max="100"></el-input-number>
+      </template>
+    </el-table-column>
+    <el-table-column fixed  label="是否皮试"  width="80" align="center">
+      <template #default="scope">
+        <el-checkbox v-model="scope.row.xpObject.rdSkin"></el-checkbox>
+      </template>
+    </el-table-column>
+    <el-table-column fixed  label="输液分组"  width="120">
+      <template #default="scope">
+        <el-input type="textarea" size="mini" v-model="scope.row.xpObject.rdGrouping" rows="1" maxlength="400"></el-input>
+      </template>
+    </el-table-column>
+    <el-table-column label="嘱托" width="200" class="patientText">
+      <template #default="scope">
+        <el-input type="textarea" size="mini" v-model="scope.row.xpObject.rdEntrust" rows="1" maxlength="400" ></el-input>
+      </template>
+    </el-table-column>
+    <el-table-column align="center" label="操作" width="50">
 		  <template #default="scope">
-			<i class="el-icon-time"></i>
-			<span style="margin-left: 10px">{{ scope.row.date }}</span>
-		  </template>
-		</el-table-column>
-		<el-table-column label="姓名" width="180">
-		  <template #default="scope">
-			<el-popover effect="light" trigger="hover" placement="top">
-			  <template #default>
-				<p>姓名: {{ scope.row.name }}</p>
-				<p>住址: {{ scope.row.address }}</p>
-			  </template>
-			  <template #reference>
-				<div class="name-wrapper">
-				  <el-tag size="medium">{{ scope.row.name }}</el-tag>
-				</div>
-			  </template>
-			</el-popover>
-		  </template>
-		</el-table-column>
-		<el-table-column align="center" label="操作">
-		  <template #default="scope">
-			<el-button
-			  size="mini"
-			  @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
-			<el-button
-			  size="mini"
-			  type="danger"
-			  @click="handleDelete(scope.$index, scope.row)">删除</el-button>
+        <el-button type="danger" icon="el-icon-delete" size="mini" @click="handleDelete(scope.$index)" circle></el-button>
 		  </template>
 		</el-table-column>
 
@@ -59,7 +68,7 @@
     export default{
         props:{
             rightTableData1:{
-                type:Array,
+                type:Object,
                 required:true
             },
             textarea1:{
@@ -69,12 +78,23 @@
         },
         data(){
             return {
-                
             }
+        },
+      methods:{
+        handleDelete(index){
+          this.rightTableData1.splice(index,1);
         }
+      }
+
     }
 </script>
 
 <style>
+.patientText/deep/ .el-input__inner {
+  color: #FD4C4C;
+  white-space: nowrap;
+  font-size: 13px;
+  text-overflow: ellipsis;
+}
 </style>
 
