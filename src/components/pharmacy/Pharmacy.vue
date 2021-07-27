@@ -16,24 +16,24 @@
 			  <el-form :model="form">
           <el-row>
             <el-col :span="5">
-              <el-form-item label="药品名称">
+              <el-form-item label-width="80px" label="药品名称">
                 <el-input v-model="form.drugName" autocomplete="off" style="width: 215px;"></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="5" :offset="7">
-              <el-form-item label="药品条形码">
+              <el-form-item label-width="100px" label="药品条形码">
                 <el-input v-model="form.drugBarCode" autocomplete="off" style="width: 215px;"></el-input>
               </el-form-item>
             </el-col>
           </el-row>
           <el-row>
             <el-col :span="5">
-              <el-form-item label="药品价格">
+              <el-form-item label-width="80px" label="药品价格">
                 <el-input v-model="form.drugPrice" @change="handleChange" :min="1" :max="1000" label="药品价格"></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="10" :offset="7">
-              <el-form-item label="药品规格">
+              <el-form-item label-width="85px" label="药品规格">
                 <el-select  v-model="form.ykSpecId" placeholder="请选规格">
                   <el-option v-for="spec in specfrom"
                              :label="spec.specSpecification"
@@ -45,7 +45,7 @@
           </el-row>
           <el-row>
             <el-col :span="10">
-              <el-form-item label="药品生产厂家">
+              <el-form-item label-width="110px" label="药品生产厂家">
                 <el-select v-model="form.ykSupplierId" placeholder="请选厂家">
                   <el-option v-for="supp in suppfrom"
                              :label="supp.supplierName"
@@ -55,7 +55,7 @@
               </el-form-item>
             </el-col>
             <el-col :span="10" :offset="2">
-              <el-form-item label="药品类别">
+              <el-form-item label-width="85px" label="药品类别">
                 <el-select  v-model="form.yfDrcaId" placeholder="请选类别">
                   <el-option v-for="drca in drcafrom"
                              :label="drca.yfDrcaName"
@@ -67,13 +67,20 @@
           </el-row>
           <el-row>
             <el-col :span="5">
-              <el-form-item label="药品备注">
-                <el-input v-model="form.drugRemark" autocomplete="off" style="width: 215px;"></el-input>
+              <el-form-item label-width="80px" label="药品用法">
+                <el-input v-model="form.drugUsage" autocomplete="off" style="width: 215px;"></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="5" :offset="7">
-              <el-form-item label="药品说明书">
+              <el-form-item label-width="100px" label="药品说明书">
                 <el-input v-model="form.drugSpecification" type="textarea" autocomplete="off" style="width: 215px;"></el-input>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="5">
+              <el-form-item label-width="80px" label="药品单位">
+                <el-input v-model="form.drugUnit" autocomplete="off" style="width: 215px;"></el-input>
               </el-form-item>
             </el-col>
           </el-row>
@@ -106,8 +113,11 @@
                   <el-form-item style="color:cornflowerblue" label="药品说明书">
                     <span>{{props.row.drugSpecification}}</span>
                   </el-form-item>
-                  <el-form-item style="color:cornflowerblue" label="药品备注">
-                    <span>{{props.row.drugRemark}}</span>
+                  <el-form-item style="color:cornflowerblue" label="药品用法">
+                    <span>{{props.row.drugUsage}}</span>
+                  </el-form-item>
+                  <el-form-item style="color:cornflowerblue" label="药品单位">
+                    <span>{{props.row.drugUnit}}</span>
                   </el-form-item>
                 </el-form>
 			      </template>
