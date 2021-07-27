@@ -35,12 +35,7 @@
 	<el-dialog :title="tctitl" v-model="tjtc" width="50%" center  ><!-- 弹窗      -=-=-=-=-=-=-==-=-=-=-=--=-=-=-=-=-=-新增套餐======================================= -->
 		<el-form   ref="tjtcForm" v-model="tcdx" label-width="100px" class="demo-ruleForm">
 			<el-row>
-<!--								<el-col :span="6">-->
-<!--									<el-form-item label="编号:" prop="name">-->
-<!--									<el-input></el-input>-->
-<!--									</el-form-item>-->
-<!--								</el-col>-->
-            <el-col :span="6">
+            <el-col :span="8">
 									<el-form-item label="套餐名称:" prop="name">
 									<el-input v-model="tcdx.codeName"></el-input>
 									</el-form-item>
@@ -52,11 +47,12 @@
             </el-col>
 			</el-row>
 			<el-row>
-					<el-col :span="6">
+					<el-col :span="8">
 							<el-form-item label="体检类型:" prop="name">
 							 <el-select v-model="tcdx.codeType" placeholder="请选择">
 							    <el-option
                       v-for="item in xmzb"
+                      :key="item.value"
                       :label="item.checkIndex"
                       :value="item.typeId">
 							    </el-option>
@@ -76,7 +72,6 @@
                   :data="tjpro"
                   :row-key="(tjpro) => tjpro.checkId"
                   style="width: 100%;"
-
                   @selection-change="handleSelectionChange">
 					<el-table-column
               :reserve-selection="true"
@@ -130,17 +125,7 @@
           </el-table-column>
 
 				</el-table>
-<!--        &lt;!&ndash;分页插件&ndash;&gt;-->
-<!--        <el-pagination-->
-<!--            style="text-align: center;"-->
-<!--            @size-change="handleSizeChange"-->
-<!--            @current-change="handleCurrentChange"-->
-<!--            :current-page="1"-->
-<!--            :page-sizes="[2,4,6,8,10]"-->
-<!--            :page-size="psize"-->
-<!--            layout="total, sizes, prev, pager, next, jumper"-->
-<!--            :total="tjpro.length">-->
-<!--        </el-pagination>-->
+
 			</el-row>
 			  <el-form-item>
 				  <el-col :span="1" :offset="8">
@@ -221,7 +206,7 @@
 	</el-dialog>
 	
 	<el-dialog :title="tilt" v-model="jcxm" width="50%" center  ><!-- 弹窗      -=-=-=-=-=-=-==-=-=-=-=--=-=-=-=-=-=-医疗项目======================================= -->
-		<el-form  status-icon v-model="jcdx" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
+		<el-form  status-icon v-model="jcdx" :ref="jcdww"  label-width="100px" class="demo-ruleForm">
 			<el-row>
 								<el-col :span="7" >
 									<el-form-item label="项目名称:" prop="name">
@@ -254,7 +239,7 @@
 			</el-row>
 			<el-form-item>
 							  <el-col :span="1" :offset="8">
-							<el-button type="primary" @click="jcxmForm('ruleForm')">确定</el-button>
+							<el-button type="primary" @click="jcxmForm()">确定</el-button>
 							</el-col>
 			</el-form-item>
 		</el-form>
@@ -336,23 +321,23 @@
 	<!-- ============================================下表格============================================ -->
 	<el-row > 
 		<el-table height="220" :data="tjpro.slice((currentPage-1)*psize,currentPage*psize)"
-            ref="jcxmtable"  style="width: 100%;" v-if="isShow!==null">
+            ref="jcxmtable"   style="width: 100%;">
 			<el-table-column label="编号" width="180" prop="checkId">
 			</el-table-column>
 			
 		    <el-table-column label="医疗项目名称" prop="checkName" >
-				<template #default="scope">
-				<el-popover effect="light" trigger="hover"  placement="top">
-					<template #default>
-						<p>项目名称: {{ scope.row.checkName }}</p>
-					</template>
-					<template #reference>
-		            <div class="name-wrapper">
-		              <el-tag size="medium">{{ scope.row.checkName }}</el-tag>
-		            </div>
-		          </template>
-				</el-popover>
-		      </template>
+          <template #default="scope">
+          <el-popover effect="light" trigger="hover"  placement="top">
+            <template #default>
+              <p>项目名称: {{ scope.row.checkName }}</p>
+            </template>
+            <template #reference>
+                  <div class="name-wrapper">
+                    <el-tag size="medium">{{ scope.row.checkName }}</el-tag>
+                  </div>
+                </template>
+          </el-popover>
+            </template>
 		    </el-table-column>
 			<el-table-column label="价格" prop="checkPay">
 			</el-table-column>
@@ -449,6 +434,24 @@
               indexSignificance:''
             }
           },
+          jcdww:{//检查项目对象
+            //检查主键
+            checkId:'',
+            // 名称
+            checkName:'',
+            // 价格
+            checkPay: '',
+            // 指标编号
+            indexId:'',
+            tjCodeIndex:{
+              // 指标编号
+              indexId:'',
+              // 指标
+              indexName:'',
+              // 指标意义
+              indexSignificance:''
+            }
+          },
           //体检套餐对象
           tcdx:{
             codeId:'',
@@ -472,11 +475,6 @@
 				price:'233',
 				lx:'入职体检'
 			}],
-			ruleForm: {
-			          pass: '',
-			          checkPass: '',
-			          age: ''
-			}
         }
 	    },
 		methods: {
@@ -524,16 +522,16 @@
           this.axios.get("http://localhost:8089/allDescTjpro",{params:{seach:this.seach}}).then((res)=>{
             this.tjpro = res.data;
           }).catch()
-
         },
       // 体检套餐基础参数================
       getMeal(){
         this.axios.get("http://localhost:8089/allMeal",{params:{checkIndex:this.search,codeName:this.search,codeType:this.CodeType}}).then((res)=>{
           this.tjmeal = res.data;
         }).catch()
-
+//体检类型
         this.axios.get("http://localhost:8089/allTJtype").then((res)=>{
           this.xmzb = res.data;
+          console.log(this.xmzb)
         }).catch()
 
       },
@@ -550,7 +548,7 @@
             this.jcdx.tjCodeIndex.indexName=row.tjCodeIndex.indexName
             this.jcdx.tjCodeIndex.indexSignificance=row.tjCodeIndex.indexSignificance
           }else {
-            this.inspectClear(formName);
+            this.inspectClear()
           }
           this.jcxm = true;
         },
@@ -561,14 +559,13 @@
             this.tcdx.codeId=row.codeId;
             this.tcdx.codeName=row.codeName;
             this.tcdx.codePay=row.codePay;
-            this.tcdx.codeType=row.codeType;
+            this.tcdx.codeType=parseInt(row.codeType);
             this.tcdx.TjAn = row.TjAn;
             var ww=[];
 
 
             this.axios.get("http://localhost:8089/aloneProt",{params:{codeId:row.codeId}}).then((res)=>{
               this.tjow = res.data;
-              // console.log(res.data)
               res.data.forEach(q=>{
                 ww.push(q.checkId)
               })
@@ -577,8 +574,6 @@
               //强制渲染
               this.$forceUpdate();
               this.tcdx.TjAn=ww;
-
-               console.log(this.tcdx.TjAn)
             }).catch()
           }else{
             this.inspectClear1(fromName);
@@ -656,24 +651,21 @@
         })
       },
       //清除修改与删除检查项目弹框
-      inspectClear(formName){
-        this.jcdx = {
-          tjCodeIndex:'',
-        }
-        this.$refs[formName].resetFields();
+      inspectClear(){
+        this.jcdx=this.jcdww
       },
       //清除修改与套餐弹框
       inspectClear1(formName){
-        this.tcdx = {
-        }
+        this.$refs[formName].resetFields();
       },
       //修改与新增检查项目确认按钮
-        jcxmForm(formName) {
+        jcxmForm() {
           console.log(this.jcdx)
           this.axios.post("http://localhost:8089/addOrUpdataTroj",{troj:this.jcdx}).then((res)=>{
             this.getData();
-            this.inspectClear(formName);
+            this.inspectClear();
           }).catch()
+
           this.jcxm = false
         },
 
@@ -685,22 +677,7 @@
         this.getData()
         this.getMeal()
       },
-    //局部渲染方法
-    // updated() {
-      // this.$nextTick(() => {
-      //   //清除表格复选框
-      //   this.$refs.inserdata.clearSelection();
-      //       for (let i = 0; i < this.tjow.length; i++) {
-      //         for (let j = 0; j < this.tjpro.length; j++) {
-      //           if (this.tjow[i].checkId == this.tjpro[j].checkId) {
-      //             this.$refs.inserdata.toggleRowSelection(this.tjpro[j],true)
-      //           }
-      //         }
-      //       }
-      //       // }
-      //     })
-      //   }
-      }
+  }
 </script>
 
 <style scoped>

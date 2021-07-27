@@ -12,6 +12,9 @@
 			<el-button type="primary" icon="el-icon-search">查询</el-button>
 		</el-col>
 	</el-row>
+
+
+
 	<el-dialog title="手术申请" v-model="isShow" width="60%" center  ><!-- 弹窗详情 -->
 		<el-form  status-icon :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
 			  <el-row style="color: red;">
@@ -300,7 +303,7 @@
 			  value: '选项3',
 			  label: '非麻醉'
 			}],
-			sqyp:"",
+			qq:'',
 			sqyp:[{
 			  value: '选项1',
 			  label: '预防过敏',
