@@ -4,7 +4,7 @@
     <el-col>
       <!-- 新增弹窗 -->
       <el-button type="primary" @click="dialogFormVisible = true">新增供应商</el-button>
-      <el-dialog  title="供应商" v-model="dialogFormVisible" width="40%">
+      <el-dialog @close="clearform" title="供应商" v-model="dialogFormVisible" width="40%">
         <el-form :model="formSipplier">
           <el-form-item label="供应商编号" :label-width="formLabelWidth">
             <el-input v-model="formSipplier.supplierId" autocomplete="off" style="width: 200px;"></el-input>
@@ -31,7 +31,7 @@
       </el-dialog>
 
       <!--修改弹窗-->
-      <el-dialog  title="供应商" v-model="handleEdit" width="40%">
+      <el-dialog @close="clearform" title="供应商" v-model="handleEdit" width="40%">
         <el-form :model="formSipplier">
           <el-row :gutter="0">
            <el-col :span="0">
@@ -40,7 +40,6 @@
              </el-form-item>
            </el-col>
           </el-row>
-
           <el-form-item label="供应商名称" :label-width="formLabelWidth">
             <el-input v-model="formSipplier.supplierName" autocomplete="off" style="width: 200px;"></el-input>
           </el-form-item>
