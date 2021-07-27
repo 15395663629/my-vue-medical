@@ -2,8 +2,8 @@
 	<div class="wz">
 		<el-button type="primary" @click="dialogVisible1 = true">新增科室</el-button>
 		<span style="margin-left: 20px;">
-			<el-input style="width: 120px;" v-model="name" value=""></el-input>
-			<el-button type="primary" icon="el-icon-orange" style="margin-left: 20px;">查询科室</el-button>
+			<el-input style="width: 120px;" v-model="kname" value=""></el-input>
+			<el-button type="primary" icon="el-icon-orange" style="margin-left: 20px;" @click="select(this.kname)">查询科室</el-button>
 		</span>
 
 	</div>
@@ -53,9 +53,11 @@
 </template>
 
 <script>
+import  qs from 'qs'
 	export default {
 		data() {
 			return {
+			  kname:'',
 			  dplist:[],//查询部门
 			  kslist:[],//表格查询集合
 				dialogVisible1: false,
@@ -164,10 +166,21 @@
         this.ksName=""
         this.value=""
         this.deId=''
-    }
+      this.kname=''
+    },
+      //查询科室
+      select(name){
+       this.ks.ksName=name
+        if(this.ks.ksName.length===0){
+          this.getData()
+        }
+        this.axios.post('http://localhost:8089/select-ks',this.ks).then((v)=>{
+          this.kslist=v.data
+          console.log(this.kslist)
+        }).catch()
+      },
 		},
     created() {
-
 		  this.getData()
     }
   }

@@ -4,189 +4,187 @@
 	</div>
 		
 	<!-- <el-button type="primary">重置密码</el-button> -->
-	<el-table ref="multipleTable" :data="tableData" tooltip-effect="dark" style="width: 100%" @selection-change="handleSelectionChange"
-	 class="dome">
-		<el-table-column type="selection" width="55">
+	<el-table ref="multipleTable" :data="fre.slice((page-1)*size,page*size)" tooltip-effect="dark" style="width: 100%" @selection-change="handleSelectionChange"
+	 class="dome" id="printMe">
+		<el-table-column type="selection">
 		</el-table-column>
-		<el-table-column label="日期" width="120">
-			<template #default="scope">{{ scope.row.date }}</template>
+		<el-table-column label="班次编号" prop="fid">
 		</el-table-column>
-		<el-table-column prop="name" label="姓名" width="120">
+		<el-table-column prop="ffrequency" label="班次名" >
 		</el-table-column>
-		<el-table-column prop="address" label="地址" width="540">
+		<el-table-column prop="fstartTime" label="开始时间">
 		</el-table-column>
+    <el-table-column prop="fendTime" label="结束时间" >
+    </el-table-column>
 		<el-table-column label="操作">
 			<template v-slot:default="r">
-				<el-button type="primary" @click="dialogVisible1 = true">编辑班次</el-button>
-				<el-button type="danger" @click="open">删除班次</el-button>
+				<el-button type="primary" @click="edit(r.row)" size="mini">编辑班次</el-button>
+				<el-button type="danger" @click="open(r.row)" size="mini">删除班次</el-button>
 
 			</template>
 		</el-table-column>
 
 	</el-table>
  <!--分页插件-->
-				  <el-pagination
-				 					style="text-align: center;"
-				       @size-change="totalCut"
-				       @current-change="pageCut"
-				       :current-page="1"
-				       :page-sizes="[2,4,6,8,10]"
-				       :page-size="size"
-				       layout="total, sizes, prev, pager, next, jumper"
-				       :total="total">
-				     </el-pagination>
+  <el-pagination
+      style="text-align: center;margin-top: 10px"
+      @size-change="HandleSizeChange"
+      @current-change="HandleCurrentChange"
+      :current-page="page"
+      :page-sizes="[2,4,6,8,10]"
+      :page-size="size"
+      layout="total, sizes, prev, pager, next, jumper"
+      :total="fre.length">
+  </el-pagination>
 					 <el-dialog title="班次管理" v-model="dialogVisible1" width="30%" :before-close="handleClose">
 					 	<!-- 表格 -->
-					 	请选择班次类别：<el-select v-model="value" placeholder="请选择"
-					 		style="width: 20%;margin-top:20px;">
-					 		<el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
-					 		</el-option>
-					 	</el-select><br />
-						请选择班次类型：<el-select v-model="value1" placeholder="请选择"
-							style="width: 20%;margin-top:20px;">
-							<el-option v-for="item in optionss" :key="item.value1" :label="item.label1" :value="item.value1">
-							</el-option>
-						</el-select><br />
+             请输入班次名称：<el-input type="text" v-model="bcName" style="width: 45%;margin-top: 20px"></el-input><br />
 					<el-row style="margin-top: 20px !important;">
-						开始日期：<el-time-select placeholder="起始时间" v-model="startTime" start='08:30' step='01:00' end='23:59'>
+						开始日期：<el-time-select placeholder="起始时间" v-model="startTime" start='08:00' step='01:00' end='23:59'>
 						</el-time-select>
 					</el-row>
 					<el-row  style="margin-top: 20px !important;">
-						结束日期：<el-time-select placeholder="结束时间" v-model="endTime" start='08:30' step='01:00' end='23:59'
+						结束日期：<el-time-select placeholder="结束时间" v-model="endTime" start='08:00' step='01:00' end='23:59'
 							>
 						</el-time-select>
 					</el-row>
 					 	<template #footer>
 					 		<span class="dialog-footer">
 					 			<el-button @click="dialogVisible1 = false">取 消</el-button>
-					 			<el-button type="primary" @click="dialogVisible1 = false">确 定</el-button>
+					 			<el-button type="primary" @click="addFre">确 定</el-button>
 					 		</span>
 					 	</template>
 					 </el-dialog>
 </template>
 
 <script>
+import qs from 'qs'
 	export default {
 		data() {
 			return {
+        bcName:'',
+        //查询表格数据
+        fre:[],
+        size:4,
+        page:1,
 				dialogVisible1:false,
-				shortcuts: [{
-					text: '最近一周',
-					value: (() => {
-						const end = new Date()
-						const start = new Date()
-						start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
-						return [start, end]
-					})(),
-				}, {
-					text: '最近一个月',
-					value: (() => {
-						const end = new Date()
-						const start = new Date()
-						start.setTime(start.getTime() - 3600 * 1000 * 24 * 30)
-						return [start, end]
-					})(),
-				}, {
-					text: '最近三个月',
-					value: (() => {
-						const end = new Date()
-						const start = new Date()
-						start.setTime(start.getTime() - 3600 * 1000 * 24 * 90)
-						return [start, end]
-					})(),
-				}],
 				
 				startTime: '',
 				endTime: '',
-				currentPage1: 5,
-				currentPage2: 5,
-				currentPage3: 5,
-				currentPage4: 4,
-				tableData: [{
-					date: '2016-05-03',
-					name: '王小虎',
-					address: '上海市普陀区金沙江路 1518 弄'
-				}, {
-					date: '2016-05-02',
-					name: '王小虎',
-					address: '上海市普陀区金沙江路 1518 弄'
-				}, {
-					date: '2016-05-04',
-					name: '王小虎',
-					address: '上海市普陀区金沙江路 1518 弄'
-				}, {
-					date: '2016-05-01',
-					name: '王小虎',
-					address: '上海市普陀区金沙江路 1518 弄'
-				}, {
-					date: '2016-05-08',
-					name: '王小虎',
-					address: '上海市普陀区金沙江路 1518 弄'
-				}, {
-					date: '2016-05-06',
-					name: '王小虎',
-					address: '上海市普陀区金沙江路 1518 弄'
-				}, {
-					date: '2016-05-07',
-					name: '王小虎',
-					address: '上海市普陀区金沙江路 1518 弄'
-				}],
-				multipleSelection: [],
+
 				dialogTableVisible: false,
-				formLabelWidth: '120px',
-				options: [{
-					value: '选项1',
-					label: '三班制'
-				}, {
-					value: '选项2',
-					label: '两班制'
-				}],
-				value: '',
-				optionss: [{
-					value1: '选项1',
-					label1: '早'
-				}, {
-					value1: '选项2',
-					label1: '中'
-				},{
-					value1: '选项3',
-					label1: '晚'
-				}],
+
 				value1: '',
+        //获取新增数据
+        addfre:{
+          fId:0,
+          fFrequency:'',
+          fStartTime:'',
+          fEndTime:''
+        }
 			}
 		},
 
 		methods: {
+      getData(){
+        this.axios.get('select-fre').then((v)=>{
+          this.fre=v.data
+          console.log(this.fre)
+        }).catch()
+      },
+      //初始每页数据数size和数据data
+      HandleSizeChange: function(size) {
+        this.size = size;
+        console.log(this.pagesize) //每页下拉显示数据
+      },
+      //初始页page
+      HandleCurrentChange: function(currentPage) {
+        this.page = currentPage;
+        console.log(this.currentPage) //点击第几页
+      },
+			open(row) {
+        this.addfre.fId=row.fid
+        this.axios({
+          url:"delet-fre",
+          params:{fid:this.addfre.fId}
+        }).then((v)=>{
+          if(v.data===0){
+            this.$message({
+              type: 'success',
+              message: '删除成功!'
+            });
+            this.getData()
+          }else {
+            this.$message({
+              type: 'info',
+              message: '该班次在使用中无法删除'
+            });
+          }
+        }).catch();
 
-			handleSelectionChange(val) {
-				this.multipleSelection = val;
-				// alert(123)
+
+
+
 			},
-			open() {
-				this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
-					confirmButtonText: '确定',
-					cancelButtonText: '取消',
-					type: 'warning'
-				}).then(() => {
-					this.$message({
-						type: 'success',
-						message: '删除成功!'
-					});
-				}).catch(() => {
-					this.$message({
-						type: 'info',
-						message: '已取消删除'
-					});
-				});
-			},
-			handleSizeChange(val) {
-				console.log(`每页 ${val} 条`);
-			},
-			handleCurrentChange(val) {
-				console.log(`当前页: ${val}`);
-			}
-		}
-	}
+      addFre(){
+        if(this.addfre.fId===0){
+          this.addfre.fFrequency=this.bcName
+          this.addfre.fStartTime=this.startTime
+          this.addfre.fEndTime=this.endTime
+          this.axios.post("add-fre",qs.stringify(this.addfre)).then((v)=>{
+            if(v.data==1){
+              this.getData()
+              this.$message({
+                type: 'success',
+                message: '新增成功!'
+              });
+              this.dialogVisible1=false
+            }else{
+              this.$message({
+                type: 'info',
+                message: '新增失败'
+              });
+              this.dialogVisible1=false
+            }
+          }).catch()
+        }else{
+          this.axios.post('edit-fre',qs.stringify(this.addfre)).then((v)=>{
+            if(v.data==1){
+              this.getData()
+              this.$message({
+                type: 'success',
+                message: '新增成功!'
+              });
+              this.dialogVisible1=false
+            }else{
+              this.$message({
+                type: 'info',
+                message: '新增失败'
+              });
+              this.dialogVisible1=false
+            }
+          }).catch()
+        }
+
+      },
+      edit(row){
+        console.log(row)
+        this.dialogVisible1=true
+        this.bcName=row.ffrequency
+        this.startTime=row.fstartTime
+        this.endTime=row.fendTime
+        //打包成对象
+        this.addfre.fId=row.fid
+        this.addfre.fFrequency= this.bcName
+        this.addfre.fStartTime=this.startTime
+        this.addfre.fEndTime=this.endTime
+        console.log(row)
+      }
+		},
+    created() {
+		  this.getData()
+    }
+  }
 </script>
 
 
