@@ -77,6 +77,13 @@
               </el-form-item>
             </el-col>
           </el-row>
+          <el-row>
+            <el-col :span="5">
+              <el-form-item label-width="80px" label="药品单位">
+                <el-input v-model="form.drugUnit" autocomplete="off" style="width: 215px;"></el-input>
+              </el-form-item>
+            </el-col>
+          </el-row>
 			  </el-form>
 			  <template #footer>
 			    <span class="dialog-footer">
@@ -108,6 +115,9 @@
                   </el-form-item>
                   <el-form-item style="color:cornflowerblue" label="药品用法">
                     <span>{{props.row.drugUsage}}</span>
+                  </el-form-item>
+                  <el-form-item style="color:cornflowerblue" label="药品单位">
+                    <span>{{props.row.drugUnit}}</span>
                   </el-form-item>
                 </el-form>
 			      </template>
