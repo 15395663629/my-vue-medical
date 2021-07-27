@@ -29,7 +29,7 @@
           <el-row>
             <el-col :span="5">
               <el-form-item label-width="80px" label="药品价格">
-                <el-input v-model="form.drugPrice" @change="handleChange" :min="1" :max="1000" label="药品价格"></el-input>
+                <el-input v-model="form.drugPrice" @change="handleChange" :min="1" :max="1000" style="width: 215px" label="药品价格"></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="10" :offset="7">
@@ -45,7 +45,7 @@
           </el-row>
           <el-row>
             <el-col :span="10">
-              <el-form-item label-width="110px" label="药品生产厂家">
+              <el-form-item label-width="80px" label="生产厂家">
                 <el-select v-model="form.ykSupplierId" placeholder="请选厂家">
                   <el-option v-for="supp in suppfrom"
                              :label="supp.supplierName"
@@ -81,6 +81,11 @@
             <el-col :span="5">
               <el-form-item label-width="80px" label="药品单位">
                 <el-input v-model="form.drugUnit" autocomplete="off" style="width: 215px;"></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="10" :offset="7">
+              <el-form-item label-width="85px" label="药品功效">
+                <el-input v-model="form.drugRemark" autocomplete="off" style="width: 215px;"></el-input>
               </el-form-item>
             </el-col>
           </el-row>
@@ -138,10 +143,14 @@
 				  label="条形码"
 				  prop="drugBarCode">
 				</el-table-column>
+        <el-table-column
+            label="药品功效"
+            prop="drugRemark">
+        </el-table-column>
 				<el-table-column
 				  label="操作">
 					<template #default="scope">
-						<el-button type="primary" plain size="mini" @click="updatePharmacy(scope.row)">编辑药品信息</el-button>
+						<el-button type="primary" plain size="mini" @click="updatePharmacy(scope.row)">编辑</el-button>
             <el-button type="success" plain size="mini" @click="cg">药品订购</el-button>
 					</template>
 				</el-table-column>
