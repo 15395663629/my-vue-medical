@@ -38,6 +38,7 @@ const routes = [
 					component:()=>import("/src/components/outpatient/UserRegistration.vue"),
 					meta:{title:'用户挂号', noCache: true },
 				},
+			
 				{
 					name:'ProjectPayment',
 					path:'/ProjectPayment',
