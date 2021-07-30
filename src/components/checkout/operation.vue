@@ -3,7 +3,7 @@
     <el-form label-width="100px" style="padding-top: 10px" >
       <el-col :span="5">
         <el-form-item  label="体检人员信息:" label-width="100px">
-          <el-input  @input="getData" style="width: 200px" v-model="serman" placeholder="请输入你要查询的体检人员" ></el-input>
+          <el-input   @input="getData" style="width: 200px" v-model="serman" placeholder="请输入你要查询的体检人员" ></el-input>
         </el-form-item>
       </el-col>
       <el-col :span="5">
@@ -23,12 +23,12 @@
 			<el-row>
 				<el-col :span="8">
 						<el-form-item label="体检人:" prop="name">
-								<el-input v-model="man.manName"></el-input>
+								<el-input size="mini" v-model="man.manName"></el-input>
 						</el-form-item>
 				</el-col>
         <el-col :span="10">
           <el-form-item label="身份证:" prop="name">
-            <el-input  @input="getId(man.manSid)" v-model="man.manSid"></el-input>
+            <el-input size="mini"  @input="getId(man.manSid)" v-model="man.manSid"></el-input>
           </el-form-item>
         </el-col>
 			</el-row>
@@ -41,26 +41,27 @@
 					</el-col>
 					<el-col :span="6">
 						<el-form-item label="年龄:" prop="name">
-						<el-input v-model="man.manAge"></el-input>
+						<el-input size="mini" v-model="man.manAge"></el-input>
 						</el-form-item>
 					</el-col>
-        、<el-col :span="7">
+          <el-col :span="7">
             <el-form-item label="出生日期:" prop="name">
-              <el-input v-model="man.manBirthtime"></el-input>
+              <el-input size="mini" v-model="man.manBirthtime"></el-input>
             </el-form-item>
           </el-col>
 			</el-row>
 			<el-row>
         <el-col :span="8">
           <el-form-item label="手机号:" prop="name">
-            <el-input v-model="man.manPhone"></el-input>
+            <el-input size="mini" v-model="man.manPhone"></el-input>
           </el-form-item>
         </el-col>
 				<el-col :span="7">
 					<el-form-item label="体检时间:" prop="name">
-						<div class="block">
+						<div  class="block">
 						    <el-date-picker
                     v-model="man.manTime"
+                    size="mini"
                     @input="console.log(man.manTime)"
 						      type="date"
 						      placeholder="选择日期">
@@ -76,7 +77,7 @@
         <!-- ==================================================================套餐表格 ==================================================================-->
           <el-tabs v-model="activeName" @tab-click="handleClick">
             <el-tab-pane style="width:730px" label="套餐选择" name="first">
-              <el-table :data="tjmeal" ref="tcdata" @selection-change="handleSelectionChange"
+              <el-table size="mini" :data="tjmeal" ref="tcdata" @selection-change="handleSelectionChange"
                         @select="select"
                         height="230">
                 <el-table-column
@@ -119,7 +120,7 @@
             <!-- ==================================================================项目表格 ==================================================================-->
 
             <el-tab-pane style="width:730px"  label="项目选择" name="second">
-              <el-table height="230" :data="tjpro"
+              <el-table size="mini" height="230" :data="tjpro"
                         @selection-change="handleSelectionChange1"
                         ref="jcxmtable"  style="width: 100%;">
                 <el-table-column
@@ -177,7 +178,7 @@
 	<!-- ==================================================体检人员表================================================== -->
 	<el-row>
 		<el-col>
-			<el-table :data="tjman.slice((currentPage-1)*pagesize,currentPage*pagesize)" height="450"  tooltip-effect="dark" style="width: 100%;">
+			<el-table :data="tjman.slice((currentPage-1)*pagesize,currentPage*pagesize)" height="450"  tooltip-effect="dark" :row-class-name="tableRowClassName" style="width: 100%;">
 			    <el-table-column
 			      label="编号"
 				  prop="manId"
@@ -228,8 +229,9 @@
           width="220px"
 				  label="操作">
           <template #default="scope">
-          <el-button size="mini" type=" primary" plain>详情</el-button>
-				  <el-button size="mini" type="primary" @click="manstate(scope.row)" v-show="getNowFormatDate==scope.row.manTime">开始</el-button>
+          <el-button size="mini" type=" primary"  plain>详情</el-button>
+				  <el-button size="mini" type="primary" @click="manstate(scope.row)" v-show="getNowFormatDate==scope.row.manTime && scope.row.mcBalance!=null">启用</el-button>
+            <el-button size="mini" type="primary" @click="aMc" v-show="scope.row.mcBalance==null">办卡</el-button>
 				  <el-button size="mini"   type="danger">取消</el-button>
           </template>
 				</el-table-column>
@@ -247,7 +249,14 @@
       </el-pagination>
 		</el-col>
 	</el-row>
-	
+  <el-row>
+    <el-col span="8" style="margin-top: 6px">
+      <div  style="background-color: red;width:14px;height: 14px;float: left;margin-top: 4px"></div>:未办理诊疗卡
+    </el-col>
+    <el-col span="9" offset="3" style="margin-top: 6px">
+      <div  style="background-color: burlywood;width:14px;height: 14px;float: left;margin-left: 33px;margin-top: 4px"></div>:预约时间即将到期
+    </el-col>
+  </el-row>
 </template>
 
 <script>
@@ -256,6 +265,7 @@ import qs from "qs";
 export default {
     data() {
       return {
+        tjsj:[],
         ksan:false,
         tc: 0,//项目选中
         //套餐
@@ -302,12 +312,58 @@ export default {
       }
     },
     methods: {
-      dateFormat:function(row,column){
-        var date=row[column,property]
-        if(date==undefined){
-            return "";
+      // 跳转页面
+      aMc(){
+        this.$router.push('/UserRegistration');
+      },
+      // 更改表格颜色
+      tableRowClassName({row, rowIndex}) {
+        console.log('ka',row)
+        if (row.manTime === this.getNowFormatDate1(-1,this.getNowFormatDate)) {
+          return 'warning-row';
+        }else if (row.mcBalance == null) {
+          return 'danger-row';
         }
-        return moment(date).format("YYYY-MM-DD")
+        return '';
+      },
+      //获取当前时间后七天
+      getNowFormatDate1(num,time) {
+        let n = num;
+        let d = '';
+        if(time) {
+          d = new Date(time);
+        } else {
+          d = new Date();
+        }
+        let year = d.getFullYear();
+        let mon = d.getMonth() + 1;
+        let day = d.getDate();
+        if(day <= n) {
+          if(mon > 1) {
+            mon = mon - 1;
+          } else {
+            year = year - 1;
+            mon = 12;
+          }
+        }
+        d.setDate(d.getDate() - n);
+        year = d.getFullYear();
+        mon = d.getMonth() + 1;
+        day = d.getDate();
+        let s = year + "-" + (mon < 10 ? ('0' + mon) : mon) + "-" + (day < 10 ? ('0' + day) : day);
+        return s;
+      },
+      //修改时间
+      alonem(manTime,manId){
+        this.axios.post('http://localhost:8089/updTjman', qs.stringify({manTime:manTime,manId:manId}))
+            .then((v)=>{
+              if(v.data == 'ok'){
+
+              }else{
+                alert(v.data);
+              }
+            }).catch(function(){
+        })
       },
       //默认勾选项目
       cleaxm() {
@@ -380,15 +436,19 @@ export default {
       },
       // 体检人员预约参数
       getData() {
-        this.axios.get("http://localhost:8089/allMan", {
-          params: {
-            manState: this.manState,
-            sermen: this.serman
-          }
+        var bb=this.getNowFormatDate1(-7,this.getNowFormatDate)
+        var aa=[];
+        this.axios.get("http://localhost:8089/allMan", {params: {manState: this.manState, sermen: this.serman}
         }).then((res) => {
+          //如果当前客户体检时间已过期自动将时间调为未来第七天
+          res.data.forEach(v=>{
+            if(v.manTime<this.getNowFormatDate){
+              this.alonem(bb,v.manId)
+            }
+          })
+          this.$forceUpdate();
           this.tjman = res.data;
         }).catch()
-
       },
       //查询套餐详情新增套餐
       cheageMeal(row) {
@@ -410,6 +470,10 @@ export default {
         if(this.man.jcXm.length!=this.tjprox.length){
           this.man.manPhy=this.tc
         }
+        //如果选的时间是当前时间之前的，就将时间改成当前时间后七天
+        if(this.man.manTime<this.getNowFormatDate){
+          this.man.manTime=this.getNowFormatDate1(-7,this.getNowFormatDate)
+        }
         this.axios.post("http://localhost:8089/addOrUpdataMan", {manj: this.man}).then((res) => {
           this.getData()
           this.inserClear(formName);
@@ -418,16 +482,12 @@ export default {
       },
       //体检人员修改状态
       manstate(row){
-        this.$confirm('是否确认开始?', '提示', {
+        this.$confirm('是否确认启用?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          this.manu(row)
-          this.$message({
-            type: 'success',
-            message: '已开始!'
-          });
+          this.manj(row)
         }).catch(() => {
           this.$message({
             type: 'info',
@@ -435,8 +495,9 @@ export default {
           });
         });
       },
+      //修改状态方法
       manu(row){
-        this.axios.post('http://localhost:8089/upde-tman', qs.stringify({manState:1,manId:row.manId}))
+         this.axios.post('http://localhost:8089/upde-tman', qs.stringify({manState:1,manId:row.manId}))
             .then((v)=>{
               if(v.data == 'ok'){
                 this.getData()
@@ -444,7 +505,46 @@ export default {
                 alert(v.data);
               }
             }).catch(function(){
+        })
+      },
+      //查询诊疗卡
+      manj(row){
+        let aa='没卡';
+          this.axios.get("http://localhost:8089/aloneCard", {params: {sId:row.manSid}}).then((res) => {
+              res.data.forEach(v=>{
+                console.log(v.mcBalance)
+                aa=v.mcBalance
+              })
+            if(aa>=row.manPhy){
+              //调用扣钱方法
+              this.updmoney(aa-row.manPhy,row.manSid)
+              //修改状态方法
+              this.manu(row)
+              this.$message({
+                message: '已启用，消费'+row.manPhy+'元',
+                type: 'success'
+              });
+            }else if(aa<row.manPhy){
+              this.$message.error('卡上余额不足，请充值');
+            }else {
+              this.$message({
+                message: '请先办理诊疗卡',
+                type: 'warning'
+              });
+            }
+        }).catch(function(){
+        })
+      },
+      //修改金额方法
+      updmoney(mcBalance,mcIdCard){
+        this.axios.post('http://localhost:8089/updeMoney', qs.stringify({mcBalance:mcBalance,mcIdCard:mcIdCard}))
+            .then((v)=>{
+              if(v.data == 'ok'){
 
+              }else{
+                alert(v.data);
+              }
+            }).catch(function(){
         })
       },
     //身份证日期获取
@@ -513,6 +613,7 @@ export default {
       }
     },
     computed:{
+      //获取当前时间
       getNowFormatDate() {
         var date = new Date();
         var seperator1 = "-";
@@ -528,6 +629,7 @@ export default {
         var currentdate = year + seperator1 + month + seperator1 + strDate;
         return currentdate;
       }
+
     },created() {
       this.getData()
       this.getMeal()
@@ -535,13 +637,14 @@ export default {
   }
 </script>
 
-<style scoped>
-	.my-tjss{
-		padding-top: 5px;
-		width: 200px;
-	}
-	.works{
-			padding: 15px;
-		}
+<style>
+.el-table .warning-row {
+  background: oldlace;
+}
+
+.el-table .danger-row {
+  color: #ff0000;
+}
+
 </style>
 

@@ -210,12 +210,17 @@
 			<el-row>
 				<el-col :span="22">
 					<el-form-item label="检查结果:" prop="name">
-					　
             <li style="list-style: none;float: left" v-for="(value) in tjjg">{{value.pro.checkName}}:{{value.manResult}}、</li>
-
 					</el-form-item>
 				</el-col>
 			</el-row>
+      <el-row>
+        <el-col :span="22">
+          <el-form-item label="医生建议:" prop="name">
+            <span v-for="(t,i) in tjjg.slice(0,1)" >{{t.man.manProposal}}</span>
+          </el-form-item>
+        </el-col>
+      </el-row>
 			  <el-form-item>
 				  <el-col :span="1" :offset="8">
 				<el-button @click="tjjlForm('ruleForm')">确定</el-button>
@@ -224,8 +229,9 @@
 		</el-form>
 	</el-dialog>
 
-  <el-dialog title="填写检查结果" v-model="txjg" width="30%" center  ><!-- 弹窗     -=-=-=-=-=-=-==-=-=-=-=--=-=-=-=-=-=-检查结果填写 -->
-    <span v-for="(t,i) in aloneg" >{{t.checkName}}:<el-input v-model="t.tjCodeIndex"></el-input></span>
+  <el-dialog title="填写检查结果" v-model="txjg" width="50%" center  ><!-- 弹窗  新增   -=-=-=-=-=-=-==-=-=-=-=--=-=-=-=-=-=-检查结果填写 -->
+    <span style="width: 800px" v-for="(t,i) in aloneg" >{{t.checkName}}:<el-input  style="width: 200px" v-model="t.tjCodeIndex"></el-input></span>
+    <span>医生建议：<el-input v-model="manProposal" style="width: 400px" type="textarea"> </el-input></span>
     <el-row>
       <el-col :span="2" :offset="10">
         <el-button type="primary" style="margin-top: 20px" @click="txjgForm">确定</el-button>
@@ -242,12 +248,14 @@
   export default {
 	    data () {
 	      return {
+
 	        txjg:false,//填写结果弹框
 	        tjjg:[],//结果
           aloneg:[],
           Res:[],//单结果集合
           jg:[],
           manId:'',//新增结果字段
+          manProposal:'',//新增结果字段医生建议
           currentPage: 1, //1初始页
           pagesize: 5, //    1每页的数据
           currentPage1: 1, //2初始页
@@ -349,6 +357,7 @@
               }
             }).catch(function(){
         })
+        //批量新增结果
         this.axios.post("http://localhost:8089/resAdd",{listArr:this.Res}).then((res)=>{
           this.getData();
         }).catch()

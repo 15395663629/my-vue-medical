@@ -49,7 +49,7 @@
 			<el-row>
 					<el-col :span="8">
 							<el-form-item label="体检类型:" prop="name">
-							 <el-select v-model="tcdx.codeType" placeholder="请选择">
+							 <el-select v-model="tcdx.codeType" placeholder='请选择'>
 							    <el-option
                       v-for="item in xmzb"
                       :key="item.value"
@@ -102,11 +102,11 @@
             <template #default="scope">
               <el-popover effect="light" trigger="hover"  placement="top">
                 <template #default>
-                  <p>指标意义: {{ scope.row.tjCodeIndex.indexSignificance }}</p>
+                  <p>指标意义: {{ scope.row.indexSignificance }}</p>
                 </template>
                 <template #reference>
                   <div class="name-wrapper">
-                    <el-tag size="medium">{{ scope.row.tjCodeIndex.indexName }}</el-tag>
+                    <el-tag size="medium">{{ scope.row.indexName }}</el-tag>
                   </div>
                 </template>
               </el-popover>
@@ -190,9 +190,16 @@
           </el-table-column>
           <el-table-column label="指标" prop="tag">
             <template #default="scope">
+              <el-popover effect="light" trigger="hover"  placement="top">
+                <template #default>
+                  <p>指标意义: {{ scope.row.indexSignificance }}</p>
+                </template>
+                <template #reference>
                   <div class="name-wrapper">
                     <el-tag size="medium">{{ scope.row.indexName }}</el-tag>
                   </div>
+                </template>
+              </el-popover>
             </template>
           </el-table-column>
 				</el-table>
@@ -205,7 +212,7 @@
 		</el-form>
 	</el-dialog>
 	
-	<el-dialog :title="tilt" v-model="jcxm" width="50%" center  ><!-- 弹窗      -=-=-=-=-=-=-==-=-=-=-=--=-=-=-=-=-=-医疗项目======================================= -->
+	<el-dialog :title="tilt" v-model="jcxm" width="50%" center  ><!-- 弹窗      -=-=-=-=-=-=-==-=-=-=-=--=-=-=-=-=-=-新增医疗项目======================================= -->
 		<el-form  status-icon v-model="jcdx" :ref="jcdww"  label-width="100px" class="demo-ruleForm">
 			<el-row>
 								<el-col :span="7" >
@@ -213,23 +220,35 @@
 									<el-input v-model="jcdx.checkName"></el-input>
 									</el-form-item>
 								</el-col>
-        <el-col :span="7" :offset="4">
-          <el-form-item label="价格:" prop="name">
-            <el-input v-model="jcdx.checkPay"></el-input>
-          </el-form-item>
-        </el-col>
+              <el-col :span="7">
+                <el-form-item label="价格:" prop="name">
+                  <el-input v-model="jcdx.checkPay"></el-input>
+                </el-form-item>
+              </el-col>
+            <el-col :span="7" >
+              <el-form-item label="科室:" prop="name">
+                <el-select   v-model="jcdx.ksId" placeholder="请选择">
+                  <el-option
+                      v-for="item in department"
+                      :key="item.value"
+                      :label="item.ksName"
+                      :value="item.ksId">
+                  </el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
 			</el-row>
 			<el-row>
-          <el-col :span="7">
+          <el-col :span="9">
           <el-form-item label="指标:" prop="name">
-            <el-input v-model="jcdx.tjCodeIndex.indexName"></el-input>
+            <el-input  size="mini" v-model="jcdx.indexName" type="textarea" :rows="3"></el-input>
           </el-form-item>
           </el-col>
-					<el-col :span="7" :offset="4">
+					<el-col :span="9" :offset="2">
 						<el-form-item label="指标意义:" prop="name">
-						<el-input v-model="jcdx.tjCodeIndex.indexSignificance"
+						<el-input size="mini" v-model="jcdx.indexSignificance"
                       type="textarea"
-                      :rows="2"
+                      :rows="3"
                       placeholder="请输入内容"></el-input>
 						</el-form-item>
 					</el-col>
@@ -248,7 +267,7 @@
 	
 
 	<el-row > <!-- ==================================================================上表格 ==================================================================-->
-		<el-table height="200" :data="tjmeal.slice((currentPage1-1)*psize1,currentPage1*psize1)" style="width: 100%;" v-if="isShow!==null">
+		<el-table size="mini" height="200" :data="tjmeal.slice((currentPage1-1)*psize1,currentPage1*psize1)" style="width: 100%;" v-if="isShow!==null">
 			<el-table-column label="编号" width="180">
 				<template #default="scope">
 					<span style="margin-left: 10px">{{ scope.row.codeId }}</span>
@@ -320,7 +339,7 @@
 
 	<!-- ============================================下表格============================================ -->
 	<el-row > 
-		<el-table height="220" :data="tjpro.slice((currentPage-1)*psize,currentPage*psize)"
+		<el-table  size="mini" height="220" :data="tjpro.slice((currentPage-1)*psize,currentPage*psize)"
             ref="jcxmtable"   style="width: 100%;">
 			<el-table-column label="编号" width="180" prop="checkId">
 			</el-table-column>
@@ -341,15 +360,17 @@
 		    </el-table-column>
 			<el-table-column label="价格" prop="checkPay">
 			</el-table-column>
+      <el-table-column label="科室" prop="deptks.ksName">
+      </el-table-column>
 			<el-table-column label="指标" prop="indexName">
         <template #default="scope">
           <el-popover effect="light" trigger="hover"  placement="top">
             <template #default>
-              <p>指标意义: {{ scope.row.tjCodeIndex.indexSignificance }}</p>
+              <p>指标意义: {{ scope.row.indexSignificance }}</p>
             </template>
             <template #reference>
               <div class="name-wrapper">
-                <el-tag size="medium">{{ scope.row.tjCodeIndex.indexName }}</el-tag>
+                <el-tag size="medium">{{ scope.row.indexName }}</el-tag>
               </div>
             </template>
           </el-popover>
@@ -402,6 +423,7 @@
   export default {
 	    data () {
 	      return {
+          department:[],//科室集合
           search: '',//套餐搜索框
           tctitl:'',//套餐弹框标题
 	        tjprol:[],//体检套餐所含项目集合
@@ -423,17 +445,12 @@
             checkName:'',
             // 价格
             checkPay: '',
-            // 指标编号
-            indexId:'',
-            tjCodeIndex:{
-              // 指标编号
-              indexId:'',
-              // 指标
-              indexName:'',
-              // 指标意义
-              indexSignificance:''
-            }
-          },
+            // 指标
+            indexName:'',
+            // 指标意义
+            indexSignificance:'',
+            ksId:''
+            },
           jcdww:{//检查项目对象
             //检查主键
             checkId:'',
@@ -441,40 +458,28 @@
             checkName:'',
             // 价格
             checkPay: '',
-            // 指标编号
-            indexId:'',
-            tjCodeIndex:{
-              // 指标编号
-              indexId:'',
               // 指标
-              indexName:'',
+            indexName:'',
               // 指标意义
-              indexSignificance:''
-            }
+            indexSignificance:'',
+            ksId:''
           },
           //体检套餐对象
           tcdx:{
             codeId:'',
             codeName:'',
             codePay:'',
-            codeType:'',
+            codeType:0,
             //检查项目集合
             TjAn:''
           },
           //套餐类型model
-      CodeType:1,
+      CodeType:"",
 			isShow:false,
 			tjtc:false,
 			tcxq:false,
 			jcxm:false,
 			input: '',
-	        radio1: '查看全部',
-			tableData:[{
-				date: '123',
-				name: '爱康君安【中枢神经系统体检套餐】',
-				price:'233',
-				lx:'入职体检'
-			}],
         }
 	    },
 		methods: {
@@ -519,6 +524,10 @@
 
       // 检查项目基础参数
         getData(){
+	        //科室
+          this.axios.get("http://localhost:8089/ks-list").then((res)=>{
+            this.department = res.data;
+          }).catch()
           this.axios.get("http://localhost:8089/allDescTjpro",{params:{seach:this.seach}}).then((res)=>{
             this.tjpro = res.data;
           }).catch()
@@ -544,9 +553,9 @@
             this.jcdx.checkName= row.checkName;
             this.jcdx.checkPay= row.checkPay;
             this.jcdx.indexId=row.indexId;
-            this.jcdx.tjCodeIndex.indexId=row.tjCodeIndex.indexId
-            this.jcdx.tjCodeIndex.indexName=row.tjCodeIndex.indexName
-            this.jcdx.tjCodeIndex.indexSignificance=row.tjCodeIndex.indexSignificance
+            this.jcdx.indexName=row.indexName
+            this.jcdx.indexSignificance=row.indexSignificance
+            this.jcdx.ksId=parseInt(row.deptks.ksId)
           }else {
             this.inspectClear()
           }

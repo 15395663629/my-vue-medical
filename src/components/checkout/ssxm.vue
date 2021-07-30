@@ -347,6 +347,7 @@
         this.axios.get("http://localhost:8089/mzproject").then((res)=>{
           this.mazui = res.data;
         }).catch()
+        //科室
         this.axios.get("http://localhost:8089/ks-list").then((res)=>{
           this.department = res.data;
         }).catch()
