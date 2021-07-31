@@ -2,7 +2,7 @@
 	<el-container style="height: 100%;">
 		<el-header height="30px"  style="line-height: 30px; background-color: #B3C0D1;color: #333;">
 			<!-- <newDateOPC style="margin: 0px; padding: 0px;"></newDateOPC> -->
-      {{medicalRecordObject}}
+      {{recordVo}}
 		</el-header>
 		<el-container style="height: 100%;">
 			<el-aside width="400px" style="background-color: #D3DCE6;color: #333;"> <!-- 右边 -->
@@ -614,7 +614,10 @@
 				],
         //从这里开始加入后台写------------------------------------------------------------
         //就诊表  VO 包括了就诊记录的一切集合和对象
-        recordVo:[],
+        recordVo:{
+          medicalRecordObject:{},
+          recipeObject:{},
+        },
         //就诊记录表
         medicalRecordObject:{
           mrCount:'',
@@ -623,6 +626,8 @@
           mrKsName:'',
           mrIdCard:'',
           mrState:'',
+          mrSickType:'',
+          mrTotalMoney:'',
           sId:'',
           sickNumber:'',
           bnNumber:'',
@@ -630,7 +635,6 @@
         },
         //处方表
         recipeObject:{
-          recipeNumber:'',
           recipeSickName:'',
           recipeDoctorName:'',
           recipeDoctorText:'',
@@ -644,15 +648,15 @@
         token:[],//操作人员
         options:[
           {
-            value: '选项1',
+            value: '小孩',
             label: '小孩'
           },
           {
-            value: '选项2',
+            value: '成年人',
             label: '成年人'
           },
           {
-            value: '选项3',
+            value: '老人',
             label: '老人'
           }],
         // 排号表
@@ -698,29 +702,23 @@
 		},
 		methods: {
 		  // 加入后台部分-------------------------------------------------------------------
+      //结束就诊
       handleClose(headerInput) {
-
-        this.medicalRecordObject.mrCount=this.headerInput.mrCount;
-        this.medicalRecordObject.mrDoctorName=this.token.sname;
-        this.medicalRecordObject.mrDiagnoseRecord='';//结果后面在获取
-        this.medicalRecordObject.mrKsName=this.headerInput.bnKsName;
-        this.medicalRecordObject.mrIdCard=this.headerInput.bnIdCard;
-        this.medicalRecordObject.mrState=1;
-        this.medicalRecordObject.sId=this.token.sid;
-        this.medicalRecordObject.sickNumber=this.leftTopTable[0].rtRegObject.sickNumber;
-        this.medicalRecordObject.bnNumber=this.leftTopTable[0].bnNumber;
-        this.medicalRecordObject.mcNumber=this.leftTopTable[0].rtRegObject.cardObject.mcCard
-
-        console.log(this.medicalRecordObject)
-
-
         this.$refs[headerInput].validate((valid)=>{
           if(valid){
             this.$confirm('是否结束就诊？').then(_ => {
-                  this.axios.post('',headerInput).then((v)=>{
-
+              this.addRecipeObject();
+              this.axios.post('addRecord',this.recordVo).then((v)=>{
+                    console.log(this.recordVo.medicalRecordObject.sId)
+                    console.log(v.data)
+                    if(v.data=='ok'){
+                      console.log("1111")
+                      this.resultVo()
+                    }
                   }).catch(()=>{})
+
                 }) .catch(_ => {});
+
           }else{
             this.$message({
               showClose: true,
@@ -969,11 +967,73 @@
           return 'success';
         }
       },
+      resultVo(){
+        console.log("ssss")
+        for(let key of Object.keys(this.headerInput)){
+          Vue.delete(this.headerInput,key);
+        }
+        for(let key of Object.keys(this.recordVo)){
+          Vue.delete(this.recordVo,key);
+        }
+        for(let key of Object.keys(this.medicalRecordObject)){
+          Vue.delete(this.medicalRecordObject,key);
+        }
+        for(let key of Object.keys(this.recipeObject)){
+          Vue.delete(this.recipeObject,key);
+        }
+      },
+      //添加vo类
+      addRecipeObject(){
+        //就诊记录表
+        this.medicalRecordObject.mrCount=this.headerInput.mrCount;
+        this.medicalRecordObject.mrDoctorName=this.token.sname;
+        this.medicalRecordObject.mrDiagnoseRecord=null;//结果后面在获取
+        this.medicalRecordObject.mrKsName=this.headerInput.bnKsName;
+        this.medicalRecordObject.mrIdCard=this.headerInput.bnIdCard;
+        this.medicalRecordObject.mrState=0;
+        this.medicalRecordObject.sId=this.token.sid;
+        this.medicalRecordObject.mrSickType = this.headerInput.optionsValue;
+        var sum1 = 0;//西药总价钱
+        this.rightTableData1.forEach((drug,i)=>{//循环判断总价钱
+          sum1 += (drug.drugPrice*drug.xpObject.rdCount);
+        })
+        var sum2 = 0;//中药总价钱
+        this.rightTableData2.forEach((drug,i)=>{//循环判断总价钱
+          sum2 += (drug.drugPrice*drug.zpObject.zpCount);
+        })
+        this.medicalRecordObject.mrTotalMoney = sum1+sum2;
+        this.medicalRecordObject.sickNumber=this.leftTopTable[0].rtRegObject.sickNumber;
+        this.medicalRecordObject.bnNumber=this.leftTopTable[0].bnNumber;
+        this.medicalRecordObject.mcNumber=this.leftTopTable[0].rtRegObject.cardObject.mcCard
+
+        console.log(this.medicalRecordObject)
+        //处方表
+        this.recipeObject.recipeSickName=this.headerInput.bnSickName;
+        this.recipeObject.recipeDoctorName=this.token.sname;
+        this.recipeObject.recipeDoctorText=null;
+        this.recipeObject.sickNumber=this.leftTopTable[0].rtRegObject.sickNumber;
+        this.recipeObject.sId=this.token.sid;
+        this.recipeObject.recipeStatePrice=0;
+        // 添加西药处方集合
+        this.rightTableData1.forEach((drug,i)=>{
+          if(drug.xpObject.rdSkin==false){
+            drug.xpObject.rdSkin=0;
+          }else{
+            drug.xpObject.rdSkin=1;
+          }
+          this.recipeObject.xpList.push(drug.xpObject);
+        })
+        //中药处方
+        this.rightTableData2.forEach((drug,i)=>{
+          this.recipeObject.zpList.push(drug.zpObject)
+        })
+        console.log(this.recipeObject)
 
 
-
-
-
+        this.recordVo.medicalRecordObject=this.medicalRecordObject;
+        this.recordVo.recipeObject=this.recipeObject;
+        console.log(this.recordVo)
+      },
       //添加到右边头部去 -- 暂时没用到撤销因为排号原因撤销掉了\======================================
       async addTopHeader(row){
         if(this.headerInput.bnCount !=''){
