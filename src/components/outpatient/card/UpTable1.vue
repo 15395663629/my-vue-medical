@@ -276,7 +276,7 @@ export default{
     var validate4 = (rule, value, callback) => { //table2 校验
       if (value === '') {
         callback(new Error('请输入金额'));
-      }else if(value <= 0 && value > 1){
+      }else if(value > this.cardArr.mcBalance){
         console.log(1+"--"+value)
         callback(new Error('请输入正确的金额~'));
       }else {

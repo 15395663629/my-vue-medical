@@ -120,7 +120,7 @@ import { ElMessage } from 'element-plus'
 				input1:"",//查询搜索框
         input2:"",//查询搜索框
         leftTable: [{  /* 表格部分1 */
-            sDate: '2021-07-26 10:10',
+            sDate: '2021-07-27 10:10',
             sOverKsName:'内科',
             sDoctor:'徐宏鱼',
             sScience:'普通号',
