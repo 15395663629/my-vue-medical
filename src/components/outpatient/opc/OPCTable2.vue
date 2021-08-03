@@ -49,26 +49,26 @@
     </el-table-column>
   </el-table>
 	  <h4>中药处方留言：</h4>
-	  <el-input type="textarea" placeholder="请输入病理原因" v-model="textarea2" maxlength="400" :rows="3"
+	  <el-input type="textarea" placeholder="请输入病理原因"  @change="textareas" v-model="textValues" maxlength="400" :rows="3"
 	  		show-word-limit>
 	  </el-input>
 </template>
 
 <script>
     export default{
+        emits:['func'],
         props:{
             rightTableData2:{
                 type:Array,
                 required:true
             },
-            textarea2:{
-                type:String,
-                required:true
-            }
+          textValues:{
+            type:String,
+            required: true
+          },
         },
         data(){
             return {
-                
             }
         },
         methods: {
@@ -91,7 +91,10 @@
               }
             });
             return sums;
-          }
+          },
+          textareas(){
+            this.$emit('func',this.textValues)
+          },
         }
     }
 </script>

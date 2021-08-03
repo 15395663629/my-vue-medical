@@ -1,4 +1,3 @@
-
 <template>
 	<el-table  :summary-method="getSummaries1" show-summary
             :data="rightTableData1" style=" width: 100%;" height="470px" size="mini" >
@@ -58,7 +57,9 @@
 	  <el-input
 	  		type="textarea"
 	  		placeholder="请输入病理原因"
-	  		v-model="textarea1"
+        @change="textareas"
+        ref="dszx"
+	  		v-model="textValues"
 	  		maxlength="400"
 	  		:rows="3"
 	  		show-word-limit>
@@ -67,15 +68,16 @@
 
 <script>
     export default{
+      emits:['func'],
         props:{
             rightTableData1:{
                 type:Object,
                 required:true
             },
-            textarea1:{
-                type:String,
-                required:true
-            }
+          textValues:{
+              type:String,
+              required: true
+            },
         },
         data(){
             return {
@@ -99,7 +101,10 @@
             }
           });
           return sums;
-        }
+        },
+        textareas(){
+          this.$emit('func',this.textValues)
+        },
       },
       created() {
 

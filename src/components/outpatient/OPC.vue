@@ -2,8 +2,8 @@
 	<el-container style="height: 100%;">
 		<el-header height="30px"  style="line-height: 30px; background-color: #B3C0D1;color: #333;">
 			<!-- <newDateOPC style="margin: 0px; padding: 0px;"></newDateOPC> -->
-      {{recordVo}}
-		</el-header>
+		{{leftTopTable[0]}}
+    </el-header>
 		<el-container style="height: 100%;">
 			<el-aside width="400px" style="background-color: #D3DCE6;color: #333;"> <!-- 右边 -->
 				<el-row>
@@ -22,8 +22,8 @@
 				</el-row>
 				<el-row>
 					<el-col><!-- ================================================== 左上 第一个table ==================================================-->
-            <el-tabs v-model="activeName" stretch >
-              <el-tab-pane  label="呼叫列表" :key="0" name ="0"> <!--@row-click="addTopHeader"-->
+            <el-tabs v-model="indexRecord" stretch  @tab-click="selectRecord"	 >
+              <el-tab-pane  label="呼叫列表" :key="2" name ="2"> <!--@row-click="addTopHeader"-->
                 <el-table :data="leftTopTable" size="mini"
                           :row-class-name="tableRowClassName" style="width: 100%;" height="560" v-loading="loading"  element-loading-background="rgba(0, 0, 0, 0.1)"
                           element-loading-text="testDuqu" >
@@ -45,7 +45,7 @@
                 </el-table>
               </el-tab-pane>
 
-              <el-tab-pane label="就诊列表" :key="1" name="1">
+              <el-tab-pane label="就诊列表" :key="0" name="0">
                 <el-row>
                   <el-col  :span="14">
                     <el-input  placeholder="请输入病人姓名或者身份证" v-model="patientQueryText" size="mini" type="text"/>
@@ -73,7 +73,7 @@
                 </el-col>
               </el-tab-pane>
 
-              <el-tab-pane label="就诊记录" :key="2" name="2">
+              <el-tab-pane label="就诊记录"  :key="1" name="1" >
                 <!-- ================================================== 左下 第三个table ==================================================-->
 
               </el-tab-pane>
@@ -184,10 +184,10 @@
 				<el-main style="background-color: #E9EEF3;color: #333;padding: 5px;" >
 					<el-tabs type="border-card" >
             <el-tab-pane label="西药处方" >
-              <opcTable1  :textarea1="textarea1" :rightTableData1="rightTableData1"></opcTable1>
+              <opcTable1  @func="getTest1" :textValues="recipeObject.xpNotes" :rightTableData1="rightTableData1"></opcTable1>
             </el-tab-pane>
             <el-tab-pane label="中药处方">
-              <opcTable2 :textarea2="textarea2" :rightTableData2="rightTableData2"></opcTable2>
+              <opcTable2 @func="getTest2" :textValues="recipeObject.zpNotes"  :rightTableData2="rightTableData2"></opcTable2>
             </el-tab-pane>
             <el-tab-pane label="病理检验">
               <opcTable3 :textarea3="textarea3" :rightTableData3="rightTableData3"></opcTable3>
@@ -575,17 +575,12 @@
 				centerDialogVisible3: false,
 				currentPage1: 5,
 				currentPage2: 5,
-
+        radio: '1',
         tableData:[{
 					date: '2016-05-02',
 					name: '王小虎',
 					address: '上海市普陀区金沙江路 1518 弄'
 				}],
-				radio: '1',
-				textarea1: '', //中间的表格的医生留言
-				textarea2: '',
-				textarea3: '',
-				textarea4: '',
 				rightTableData3: [{
 				          date: '2016-05-02',
 				          name: '王小虎',
@@ -623,6 +618,7 @@
           mrCount:'',
           mrDoctorName:'',
           mrDiagnoseRecord:'',
+          mrSection:'',
           mrKsName:'',
           mrIdCard:'',
           mrState:'',
@@ -638,13 +634,16 @@
           recipeSickName:'',
           recipeDoctorName:'',
           recipeDoctorText:'',
+          xpNotes:'',
+          zpNotes:'',
           sickNumber:'',
           sId:'',
           recipeStatePrice:'',
           xpList:[],
           zpList:[],
         },
-
+        textarea3: '',
+        textarea4: '',
         token:[],//操作人员
         options:[
           {
@@ -661,6 +660,8 @@
           }],
         // 排号表
         leftTopTable:[],
+        //就诊记录表查询
+        leftRecord:[],
         // 头部model属性
         headerInput:{
 				  bnNumber: '',
@@ -693,15 +694,29 @@
         selectDrugArr:[],//医生选中数据
         rightTableData1:[],//西药处方
         rightTableData2: [],//中药处方
-        activeName:'0',//切换默认值
+        indexRecord:'2',//切换默认值
         patientQueryText:'',//呼叫列表搜索内容
         loading:false, // 呼叫的登入加载
-        testDuqu:'',
+        testDuqu:'',//正在呼叫
 
 			}
 		},
 		methods: {
 		  // 加入后台部分-------------------------------------------------------------------
+      selectRecord(){
+        console.log(this.indexRecord)
+        this.axios.post("selectAllRecord",this.indexRecord).then((v)=>{
+          this.leftRecord = v.data;
+          console.log(this.leftRecord)
+        }).catch();
+      },
+      //子组件传值过来。对处方的意见建议
+      getTest1(data){
+        this.recipeObject.xpNotes = data
+      },
+      getTest2(data){
+        this.recipeObject.zpNotes = data
+      },
       //结束就诊
       handleClose(headerInput) {
         this.$refs[headerInput].validate((valid)=>{
@@ -709,15 +724,18 @@
             this.$confirm('是否结束就诊？').then(_ => {
               this.addRecipeObject();
               this.axios.post('addRecord',this.recordVo).then((v)=>{
-                    console.log(this.recordVo.medicalRecordObject.sId)
-                    console.log(v.data)
                     if(v.data=='ok'){
-                      console.log("1111")
-                      this.resultVo()
+                      this.$message({
+                        showClose: true,
+                        type: 'success',
+                        message: '就诊完成，'+this.headerInput.bnSickName+'的病人信息您可从就诊记录中查询~'
+                      });
+                      this.countLeftTopTable();//刷新排号界面
+                      this.resultVo()//重置所有面板属性
                     }
                   }).catch(()=>{})
 
-                }) .catch(_ => {});
+                }).catch(_ => {});
 
           }else{
             this.$message({
@@ -763,6 +781,7 @@
                 type: 'warning'
               }).then(() => {
                 this.$message({
+                  showClose: true,
                   type: 'success',
                   message: '跳号成功!'
                 });
@@ -771,6 +790,7 @@
                 this.resultLeftTopTable();
               }).catch(() => {
                 this.$message({
+                  showClose: true,
                   type: 'info',
                   message: '已取消跳号'
                 });
@@ -818,9 +838,7 @@
       countLeftTopTable(){
         this.axios.post('allMzOpcNumber',{ksName:this.token.ksId,science:this.token.tid}).then((v)=>{
           this.leftTopTable=v.data
-        }).catch(()=>{
-
-        })
+        }).catch(()=>{ })
       },
       //重置中药和西药和头部的对象和集合
       resultLeftTopTable(){
@@ -842,7 +860,6 @@
       // 动态刷新所有的标签选择和病人资料
       operationInit(){
         this.countLeftTopTable();
-
         this.axios.post('select-drug-usage').then((v)=>{
           this.searchDrugUsageArr = v.data;
         }).catch();
@@ -929,9 +946,8 @@
               zpCount:1,//数量
               zpUsage:drug.drugSpecification,//用法
               zpPrice:drug.drugPrice,//单价
-              zpEntrust:'',//嘱托
-              zpNotes:'',//医生留言
-              recipeNumber: '',//处方编号
+              zpEntrust:null,//嘱托
+              recipeNumber:null,//处方编号
             },
             this.rightTableData2.push(drug);
             console.log(this.rightTableData2)
@@ -944,15 +960,14 @@
               rdTyppe:drug.yfDrcaName,//类型
               rdSkin:false,//是否皮试
 
-              rdGrouping:'',//输液分组
-              rdEntrust:'',//嘱托
-              rdNotes:'',//医生留言
+              rdGrouping:null,//输液分组
+              rdEntrust:null,//嘱托
               drugId:drug.drugId,//药品编号
-              recipeNumber:'',//处方编号
+              recipeNumber:null,//处方编号
 
-              rdDosage:'',//用量
-              rdFrequency:'',//频次
-              rdSkinResult:'',//皮试结果
+              rdDosage:null,//用量
+              rdFrequency:null,//频次
+              rdSkinResult:null,//皮试结果
 
             }
             this.rightTableData1.push(drug);
@@ -967,30 +982,16 @@
           return 'success';
         }
       },
-      resultVo(){
-        console.log("ssss")
-        for(let key of Object.keys(this.headerInput)){
-          Vue.delete(this.headerInput,key);
-        }
-        for(let key of Object.keys(this.recordVo)){
-          Vue.delete(this.recordVo,key);
-        }
-        for(let key of Object.keys(this.medicalRecordObject)){
-          Vue.delete(this.medicalRecordObject,key);
-        }
-        for(let key of Object.keys(this.recipeObject)){
-          Vue.delete(this.recipeObject,key);
-        }
-      },
       //添加vo类
       addRecipeObject(){
         //就诊记录表
         this.medicalRecordObject.mrCount=this.headerInput.mrCount;
         this.medicalRecordObject.mrDoctorName=this.token.sname;
         this.medicalRecordObject.mrDiagnoseRecord=null;//结果后面在获取
+        this.medicalRecordObject.mrSection = this.leftTopTable[0].bnTime;
         this.medicalRecordObject.mrKsName=this.headerInput.bnKsName;
         this.medicalRecordObject.mrIdCard=this.headerInput.bnIdCard;
-        this.medicalRecordObject.mrState=0;
+        this.medicalRecordObject.mrState=1;//结束就诊就把状态改成1进入就诊记录表0是正在进行中
         this.medicalRecordObject.sId=this.token.sid;
         this.medicalRecordObject.mrSickType = this.headerInput.optionsValue;
         var sum1 = 0;//西药总价钱
@@ -1005,8 +1006,6 @@
         this.medicalRecordObject.sickNumber=this.leftTopTable[0].rtRegObject.sickNumber;
         this.medicalRecordObject.bnNumber=this.leftTopTable[0].bnNumber;
         this.medicalRecordObject.mcNumber=this.leftTopTable[0].rtRegObject.cardObject.mcCard
-
-        console.log(this.medicalRecordObject)
         //处方表
         this.recipeObject.recipeSickName=this.headerInput.bnSickName;
         this.recipeObject.recipeDoctorName=this.token.sname;
@@ -1027,12 +1026,59 @@
         this.rightTableData2.forEach((drug,i)=>{
           this.recipeObject.zpList.push(drug.zpObject)
         })
-        console.log(this.recipeObject)
-
-
         this.recordVo.medicalRecordObject=this.medicalRecordObject;
         this.recordVo.recipeObject=this.recipeObject;
-        console.log(this.recordVo)
+      },
+      //结束就诊重置
+      resultVo(){
+        this.headerInput={
+          bnNumber: '',
+          bnCount:'',
+          mcCard:'',
+          bnIdCard:'',
+          bnSickName:'',
+          bnKsName:'',
+          sickSex:'',
+          sickAge:'',
+          sickPhone:'',
+          rtClass:'',
+          mrCount:'',
+          optionsValue:'',//病人类型 老人还是。。。
+        };
+        this.recordVo={
+          medicalRecordObject:{},
+          recipeObject:{},
+        };
+        //就诊记录表
+        this.medicalRecordObject={
+          mrCount:'',
+          mrDoctorName:'',
+          mrDiagnoseRecord:'',
+          mrKsName:'',
+          mrIdCard:'',
+          mrState:'',
+          mrSickType:'',
+          mrTotalMoney:'',
+          sId:'',
+          sickNumber:'',
+          bnNumber:'',
+          mcNumber:'',
+        };
+        //处方表
+        this.recipeObject={
+          recipeSickName:'',
+          recipeDoctorName:'',
+          recipeDoctorText:'',
+          sickNumber:'',
+          xpNotes:'',
+          zpNotes:'',
+          sId:'',
+          recipeStatePrice:'',
+          xpList:[],
+          zpList:[],
+        };
+        this.rightTableData1=[];
+        this.rightTableData2=[];
       },
       //添加到右边头部去 -- 暂时没用到撤销因为排号原因撤销掉了\======================================
       async addTopHeader(row){
