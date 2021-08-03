@@ -547,7 +547,6 @@
       //新增修改项目弹框
         jcxmEdit(is, row,formName) {
           this.tilt = is == 1 ? '新增检查项目' : '修改检查项目';//设置弹框标题
-          var rr=[];
           if(row != undefined){//判断是否有值
             this.jcdx.checkId= row.checkId;
             this.jcdx.checkName= row.checkName;

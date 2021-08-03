@@ -229,9 +229,9 @@
 		</el-form>
 	</el-dialog>
 
-  <el-dialog title="填写检查结果" v-model="txjg" width="50%" center  ><!-- 弹窗  新增   -=-=-=-=-=-=-==-=-=-=-=--=-=-=-=-=-=-检查结果填写 -->
-    <span style="width: 800px" v-for="(t,i) in aloneg" >{{t.checkName}}:<el-input  style="width: 200px" v-model="t.tjCodeIndex"></el-input></span>
-    <span>医生建议：<el-input v-model="manProposal" style="width: 400px" type="textarea"> </el-input></span>
+  <el-dialog title="填写检查结果" v-model="txjg" width="40%" center  ><!-- 弹窗  新增   -=-=-=-=-=-=-==-=-=-=-=--=-=-=-=-=-=-检查结果填写 -->
+    <span v-for="(t,i) in aloneg" >{{t.checkName}}:<el-input  v-model="t.tjCodeIndex"></el-input></span>
+    <span style="color: red">医生建议：<el-input v-model="manProposal"  type="textarea"> </el-input></span>
     <el-row>
       <el-col :span="2" :offset="10">
         <el-button type="primary" style="margin-top: 20px" @click="txjgForm">确定</el-button>
@@ -333,6 +333,7 @@
       //检查结果填写弹框
       txjgAdd(row) {
         this.manId=row.manId
+        //查询体检人员所含项目
         this.axios.get("http://localhost:8089/aloneMp", {params: {manId: row.manId}
         }).then((res) => {
           this.aloneg = res.data;
@@ -347,11 +348,20 @@
         this.aloneg.forEach(v=>{
           this.Res.push({'checkId':v.checkId,manResult:v.tjCodeIndex,manId:this.manId})
         })
+        //更改医生指导意见
+        this.axios.post('http://localhost:8089/upd-manY', qs.stringify({manProposal:this.manProposal,manId:this.manId}))
+            .then((v)=>{
+              if(v.data == 'ok'){
+              }else{
+                alert(v.data);
+              }
+            }).catch(function(){
+        })
         //改状态
         this.axios.post('http://localhost:8089/upde-tman', qs.stringify({manState:2,manId:this.manId}))
             .then((v)=>{
               if(v.data == 'ok'){
-                this.getData()
+                // this.getData()
               }else{
                 alert(v.data);
               }
@@ -370,7 +380,6 @@
       },
       //检查结果
 			tjjlEdit(row) {
-
         this.axios.get("http://localhost:8089/aloneRes", {params: {manId: row.manId}
         }).then((res) => {
           this.tjjg = res.data;

@@ -13,12 +13,12 @@
       </el-col>
       <el-col :span="5" >
         <el-form-item label="" label-width="449px">
-          <el-button type="primary"  @click="xztjEdit()">新增</el-button>
+          <el-button type="primary"  @click="xztjEdit(1)">新增</el-button>
         </el-form-item>
       </el-col>
     </el-form>
 	</el-row>
-	<el-dialog title="新增体检人员" v-model="xztj" width="50%" center style="overflow: auto"  ><!-- 弹框      -=-=-=-=-=-=-==-=-=-=-=--=-=-=-=-=-=-新增体检人员弹框======================================= -->
+	<el-dialog :title=tiltm v-model="xztj" width="50%" center style="overflow: auto"  ><!-- 弹框      -=-=-=-=-=-=-==-=-=-=-=--=-=-=-=-=-=-新增体检人员弹框======================================= -->
 		<el-form v-model="man"  status-icon :rules="rules" ref="inserman" label-width="100px" class="demo-ruleForm">
 			<el-row>
 				<el-col :span="8">
@@ -124,7 +124,6 @@
                         @selection-change="handleSelectionChange1"
                         ref="jcxmtable"  style="width: 100%;">
                 <el-table-column
-                    @click="handleSelectionChange2"
                     :reserve-selection="true"
                     type="selection"
                     width="55">
@@ -152,11 +151,11 @@
                   <template #default="scope">
                     <el-popover effect="light" trigger="hover"  placement="top">
                       <template #default>
-                        <p>指标意义: {{ scope.row.tjCodeIndex.indexSignificance }}</p>
+                        <p>指标意义: {{ scope.row.indexSignificance }}</p>
                       </template>
                       <template #reference>
                         <div class="name-wrapper">
-                          <el-tag size="medium">{{ scope.row.tjCodeIndex.indexName }}</el-tag>
+                          <el-tag size="medium">{{ scope.row.indexName }}</el-tag>
                         </div>
                       </template>
                     </el-popover>
@@ -169,12 +168,62 @@
 			</el-row>
 			<el-form-item>
 							  <el-col :span="1" :offset="8">
-							<el-button type="primary" @click="xztjForm('inserman')">确定</el-button>
+							<el-button type="primary" @click="xztjForm()">确定</el-button>
 							</el-col>
 			</el-form-item>
 		</el-form>
 	</el-dialog>
-	
+
+  <el-dialog title="确认启用?" v-model="qyry" width="50%" center style="overflow:auto"  ><!-- 弹框      -=-=-=-=-=-=-==-=-=-=-=--=-=-=-=-=-=-启用体检人员======================================= -->
+
+          <!-- ==================================================================项目表格 ==================================================================-->
+        <el-form>
+          所含项目
+            <el-table size="mini" height="230" :data="aloneg"
+                        style="width: 100%;">
+              <el-table-column label="编号" width="180" prop="checkId">
+              </el-table-column>
+
+              <el-table-column label="医疗项目名称" prop="checkName" >
+                <template #default="scope">
+                  <el-popover effect="light" trigger="hover"  placement="top">
+                    <template #default>
+                      <p>项目名称: {{ scope.row.checkName }}</p>
+                    </template>
+                    <template #reference>
+                      <div class="name-wrapper">
+                        <el-tag size="medium">{{ scope.row.checkName }}</el-tag>
+                      </div>
+                    </template>
+                  </el-popover>
+                </template>
+              </el-table-column>
+              <el-table-column label="价格" prop="checkPay">
+              </el-table-column>
+              <el-table-column label="指标" prop="indexName">
+                <template #default="scope">
+                  <el-popover effect="light" trigger="hover"  placement="top">
+                    <template #default>
+                      <p>指标意义: {{ scope.row.indexSignificance }}</p>
+                    </template>
+                    <template #reference>
+                      <div class="name-wrapper">
+                        <el-tag size="medium">{{ scope.row.indexName }}</el-tag>
+                      </div>
+                    </template>
+                  </el-popover>
+                </template>
+              </el-table-column>
+            </el-table>
+      <el-form-item>
+        <el-col :span="1" :offset="11">
+            <el-button style="margin-top: 5px" type="primary" @click="qyryForm()">确定</el-button>
+        </el-col>
+      </el-form-item>
+    </el-form>
+  </el-dialog>
+
+
 	<!-- ==================================================体检人员表================================================== -->
 	<el-row>
 		<el-col>
@@ -229,8 +278,8 @@
           width="220px"
 				  label="操作">
           <template #default="scope">
-          <el-button size="mini" type=" primary"  plain>详情</el-button>
-				  <el-button size="mini" type="primary" @click="manstate(scope.row)" v-show="getNowFormatDate==scope.row.manTime && scope.row.mcBalance!=null">启用</el-button>
+          <el-button size="mini" @click="xztjEdit(0,scope.row)" type="primary" >修改</el-button>
+				  <el-button size="mini" type="primary" @click="qyryEdit(scope.row)" v-show="getNowFormatDate==scope.row.manTime && scope.row.mcBalance!=null">启用</el-button>
             <el-button size="mini" type="primary" @click="aMc" v-show="scope.row.mcBalance==null">办卡</el-button>
 				  <el-button size="mini"   type="danger">取消</el-button>
           </template>
@@ -265,6 +314,8 @@ import qs from "qs";
 export default {
     data() {
       return {
+        ryrow:[],//启用row
+        tiltm:'',//弹框标题
         tjsj:[],
         ksan:false,
         tc: 0,//项目选中
@@ -280,6 +331,7 @@ export default {
         manState: 0,
         // 搜索字段、
         serman: '',
+        aloneg:[],//体检人员所含项目
         tjprox: [],//套餐详情
         // 体检人员集合
         tjman: [],
@@ -298,17 +350,10 @@ export default {
           manState: '',
           jcXm: '',
         },
-        xztj: false,
+        qyry:false,//启用弹框
+        xztj: false,//新增修改弹框
         input: '',
-        radio: '1',
-        radio1: '查看全部',
-        tableData: [{
-          date: '123',
-          name: '爱康君安【中枢神经系统体检套餐】',
-          price: '233',
-          lx: '入职体检'
-        }],
-        isShow:[]
+        radio: '1'
       }
     },
     methods: {
@@ -318,7 +363,6 @@ export default {
       },
       // 更改表格颜色
       tableRowClassName({row, rowIndex}) {
-        console.log('ka',row)
         if (row.manTime === this.getNowFormatDate1(-1,this.getNowFormatDate)) {
           return 'warning-row';
         }else if (row.mcBalance == null) {
@@ -365,7 +409,7 @@ export default {
             }).catch(function(){
         })
       },
-      //默认勾选项目
+      //默认勾选项目选择套餐时
       cleaxm() {
         this.$refs.jcxmtable.clearSelection();
         for (let i = 0; i < this.tjprox.length; i++) {
@@ -412,6 +456,31 @@ export default {
       handleClick(tab, event) {
 
       },
+      //默认勾选项目修改时
+      cleaxm1() {
+        this.$refs.jcxmtable.clearSelection();
+        this.$refs.tcdata.clearSelection();
+        for (let i = 0; i < this.aloneg.length; i++) {
+          for (let j = 0; j < this.tjpro.length; j++) {
+            if (this.aloneg[i].checkId == this.tjpro[j].checkId) {
+              this.$refs.jcxmtable.toggleRowSelection(this.tjpro[j], true)
+            }
+          }
+        }
+      },
+      // 查询体检人员所含项目
+      aloneMp(row,is){
+        this.axios.get("http://localhost:8089/aloneMp", {params: {manId: row.manId}
+        }).then((res) => {
+          this.aloneg = res.data;
+          //判断是否为需要渲染
+          if(is!=1){
+            this.cleaxm1()
+            //强制渲染
+            this.$forceUpdate();
+          }
+        }).catch()
+      },
       // 初始页currentPage、初始每页数据数pagesize和数据data
       handleSizeChange: function (size) {
         this.pagesize = size;
@@ -450,7 +519,7 @@ export default {
           this.tjman = res.data;
         }).catch()
       },
-      //查询套餐详情新增套餐
+      //查询套餐详情所含项目
       cheageMeal(row) {
         this.axios.get("http://localhost:8089/aloneProt", {params: {codeId: row.codeId}}).then((res) => {
           this.tjprox = res.data;
@@ -460,11 +529,38 @@ export default {
           this.$forceUpdate();
         }).catch()
       },
-      xztjEdit() {
+      //启用打开
+      qyryEdit(row){
+        this.ryrow=row;
+        this.aloneMp(row,1)
+        this.qyry=true;
+      },
+      //启用确认按钮
+      qyryForm(){
+        this.manstate(this.ryrow)
+        this.qyry=false;
+      },
+      //打开新增修改弹框
+      xztjEdit(is,row) {
+        this.inserClear()
+        this.tiltm = is == 1 ? '新增体检人员' : '修改体检人员';//设置弹框标题
+        if(row != undefined){//判断是否有值
+          this.activeName='second';
+          this.man.manId=row.manId;
+          this.man.manName=row.manName
+          this.man.manSid=row.manSid
+          this.man.manGender=row.manGender
+          this.man.manBirthtime=row.manBirthtime
+          this.man.manAge=row.manAge
+          this.man.manPhone=row.manPhone
+          this.man.manTime=row.manTime
+          //调用查询体检人员所含项目方法
+          this.aloneMp(row)
+        }
         this.xztj = true;
       },
       // 新增体检人员确认按钮
-      xztjForm(formName) {
+      xztjForm() {
         console.log(this.man)
         //如果手动选择了项目就重新就算价格
         if(this.man.jcXm.length!=this.tjprox.length){
@@ -474,11 +570,15 @@ export default {
         if(this.man.manTime<this.getNowFormatDate){
           this.man.manTime=this.getNowFormatDate1(-7,this.getNowFormatDate)
         }
-        this.axios.post("http://localhost:8089/addOrUpdataMan", {manj: this.man}).then((res) => {
-          this.getData()
-          this.inserClear(formName);
-        }).catch()
-        this.xztj = false
+        if(this.man.jcXm.length!=0){
+          this.axios.post("http://localhost:8089/addOrUpdataMan", {manj: this.man}).then((res) => {
+            this.getData()
+            this.inserClear();
+          }).catch()
+          this.xztj = false
+        }else {
+          this.$message.error('所选项目不能为空');
+        }
       },
       //体检人员修改状态
       manstate(row){
@@ -587,9 +687,9 @@ export default {
       return {age, sex, birth}
     },
     //清空弹框
-      inserClear(formName) {
-          this.$refs.jcxmtable.clearSelection();
-          this.$refs.tcdata.clearSelection();
+      inserClear() {
+          // this.$refs.jcxmtable.clearSelection();
+          // this.$refs.tcdata.clearSelection();
         // 体检人员对象
         this.man= {
               manId: 0,

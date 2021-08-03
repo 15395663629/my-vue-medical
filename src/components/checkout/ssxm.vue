@@ -130,7 +130,15 @@
 					</el-col>
 					<el-col :span="7" :offset="3">
 						<el-form-item label="手术类型:" prop="name">
-						<el-input v-model="ssdx.projectType"></el-input>
+              <el-select v-model="ssdx.projectType" placeholder="请选择">
+                <el-option
+                    v-for="item in ssdj"
+                    :key="item.value"
+                    :label="item.value"
+                    :value="item.value">
+                </el-option>
+              </el-select>
+<!--						<el-input v-model="ssdx.projectType"></el-input>-->
 						</el-form-item>
 					</el-col>
 			  </el-row>
@@ -320,7 +328,20 @@
             value:''
           }],
 
-
+          ssdj:[{
+            text:'一级手术',
+            value:'一级手术'
+          },{
+            text:'二级手术',
+            value:'二级手术'
+          },{
+            text:'三级手术',
+            value:'三级手术'
+          },{
+            text:'四级手术',
+            value:'四级手术'
+          }
+          ],
 			    isShow:false,
 			    xgss:false,
           // 搜索框
