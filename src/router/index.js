@@ -152,6 +152,7 @@ const routes = [
 					component:()=>import("/src/components/jurisdiction/YuanGong.vue"),
 					meta:{title:'员工', noCache: true },
 				},
+
 				
 				{
 					name:'dept',//命名路由
