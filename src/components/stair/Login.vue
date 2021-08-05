@@ -73,6 +73,14 @@ import qs from 'qs'
       //清空sessionStorage
       this.$store.state.token = ''
       sessionStorage.removeItem("token")
+      this.axios.interceptors.request.use((config)=>{
+        if(this.$store.state.token.uid===null||this.$store.state.token.uid===undefined){
+          this.$router.push('/')
+        }else{
+          this.$router.push('/home')
+        }
+        return config;
+      })
     },
 		methods:{
 			// login() {

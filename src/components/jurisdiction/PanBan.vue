@@ -1,32 +1,48 @@
 <template>
 <el-row >
   <el-col >
-    <el-select v-model="value" placeholder="请选择科室"
-               style="width: 20%"  @change="dome($event)">
-      <el-option v-for="item in dept" :key="item.rid" :label="item.rname" :value="item.rid">
-      </el-option>
-    </el-select>
-    <el-select v-model="value" placeholder="请选择员工"
-               style="width: 20%;margin-left: 50px"  @change="dome($event)">
-      <el-option v-for="item in dept" :key="item.rid" :label="item.rname" :value="item.rid">
-      </el-option>
-    </el-select>
+<!--    <el-select v-model="value" placeholder="请选择科室"-->
+<!--               style="width: 20%"  @change="dome($event)">-->
+<!--      <el-option v-for="item in kslist" :key="item.ksId" :label="item.ksName" :value="item.ksId">-->
+<!--      </el-option>-->
+<!--    </el-select>-->
+<!--    <el-select v-model="value" placeholder="请选择员工"-->
+<!--               style="width: 20%;margin-left: 50px"  @change="dome($event)">-->
+<!--      <el-option v-for="item in dept" :key="item.rid" :label="item.rname" :value="item.rid">-->
+<!--      </el-option>-->
+<!--    </el-select>-->
     <el-button style="margin-left: 80px" @click="dialogVisible = true">新增排班</el-button>
   </el-col>
 </el-row>
   <el-dialog title="科室管理" v-model="dialogVisible" width="30%" :before-close="handleClose">
-<!--    请选择员工：<el-select v-model="staff" placeholder="请选择"-->
+    请选择科室：<el-select v-model="value" placeholder="请选择"
+                     style="width: 30%;margin-top:20px;" @change="dome($event)">
+    <el-option v-for="item in kslist" :key="item.ksId" :label="item.ksName" :value="item.ksId" >
+
+    </el-option>
+  </el-select><br />
+    请选择员工：  <el-select v-model="staff" multiple placeholder="请选择" style="width: 30%;margin-top:20px;" @change="obtainStaff($event)">
+    <el-option
+        v-for="item in staffs"
+        :key="item.sid"
+        :label="item.sname"
+        :value="item.sid">
+    </el-option>
+  </el-select>
+<!--  />-->
+<!--    <el-select v-model="staff" placeholder="请选择"-->
 <!--                                                             style="width: 30%;margin-top:20px;" @change="dome($event)">-->
-<!--    <el-option v-for="item in dplist" :key="item.deId" :label="item.deName" :value="item.deId" >-->
+<!--    <el-option v-for="item in staffs" :key="item.sid" :label="item.sname" :value="item.sid" >-->
 
 <!--    </el-option>-->
-<!--  </el-select><br />-->
-<!--    请选择班次：<el-select v-model="fre" placeholder="请选择"-->
-<!--                     style="width: 30%;margin-top:20px;" @change="dome($event)">-->
-<!--    <el-option v-for="item in dplist" :key="item.deId" :label="item.deName" :value="item.deId" >-->
+<!--  </el-select>-->
+    <br />
+    请选择班次：<el-select v-model="fre" placeholder="请选择"
+                     style="width: 30%;margin-top:20px;" @change="obtainfre($event)">
+    <el-option v-for="item in fres" :key="item.fid" :label="item.ffrequency" :value="item.fid" >
 
-<!--    </el-option>-->
-<!--  </el-select><br />-->
+    </el-option>
+  </el-select><br />
     时<span style="margin-left: 10px"></span>间：<el-date-picker
         v-model="shijian"
         type="daterange"
@@ -35,11 +51,10 @@
         start-placeholder="开始日期"
         end-placeholder="结束日期"
         :shortcuts="shortcuts"
-        style="margin-top: 10px"
+        style="margin-top: 20px"
         @change="dateChangebirthday1"
         format="YYYY-MM-DD"
         value-format="YYYY-MM-DD"
-
   >
     </el-date-picker>
     <template #footer>
@@ -50,26 +65,32 @@
     </template>
   </el-dialog>
   <!-- 日历 -->
-   <el-calendar style="margin-top: 10px">
-     <template #dateCell="{data}">
-       <p  v-for="i in sch">
-         {{ data.day.split('-').slice(1).join('-') }}
-       </p>
-     </template>
-   </el-calendar>
+<!--   <el-calendar style="margin-top: 10px">-->
+<!--     <template #dateCell="{data}">-->
+<!--       <p  v-for="i in sch">-->
+<!--         {{ data.day.split('-').slice(1).join('-') }}-->
+<!--       </p>-->
+<!--     </template>-->
+<!--   </el-calendar>-->
 
 </template>
 
 <script>
 import qs from "qs";
-
 export  default {
   data(){
     return{
       dialogVisible:false,
       staff:'',
       fre:'',
-      dome:[],
+      //班次下拉列表
+      fres:[],
+      value:'',
+      //科室下拉列表
+      kslist:[],
+      //员工下拉列表
+      staffs:[],
+
       shijian:'',
       sch:{
         scId:0,
@@ -80,8 +101,10 @@ export  default {
       },
       f:{
         shid:0,
-        Shitime:''
+        Shitime:'',
+        ksid:0,
       },
+      freId:0,
       shortcuts: [{
         text: '最近一周',
         value: () => {
@@ -112,21 +135,44 @@ export  default {
   },
   methods:{
     getData(){
-      this.axios.get('paiban').then((v)=>{
-        this.sch=v.data
-        console.log(this.sch)
+      this.axios.get('http://localhost:8089/ks-list').then((v)=>{
+        this.kslist=v.data
       }).catch()
+      this.axios.get('select-fre').then((v)=>{
+        this.fres=v.data
+        console.log(this.fre)
+      }).catch()
+    },
+    dome(event){
+      this.ksid=event
+      this.axios({
+        url:"staff-ks",
+        params:{id:this.ksid}
+      }).then((v)=>{
+        this.staffs=v.data
+      }).catch();
+    },
+    obtainStaff(event){
+      this.obtain=event
+    },
+    obtainfre(event){
+      this.freId=event
     },
     dateChangebirthday1(val){
      this.Shitime=val
     },
     ok(){
-      // var grant = JSON.stringify({Shitime:this.Shitime})
-      // // console.log(grant)
-      // this.axios.get('data-time',qs.stringify({grant})).then((v)=>{
-      //
-      // }).catch()
-    }
+      // var freid=this.freId
+      //获取日期
+      this.axios.post('data-time',{funs:this.Shitime,funss:this.obtain,freid:this.freId}).then((v)=>{
+      }).catch()
+      // this.axios({
+      //   url:"data-time",
+      //   params:{grant:qs.stringify(grant)}
+      // }).then((v)=>{
+      // }).catch();
+    },
+
   },
   created() {
     this.getData()
