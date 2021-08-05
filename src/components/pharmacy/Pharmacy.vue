@@ -15,14 +15,27 @@
 			<el-dialog @close="fromdata" title="药品信息" v-model="dialogFormVisible">
 			  <el-form :model="form">
           <el-row>
+            <el-col :span="10">
+              <el-form-item label-width="100px" label="是否为处方药">
+                <el-radio v-model="form.drugPrescription" :label="1">处方药</el-radio>
+                <el-radio v-model="form.drugPrescription" :label="2">非处方药</el-radio>
+              </el-form-item>
+            </el-col>
+            <el-col :span="1" :offset="2">
+              <el-form-item label-width="72px" label="保质期">
+                <el-input v-model="form.drugPastDate" style="width: 215px"/>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row>
             <el-col :span="5">
               <el-form-item label-width="80px" label="药品名称">
-                <el-input v-model="form.drugName" autocomplete="off" style="width: 215px;"></el-input>
+                <el-input v-model="form.drugName" style="width: 215px;"></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="5" :offset="7">
               <el-form-item label-width="100px" label="药品条形码">
-                <el-input v-model="form.drugBarCode" autocomplete="off" style="width: 215px;"></el-input>
+                <el-input v-model="form.drugBarCode" style="width: 215px;"></el-input>
               </el-form-item>
             </el-col>
           </el-row>
@@ -68,24 +81,36 @@
           <el-row>
             <el-col :span="5">
               <el-form-item label-width="80px" label="药品用法">
-                <el-input v-model="form.drugUsage" autocomplete="off" style="width: 215px;"></el-input>
+                <el-input v-model="form.drugUsage" style="width: 215px;"></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="5" :offset="7">
               <el-form-item label-width="100px" label="药品说明书">
-                <el-input v-model="form.drugSpecification" type="textarea" autocomplete="off" style="width: 215px;"></el-input>
+                <el-input v-model="form.drugSpecification" type="textarea" style="width: 215px;"></el-input>
               </el-form-item>
             </el-col>
           </el-row>
           <el-row>
             <el-col :span="5">
               <el-form-item label-width="80px" label="药品单位">
-                <el-input v-model="form.drugUnit" autocomplete="off" style="width: 215px;"></el-input>
+                <el-input v-model="form.drugUnit" style="width: 215px;"></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="10" :offset="7">
               <el-form-item label-width="85px" label="药品功效">
-                <el-input v-model="form.drugRemark" autocomplete="off" style="width: 215px;"></el-input>
+                <el-input v-model="form.drugRemark" style="width: 215px;"></el-input>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="5">
+              <el-form-item label-width="80px" label="每粒单价">
+                <el-input v-model="form.drugParticle" style="width: 215px;"/>
+              </el-form-item>
+            </el-col>
+            <el-col :span="10" :offset="7">
+              <el-form-item label-width="85px" label="每瓶数量">
+                <el-input v-model="form.drugQuantity" style="width: 215px;"/>
               </el-form-item>
             </el-col>
           </el-row>
@@ -107,22 +132,31 @@
               <template #default="props">
                 <el-form inline>
                   <el-form-item style="color: cornflowerblue" label="药品编号">
-                    <span>{{ props.row.drugId }}</span>
+                    {{ props.row.drugId }}
                   </el-form-item>
                   <el-form-item style="color: cornflowerblue" label="生产厂家">
-                    <span>{{ props.row.ykSupplier.supplierName }}</span>
+                    {{ props.row.ykSupplier.supplierName }}
                   </el-form-item>
                   <el-form-item style="color:cornflowerblue" label="规格">
-                    <span>{{ props.row.ykDrugspecifcations.specSpecification }}</span>
+                    {{ props.row.ykDrugspecifcations.specSpecification }}
+                  </el-form-item>
+                  <el-form-item style="color:cornflowerblue" label="单粒价格">
+                    {{props.row.drugParticle}}
+                  </el-form-item>
+                  <el-form-item style="color:cornflowerblue" label="每瓶数量">
+                    {{props.row.drugQuantity}}
                   </el-form-item>
                   <el-form-item style="color:cornflowerblue" label="药品说明书">
-                    <span>{{props.row.drugSpecification}}</span>
+                    {{props.row.drugSpecification}}
                   </el-form-item>
                   <el-form-item style="color:cornflowerblue" label="药品用法">
-                    <span>{{props.row.drugUsage}}</span>
+                    {{props.row.drugUsage}}
                   </el-form-item>
                   <el-form-item style="color:cornflowerblue" label="药品单位">
-                    <span>{{props.row.drugUnit}}</span>
+                    {{props.row.drugUnit}}
+                  </el-form-item>
+                  <el-form-item style="color:cornflowerblue" label="保质期">
+                    {{props.row.drugPastDate}}
                   </el-form-item>
                 </el-form>
 			      </template>
@@ -142,10 +176,17 @@
 				<el-table-column
 				  label="条形码"
 				  prop="drugBarCode">
-				</el-table-column>
+				</el-table-column> 
         <el-table-column
             label="药品功效"
             prop="drugRemark">
+        </el-table-column>
+        <el-table-column
+            label="处方药"
+            prop="drugPrescription">
+          <template #default="scope">
+            {{scope.row.drugPrescription == 1?'处方药':'非处方药'}}
+          </template>
         </el-table-column>
 				<el-table-column
 				  label="操作">
@@ -194,7 +235,10 @@
           ykSpecId:'',
           drugSpecification:'',
           supplierId:'',
-          drugPastdate:''
+          drugPastDate:'',
+          drugParticle:'',//单粒价格
+          drugQuantity:'',//每瓶数量
+          drugPrescription:'',//是否为处方药
         },
         specfrom:[],
         suppfrom:[],
@@ -260,7 +304,11 @@
             this.form.drugRemark = row.drugRemark
             this.form.drugUnit = row.drugUnit
             this.form.drugSpecification = row.drugSpecification
-            this.form.drugPastdate = row.drugPastdate
+            this.form.drugPastDate = row.drugPastDate
+            this.form.drugParticle = row.drugParticle
+            this.form.drugQuantity = row.drugQuantity
+
+            this.form.drugPrescription = row.drugPrescription
         this.dialogFormVisible = true;
         this.getData();
       },
@@ -279,7 +327,10 @@
           drugRemark:null,
           drugUnit:null,
           drugSpecification:null,
-          drugPastdate:null,
+          drugPastDate:null,
+          drugParticle:null,
+          drugQuantity:null,
+          drugPrescription:null,
         }
         this.dialogFormVisible = false
       },
