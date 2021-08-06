@@ -51,11 +51,13 @@ createApp(App)
 .component("opcTable2",opcTable2)
 .component("opcTable3",opcTable3)
 .component("opcTable4",opcTable4)
+
 .component("cardTable1",cardTable1)
 .component("cardTable2",cardTable2)
 .component("upTable1",upTable1)
 .component("upTable2",upTable2)
 .component('crumb',crumb)
+
 .component("regDialog1",regDialog1)
 .component("regDialog2",regDialog2)
 .mount('#app')

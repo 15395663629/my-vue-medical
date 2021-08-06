@@ -2,7 +2,7 @@
 	<el-container style="height: 100%;">
 		<el-header height="30px"  style="line-height: 30px; background-color: #B3C0D1;color: #333;">
 			<!-- <newDateOPC style="margin: 0px; padding: 0px;"></newDateOPC> -->
-		{{leftTopTable[0]}}
+		{{leftRecord}}
     </el-header>
 		<el-container style="height: 100%;">
 			<el-aside width="400px" style="background-color: #D3DCE6;color: #333;"> <!-- 右边 -->
@@ -44,38 +44,13 @@
                   </el-table-column>
                 </el-table>
               </el-tab-pane>
-
+<!--              table2           ===============-->
               <el-tab-pane label="就诊列表" :key="0" name="0">
-                <el-row>
-                  <el-col  :span="14">
-                    <el-input  placeholder="请输入病人姓名或者身份证" v-model="patientQueryText" size="mini" type="text"/>
-                  </el-col>
-                  <el-col :span="1" >
-                    <el-button  size="mini" @click="" icon="el-icon-search" type="primary" ></el-button>
-                  </el-col>
-                </el-row>
-                <el-col><!-- ================================================== 左下 第二个table ==================================================-->
-                  <el-table highlight-current-row size="mini" :row-class-name="tableRowClassName" :data="bottom_tables" style="width: 100%" height="530">
-                    <el-table-column fixed  label="序号"  width="50"></el-table-column>
-                    <el-table-column fixed  label="姓名"  width="100"></el-table-column>
-                    <el-table-column fixed prop="bnIdCard" label="身份证"  width="160">
-                    </el-table-column>
-                    <el-table-column fixed prop="tag" label="标签"
-                                     width="90" :filters="[{ text: '复诊', value: '复诊' }, { text: '初诊', value: '初诊' }]"
-                                     :filter-method="filterTag"  filter-placement="bottom-end">
-                      <template #default="scope">
-                        <el-tag :type="scope.row.tag === '复诊' ? 'primary' : 'success'" disable-transitions>
-                          {{scope.row.tag}}
-                        </el-tag>
-                      </template>
-                    </el-table-column>
-                  </el-table>
-                </el-col>
+                <left-table2 :text="leftText" :leftTable="leftRecord"></left-table2>
               </el-tab-pane>
-
+<!--              table3           ===============-->
               <el-tab-pane label="就诊记录"  :key="1" name="1" >
-                <!-- ================================================== 左下 第三个table ==================================================-->
-
+                <left-table3 :text="leftText" :leftTable="leftRecord"></left-table3>
               </el-tab-pane>
 
             </el-tabs>
@@ -207,13 +182,6 @@
                       </el-form-item>
                     </el-col>
                     <el-col :span="23">
-                      <el-form-item label="现病史：" label-width="100px"  >
-                        <el-input  autosize type="textarea" size="mini"  maxlength="400"
-                                   show-word-limit>
-                        </el-input>
-                      </el-form-item>
-                    </el-col>
-                    <el-col :span="23">
                       <el-form-item label="既往病史：" label-width="100px"  >
                         <el-input  autosize type="textarea" size="mini"  maxlength="400"
                                    show-word-limit>
@@ -230,6 +198,13 @@
                     <el-col :span="23">
                       <el-form-item label="体检结果：" label-width="100px"  >
                         <el-input  rows="4" type="textarea" size="mini" disabled maxlength="400"
+                                   show-word-limit>
+                        </el-input>
+                      </el-form-item>
+                    </el-col>
+                    <el-col :span="23">
+                      <el-form-item label="现病史：" label-width="100px"  >
+                        <el-input  autosize type="textarea" size="mini"  maxlength="400"
                                    show-word-limit>
                         </el-input>
                       </el-form-item>
@@ -566,8 +541,11 @@
 
 
 <script>
-	export default{
-		data(){
+  import LeftTable2 from "./opc/LeftTable2.vue";
+  import LeftTable3 from "./opc/LeftTable3.vue";
+  export default{
+    components: {LeftTable3, LeftTable2},
+    data(){
 			return{
 				bingli:false,//病理查看
 				centerDialogVisible1: false,
@@ -624,6 +602,7 @@
           mrState:'',
           mrSickType:'',
           mrTotalMoney:'',
+          mrMcCard:'',
           sId:'',
           sickNumber:'',
           bnNumber:'',
@@ -662,6 +641,7 @@
         leftTopTable:[],
         //就诊记录表查询
         leftRecord:[],
+        leftText:'',//呼叫列表搜索内容
         // 头部model属性
         headerInput:{
 				  bnNumber: '',
@@ -695,7 +675,6 @@
         rightTableData1:[],//西药处方
         rightTableData2: [],//中药处方
         indexRecord:'2',//切换默认值
-        patientQueryText:'',//呼叫列表搜索内容
         loading:false, // 呼叫的登入加载
         testDuqu:'',//正在呼叫
 
@@ -705,7 +684,7 @@
 		  // 加入后台部分-------------------------------------------------------------------
       selectRecord(){
         console.log(this.indexRecord)
-        this.axios.post("selectAllRecord",this.indexRecord).then((v)=>{
+        this.axios.post("selectAllRecord",{index:this.indexRecord}).then((v)=>{
           this.leftRecord = v.data;
           console.log(this.leftRecord)
         }).catch();
@@ -1005,7 +984,8 @@
         this.medicalRecordObject.mrTotalMoney = sum1+sum2;
         this.medicalRecordObject.sickNumber=this.leftTopTable[0].rtRegObject.sickNumber;
         this.medicalRecordObject.bnNumber=this.leftTopTable[0].bnNumber;
-        this.medicalRecordObject.mcNumber=this.leftTopTable[0].rtRegObject.cardObject.mcCard
+        this.medicalRecordObject.mrMcCard=this.leftTopTable[0].rtRegObject.cardObject.mcCard
+        this.medicalRecordObject.mcNumber=this.leftTopTable[0].rtRegObject.cardObject.mcNumber
         //处方表
         this.recipeObject.recipeSickName=this.headerInput.bnSickName;
         this.recipeObject.recipeDoctorName=this.token.sname;
