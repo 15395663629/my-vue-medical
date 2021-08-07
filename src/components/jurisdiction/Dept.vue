@@ -57,6 +57,7 @@
 </template>
 
 <script>
+ import qs from  'qs'
 	export default {
 	    data() {
 	      return {
@@ -103,15 +104,21 @@
             this.valus.deName=this.value
             this.valus.deDate=new Date()
             console.log(this.valus.deId)
-            this.axios.post("http://localhost:8089/add-list",this.valus).then((v)=>{
-             if(v.data==='ok'){
-               this.clearForm()
-               this.getData()
-             }else{
-               console.log(v.data)
-             }
-
-            }).catch()
+            this.axios({
+              url:"add-list",
+              params:{dept:this.valus}
+            }).then((v)=>{
+              if(v.data==='ok'){
+                this.clearForm()
+                this.getData()
+              }else{
+                console.log(v.data)
+              }
+            }).catch();
+            // this.axios.post("http://localhost:8089/add-list",qs.stringify(this.valus)).then((v)=>{
+            //
+            //
+            // }).catch()
           }else{
             //修改部门
             this.valus.deName=this.value

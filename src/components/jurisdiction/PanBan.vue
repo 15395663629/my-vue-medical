@@ -14,22 +14,22 @@
     <el-button style="margin-left: 80px" @click="dialogVisible = true">新增排班</el-button>
   </el-col>
 </el-row>
-  <el-calendar id="calendar">
-    <!-- 这里使用的是 2.5 slot 语法，对于新项目请使用 2.6 slot 语法-->
-    <template
-        slot="dateCell"
-        slot-scope="{date, data}">
-      <!--自定义内容-->
-      <div>
-        <div class="calendar-day" style="text-align: center">
-          <el-tooltip v-if="brightDate.indexOf(data.day) != -1" class="item" effect="dark" :content="content(data.day)" placement="right">
-            <span class="everyDay">{{ data.day.split('-').slice(2).join('-') }}</span>
-          </el-tooltip>
-          <span v-else>{{ data.day.split('-').slice(2).join('-') }}</span>
-        </div>
-      </div>
-    </template>
-  </el-calendar>
+<!--  <el-calendar id="calendar">-->
+<!--    &lt;!&ndash; 这里使用的是 2.5 slot 语法，对于新项目请使用 2.6 slot 语法&ndash;&gt;-->
+<!--    <template-->
+<!--        slot="dateCell"-->
+<!--        slot-scope="{date, data}">-->
+<!--      &lt;!&ndash;自定义内容&ndash;&gt;-->
+<!--      <div>-->
+<!--        <div class="calendar-day" style="text-align: center">-->
+<!--          <el-tooltip v-if="brightDate.indexOf(data.day) != -1" class="item" effect="dark" :content="content(data.day)" placement="right">-->
+<!--            <span class="everyDay">{{ data.day.split('-').slice(2).join('-') }}</span>-->
+<!--          </el-tooltip>-->
+<!--          <span v-else>{{ data.day.split('-').slice(2).join('-') }}</span>-->
+<!--        </div>-->
+<!--      </div>-->
+<!--    </template>-->
+<!--  </el-calendar>-->
   <el-dialog title="科室管理" v-model="dialogVisible" width="30%" :before-close="handleClose">
     请选择科室：<el-select v-model="value" placeholder="请选择"
                      style="width: 30%;margin-top:20px;" @change="dome($event)">
