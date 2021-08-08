@@ -26,6 +26,7 @@ import opcTable1 from "./components/outpatient/opc/OPCTable1.vue"// 问诊
 import opcTable2 from "./components/outpatient/opc/OPCTable2.vue"
 import opcTable3 from "./components/outpatient/opc/OPCTable3.vue"
 import opcTable4 from "./components/outpatient/opc/OPCTable4.vue"
+import opcTable5 from "./components/outpatient/opc/OPCTable5.vue"
 import cardTable1 from "./components/outpatient/card/CardTable1.vue"// 诊疗卡
 import cardTable2 from "./components/outpatient/card/CardTable2.vue"
 import upTable1 from "./components/outpatient/card/UpTable1.vue"
@@ -51,11 +52,14 @@ createApp(App)
 .component("opcTable2",opcTable2)
 .component("opcTable3",opcTable3)
 .component("opcTable4",opcTable4)
+.component("opcTable5",opcTable5)
+
 .component("cardTable1",cardTable1)
 .component("cardTable2",cardTable2)
 .component("upTable1",upTable1)
 .component("upTable2",upTable2)
 .component('crumb',crumb)
+
 .component("regDialog1",regDialog1)
 .component("regDialog2",regDialog2)
 .mount('#app')

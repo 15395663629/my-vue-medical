@@ -5,9 +5,6 @@
 		style="width: 100%"
 		height="450"
 		>
-		 <el-table-column type="selection" width="55">
-		</el-table-column>
-		
 		<el-table-column
 		  label="日期"
 		  width="180">
