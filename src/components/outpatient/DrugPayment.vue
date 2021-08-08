@@ -66,7 +66,10 @@
 		<el-table-column fixed  label="用法"  width="60"></el-table-column>
 		<el-table-column fixed  label="是否皮试"  width="100"></el-table-column>
 		<el-table-column fixed  label="输液分组"  width="100"></el-table-column>
-    <el-table-column label="嘱托" width="200">
+		<el-table-column fixed  label="单价"  width="60"></el-table-column>
+		<el-table-column fixed  label="计数"  width="130"></el-table-column>
+		<el-table-column fixed  label="总量"  width="100"></el-table-column>
+    <el-table-column label="嘱托" fixed width="200">
       <template #default="scope">
         <el-popover effect="light" trigger="hover" placement="top">
           <template #default>
@@ -80,32 +83,20 @@
         </el-popover>
       </template>
     </el-table-column>
-
-		<el-table-column fixed  label="单价"  width="60"></el-table-column>
-		<el-table-column fixed  label="计数"  width="130"></el-table-column>
-		<el-table-column fixed  label="总量"  width="100"></el-table-column>
 		<el-table-column fixed  label="金额"  width="100"></el-table-column>
-		<el-table-column prop="drugType" label="标签" align="center"
-		width="166" :filters="[{ text: '西药', value: '西药' }, { text: '检验', value: '检验' },{text:'中药',value:'中药'}]"
-		:filter-method="filterTag2"  filter-placement="bottom-end">
-			<template #default="scope">
-		        <el-tag size="mini" :type="scope.row.drugType === '检验' ? 'primary' : (scope.row.drugType === '中药'?'success':'danger')" disable-transitions>
-				{{scope.row.drugType}}
-				</el-tag>
-			</template>
-		</el-table-column>
+
+
 	 </el-table>
-	
+
 	<!-- 阴影层======================================== -->
-	<el-dialog title="项目缴费" v-model="centerDialogVisible" 
-	 width="80%"  destroy-on-close center>
+	<el-dialog title="项目缴费" v-model="centerDialogVisible"  top="30px" width="80%"  destroy-on-close center>
 	 <el-row>
-		 <el-col :span="5">
-			<el-input style="width: 200px;" placeholder="请输入你要查询的内容" ></el-input> 
-			<el-button type="primary" icon="el-icon-search">查询</el-button>
-		</el-col>
+		 <el-col >
+			<el-input size="small" style="width: 250px;" placeholder="请输入病人身份证或者就诊卡卡号" ></el-input>
+			<el-button size="small" type="primary" icon="el-icon-search">查询</el-button>
+     </el-col>
 	 </el-row>
-	 <el-table height="500" row-key="date"  :data="tableData" style="width: 100%">
+	 <el-table size="mini" height="450" row-key="date"  :data="tableData" style="width: 100%">
 		<el-table-column fixed  label="单据编号"  width="120"></el-table-column>
 		<el-table-column fixed  label="操作"  width="120">
 			<el-button type="success" size="mini">
@@ -122,17 +113,8 @@
 			</template>
 		</el-table-column>
 	 </el-table>
-	 <div class="block">
-	     <span class="demonstration"></span>
-	     <el-pagination
-	       @size-change="handleSizeChange"
-	       @current-change="handleCurrentChange"
-	       v-model:currentPage="currentPage3"
-	       :page-size="100"
-	       layout="prev, pager, next, jumper"
-	       :total="1000">
-	     </el-pagination>
-	   </div>
+
+
 	</el-dialog>
 	
 </template>
@@ -152,13 +134,7 @@
 					tag: '项目缴费',
 					drugType:'中药'
 				},
-				{
-					date: '2016-05-04',
-					name: '王小虎',
-					address: '上海市普陀区金沙江路 1517 弄',
-					tag: '药品缴费',
-					drugType:'检验'
-				}],
+				],
 				
 			};
 		},
@@ -166,15 +142,6 @@
 		      filterTag(value, row) {
 		        return row.tag === value;
 		      },
-			  filterTag2(value, row) {
-			    return row.drugType === value;
-			  },
-			  handleSizeChange(val) {
-				console.log(`每页 ${val} 条`);
-			  },
-			  handleCurrentChange(val) {
-				console.log(`当前页: ${val}`);
-			  },
 		},
 		
 	};

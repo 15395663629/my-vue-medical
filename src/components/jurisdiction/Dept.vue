@@ -11,7 +11,7 @@
   <!-- 表格 -->
   <el-table ref="multipleTable" :data="dept.slice((page-1)*size,page*size)"
             tooltip-effect="dark" style="width: 100%"
-            @selection-change="handleSelectionChange" class="dome">
+            class="dome">
     <el-table-column type="selection">
     </el-table-column>
     <el-table-column label="部门编号"  prop="deId">
@@ -32,7 +32,7 @@
 	  <el-pagination
 	  	style="text-align: center;margin-top: 10px"
 	       @size-change="HandleSizeChange"
-	       @current-change=" "
+	       @current-change="HandleCurrentChange"
 	       :current-page="page"
 	       :page-sizes="[2,4,6,8,10]"
 	       :page-size="size"
@@ -43,7 +43,7 @@
 	    title="部门信息"
 	    v-model="dialogVisible1"
 	    width="30%"
-	    :before-close="handleClose">
+	    >
 	   <!-- 表格 -->
 	   部门名称：<el-input type="text" style="width: 40%;" v-model="value"></el-input><br />
 	    <template #footer>
@@ -57,6 +57,7 @@
 </template>
 
 <script>
+ import qs from  'qs'
 	export default {
 	    data() {
 	      return {
@@ -101,17 +102,23 @@
           if(this.valus.deId===0){
             //新增部门
             this.valus.deName=this.value
-            this.valus.deDate=new Date()
+             this.valus.deDate=new Date()
             console.log(this.valus.deId)
-            this.axios.post("http://localhost:8089/add-list",this.valus).then((v)=>{
-             if(v.data==='ok'){
-               this.clearForm()
-               this.getData()
-             }else{
-               console.log(v.data)
-             }
-
-            }).catch()
+            this.axios({
+              url:"add-dept",
+              params:{depts:this.valus}
+            }).then((v)=>{
+              if(v.data==='ok'){
+                this.clearForm()
+                this.getData()
+              }else{
+                console.log(v.data)
+              }
+            }).catch();
+            // this.axios.post("http://localhost:8089/add-list",qs.stringify(this.valus)).then((v)=>{
+            //
+            //
+            // }).catch()
           }else{
             //修改部门
             this.valus.deName=this.value
