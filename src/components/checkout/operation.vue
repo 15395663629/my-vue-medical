@@ -79,6 +79,7 @@
             <el-tab-pane style="width:730px" label="套餐选择" name="first">
               <el-table size="mini" :data="tjmeal" ref="tcdata" @selection-change="handleSelectionChange"
                         @select="select"
+                        @select-all="false"
                         height="230">
                 <el-table-column
 
@@ -216,7 +217,11 @@
               </el-table-column>
             </el-table>
       <el-form-item>
-        <el-col :span="1" :offset="11">
+        <el-col :span="13">
+          <span>请输入密码:</span>
+          <el-input v-model="rlmm"  style="margin-top: 5px;width: 300px"></el-input>
+        </el-col>
+        <el-col :span="1" :offset="6">
             <el-button style="margin-top: 5px" type="primary" @click="qyryForm()">确定</el-button>
         </el-col>
       </el-form-item>
@@ -314,6 +319,7 @@ import qs from "qs";
 export default {
     data() {
       return {
+        rlmm:'',//诊疗卡密码
         ryrow:[],//启用row
         tiltm:'',//弹框标题
         tjsj:[],
@@ -538,7 +544,6 @@ export default {
       //启用确认按钮
       qyryForm(){
         this.manstate(this.ryrow)
-        this.qyry=false;
       },
       //打开新增修改弹框
       xztjEdit(is,row) {
@@ -582,18 +587,8 @@ export default {
       },
       //体检人员修改状态
       manstate(row){
-        this.$confirm('是否确认启用?', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).then(() => {
+        //调用查询诊疗卡方法
           this.manj(row)
-        }).catch(() => {
-          this.$message({
-            type: 'info',
-            message: '已取消'
-          });
-        });
       },
       //修改状态方法
       manu(row){
@@ -610,28 +605,32 @@ export default {
       //查询诊疗卡
       manj(row){
         let aa='没卡';
+        let bb=this.rlmm;
+        let cc='';
           this.axios.get("http://localhost:8089/aloneCard", {params: {sId:row.manSid}}).then((res) => {
               res.data.forEach(v=>{
-                console.log(v.mcBalance)
+                console.log(v.mcPawd)
                 aa=v.mcBalance
+                cc=v.mcPawd
               })
-            if(aa>=row.manPhy){
-              //调用扣钱方法
-              this.updmoney(aa-row.manPhy,row.manSid)
-              //修改状态方法
-              this.manu(row)
-              this.$message({
-                message: '已启用，消费'+row.manPhy+'元',
-                type: 'success'
-              });
-            }else if(aa<row.manPhy){
-              this.$message.error('卡上余额不足，请充值');
+            if(bb==cc){
+              if(aa>=row.manPhy){
+                //调用扣钱方法
+                this.updmoney(aa-row.manPhy,row.manSid)
+                //修改状态方法
+                this.manu(row)
+                this.$message({
+                  message: '已启用，消费'+row.manPhy+'元',
+                  type: 'success'
+                });
+                this.qyry=false;
+              }else if(aa<row.manPhy){
+                this.$message.error('卡上余额不足，请充值');
+              }
             }else {
-              this.$message({
-                message: '请先办理诊疗卡',
-                type: 'warning'
-              });
+              this.$message.error('密码错误');
             }
+
         }).catch(function(){
         })
       },
