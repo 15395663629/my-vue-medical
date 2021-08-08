@@ -6,7 +6,6 @@
 	export default {
 	  name: 'App',
 	  created: function() {
-	    
 	    if (sessionStorage.getItem("state")) {
 	      this.$store.replaceState(
 	        Object.assign(

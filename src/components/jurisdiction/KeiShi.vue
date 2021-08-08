@@ -8,7 +8,7 @@
 
 	</div>
     <!-- 表格 -->
-	<el-table ref="multipleTable" :data="kslist" tooltip-effect="dark" style="width: 100%"
+	<el-table ref="multipleTable" :data="kslist.slice((page-1)*size,page*size)" tooltip-effect="dark" style="width: 100%"
 		@selection-change="handleSelectionChange" class="dome">
 		<el-table-column type="selection" >
 		</el-table-column>
@@ -16,6 +16,8 @@
 		</el-table-column>
 		<el-table-column prop="ksName" label="科室名称" >
 		</el-table-column>
+    <el-table-column prop="ksDz" label="科室地址" >
+    </el-table-column>
 		<el-table-column prop="dept.deName" label="所属部门">
 		</el-table-column>
 		<el-table-column label="操作">
@@ -28,12 +30,20 @@
 
 	</el-table>
 	<!--分页插件-->
-	<el-pagination style="text-align: center;margin-top: 10px" @size-change="totalCut" @current-change="pageCut" :current-page="1"
-		:page-sizes="[2,4,6,8,10]" :page-size="size" layout="total, sizes, prev, pager, next, jumper" :total="total" >
-	</el-pagination>
+  <!-- 分页插件 -->
+  <el-pagination
+      style="text-align: center;margin-top: 10px"
+      @size-change="HandleSizeChange"
+      @current-change="HandleCurrentChange"
+      :current-page="page"
+      :page-sizes="[2,4,6,8,10]"
+      :page-size="size"
+      layout="total, sizes, prev, pager, next, jumper"
+      :total="kslist.length">
+  </el-pagination>
 
 
-	<el-dialog title="科室管理" v-model="dialogVisible1" width="30%" :before-close="handleClose">
+	<el-dialog title="科室管理" v-model="dialogVisible1" width="30%" >
 		科室名称：<el-input type="text" style="width: 40%;" v-model="ksName"></el-input><br />
 		部&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;门 ：<el-select v-model="value" placeholder="请选择"
 			style="width: 20%;margin-top:20px;" @change="dome($event)">
@@ -41,7 +51,7 @@
 
 			</el-option>
 		</el-select><br />
-
+    科室部门：<el-input type="text"  style="width: 40%;margin-top: 20px" v-model="ksdz"></el-input>
 		<template #footer>
 			<span class="dialog-footer">
 				<el-button @click="cs()">取 消</el-button>
@@ -57,7 +67,9 @@ import  qs from 'qs'
 	export default {
 		data() {
 			return {
+
 			  kname:'',
+        ksdz:'',
 			  dplist:[],//查询部门
 			  kslist:[],//表格查询集合
 				dialogVisible1: false,
@@ -69,8 +81,12 @@ import  qs from 'qs'
         ks:{
 			    ksId:0,
           ksName:'',
+          ksDz:'',
           deId:0
-        }
+        },
+        //分页
+        size:4,
+        page:1
 			}
 		},
 
@@ -124,8 +140,19 @@ import  qs from 'qs'
         this.qc()
 
       },
+      //初始每页数据数size和数据data
+      HandleSizeChange: function(size) {
+        this.size = size;
+        console.log(this.pagesize) //每页下拉显示数据
+      },
+      //初始页page
+      HandleCurrentChange: function(currentPage) {
+        this.page = currentPage;
+        console.log(this.currentPage) //点击第几页
+      },
       ook(){
         this.ks.ksName =this.ksName
+        this.ks.ksDz=this.ksdz
         this.ks.deId =this.deId
        if(this.ks.ksId===0){
          this.axios.post("http://localhost:8089/add-ks",this.ks).then((v)=>{
