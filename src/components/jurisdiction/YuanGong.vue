@@ -14,7 +14,7 @@
 	</div>
 
 	<el-table ref="multipleTable" :data="funs.slice((page-1)*size,page*size)" tooltip-effect="dark" style="width: 100%"
-		@selection-change="handleSelectionChange" class="dome">
+		 class="dome">
 		<el-table-column type="selection">
 		</el-table-column>
     <el-table-column prop="sid" label="员工编号">
@@ -60,7 +60,7 @@
       layout="total, sizes, prev, pager, next, jumper"
       :total="funs.length">
   </el-pagination>
-	<el-dialog title="员工信息" v-model="dialogVisible1" width="40%" :before-close="handleClose">
+	<el-dialog title="员工信息" v-model="dialogVisible1" width="40%" >
 			员工姓名：<el-input type="text" style="width: 30%;" v-model="sname"></el-input>
       用户名：<el-input type="text" style="width: 30%" v-model="uname"></el-input><br>
 
@@ -98,10 +98,10 @@
 		</template>
 	</el-dialog>
   <!-- 角色授权弹框-->
-  <el-dialog title="角色授权" v-model="dialogVisible" width="30%" style="height: 50%">
+  <el-dialog title="员工授权" v-model="dialogVisible" width="30%" >
     <el-tree ref="tree" :data="roles" node-key="rid"
              :props="props" show-checkbox  default-expand-all
-             @check-change="checkChange">
+             >
     </el-tree>
     <template #footer>
 			<span class="dialog-footer">
@@ -173,7 +173,8 @@ import qs from 'qs'
         keId:0,
         tId:0,
         rId:0,
-        dialogVisible:false
+        dialogVisible:false,
+        name:''
 			}
 		},
 
@@ -238,7 +239,7 @@ import qs from 'qs'
         this.staff.tid=this.tId
         this.user.uname=this.uname
         this.user.upswd=this.upass
-        console.log(this.staff.sid)
+        console.log(this.staff)
 
        if(this.staff.sid===0){
          // this.axios.post('add-staff',qs.stringify(data)).then().catch()
@@ -276,7 +277,7 @@ import qs from 'qs'
         this.upass=''
       },
       bianji(row){
-       console.log(row)
+       // console.log(row)
         this.staff.sid=row.sid
         this.dialogVisible1=true
         //回显数据
@@ -284,7 +285,6 @@ import qs from 'qs'
         this.ssore=row.ssore
         this.phone=row.sphone
         this.yuangong=row.ks.ksName
-        // this.jusei=row.role.rname
         this.tile=row.t.tname
         this.dept=row.dept.deName
         this.user.uid=row.user.uid

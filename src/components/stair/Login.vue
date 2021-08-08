@@ -24,15 +24,16 @@
 					  </el-form-item>
 					</el-form>
 						
-					<el-dialog
-					  title="温馨提示"
-					  :visible.sync="dialogVisible"
-					  width="30%"  :before-close="handleClose">
-					  <span>请输入账号和密码</span>
-					  <span slot="footer" class="dialog-footer">
-					    <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
-					  </span>
-			</el-dialog>
+<!--					<el-dialog-->
+<!--					  title="温馨提示"-->
+<!--					  :visible.sync="dialogVisible"-->
+<!--            modelVa="dialogVisible"-->
+<!--					  width="30%"  :before-close="handleClose">-->
+<!--					  <span>请输入账号和密码</span>-->
+<!--					  <span slot="footer" class="dialog-footer">-->
+<!--					    <el-button type="primary" @click="dialogVisible = false">确 定</el-button>-->
+<!--					  </span>-->
+<!--			</el-dialog>-->
 		</div>
 	</div>
 </template>
@@ -83,26 +84,6 @@ import qs from 'qs'
       })
     },
 		methods:{
-			// login() {
-			// 	  // 数据验证
-      //   if(this.form.userName=== "admin" && this.form.userPassword==="123456"){
-      //     this.$router.push('/home')
-      //   }else{
-      //     this.errors.users="账号密码错误"
-      //   }
-			// 	// this.axios.post(
-			// 	// 	'http://localhost:8888/user',this.user
-			// 	// ).then((v)=>{
-			// 	// 	if(v.data=='ok'){
-			// 	// 		console.log("+++++++")
-			// 	// 		this.$router.push('/home')
-			// 	// 	}else{
-			// 	// 		// 使用 vue-router 路由到指定页面，该方式称之为编程式导航
-			// 	// 	}
-			// 	// }).catch((v)=>{
-			// 	// 	alert(v)
-			// 	// });
-			// },
 			resetForm(){
 				this.$refs['loginForm'].resetFields();
 			},

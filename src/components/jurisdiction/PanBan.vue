@@ -30,7 +30,7 @@
 <!--      </div>-->
 <!--    </template>-->
 <!--  </el-calendar>-->
-  <el-dialog title="科室管理" v-model="dialogVisible" width="30%" :before-close="handleClose">
+  <el-dialog title="科室管理" v-model="dialogVisible" width="30%" >
     请选择科室：<el-select v-model="value" placeholder="请选择"
                      style="width: 30%;margin-top:20px;" @change="dome($event)">
     <el-option v-for="item in kslist" :key="item.ksId" :label="item.ksName" :value="item.ksId" >

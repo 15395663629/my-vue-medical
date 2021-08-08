@@ -82,12 +82,12 @@
 			}
 		},
 		methods:{
-		  getData(){
-		    this.axios.get('home-sch').then((v)=>{
-		      this.tableData=v.data
-          console.log(this.tableData)
-        }).catch()
-      },
+		  // getData(){
+		  //   this.axios.get('home-sch').then((v)=>{
+		  //     this.tableData=v.data
+      //     console.log(this.tableData)
+      //   }).catch()
+      // },
 			logout() {
 			  window.sessionStorage.clear()
 			  this.$router.push('/')
@@ -142,7 +142,7 @@
 		},
 		created() {
       this.token = this.$store.state.token
-      this.getData()
+      // this.getData()
       this.setrowspans();
 
     }

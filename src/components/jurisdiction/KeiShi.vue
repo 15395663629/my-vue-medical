@@ -8,7 +8,7 @@
 
 	</div>
     <!-- 表格 -->
-	<el-table ref="multipleTable" :data="kslist" tooltip-effect="dark" style="width: 100%"
+	<el-table ref="multipleTable" :data="kslist.slice((page-1)*size,page*size)" tooltip-effect="dark" style="width: 100%"
 		@selection-change="handleSelectionChange" class="dome">
 		<el-table-column type="selection" >
 		</el-table-column>
@@ -28,12 +28,20 @@
 
 	</el-table>
 	<!--分页插件-->
-	<el-pagination style="text-align: center;margin-top: 10px" @size-change="totalCut" @current-change="pageCut" :current-page="1"
-		:page-sizes="[2,4,6,8,10]" :page-size="size" layout="total, sizes, prev, pager, next, jumper" :total="total" >
-	</el-pagination>
+  <!-- 分页插件 -->
+  <el-pagination
+      style="text-align: center;margin-top: 10px"
+      @size-change="HandleSizeChange"
+      @current-change="HandleCurrentChange"
+      :current-page="page"
+      :page-sizes="[2,4,6,8,10]"
+      :page-size="size"
+      layout="total, sizes, prev, pager, next, jumper"
+      :total="kslist.length">
+  </el-pagination>
 
 
-	<el-dialog title="科室管理" v-model="dialogVisible1" width="30%" :before-close="handleClose">
+	<el-dialog title="科室管理" v-model="dialogVisible1" width="30%" >
 		科室名称：<el-input type="text" style="width: 40%;" v-model="ksName"></el-input><br />
 		部&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;门 ：<el-select v-model="value" placeholder="请选择"
 			style="width: 20%;margin-top:20px;" @change="dome($event)">
@@ -57,6 +65,7 @@ import  qs from 'qs'
 	export default {
 		data() {
 			return {
+
 			  kname:'',
 			  dplist:[],//查询部门
 			  kslist:[],//表格查询集合
@@ -70,7 +79,10 @@ import  qs from 'qs'
 			    ksId:0,
           ksName:'',
           deId:0
-        }
+        },
+        //分页
+        size:4,
+        page:1
 			}
 		},
 
@@ -123,6 +135,16 @@ import  qs from 'qs'
         this.dialogVisible1=false
         this.qc()
 
+      },
+      //初始每页数据数size和数据data
+      HandleSizeChange: function(size) {
+        this.size = size;
+        console.log(this.pagesize) //每页下拉显示数据
+      },
+      //初始页page
+      HandleCurrentChange: function(currentPage) {
+        this.page = currentPage;
+        console.log(this.currentPage) //点击第几页
       },
       ook(){
         this.ks.ksName =this.ksName
