@@ -31,7 +31,7 @@
         <el-aside width="200px">
           <el-menu router unique-opened
                    class="el-menu-vertical-demo">
-            <el-submenu v-for="(menu,idx) in menus" :index="idx">
+            <el-submenu v-for="(menu,idx) in menus" :index="idx+''">
               <template #title>
                 <i :class="menu.fctionIcon"></i>
                 <span>{{menu.fctionAssembly}}</span>

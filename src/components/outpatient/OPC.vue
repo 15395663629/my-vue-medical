@@ -1124,7 +1124,10 @@
         //   }).catch(()=>{})
         // },
         pushUrl(path){/* 页面跳转 */
-          this.$router.push(path);
+          this.$confirm('是否返回主页？').then(_ => {
+            this.$router.push(path);
+          }).catch(_ => {});
+
         },
         openFullScreen2() {//保存
           const loading = this.$loading({
