@@ -98,16 +98,20 @@ import qs from 'qs'
 				}
 			},
 			onSubmit(formName) {
-			  console.log(this.form)
+
         this.$refs[formName].validate(valid =>{
           if(valid){
             this.axios.post('http://localhost:8089/login',qs.stringify(this.form)).then((v)=>{
-              console.log(v.data)
               if(v.data !== 0){
-                this.$store.state.token = v.data;
-                sessionStorage.setItem("token",JSON.stringify(v.data))
-                // console.log(token)
-                this.$router.push('/home')
+                console.log(v.data.list.szt)
+                  if(v.data.list.szt ===0){
+                    this.$store.state.token = v.data;
+                    sessionStorage.setItem("token",JSON.stringify(v.data))
+                    // console.log(token)
+                    this.$router.push('/home')
+                  }else{
+                    this.$message.error("你已离职无法登录")
+                  }
               }else{
                 this.$message.error("账号密码错误")
               }

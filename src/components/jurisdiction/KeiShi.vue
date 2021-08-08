@@ -16,6 +16,8 @@
 		</el-table-column>
 		<el-table-column prop="ksName" label="科室名称" >
 		</el-table-column>
+    <el-table-column prop="ksDz" label="科室地址" >
+    </el-table-column>
 		<el-table-column prop="dept.deName" label="所属部门">
 		</el-table-column>
 		<el-table-column label="操作">
@@ -49,7 +51,7 @@
 
 			</el-option>
 		</el-select><br />
-
+    科室部门：<el-input type="text"  style="width: 40%;margin-top: 20px" v-model="ksdz"></el-input>
 		<template #footer>
 			<span class="dialog-footer">
 				<el-button @click="cs()">取 消</el-button>
@@ -67,6 +69,7 @@ import  qs from 'qs'
 			return {
 
 			  kname:'',
+        ksdz:'',
 			  dplist:[],//查询部门
 			  kslist:[],//表格查询集合
 				dialogVisible1: false,
@@ -78,6 +81,7 @@ import  qs from 'qs'
         ks:{
 			    ksId:0,
           ksName:'',
+          ksDz:'',
           deId:0
         },
         //分页
@@ -148,6 +152,7 @@ import  qs from 'qs'
       },
       ook(){
         this.ks.ksName =this.ksName
+        this.ks.ksDz=this.ksdz
         this.ks.deId =this.deId
        if(this.ks.ksId===0){
          this.axios.post("http://localhost:8089/add-ks",this.ks).then((v)=>{

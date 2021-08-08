@@ -43,7 +43,7 @@
 			<template v-slot:default="r">
 				<el-button type="primary" size="mini" @click="getRoleFuns(r.row)">授权</el-button>
 				<el-button type="primary" @click="bianji(r.row)" size="mini">编辑</el-button>
-				<el-button type="primary" size="mini">离职</el-button>
+				<el-button type="primary" size="mini"  @click="open(r.row)">离职</el-button>
 				
 			</template>
 		</el-table-column>
@@ -179,6 +179,19 @@ import qs from 'qs'
 		},
 
 		methods: {
+      open(row) {
+        // this.axios.post('',).then().catch()
+        this.axios({
+          url:"quit-staff",
+          params:{id:row.sid}
+        }).then((v)=>{
+          if(v.data==="ok"){
+            this.$message.error("离职成功")
+          }else{
+            this.$message.error("离职失败")
+          }
+        }).catch();
+      },
       getData(){
         //查询员工
         this.axios.get("selectall-staff").then((res)=>{
@@ -327,7 +340,8 @@ import qs from 'qs'
 		},
     created() {
 		  this.getData()
-    }
+    },
+
   }
 </script>
 
