@@ -249,12 +249,10 @@
       //打开采购明细弹框
       opemMingxi(obj){
         this.mingxi = true;
-        console.log(obj)
         this.ydpdform = obj.ykDrugpurchasePlanDetails;
       },
       /*选择药品添加到表格*/
       adddrug(){
-        // this.drugInfosC=this.DrugPurchasePlanDetailsArr;
         this.gridData=this.drugInfosC;
           this.open=false;
       },

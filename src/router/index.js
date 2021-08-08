@@ -191,6 +191,18 @@ const routes = [
 					meta:{title:'药品信息管理', noCache: true },
 				},
 				{
+					name:'YaoKu',
+					path:'/YaoKu',
+					component:()=>import("/src/components/pharmacy/DrugStorage.vue"),
+					meta:{title:'药库', noCache: true },
+				},
+				{
+					name:'Haocai',
+					path:'/Haocai',
+					component:()=>import("/src/components/pharmacy/Consumable.vue"),
+					meta:{title:'耗材', noCache: true },
+				},
+				{
 					name:'MZ',
 					path:'/MZ',
 					component:()=>import("/src/components/pharmacy/Outpatient.vue"),
