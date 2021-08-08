@@ -39,7 +39,6 @@
 		  		          size="small"
 		  		          placeholder="病人名称搜索"/>
 		  		      </template>
-		  			  
 		  			  <!--这里放操作按钮-->
 		  			  <template  #default='scope'>
 		  			  	<el-button type="danger" icon="el-icon-delete" @click="delEmp(scope.row)" circle>删除</el-button>
@@ -59,10 +58,6 @@
 		  	        :total="total">
 		  	      </el-pagination>
 		  </el-dialog>
-		  
-		  
-		  
-		  
 		  <!--=============================================选择患者信息弹框===================================-->
 		  <el-dialog title="患者信息" v-model="isShowZY">
 		  	<el-form>
@@ -125,8 +120,7 @@
 		  			</el-col>
 		  		</el-row>
 		  	</el-form>
-		  	
-		  	
+
 		  	<template #footer>
 		  			<el-button @click="addEmp('empFrom')" type="primary">确定</el-button>
 		  			<el-button @click="isShowZY = false" type="danger">取消</el-button>
@@ -146,12 +140,10 @@
 		  		<el-table
 		  		    :data="InhospitalApplyArr"
 		  		    tooltip-effect="dark"
-		  		    style="width: 100%"
-		  			>
+		  		    style="width: 100%">
 		  		    <el-table-column
 		  		      label="药品名称"
-		  			  prop="empId"
-		  		      >
+		  			  prop="empId">
 		  		    </el-table-column>
 		  		    <el-table-column
 		  		      prop="empName"
@@ -170,8 +162,6 @@
 		  			  label="类别">
 		  			</el-table-column>
 		  		  </el-table>
-		  		  
-		  		  
 		  		  <!--分页插件-->
 		  		   <el-pagination
 		  				style="text-align: center;"
@@ -213,8 +203,6 @@
 		  		  prop="empSalary"
 		  		  label="申请人">
 		  		</el-table-column>
-		  		
-		  		
 		  		<el-table-column width="200px"
 		  		      align="right">
 		  		      <template  #header>
@@ -244,10 +232,7 @@
 		  	        :total="total">
 		  	      </el-pagination>
 		  </el-dialog>
-		  
-		  
-		  
-		  
+
 		  <!--=============================================选择患者信息弹框===================================-->
 		  <el-dialog title="患者信息" v-model="isShowZY">
 		  	<el-form>
@@ -297,8 +282,7 @@
 		  				</el-form-item>
 		  			</el-col>
 		  		</el-row>
-		  		
-		  		
+
 		  		<el-row>
 		  			<el-col :span="6">
 		  				<el-form-item label="年龄" label-width="80px">
@@ -307,8 +291,7 @@
 		  			</el-col>
 		  			<el-col :span="2">
 		  			</el-col>
-		  			
-		  			
+
 		  			<el-col :offset="1" :span="9">
 		  				<el-form-item label="治疗医生" label-width="80px">
 		  					<el-select v-model="isSex" placeholder="请选择">
@@ -353,9 +336,7 @@
 		  				</el-form-item>
 		  			</el-col>
 		  		</el-row>
-		  		
-		  		
-		  		
+
 		  		<el-row>
 		  			<el-col :span="6">
 		  				<el-form-item label="电话" label-width="80px">
