@@ -61,7 +61,7 @@
         </el-col>
         <el-col>
           <el-form-item prop="sickIdCard" label="身份证" >
-            <el-input @change="getInfo(mzSickArr.sickIdCard)" v-model="mzSickArr.sickIdCard"></el-input>
+            <el-input @input="getInfo(mzSickArr.sickIdCard)" v-model="mzSickArr.sickIdCard"></el-input>
           </el-form-item>
         </el-col>
         <el-col>
@@ -120,14 +120,14 @@ import { ElMessage } from 'element-plus'
 				input1:"",//查询搜索框
         input2:"",//查询搜索框
         leftTable: [{  /* 表格部分1 */
-            sDate: '2021-07-26 10:10',
+            sDate: '2021-07-31 10:10',
             sOverKsName:'内科',
             sDoctor:'徐宏鱼',
             sScience:'普通号',
             sType:'主任医师',
             sPrice:'19',
 				},{  /* 表格部分1 */
-            sDate: '2021-07-27 10:11',
+            sDate: '2021-07-31 10:11',
             sOverKsName:'内科',
             sDoctor:'雷啊狗',
             sScience:'专家号',
@@ -208,7 +208,9 @@ import { ElMessage } from 'element-plus'
        //病人新增************************************************************************************************************************
        submitMzSick(formName) { // 确定病人新增
          this.$refs[formName].validate((valid) => {
+           console.log(valid)
            if (valid) {
+
              this.axios.post("addMzSick", this.mzSickArr).then((res) => {
                console.log(res.data)
                if (res.data == 'ok') {

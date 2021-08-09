@@ -2,7 +2,7 @@
 	<el-button type="primary"  @click="dialogVisible1 = true">新增角色</el-button>
 	<!-- <el-button type="primary">重置密码</el-button> -->
 	<el-table ref="multipleTable" :data="role.slice((page-1)*size,page*size)" tooltip-effect="dark" style="width: 100%"
-		@selection-change="handleSelectionChange" class="dome">
+	 class="dome">
 		<el-table-column type="selection" >
 		</el-table-column>
 		<el-table-column prop="rid" label="姓名">
@@ -19,12 +19,19 @@
 
 	</el-table>
 	<!--分页插件-->
-	<el-pagination style="text-align: center;" @size-change="HandleSizeChange" @current-change="" :current-page="page"
-		:page-sizes="[2,4,6,8,10]" :page-size="size" layout="total, sizes, prev, pager, next, jumper" :total="role.length">
-	</el-pagination>
+  <!-- 分页插件 -->
+  <el-pagination
+      style="text-align: center;margin-top: 10px"
+      @size-change="HandleSizeChange"
+      @current-change="HandleCurrentChange"
+      :current-page="page"
+      :page-sizes="[2,4,6,8,10]"
+      :page-size="size"
+      layout="total, sizes, prev, pager, next, jumper"
+      :total="role.length">
+  </el-pagination>
   <!--                 新增角色弹框                                   -->
-	<el-dialog title="角色管理" v-model="dialogVisible1" width="30%" :before-close="handleClose">
-
+	<el-dialog title="角色管理" v-model="dialogVisible1" width="30%" >
 		请输入角色名称：<el-input type="text" style="width: 40%;" v-model="rolename"></el-input><br />
 		请选择父级名称：<el-select v-model="value" placeholder="请选择"
 			style="width: 20%;margin-top:20px;"  @change="dome($event)">
@@ -39,10 +46,10 @@
 		</template>
 	</el-dialog>
   <!-- 角色授权弹框-->
-  <el-dialog title="角色授权" v-model="dialogVisible" width="30%" style="height: 50%">
+  <el-dialog title="角色授权" v-model="dialogVisible" width="30%" >
     <el-tree ref="tree" :data="funs" node-key="fctionId"
              :props="props" show-checkbox  default-expand-all
-             @check-change="checkChange">
+            >
     </el-tree>
 
 
@@ -90,7 +97,8 @@ import  qs from 'qs'
           label: 'fctionAssembly',
           children: 'list'
         },
-        dage:[] 
+        dage:[] ,
+
 			}
 		},
 

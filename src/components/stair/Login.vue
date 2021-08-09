@@ -24,15 +24,16 @@
 					  </el-form-item>
 					</el-form>
 						
-					<el-dialog
-					  title="温馨提示"
-					  :visible.sync="dialogVisible"
-					  width="30%"  :before-close="handleClose">
-					  <span>请输入账号和密码</span>
-					  <span slot="footer" class="dialog-footer">
-					    <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
-					  </span>
-			</el-dialog>
+<!--					<el-dialog-->
+<!--					  title="温馨提示"-->
+<!--					  :visible.sync="dialogVisible"-->
+<!--            modelVa="dialogVisible"-->
+<!--					  width="30%"  :before-close="handleClose">-->
+<!--					  <span>请输入账号和密码</span>-->
+<!--					  <span slot="footer" class="dialog-footer">-->
+<!--					    <el-button type="primary" @click="dialogVisible = false">确 定</el-button>-->
+<!--					  </span>-->
+<!--			</el-dialog>-->
 		</div>
 	</div>
 </template>
@@ -73,28 +74,16 @@ import qs from 'qs'
       //清空sessionStorage
       this.$store.state.token = ''
       sessionStorage.removeItem("token")
+      this.axios.interceptors.request.use((config)=>{
+        if(this.$store.state.token.uid===null||this.$store.state.token.uid===undefined){
+          this.$router.push('/')
+        }else{
+          this.$router.push('/home')
+        }
+        return config;
+      })
     },
 		methods:{
-			// login() {
-			// 	  // 数据验证
-      //   if(this.form.userName=== "admin" && this.form.userPassword==="123456"){
-      //     this.$router.push('/home')
-      //   }else{
-      //     this.errors.users="账号密码错误"
-      //   }
-			// 	// this.axios.post(
-			// 	// 	'http://localhost:8888/user',this.user
-			// 	// ).then((v)=>{
-			// 	// 	if(v.data=='ok'){
-			// 	// 		console.log("+++++++")
-			// 	// 		this.$router.push('/home')
-			// 	// 	}else{
-			// 	// 		// 使用 vue-router 路由到指定页面，该方式称之为编程式导航
-			// 	// 	}
-			// 	// }).catch((v)=>{
-			// 	// 	alert(v)
-			// 	// });
-			// },
 			resetForm(){
 				this.$refs['loginForm'].resetFields();
 			},
@@ -109,16 +98,20 @@ import qs from 'qs'
 				}
 			},
 			onSubmit(formName) {
-			  console.log(this.form)
+
         this.$refs[formName].validate(valid =>{
           if(valid){
             this.axios.post('http://localhost:8089/login',qs.stringify(this.form)).then((v)=>{
-              console.log(v.data)
               if(v.data !== 0){
-                this.$store.state.token = v.data;
-                sessionStorage.setItem("token",JSON.stringify(v.data))
-                // console.log(token)
-                this.$router.push('/home')
+                console.log(v.data.list.szt)
+                  if(v.data.list.szt ===0){
+                    this.$store.state.token = v.data;
+                    sessionStorage.setItem("token",JSON.stringify(v.data))
+                    // console.log(token)
+                    this.$router.push('/home')
+                  }else{
+                    this.$message.error("你已离职无法登录")
+                  }
               }else{
                 this.$message.error("账号密码错误")
               }

@@ -4,7 +4,7 @@
 	</div>
 		
 	<!-- <el-button type="primary">重置密码</el-button> -->
-	<el-table ref="multipleTable" :data="fre.slice((page-1)*size,page*size)" tooltip-effect="dark" style="width: 100%" @selection-change="handleSelectionChange"
+	<el-table ref="multipleTable" :data="fre.slice((page-1)*size,page*size)" tooltip-effect="dark" style="width: 100%"
 	 class="dome" id="printMe">
 		<el-table-column type="selection">
 		</el-table-column>
@@ -36,7 +36,7 @@
       layout="total, sizes, prev, pager, next, jumper"
       :total="fre.length">
   </el-pagination>
-					 <el-dialog title="班次管理" v-model="dialogVisible1" width="30%" :before-close="handleClose">
+					 <el-dialog title="班次管理" v-model="dialogVisible1" width="30%" >
 					 	<!-- 表格 -->
              请输入班次名称：<el-input type="text" v-model="bcName" style="width: 45%;margin-top: 20px"></el-input><br />
 					<el-row style="margin-top: 20px !important;">
