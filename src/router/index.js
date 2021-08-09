@@ -17,6 +17,13 @@ const routes = [
 		component:()=>import("/src/components/inhospital/MAMOperation.vue"),
 		meta:'登入'
 	},
+	//医嘱执行一级路由
+	{
+		name:'MedicalAdvice',
+		path:'/medicaladvice',
+		component:() => import('/src/components/inhospital/MedicalAdvice.vue'),
+		meta:{title:'医嘱执行', noCache: true },
+	},
 	//opc门诊的一级路由
 	{
 			name:'OPC',
@@ -106,12 +113,6 @@ const routes = [
 					path:'/discharge',
 					component: () => import('/src/components/inhospital/discharge.vue'),
 					meta:{title:'出院结算', noCache: true },
-				},
-				{
-					name:'MedicalAdvice',
-					path:'/medicaladvice',
-					component:() => import('/src/components/inhospital/MedicalAdvice.vue'),
-					meta:{title:'医嘱执行', noCache: true },
 				},
 				{
 					name:'MedicalAdviceManage',
