@@ -143,6 +143,7 @@
 									<el-button size="mini" type="primary">转住院</el-button>
 								</el-form-item>
 							</el-col>
+
 							<el-col >
 								<el-form-item label-width="15px" >
 									<el-button size="mini" @click="handleClose('headerInput')" type="primary">结束就诊</el-button>
@@ -582,7 +583,7 @@
           zpNotes:'',
           sickNumber:'',
           sId:'',
-          recipeStatePrice:'',
+          recipePrice:0,
           xpList:[],
           zpList:[],
         },
@@ -930,7 +931,6 @@
               rdEntrust:null,//嘱托
               drugId:drug.drugId,//药品编号
               recipeNumber:null,//处方编号
-
               rdDosage:null,//用量
               rdFrequency:null,//频次
               rdSkinResult:null,//皮试结果
@@ -968,7 +968,7 @@
         this.rightTableData2.forEach((drug,i)=>{//循环判断总价钱
           sum2 += (drug.drugPrice*drug.zpObject.zpCount);
         })
-        this.medicalRecordObject.mrTotalMoney = sum1+sum2;
+        this.medicalRecordObject.mrTotalMoney = sum1+sum2;//这里还得加上其他检验的钱
         this.medicalRecordObject.sickNumber=this.leftTopTable[0].rtRegObject.sickNumber;
         this.medicalRecordObject.bnNumber=this.leftTopTable[0].bnNumber;
         this.medicalRecordObject.mrMcCard=this.leftTopTable[0].rtRegObject.cardObject.mcCard
@@ -979,7 +979,7 @@
         this.recipeObject.recipeDoctorText=null;
         this.recipeObject.sickNumber=this.leftTopTable[0].rtRegObject.sickNumber;
         this.recipeObject.sId=this.token.sid;
-        this.recipeObject.recipeStatePrice=0;
+        this.recipeObject.recipePrice = sum1+sum2;
         // 添加西药处方集合
         this.rightTableData1.forEach((drug,i)=>{
           if(drug.xpObject.rdSkin==false){//判断是否皮试
@@ -987,6 +987,7 @@
           }else{
             drug.xpObject.rdSkin=1;
           }
+
           this.recipeObject.xpList.push(drug.xpObject);
         })
         //中药处方

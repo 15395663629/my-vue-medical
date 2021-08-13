@@ -1,132 +1,167 @@
 <template><!-- 药品缴费 -->
-	<el-row>
-		<el-form  status-icon  ref="ruleForm" label-width="100px" class="demo-ruleForm">
-			<el-col :span="5">
-				<el-form-item  label="缴费单号：">
-					<el-input size="mini" disabled></el-input>
-				</el-form-item>
-			</el-col>
-			<el-col :span="5">
-				<el-form-item label="姓名：">
-					<el-input size="mini" disabled></el-input>
-				</el-form-item>
-			</el-col>
-			<el-col :span="5">
-				<el-form-item label="性别：">
-					<el-input size="mini" disabled></el-input>
-				</el-form-item>
-			</el-col>
-			<el-col :span="5">
-				<el-form-item label="年龄：">
-					<el-input size="mini" disabled></el-input>
-				</el-form-item>
-			</el-col >
-			<el-row :span="4">
-				<el-form-item >
-					<el-button size="mini" @click="centerDialogVisible = true" type="primary">选择收费</el-button>
-				</el-form-item>
-			</el-row>
-		</el-form>
-	</el-row>
-	<el-row >
-		<el-form  status-icon  ref="ruleForm" label-width="100px" class="demo-ruleForm">
-			<el-col :span="5">
-				<el-form-item  label="科室：">
-					<el-input size="mini" disabled></el-input>
-				</el-form-item>
-			</el-col>
-			<el-col :span="5">
-				<el-form-item label="诊断医生：">
-					<el-input size="mini" disabled></el-input>
-				</el-form-item>
-			</el-col>
-			<el-col :span="5">
-				<el-form-item label="电话：">
-					<el-input size="mini" disabled></el-input>
-				</el-form-item>
-			</el-col>
-			<el-col :span="5">
-				<el-form-item label="挂号费：">
-					<el-input size="mini" disabled></el-input>
-				</el-form-item>
-			</el-col >
-			<el-row :span="4">
-				<el-form-item >
-					<el-button size="mini"  type="primary" @click="dialogVisible = true">收费打印</el-button>
-				</el-form-item>
-			</el-row>
-		</el-form>
-	</el-row>
-	
-	<el-table show-summary height="450" row-key="date" :data="tableData" >
-		<el-table-column fixed  label="药品名称"  width="100"></el-table-column>
-		<el-table-column fixed  label="计量"  width="60"></el-table-column>
-		<el-table-column fixed  label="单位"  width="60"></el-table-column>
-		<el-table-column fixed  label="频次"  width="60"></el-table-column>
-		<el-table-column fixed  label="用法"  width="60"></el-table-column>
-		<el-table-column fixed  label="是否皮试"  width="100"></el-table-column>
-		<el-table-column fixed  label="输液分组"  width="100"></el-table-column>
-		<el-table-column fixed  label="单价"  width="60"></el-table-column>
-		<el-table-column fixed  label="计数"  width="130"></el-table-column>
-		<el-table-column fixed  label="总量"  width="100"></el-table-column>
-    <el-table-column label="嘱托" fixed width="200">
-      <template #default="scope">
-        <el-popover effect="light" trigger="hover" placement="top">
-          <template #default>
-            <p>嘱托详情: {{ scope.row.address }}</p>
-          </template>
-          <template #reference>
-            <div  class="name-wrapper">
-              <el-tag  size="mini">{{ scope.row.address }}</el-tag>
-            </div>
-          </template>
-        </el-popover>
-      </template>
-    </el-table-column>
-		<el-table-column fixed  label="金额"  width="100"></el-table-column>
+  430224199805045517
+  {{leftTableList}}
+  <el-row>
+    <el-col :span="10"  style="margin-top: 20px">
+      <el-row >
+        <el-col :span="24">
+          <el-input size="small" style="width: 200px;" v-model="leftText"  placeholder="请输入你要查询的内容" ></el-input>
+          <el-button size="small" @click="selectRecord" type="primary" icon="el-icon-search">查询</el-button>
+        </el-col>
+        <el-form   status-icon :model="leftRecordObject"   ref="leftRecordObject" label-width="100px" class="demo-ruleForm te">
+          <el-col :span="12" >
+            <el-form-item  label="问诊号："  style="margin:10px 0px 0px 0px">
+              <el-input size="mini" v-model="leftRecordObject.mrCount" disabled></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="11">
+            <el-form-item label="姓名："  style="margin: 10px 0px 0px 0px ">
+              <el-input size="mini"   v-model="leftRecordObject.recipeSickName" disabled></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="身份证：" style="margin-bottom: 0px">
+              <el-input size="mini"  v-model="leftRecordObject.mrIdCard" disabled></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="11">
+            <el-form-item label="就诊卡号："  style="margin-bottom: 0px">
+              <el-input size="mini"  v-model="leftRecordObject.mrMcCard" disabled></el-input>
+            </el-form-item>
+          </el-col >
+          <el-col :span="12">
+            <el-form-item label="电话：" style="margin-bottom: 0px">
+              <el-input size="mini"  v-model="leftRecordObject.sickPhone"  disabled></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="11">
+            <el-form-item  label="就诊科室：" style="margin-bottom: 0px" >
+              <el-input size="mini"  v-model="leftRecordObject.mrKsName"  disabled></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="诊断医生：" style="margin-bottom: 0px" >
+              <el-input size="mini"   v-model="leftRecordObject.mrDoctorName" disabled></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="11">
+            <el-form-item label="项目总金额：" style="margin-bottom: 0px">
+              <el-input size="mini"  v-model="leftRecordObject.mrTotalMoney"  disabled></el-input>
+            </el-form-item>
+          </el-col >
+        </el-form>
+        <el-table show-summary size="mini" height="370" row-key="date" style="margin-top: 25px" :data="leftTableList">
+
+          <el-table-column fixed prop="xmName"  align="center" label="项目类型"  filter-placement="bottom-end">
+            <template #default="scope">
+              <el-tag size="small"  :type="colorType(scope.row.xmName)" disable-transitions>
+                {{scope.row.xmName}}
+              </el-tag>
+            </template>
+          </el-table-column>
+
+          <el-table-column fixed  label="项目总金额" >
+            <template #default="scope">
+                {{scope.row.xmSum}}
+            </template>
+          </el-table-column>
+          <el-table-column fixed  label="项目留言"  align="center" >
+            <template #default="scope">
+              {{scope.row.xmText}}
+            </template>
+          </el-table-column>
+
+          <el-table-column fixed label="项目总览">
+            <template #default="scope">
+              <el-popover effect="light" trigger="hover" placement="top" width="200px">
+                <template #default   >
+                  <p>名称&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;价格&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;数量</p>
+                  <div v-for="x in scope.row.xmContent">
+                    <span>
+                      {{x.rdName}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    </span>
+                    <span>
+                      {{x.rdPrice}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    </span>
+                    <span>
+                      {{x.rdCount}}
+                    </span>
+                  </div>
+                </template>
+                <template #reference>
+                  <div  class="name-wrapper">
+                    <el-tag  size="small">{{scope.row.xmName=="西药处方" || scope.row.xmName=="中药处方"  ? "药品": (scope.row.xmName=="病理检验" ? "检验":"手术")}}</el-tag>
+                  </div>
+                </template>
+              </el-popover>
+            </template>
+          </el-table-column>
+
+          <el-table-column fixed  label="操作" align="center" >
+            <template #default="scope">
+              <el-button type="success" size="mini" plain @click="forPrinting(scope.row.xmNumber)">收费打印</el-button>
+            </template>
+          </el-table-column>
+
+        </el-table>
+      </el-row>
+
+    </el-col>
+<!--    缴费查询   -->
+    <el-col :span="14" style="margin-top: 20px">
+      <el-row>
+        <el-col :span="24" style="margin-left: 10px">
+          <el-input size="small" style="width: 200px;" placeholder="请输入你要查询的内容" ></el-input>
+          <el-button size="small" type="primary" icon="el-icon-search">查询</el-button>
+        </el-col>
+        <el-table size="mini"  height="560px" row-key="date"  :data="tableData" style="width: 100% ;margin-top: 5px;margin-left: 10px">
+
+          <el-table-column fixed label="序号"> </el-table-column>
+          <el-table-column fixed label="就诊卡号"> </el-table-column>
+          <el-table-column fixed label="姓名"> </el-table-column>
+          <el-table-column fixed label="项目总览">
+            <template #default="scope">
+              <el-popover effect="light" trigger="hover" placement="top">
+                <template #default>
+                  <p>嘱托详情: {{ scope.row.address }}</p>
+                </template>
+                <template #reference>
+                  <div  class="name-wrapper">
+                    <el-tag  size="small">{{ scope.row.address }}</el-tag>
+                  </div>
+                </template>
+              </el-popover>
+            </template>
+          </el-table-column>
+          <el-table-column fixed label="项目总金额"> </el-table-column>
+          <el-table-column fixed  label="操作">
+            <template #default="scope">
+              <el-tooltip content="打印小票" >
+                <el-button
+                    size="mini"
+                    type="success"
+                    icon="el-icon-printer"
+                    circle
+                    @click="handleEdit(scope.$index, scope.row)"></el-button>
+              </el-tooltip>
+            </template>
+          </el-table-column>
+
+        </el-table>
+      </el-row>
+
+    </el-col>
+
+  </el-row>
 
 
-	 </el-table>
-
-	<!-- 阴影层======================================== -->
-	<el-dialog title="项目缴费" v-model="centerDialogVisible"  top="30px" width="80%"  destroy-on-close center>
-	 <el-row>
-		 <el-col >
-			<el-input size="small" style="width: 250px;" placeholder="请输入病人身份证或者就诊卡卡号" ></el-input>
-			<el-button size="small" type="primary" icon="el-icon-search">查询</el-button>
-     </el-col>
-	 </el-row>
-	 <el-table size="mini" height="450" row-key="date"  :data="tableData" style="width: 100%">
-		<el-table-column fixed  label="单据编号"  width="120"></el-table-column>
-		<el-table-column fixed  label="操作"  width="120">
-			<el-button type="success" size="mini">
-				选择
-			</el-button>
-		</el-table-column>
-		<el-table-column prop="tag" label="标签"
-		width="100" :filters="[{ text: '药品缴费', value: '药品缴费' }, { text: '项目缴费', value: '检验缴费' }]"
-		:filter-method="filterTag"  filter-placement="bottom-end">
-			<template #default="scope">
-		        <el-tag :type="scope.row.tag === '项目缴费' ? 'primary' : 'success'" disable-transitions>
-				{{scope.row.tag}}
-				</el-tag>
-			</template>
-		</el-table-column>
-	 </el-table>
-
-
-	</el-dialog>
-	
 </template>
 
 <script>
 	export default {
 		data() {
 			return {
-				textarea:"",
-				dialogVisible: false,
-				centerDialogVisible: false,
-				currentPage3: 5,
+
 				tableData: [{
 					date: '2016-05-02',
 					name: '王小虎',
@@ -135,17 +170,114 @@
 					drugType:'中药'
 				},
 				],
-				
-			};
+        //输入text
+        leftText:'',
+
+        rightText:'',
+        //显示的病人对象
+        leftRecordObject:{
+          mrCount:'',
+          recipeSickName:'',
+          mrIdCard:'',
+          mrMcCard:'',
+          sickPhone:'',
+          mrKsName:'',
+          mrDoctorName:'',
+          mrTotalMoney:'',
+        },
+        leftRecordList:'',
+        //项目集合
+        leftTableList:[],
+        //西药处方
+        xpObject:{
+          xmNumber:0,
+          xmName:'',
+          xmSum:'',
+          xmText:'',
+          xmContent:[],
+        },
+        //中药处方
+        zpObject:{
+				  xmNumber:0,
+          xmName:'',
+          xmSum:'',
+          xmText:'',
+          xmContent:[],
+        },
+
+
+			}
 		},
 		 methods: {
-		      filterTag(value, row) {
-		        return row.tag === value;
-		      },
+		  /*搜索输入*/
+       selectRecord(){
+         if(this.leftText!=null){
+           this.axios.post("selectAllRecords",{texts:this.leftText}).then((v)=>{
+             this.leftRecordObject.mrCount = v.data.mrCount;
+             this.leftRecordObject.recipeSickName = v.data.recipeObject.recipeSickName;
+             this.leftRecordObject.mrIdCard = v.data.mrIdCard;
+             this.leftRecordObject.mrMcCard = v.data.mrMcCard;
+             this.leftRecordObject.sickPhone  = v.data.sickObject.sickPhone;
+             this.leftRecordObject.mrKsName   = v.data.mrKsName;
+             this.leftRecordObject.mrDoctorName = v.data.mrDoctorName;
+             this.leftRecordObject.mrTotalMoney  = v.data.mrTotalMoney;
+             this.leftRecordList = v.data;
+             this.leftRecordListFunction(this.leftRecordList)
+           }).catch();
+         }
+       },
+       //项目总览，--赋值
+       leftRecordListFunction(row){
+          if(row.recipeObject.xpList[0].rdName !=null && ''!= row.recipeObject.xpList[0].rdName){
+            var sum1 = 0;//西药总价钱
+            row.recipeObject.xpList.forEach((drug,i)=>{//循环判断总价钱
+              sum1 += (drug.rdPrice*drug.rdCount);
+            })
+            this.xpObject.xmNumber = row.recipeObject.recipeNumber;
+            this.xpObject.xmName="西药处方";
+            this.xpObject.xmSum = sum1;
+            this.xpObject.xmText = row.recipeObject.xpNotes;
+            this.xpObject.xmContent = row.recipeObject.xpList
+            this.leftTableList.push(this.xpObject)
+          }
+         if(row.recipeObject.zpList[0].zpName !=null && '' != row.recipeObject.zpList[0].zpName){
+           var sum2 = 0;//中药总价钱
+           row.recipeObject.zpList.forEach((drug,i)=>{//循环判断总价钱
+             sum2 += (drug.zpPrice*drug.zpCount);
+           })
+           this.xpObject.xmNumber = row.recipeObject.recipeNumber;
+           this.zpObject.xmName="中药处方";
+           this.zpObject.xmSum = sum2;
+           this.zpObject.xmText = row.recipeObject.zpNotes;
+           this.zpObject.xmContent = row.recipeObject.zpList
+           this.leftTableList.push(this.zpObject)
+         }
+         console.log(this.leftTableList)
+       },
+       forPrinting(index){
+         this.axios.post("forPrinting",{index:index}).then((v)=>{
+           console.log(v.data)
+         }).catch();
+       },
+       //标签方法
+       colorType(value) {
+         if(value=="西药处方" || value == "中药处方"){
+            return 'success';
+         }else{
+           return 'primary';
+         }
+       },
+
+
 		},
 		
 	};
 </script>
 
-<style>
+<style scoped>
+.te /deep/ .el-input__inner {
+  color: red;
+  font-size: 13px;
+  cursor: pointer;
+}
 </style>
