@@ -50,8 +50,8 @@
             </el-form-item>
           </el-col >
         </el-form>
-        <el-table show-summary size="mini" height="370" row-key="date" style="margin-top: 25px" :data="leftTableList">
 
+        <el-table show-summary size="mini" height="370" row-key="date" style="margin-top: 25px" :data="leftTableList">
           <el-table-column fixed prop="xmName"  align="center" label="项目类型"  filter-placement="bottom-end">
             <template #default="scope">
               <el-tag size="small"  :type="colorType(scope.row.xmName)" disable-transitions>
@@ -73,20 +73,20 @@
 
           <el-table-column fixed label="项目总览">
             <template #default="scope">
-              <el-popover effect="light" trigger="hover" placement="top" width="200px">
-                <template #default   >
-                  <p>名称&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;价格&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;数量</p>
-                  <div v-for="x in scope.row.xmContent">
-                    <span>
-                      {{x.rdName}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                    </span>
-                    <span>
-                      {{x.rdPrice}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                    </span>
-                    <span>
-                      {{x.rdCount}}
-                    </span>
-                  </div>
+              <el-popover effect="light" trigger="hover" placement="top" width="220px">
+                <template #default>
+                  <table>
+                    <tr>
+                      <td style="width: 100px">名称</td>
+                      <td style="width: 70px">价格</td>
+                      <td style="width: 50px">数量</td>
+                    </tr>
+                    <tr  v-for="x in scope.row.xmContent">
+                      <td style="width: 100px">{{x.coName}}</td>
+                      <td style="width: 70px">{{x.coPrice}}</td>
+                      <td style="width: 50px">{{x.coCount}}</td>
+                    </tr>
+                  </table>
                 </template>
                 <template #reference>
                   <div  class="name-wrapper">
@@ -204,15 +204,22 @@
           xmText:'',
           xmContent:[],
         },
-
-
+        //药品赋值对象
+        contentObject:{},
+        //西药暂用数组
+        contentArr1:[],
+        //中药暂用数组
+        contentArr2:[],
 			}
 		},
 		 methods: {
 		  /*搜索输入*/
        selectRecord(){
          if(this.leftText!=null){
+           // 每次添加之前先清空一边集合
+           this.leftTableList=[];
            this.axios.post("selectAllRecords",{texts:this.leftText}).then((v)=>{
+             //赋值到个人信息去
              this.leftRecordObject.mrCount = v.data.mrCount;
              this.leftRecordObject.recipeSickName = v.data.recipeObject.recipeSickName;
              this.leftRecordObject.mrIdCard = v.data.mrIdCard;
@@ -222,6 +229,7 @@
              this.leftRecordObject.mrDoctorName = v.data.mrDoctorName;
              this.leftRecordObject.mrTotalMoney  = v.data.mrTotalMoney;
              this.leftRecordList = v.data;
+             //赋值集合 -- 表格显示
              this.leftRecordListFunction(this.leftRecordList)
            }).catch();
          }
@@ -237,7 +245,17 @@
             this.xpObject.xmName="西药处方";
             this.xpObject.xmSum = sum1;
             this.xpObject.xmText = row.recipeObject.xpNotes;
-            this.xpObject.xmContent = row.recipeObject.xpList
+
+            row.recipeObject.xpList.forEach((b,i)=>{
+              //先添加一遍在清空数组
+              this.contentObject.coName = b.rdName;
+              this.contentObject.coPrice = b.rdPrice;
+              this.contentObject.coCount =b.rdCount;
+              this.contentArr1.push(this.contentObject)
+              //清空数组
+              this.contentObject={};
+            })
+            this.xpObject.xmContent=this.contentArr1
             this.leftTableList.push(this.xpObject)
           }
          if(row.recipeObject.zpList[0].zpName !=null && '' != row.recipeObject.zpList[0].zpName){
@@ -249,7 +267,17 @@
            this.zpObject.xmName="中药处方";
            this.zpObject.xmSum = sum2;
            this.zpObject.xmText = row.recipeObject.zpNotes;
-           this.zpObject.xmContent = row.recipeObject.zpList
+
+           row.recipeObject.zpList.forEach((b,i)=>{
+             //先添加一遍在清空数组
+             this.contentObject.coName = b.zpName;
+             this.contentObject.coPrice = b.zpPrice;
+             this.contentObject.coCount =b.zpCount;
+             this.contentArr2.push(this.contentObject)
+             //清空数组
+             this.contentObject={};
+           })
+           this.zpObject.xmContent=this.contentArr2
            this.leftTableList.push(this.zpObject)
          }
          console.log(this.leftTableList)
