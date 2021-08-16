@@ -51,7 +51,7 @@
               </el-tab-pane>
 <!--              table3           ===============-->
               <el-tab-pane label="就诊记录"  :key="1" name="1" >
-                <left-table3 :text="leftText" :leftTable="leftRecord"></left-table3>
+                <left-table3 @func="getLeft" @funcs="selectRecord" :text="leftText" :leftTable="leftRecord"></left-table3>
               </el-tab-pane>
 
             </el-tabs>
@@ -649,8 +649,8 @@
 		  // 加入后台部分-------------------------------------------------------------------
       //查询就诊记录表，已经完成就诊的
       selectRecord(){
-        console.log(this.indexRecord)
-        this.axios.post("selectAllRecord",{index:this.indexRecord}).then((v)=>{
+        console.log(this.leftText)
+        this.axios.post("selectAllRecord",{index:this.indexRecord,texts:this.leftText}).then((v)=>{
           this.leftRecord = v.data;
           console.log(this.leftRecord)
         }).catch();
@@ -661,6 +661,10 @@
       },
       getTest2(data){
         this.recipeObject.zpNotes = data
+      },
+
+      getLeft(data){
+        this.leftText = data
       },
       //结束就诊
       handleClose(headerInput) {
