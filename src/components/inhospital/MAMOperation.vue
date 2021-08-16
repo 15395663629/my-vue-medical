@@ -237,6 +237,11 @@
                     width="55"/>
                 <el-table-column prop="drugName" label="药品名称"> </el-table-column>
                 <el-table-column prop="specSpecification" label="药品规格"> </el-table-column>
+                <el-table-column label="是否处方药">
+                  <template #default="obj">
+                    {{obj.row.drugPrescription == 1 ? '是' : '否'}}
+                  </template>
+                </el-table-column>
                 <el-table-column prop="drugUnit" label="药品单位"> </el-table-column>
                 <el-table-column prop="yfDrcaName" label="类别">
                   <template #default="obj">
@@ -690,7 +695,6 @@ export default{
         desPresentDate:''//最新执行时间
       },
 
-
       //=======================================================================查看医嘱 数据
       doctorEnjoinArr:[],//医嘱数组
       doctorEnjoinDetailsArr:[],//医嘱详情数组
@@ -699,7 +703,6 @@ export default{
       staffNname:'',//医生名称
       //===================停嘱数据
       stopDoctorEnjoinVue:{//停嘱对象（前台做操作）
-
       },
       stopDoctorEnjoinDetailsIndex:'',//修改下标
       stopDoctorEnjoin:{//停嘱对象(返回到后台的)
@@ -711,7 +714,6 @@ export default{
         sdeDate:'',//停嘱日期
         ptNo:''//病人住院号
       },
-
 
       //========================================================================医嘱信息数据
       isDoctorEnjoinMessageShow:false,//是否显示医嘱信息弹框
@@ -784,22 +786,22 @@ export default{
 
 
     //=======================================================================查看医嘱方法
-    // //切换查看医嘱表格
-    // selectLookDoctorEnjoinTable(){
-    //   if(this.patientBaseObj.ptNo != undefined){
-    //     if(this.isMainOrMinor == 2){
-    //         this.axios({url:'select-doctorEnjoin-ByPtNo',params:{ptNo:this.patientBaseObj.ptNo}}).then((v)=>{
-    //           console.log(v.data);
-    //           this.doctorEnjoinArr = v.data;
-    //         }).catch((data)=>{})
-    //     }else{
-    //       this.axios({url:'select-doctorEnjoinDetails-ByPtNo',params:{ptNo:this.patientBaseObj.ptNo}}).then((v)=>{
-    //         console.log(v.data)
-    //         this.doctorEnjoinDetailsArr = v.data;
-    //       })
-    //     }
-    //   }
-    // },
+    //切换查看医嘱表格
+    selectLookDoctorEnjoinTable(){
+      if(this.patientBaseObj.ptNo != undefined){
+        if(this.isMainOrMinor == 2){
+            this.axios({url:'select-doctorEnjoin-ByPtNo',params:{ptNo:this.patientBaseObj.ptNo}}).then((v)=>{
+              console.log(v.data);
+              this.doctorEnjoinArr = v.data;
+            }).catch((data)=>{})
+        }else{
+          this.axios({url:'select-doctorEnjoinDetails-ByPtNo',params:{ptNo:this.patientBaseObj.ptNo}}).then((v)=>{
+            console.log(v.data)
+            this.doctorEnjoinDetailsArr = v.data;
+          })
+        }
+      }
+    },
     //主表数据点击查看详情方法
     lookDoctorEnjoinDetailsTable(obj){
       this.doctorEnjoinDetailsArr = obj.dedList;
@@ -897,16 +899,17 @@ export default{
         return;
       }
 
-      for (let drug of this.selectDrugArr) {
+      for (let drug of this.selectDrugArr){
         this.doctorEnjoinDetailsObj.desDrugName = drug.drugName;
         this.doctorEnjoinDetailsObj.desUnit = drug.drugUnit;
-        this.doctorEnjoinDetailsObj.desPrice = drug.drugPrice;
+        this.doctorEnjoinDetailsObj.desPrice = drug.iss == 2 ? drug.drugPrice : drug.iss == 1 && drug.drugPrescription == 1 ? drug.drugParticle : drug.drugPrice;
         this.doctorEnjoinDetailsObj.desUsage = drug.drugUsage;
         this.doctorEnjoinDetailsObj.desCount = 1;
-        this.doctorEnjoinDetailsObj.desDrugIs = drug.iss;//药品还是耗材
+        this.doctorEnjoinDetailsObj.desDrugIs = drug.iss == 2 ? 2 : drug.iss == 1 && drug.drugPrescription == 1 ? 3 : 1;//药品还是耗材或者处方药
         this.doctorEnjoinDetailsObj.desDrugId = drug.drugId;
         this.doctorEnjoinDetailsObj.desEnteringDate = this.formatDate(new Date(), 'yyyy-MM-dd hh:mm:ss');
         this.doctorEnjoinObj.dedList.push(this.doctorEnjoinDetailsObj);
+        console.log(this.doctorEnjoinObj);
 
         this.doctorEnjoinDetailsObj = {//医嘱详情实体类
           desId:'',//医嘱详细编号
@@ -968,7 +971,7 @@ export default{
       }
 
       this.doctorEnjoinObj.ptNo = this.patientBaseObj.ptNo;
-
+    console.log(this.doctorEnjoinObj)
       this.axios.post('add-doctorEnjoin',this.doctorEnjoinObj).then((v)=>{
         if(v.data){
           this.emptyDoctorEnjoin();
@@ -1188,15 +1191,10 @@ export default{
             })
           }
         }
-
       }else if(this.maxCard == '化验项目'){
-
       }else if(this.maxCard == '化验结果'){
-
       }
     },
-
-
 
 
 
@@ -1236,21 +1234,17 @@ export default{
     //判断医嘱是否停用 如果停用的表格就标红
     tableDoctorEnjoinDetailsRowClassName({row, rowIndex}) {
       if (row.desEndDate != '' && row.desEndDate != null) {
-
         if(this.formatDate(row.desEndDate, 'yyyy-MM-dd') <= this.formatDate(new Date(), 'yyyy-MM-dd')){
           return 'tyyz';
         }
-
       }
     },
     //判断医嘱是否停用 如果停用的表格就标红
     tableDoctorEnjoinRowClassName({row, rowIndex}) {
       if (row.deEndDate != '' && row.deEndDate != null) {
-
         if(this.formatDate(row.deEndDate, 'yyyy-MM-dd') <= this.formatDate(new Date(), 'yyyy-MM-dd')){
           return 'tyyz';
         }
-
       }
     },
 

@@ -568,7 +568,6 @@ export default{
     //判断医嘱是否停用 如果停用的表格就标红
     tableDoctorEnjoinDetailsRowClassName({row, rowIndex}) {
       if (row.desEndDate != '' && row.desEndDate != null) {
-
         if(this.formatDate(row.desEndDate, 'yyyy-MM-dd') <= this.formatDate(new Date(), 'yyyy-MM-dd')){
           return 'tyyz';
         }

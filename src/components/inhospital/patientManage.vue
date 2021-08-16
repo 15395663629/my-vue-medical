@@ -365,6 +365,8 @@
           <el-table-column prop="ptInDate" label="入院日期"></el-table-column>
           <el-table-column prop="ksName" label="科室"></el-table-column>
           <el-table-column prop="staff.sname" label="主治医生"></el-table-column>
+          <el-table-column prop="ptPayMoney" label="预交金"></el-table-column>
+          <el-table-column prop="ptPrice" label="余额"></el-table-column>
           <el-table-column label="门诊诊断">
             <template #default="pt">
               <el-button @click="openMzDiagnose(pt.row)" type="text">诊断信息</el-button>
