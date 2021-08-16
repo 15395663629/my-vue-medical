@@ -15,16 +15,16 @@
 			<el-dialog @close="fromdata" title="采购计划" v-model="dialogFormVisible">
         <el-button type="primary" @click="open = true">添加药品</el-button>
 				<el-form model="caigou">
-          <el-form-item label="采购计划名称" :label-width="formLabelWidth">
+          <el-form-item label="采购计划名称">
             <el-input style="width: 215px;" v-model="caigou.ykPurchaseName"></el-input>
           </el-form-item>
-					<el-form-item label="采购编号"  :label-width="formLabelWidth">
+					<el-form-item label="采购编号">
 					  <el-input style="width: 215px;" disabled v-model="caigou.ykPurchaseId"></el-input>
 					</el-form-item>
-					<el-form-item label="采购日期" :label-width="formLabelWidth">
+					<el-form-item label="采购日期">
 						<el-date-picker v-model="caigou.ykPurchaseTime" type="date" placeholder="选择采购日期"></el-date-picker>
 					</el-form-item>
-					<el-form-item label="经手人" :label-width="formLabelWidth">
+					<el-form-item label="经手人">
 						<el-select v-model="caigou.sId" placeholder="选择经手人">
 						  <el-option v-for="stall in stallform"
                         :label="stall.sname"
@@ -97,8 +97,8 @@
       </template>
     </el-dialog>
 	</el-row>
-	<!-- ------------------------------------------------------------表格--------------------------------------------------- -->
-	<el-row :gutter="20">
+  <!-- ------------------------------------------------------------表格--------------------------------------------------- -->
+  <el-row :gutter="20">
 		<el-col>
 			<el-table :data="tableData" style="width: 100%;">
 				<el-table-column prop="ykPurchaseTime" label="采购日期">
@@ -164,7 +164,6 @@
         input:'',
         dialogFormVisible: false,
         open:false,
-        formLabelWidth: '120px',
         value1: '',
         drugInfosC:[],
       }
@@ -250,12 +249,10 @@
       //打开采购明细弹框
       opemMingxi(obj){
         this.mingxi = true;
-        console.log(obj)
         this.ydpdform = obj.ykDrugpurchasePlanDetails;
       },
       /*选择药品添加到表格*/
       adddrug(){
-        // this.drugInfosC=this.DrugPurchasePlanDetailsArr;
         this.gridData=this.drugInfosC;
           this.open=false;
       },

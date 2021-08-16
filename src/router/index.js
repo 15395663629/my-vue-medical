@@ -17,6 +17,13 @@ const routes = [
 		component:()=>import("/src/components/inhospital/MAMOperation.vue"),
 		meta:'登入'
 	},
+	//医嘱执行一级路由
+	{
+		name:'MedicalAdvice',
+		path:'/medicaladvice',
+		component:() => import('/src/components/inhospital/MedicalAdvice.vue'),
+		meta:{title:'医嘱执行', noCache: true },
+	},
 	//opc门诊的一级路由
 	{
 			name:'OPC',
@@ -42,21 +49,22 @@ const routes = [
 				{
 					name:'ProjectPayment',
 					path:'/ProjectPayment',
-					component:()=>import("/src/components/outpatient/ProjectPayment.vue"),
+					component:()=>import("/src/components/outpatient/DrugPayment.vue"),
 					meta:{title:'医疗缴费', noCache: true },
-					children:[//门诊问诊三级路由------------------
-						{
-							name:'DrugPayment',
-								path:'/DrugPayment',
-								component:()=>import("/src/components/outpatient/DrugPayment.vue"),
-								meta:{title:'药品缴费', noCache: true },
-						},
-						{
-								name:'ProjectPrice',
-								path:'/ProjectPrice',
-								component:()=>import("/src/components/outpatient/ProjectPrice.vue"),
-								meta:{title:'项目缴费', noCache: true },
-						},]
+					// children:[//门诊问诊三级路由------------------ProjectPayment.vue
+					// 	{
+					// 		name:'DrugPayment',
+					// 			path:'/DrugPayment',
+					// 			component:()=>import("/src/components/outpatient/DrugPayment.vue"),
+					// 			meta:{title:'药品缴费', noCache: true },
+					// 	},
+					// 	{
+					// 			name:'ProjectPrice',
+					// 			path:'/ProjectPrice',
+					// 			component:()=>import("/src/components/outpatient/ProjectPrice.vue"),
+					// 			meta:{title:'项目缴费', noCache: true },
+					// 	},
+					// 	]
 				},
 				{
 					name:'card',
@@ -107,12 +115,6 @@ const routes = [
 					path:'/discharge',
 					component: () => import('/src/components/inhospital/discharge.vue'),
 					meta:{title:'出院结算', noCache: true },
-				},
-				{
-					name:'MedicalAdvice',
-					path:'/medicaladvice',
-					component:() => import('/src/components/inhospital/MedicalAdvice.vue'),
-					meta:{title:'医嘱执行', noCache: true },
 				},
 				{
 					name:'MedicalAdviceManage',
@@ -190,6 +192,18 @@ const routes = [
 					path:'/YF',
 					component:()=>import("/src/components/pharmacy/Pharmacy.vue"),
 					meta:{title:'药品信息管理', noCache: true },
+				},
+				{
+					name:'YaoKu',
+					path:'/YaoKu',
+					component:()=>import("/src/components/pharmacy/DrugStorage.vue"),
+					meta:{title:'药库', noCache: true },
+				},
+				{
+					name:'Haocai',
+					path:'/Haocai',
+					component:()=>import("/src/components/pharmacy/Consumable.vue"),
+					meta:{title:'耗材', noCache: true },
 				},
 				{
 					name:'MZ',

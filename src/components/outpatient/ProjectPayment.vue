@@ -1,14 +1,14 @@
 <template>
-	  <el-tabs v-model="activeName" type="card" @tab-click="handleClick"><!-- 三级路由调转 -->
-	    <el-tab-pane label="医疗缴费" name="/DrugPayment"><!-- 药品缴费 -->
-		</el-tab-pane>
-		<!-- 项目缴费 -->
-	    <el-tab-pane  label="缴费查询" name="/ProjectPrice">
-		</el-tab-pane>
-	  </el-tabs>
-	  <div>
-			<router-view  ></router-view>
-	  </div> 
+<!--	  <el-tabs v-model="activeName" type="card" @tab-click="handleClick">&lt;!&ndash; 三级路由调转 &ndash;&gt;-->
+<!--	    <el-tab-pane label="医疗缴费" name="/DrugPayment">&lt;!&ndash; 药品缴费 &ndash;&gt;-->
+<!--		</el-tab-pane>-->
+<!--		 项目缴费 -->
+<!--	    <el-tab-pane  label="缴费查询" name="/ProjectPrice">-->
+<!--		</el-tab-pane>-->
+<!--	  </el-tabs>-->
+<!--	  <div>-->
+<!--			<router-view  ></router-view>-->
+<!--	  </div> -->
 </template>
 
 <script>
