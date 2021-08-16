@@ -49,21 +49,22 @@ const routes = [
 				{
 					name:'ProjectPayment',
 					path:'/ProjectPayment',
-					component:()=>import("/src/components/outpatient/ProjectPayment.vue"),
+					component:()=>import("/src/components/outpatient/DrugPayment.vue"),
 					meta:{title:'医疗缴费', noCache: true },
-					children:[//门诊问诊三级路由------------------
-						{
-							name:'DrugPayment',
-								path:'/DrugPayment',
-								component:()=>import("/src/components/outpatient/DrugPayment.vue"),
-								meta:{title:'药品缴费', noCache: true },
-						},
-						{
-								name:'ProjectPrice',
-								path:'/ProjectPrice',
-								component:()=>import("/src/components/outpatient/ProjectPrice.vue"),
-								meta:{title:'项目缴费', noCache: true },
-						},]
+					// children:[//门诊问诊三级路由------------------ProjectPayment.vue
+					// 	{
+					// 		name:'DrugPayment',
+					// 			path:'/DrugPayment',
+					// 			component:()=>import("/src/components/outpatient/DrugPayment.vue"),
+					// 			meta:{title:'药品缴费', noCache: true },
+					// 	},
+					// 	{
+					// 			name:'ProjectPrice',
+					// 			path:'/ProjectPrice',
+					// 			component:()=>import("/src/components/outpatient/ProjectPrice.vue"),
+					// 			meta:{title:'项目缴费', noCache: true },
+					// 	},
+					// 	]
 				},
 				{
 					name:'card',
