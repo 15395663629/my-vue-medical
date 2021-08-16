@@ -1,214 +1,235 @@
 <template>
-  <el-row >
-    <el-col >
-      <!--    <el-select v-model="value" placeholder="请选择科室"-->
-      <!--               style="width: 20%"  @change="dome($event)">-->
-      <!--      <el-option v-for="item in kslist" :key="item.ksId" :label="item.ksName" :value="item.ksId">-->
-      <!--      </el-option>-->
-      <!--    </el-select>-->
-      <!--    <el-select v-model="value" placeholder="请选择员工"-->
-      <!--               style="width: 20%;margin-left: 50px"  @change="dome($event)">-->
-      <!--      <el-option v-for="item in dept" :key="item.rid" :label="item.rname" :value="item.rid">-->
-      <!--      </el-option>-->
-      <!--    </el-select>-->
-      <el-button style="margin-left: 80px" @click="dialogVisible = true">新增排班</el-button>
-    </el-col>
-  </el-row>
-  <!--  <el-calendar id="calendar">-->
-  <!--    &lt;!&ndash; 这里使用的是 2.5 slot 语法，对于新项目请使用 2.6 slot 语法&ndash;&gt;-->
-  <!--    <template-->
-  <!--        slot="dateCell"-->
-  <!--        slot-scope="{date, data}">-->
-  <!--      &lt;!&ndash;自定义内容&ndash;&gt;-->
-  <!--      <div>-->
-  <!--        <div class="calendar-day" style="text-align: center">-->
-  <!--          <el-tooltip v-if="brightDate.indexOf(data.day) != -1" class="item" effect="dark" :content="content(data.day)" placement="right">-->
-  <!--            <span class="everyDay">{{ data.day.split('-').slice(2).join('-') }}</span>-->
-  <!--          </el-tooltip>-->
-  <!--          <span v-else>{{ data.day.split('-').slice(2).join('-') }}</span>-->
-  <!--        </div>-->
-  <!--      </div>-->
-  <!--    </template>-->
-  <!--  </el-calendar>-->
-  <el-dialog title="科室管理" v-model="dialogVisible" width="30%" >
-    请选择科室：<el-select v-model="value" placeholder="请选择"
-                     style="width: 30%;margin-top:20px;" @change="dome($event)">
-    <el-option v-for="item in kslist" :key="item.ksId" :label="item.ksName" :value="item.ksId" >
+  <div class="app-container">
+    <!-- 查询条件开始 -->
+    <el-row :gutter="12" style="margin-bottom: 5px">
+      <el-col :span="24">
+        <el-card shadow="always">
+          <el-form ref="queryForm" :model="queryParams" :inline="true" label-width="88px">
+            <el-form-item>
+              <el-col :span="12">
+                <el-form-item>
+                  <el-select
+                      @change="dome($event)"
+                      v-model="pbType"
+                      clearable
+                      size="small"
+                      style="width: 200px"
+                      value-key="bcTypeId"
+                  >
+                    <el-option
+                        v-for="c in deptOptions"
+                        :key="c.fcId"
+                        :label="c.fcName"
+                        :value="c.fcId"
+                    />
+                  </el-select>
+                </el-form-item>
 
-    </el-option>
-  </el-select><br />
-    请选择员工：  <el-select v-model="staff" multiple placeholder="请选择" style="width: 30%;margin-top:20px;" @change="obtainStaff($event)">
-    <el-option
-        v-for="item in staffs"
-        :key="item.sid"
-        :label="item.sname"
-        :value="item.sid">
-    </el-option>
-  </el-select>
-    <!--  />-->
-    <!--    <el-select v-model="staff" placeholder="请选择"-->
-    <!--                                                             style="width: 30%;margin-top:20px;" @change="dome($event)">-->
-    <!--    <el-option v-for="item in staffs" :key="item.sid" :label="item.sname" :value="item.sid" >-->
+              </el-col>
+              <el-form-item>
+                <el-select
+                    v-model="ksId"
+                    clearable
+                    value-key="ksId"
+                    size="small"
+                    style="width: 240px"
+                    @change="quit($event)"
+                >
+                  <el-option
+                      v-for="ks in keShi"
+                      :key="ks.ksId"
+                      :label="ks.ksName"
+                      :value="ks.ksId"
+                  />
+                </el-select>
+              </el-form-item>
+              <el-form-item>
+                <el-button type="primary" round icon="el-icon-refresh" size="mini">打印</el-button>
+              </el-form-item>
+              <el-form-item style="float: right">
+                <el-button type="primary" round icon="el-icon-s-fold" size="small" >上一周</el-button>
+                <el-button type="success" round icon="el-icon-s-operation" size="small" >当前周</el-button>
+                <el-button type="warning" round icon="el-icon-s-unfold" size="small" >下一周</el-button>
+              </el-form-item>
+            </el-form-item>
 
-    <!--    </el-option>-->
-    <!--  </el-select>-->
-    <br />
-    请选择班次：<el-select v-model="fre" placeholder="请选择"
-                     style="width: 30%;margin-top:20px;" @change="obtainfre($event)">
-    <el-option v-for="item in fres" :key="item.fid" :label="item.ffrequency" :value="item.fid" >
+          </el-form>
+        </el-card>
+      </el-col>
+    </el-row>
+    <!-- 查询条件结束 -->
+    <!--    表头开始  -->
+    <el-row class="div10">
+      <el-col :span="2" class="div11" >
+        日期\班次
+      </el-col>
+      <el-col :span="wid" class="div12" v-for="bc in schedulingTypeOptions" :key="bc.fid">
+        {{bc.fstartTime}}至{{bc.fendTime}}
+      </el-col>
+    </el-row>
+    <!--    表头结束  -->
 
-    </el-option>
-  </el-select><br />
-    时<span style="margin-left: 10px"></span>间：<el-date-picker
-      v-model="shijian"
-      type="daterange"
-      unlink-panels
-      range-separator="至"
-      start-placeholder="开始日期"
-      end-placeholder="结束日期"
-      :shortcuts="shortcuts"
-      style="margin-top: 20px"
-      @change="dateChangebirthday1"
-      format="YYYY-MM-DD"
-      value-format="YYYY-MM-DD"
-      :picker-options="pickerOptions"
-  >
-  </el-date-picker>
-    <template #footer>
-			<span class="dialog-footer">
-				<el-button @click="dialogVisible = false">取 消</el-button>
-				<el-button type="primary" @click="ok">确 定</el-button>
-			</span>
-    </template>
-  </el-dialog>
-  <!-- 日历 -->
-  <!--   <el-calendar style="margin-top: 10px">-->
-  <!--     <template #dateCell="{data}">-->
-  <!--       <p  v-for="i in sch">-->
-  <!--         {{ data.day.split('-').slice(1).join('-') }}-->
-  <!--       </p>-->
-  <!--     </template>-->
-  <!--   </el-calendar>-->
+    <!--    主体开始  -->
+    <el-row class="div20 " v-for="pb in pbtableData" style="margin-top: 2px;height: 60px;">
+      <el-col :span="2" class="div21 ">
+        {{pb.xq}}<br>{{pb.rq}}
+      </el-col>
+      <el-col :span="wid" v-for="bc in schedulingTypeOptions">
+          <span v-for="ygpb in pb.slist">
+            <template v-if="ygpb.frId==bc.fid">
+              {{ygpb.staff.sname}}
+            </template>
+          </span>
+        <el-button type="primary" icon="el-icon-plus"  circle @click="dialogVisible=true"></el-button>
+      </el-col>
+    </el-row>
+    <!--    主体结束  -->
+    <!--==========================弹框开始===========================-->
+    <el-dialog v-model="dialogVisible" title='添加员工' >
+      <el-form-item>
+        <el-tree
+            ref="tree"
+            :data="ksYgs"
+            :props="defaultProps"
+            show-checkbox
+            node-key="tid"
+            default-expand-all
+        />
+      </el-form-item>
+      <div style="text-align:right;">
+        <el-button type="danger" @click="dialogVisible=false,this.reset()">关闭</el-button>
+        <el-button type="primary" @click="confirmRole()">确定</el-button>
+      </div>
+    </el-dialog>
+    <!--    ========================弹框结束=======================-->
 
+  </div>
 </template>
 
 <script>
-import qs from "qs";
-export  default {
-  data(){
-    return{
-
-      pickerOptions: {
-        disabledDate(date) {
-          //这里设置今天以前的不可选
-          return date.getTime() < Date.now() - 24 * 60 * 60 * 1000;
-        }
+import qs from 'qs'
+export default {
+  data() {
+    return {
+      ksYgs: [],
+      //级联选择
+      defaultProps: {
+        id:'tid',
+        label: 'tname',
+        children: 'staff'
       },
-
-      dialogVisible:false,
-      staff:'',
-      fre:'',
-      //班次下拉列表
-      fres:[],
-      value:'',
-      //科室下拉列表
-      kslist:[],
-      //员工下拉列表
-      staffs:[],
-
-      shijian:'',
-      sch:{
-        scId:0,
-        scStartDate:'',
-        scEndDate:'',
-        sId:0,
-        fcId:0
+      ksId: '',
+      keShi: [],
+      //  班次类型
+      pbType: '',
+      // 遮罩层
+      loading: false,
+      // 对话框标题
+      title: '',
+      // 是否打开对话框
+      open: false,
+      // 排班类型数据
+      deptOptions: [],
+      // 医生数据
+      userOptions: [],
+      // 班次数据
+      schedulingTypeOptions: [],
+      // 排班时间段数据
+      subsectionTypeOptions: [],
+      // 查询参数
+      queryParams: {
+        queryDate: undefined
       },
-      f:{
-        shid:0,
-        Shitime:'',
-        ksid:0,
+      schedulingData: {
+        startTimeThisWeek: undefined,
+        endTimeThisWeek: undefined
       },
-      freId:0,
-      shortcuts: [{
-        text: '最近一周',
-        value: () => {
-          const end = new Date()
-          const start = new Date()
-          start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
-          return [start, end]
-        },
-      }, {
-        text: '最近一个月',
-        value: () => {
-          const end = new Date()
-          const start = new Date()
-          start.setTime(start.getTime() - 3600 * 1000 * 24 * 30)
-          return [start, end]
-        },
-      }, {
-        text: '最近三个月',
-        value: () => {
-          const end = new Date()
-          const start = new Date()
-          start.setTime(start.getTime() - 3600 * 1000 * 24 * 90)
-          return [start, end]
-        },
-      }],
-
+      // 排班表数据
+      pbtableData: [],
+      dialogVisible: false,
+      // 修改的数据
+      editData: [],
+      week:[],
+      length2: 0,
+      bcId:''
     }
   },
-  methods:{
+  //  计算属性
+  computed: {
+    wid(){
+      return Math.floor(22/this.length2)
+    }
+  },
+  created() {
+  this.getData()
 
+  },
+  methods: {
     getData(){
-      this.axios.get('http://localhost:8089/ks-list').then((v)=>{
-        this.kslist=v.data
+      this.axios.get('list-fre').then((v)=>{
+        this.deptOptions=v.data
       }).catch()
-      this.axios.get('select-fre').then((v)=>{
-        this.fres=v.data
-        console.log(this.fre)
+      this.axios.get("ks-list").then((v)=>{
+        this.keShi=v.data
+      }).catch()
+      this.axios.get('add-sch').then((v)=>{
+      this.ksYgs=v.data
       }).catch()
     },
     dome(event){
-      this.ksid=event
+     this.bcId=event
       this.axios({
-        url:"staff-ks",
-        params:{id:this.ksid}
+        url:"bc-list",
+        params:{bcId:this.bcId}
       }).then((v)=>{
-        this.staffs=v.data
+        this.schedulingTypeOptions=v.data
+        this.length2=v.data.length
+        console.log(this.schedulingTypeOptions)
       }).catch();
     },
-    obtainStaff(event){
-      this.obtain=event
+    quit(event){
+      this.axios({
+        url:"week",
+        params:{ksId:event}
+      }).then((v)=>{
+        this.pbtableData=v.data
+        console.log(this.pbtableData)
+      }).catch();
     },
-    obtainfre(event){
-      this.freId=event
-    },
-    dateChangebirthday1(val){
-      this.Shitime=val
-    },
-    ok(){
-      // var freid=this.freId
-      //获取日期
-      this.axios.post('data-time',{funs:this.Shitime,funss:this.obtain,freid:this.freId}).then((v)=>{
-      }).catch()
-      // this.axios({
-      //   url:"data-time",
-      //   params:{grant:qs.stringify(grant)}
-      // }).then((v)=>{
-      // }).catch();
-    },
-
-  },
-  created() {
-    this.getData()
+    confirmRole(){
+      var funs=this.$refs.tree.getCheckedKeys();
+      var grant = JSON.stringify({funs:funs})
+      console.log(grant)
+    }
   }
 }
+
 </script>
 
+<style>
+.div10{
+  text-align: center;
+  height: 30px;
+  background-color: #99a9bf;
+}
+/*日期样式*/
+.div10>.div11{
+  background-color: #42b983;
+}
+/*  班次样式 */
+.div10>.div12{
+  border: 1px solid red;
+  background-color: #b3c0d1;
+}
+.div20{
+  text-align: center;
+  background-color: #008489;
+}
+.div20>.div21{
 
-<style >
-.is-selected {
-  color: #1989FA;
+  background-color: #42b983;
+}
+.border{
+  border: 1px solid black;
 }
 </style>
