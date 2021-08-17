@@ -80,7 +80,7 @@
               {{ygpb.staff.sname}}
             </template>
           </span>
-        <el-button type="primary" icon="el-icon-plus"  circle @click="dialogVisible=true"></el-button>
+        <el-button type="primary" icon="el-icon-plus"  circle @click="dakai(pb.rq,bc.fid)"></el-button>
       </el-col>
     </el-row>
     <!--    主体结束  -->
@@ -152,7 +152,11 @@ export default {
       editData: [],
       week:[],
       length2: 0,
-      bcId:''
+      bcId:'',
+      sch:{
+        rq:'',
+        bcId:''
+      }
     }
   },
   //  计算属性
@@ -189,21 +193,32 @@ export default {
       }).catch();
     },
     quit(event){
+      this.ksId=event
       this.axios({
         url:"week",
-        params:{ksId:event}
+        params:{ksId:this.ksId}
       }).then((v)=>{
         this.pbtableData=v.data
         console.log(this.pbtableData)
       }).catch();
+    },
+    dakai(rq,bcId){
+      this.dialogVisible= true
+     this.sch.rq=rq
+      this.sch.bcId=bcId
     },
     confirmRole(){
       var funs=this.$refs.tree.getCheckedKeys();//员工id
       //班次编号
       console.log(this.schedulingTypeOptions[0].fid)
       //日期
-      var grant = JSON.stringify({funs:funs})
-      console.log(grant)
+      var grant = JSON.stringify({rq:this.sch.rq,bcId:this.sch.bcId,funs:funs})
+      this.axios.post("saveGrant",qs.stringify({grant:grant})).then((res)=>{
+        this.dialogVisible=false
+        // this.getData()
+        this.dome(this.bcId)
+        this.quit(this.ksId)
+      }).catch()
     }
   }
 }
