@@ -87,6 +87,7 @@
     <!--==========================弹框开始===========================-->
     <el-dialog v-model="dialogVisible" title='添加员工' >
       <el-form-item>
+        <!-- 复选情况下使用 check-strictly （默认false）使父子不相互关联 -->
         <el-tree
             ref="tree"
             :data="ksYgs"
@@ -94,10 +95,11 @@
             show-checkbox
             node-key="tid"
             default-expand-all
+            check-strictly
         />
       </el-form-item>
       <div style="text-align:right;">
-        <el-button type="danger" @click="dialogVisible=false,this.reset()">关闭</el-button>
+        <el-button type="danger" @click="dialogVisible=false">关闭</el-button>
         <el-button type="primary" @click="confirmRole()">确定</el-button>
       </div>
     </el-dialog>
@@ -114,7 +116,6 @@ export default {
       ksYgs: [],
       //级联选择
       defaultProps: {
-        id:'tid',
         label: 'tname',
         children: 'staff'
       },
@@ -197,7 +198,10 @@ export default {
       }).catch();
     },
     confirmRole(){
-      var funs=this.$refs.tree.getCheckedKeys();
+      var funs=this.$refs.tree.getCheckedKeys();//员工id
+      //班次编号
+      console.log(this.schedulingTypeOptions[0].fid)
+      //日期
       var grant = JSON.stringify({funs:funs})
       console.log(grant)
     }
