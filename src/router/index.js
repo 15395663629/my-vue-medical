@@ -6,7 +6,7 @@ const routes = [
 	//登录一级路由
 	{
 		name:'login',
-		path:'/',
+		path:'/login',
 		component:()=>import("/src/components/stair/login.vue"),
 		meta:'登入'
 	},
@@ -16,6 +16,13 @@ const routes = [
 		path:'/MAMOperation',
 		component:()=>import("/src/components/inhospital/MAMOperation.vue"),
 		meta:'登入'
+	},
+	//医嘱执行一级路由
+	{
+		name:'MedicalAdvice',
+		path:'/medicaladvice',
+		component:() => import('/src/components/inhospital/MedicalAdvice.vue'),
+		meta:{title:'医嘱执行', noCache: true },
 	},
 	//opc门诊的一级路由
 	{
@@ -42,21 +49,22 @@ const routes = [
 				{
 					name:'ProjectPayment',
 					path:'/ProjectPayment',
-					component:()=>import("/src/components/outpatient/ProjectPayment.vue"),
+					component:()=>import("/src/components/outpatient/DrugPayment.vue"),
 					meta:{title:'医疗缴费', noCache: true },
-					children:[//门诊问诊三级路由------------------
-						{
-							name:'DrugPayment',
-								path:'/DrugPayment',
-								component:()=>import("/src/components/outpatient/DrugPayment.vue"),
-								meta:{title:'药品缴费', noCache: true },
-						},
-						{
-								name:'ProjectPrice',
-								path:'/ProjectPrice',
-								component:()=>import("/src/components/outpatient/ProjectPrice.vue"),
-								meta:{title:'项目缴费', noCache: true },
-						},]
+					// children:[//门诊问诊三级路由------------------ProjectPayment.vue
+					// 	{
+					// 		name:'DrugPayment',
+					// 			path:'/DrugPayment',
+					// 			component:()=>import("/src/components/outpatient/DrugPayment.vue"),
+					// 			meta:{title:'药品缴费', noCache: true },
+					// 	},
+					// 	{
+					// 			name:'ProjectPrice',
+					// 			path:'/ProjectPrice',
+					// 			component:()=>import("/src/components/outpatient/ProjectPrice.vue"),
+					// 			meta:{title:'项目缴费', noCache: true },
+					// 	},
+					// 	]
 				},
 				{
 					name:'card',
@@ -109,12 +117,6 @@ const routes = [
 					meta:{title:'出院结算', noCache: true },
 				},
 				{
-					name:'MedicalAdvice',
-					path:'/medicaladvice',
-					component:() => import('/src/components/inhospital/MedicalAdvice.vue'),
-					meta:{title:'医嘱执行', noCache: true },
-				},
-				{
 					name:'MedicalAdviceManage',
 					path:'/medicaladvicemanage',
 					component:() => import('/src/components/inhospital/MedicalAdviceManage.vue'),
@@ -152,6 +154,7 @@ const routes = [
 					component:()=>import("/src/components/jurisdiction/YuanGong.vue"),
 					meta:{title:'员工', noCache: true },
 				},
+
 				
 				{
 					name:'dept',//命名路由
@@ -302,13 +305,18 @@ const router = createRouter({
 	routes //这里是把上面的routes赋到这里来
 })
 //路由
-// router.beforeEach((to,from,next)=>{
-//   if(to.path=='/login' || sessionStorage.getItem('token')){
-//     next();
-//   }else{
-//     //Message.error('请重新登录');
-//     next('/login');
-//   }
+router.beforeEach((to,from,next)=>{
+	if(to.path=='/login' || sessionStorage.getItem('token')){
+		// console.log("123")
+		next()
+	}else{
+		// console.log("456")
+			next('/login');
+	}
+})
+// router.beforeEach(function (to,from,next){
+// 	const  state=JSON.parse(sessionStorage.getItem("state"))
+// 	if(to.name!=="/"&& state==null || to.name!=="/"&& !state.token.isValidate){}
 // })
 //给路由定义一个对外的引用（注入路由）就是起别名一样
 export default router

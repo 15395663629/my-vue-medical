@@ -1,17 +1,150 @@
 <template >
 	<el-row class="row-one">
-		<el-col :span="20" >
-			时间选择：<el-date-picker
-						  v-model="value"
-						  type="daterange"
-						  start-placeholder="开始时间"
-						  end-placeholder="结束时间"
-						  :default-value="[new Date(2010, 9, 1), new Date(2010, 10, 1)]">
-					</el-date-picker>	
+		<el-col :span="24">
 			 病人信息：<el-input class="ss-br-xx" v-model="input" placeholder="请输入你要查询的病人" ></el-input>  
 			<el-button type="primary" icon="el-icon-search">查询</el-button>
+      <el-button  @click="drawer = true" style="margin-left: 500px" type="primary">手术室管理</el-button>
 		</el-col>
 	</el-row>
+  <el-drawer
+      title="手术室管理"
+      size="600px"
+      v-model="drawer"
+      :direction='direction'
+      :before-close="handleClose">
+    <el-button   style="margin-left: 500px" @click="sssEdit('',1)" type="primary">新增</el-button>
+    <el-table
+        size="mini"
+        :data="room"
+        style="width:600px"
+        height="450px"
+        >
+      <el-table-column
+          label="编号"
+          prop="operationName">
+        <template #default="scope">
+          <el-popover effect="light" trigger="hover"  placement="top">
+            <template #default>
+              <p>地址: {{ scope.row.operationRoomAddress }}</p>
+            </template>
+            <template #reference>
+              <div class="name-wrapper">
+                <el-tag size="medium">{{ scope.row.operationName }}</el-tag>
+              </div>
+            </template>
+          </el-popover>
+        </template>
+      </el-table-column>
+      <el-table-column
+          prop="operationType"
+          label="类别">
+      </el-table-column>
+      <el-table-column
+          prop="deptks.ksName"
+          label="科室">
+      </el-table-column>
+      <el-table-column
+          prop="baseResultMap.sname"
+          label="负责人">
+      </el-table-column>
+      <el-table-column
+          prop="operationZt"
+          label="状态">
+        <template #default="scope">
+              <div class="name-wrapper">
+                <el-tag :type="scope.row.operationZt==0?'success':(scope.row.operationZt==1?'warning':'info')" size="medium">{{ scope.row.operationZt==0?'空闲':(scope.row.operationZt==1?'忙':'停用') }}</el-tag>
+              </div>
+        </template>
+      </el-table-column>
+      <el-table-column label="操作" width="150px">
+        <template #default="scope">
+          <el-button
+              size="mini"
+              type="primary"
+
+              @click="sssEdit(scope.row)">修改</el-button>
+          <el-button
+              size="mini"
+              type="danger"
+              v-show="scope.row.operationZt!=2"
+              @click="opensss(scope.row,2)">停用</el-button>
+          <el-button
+              size="mini"
+              type="success"
+              v-show="scope.row.operationZt==2"
+              @click="opensss(scope.row,0)">启用</el-button>
+        </template>
+      </el-table-column>
+    </el-table>
+    <span style="font-size:12px">(1)Ⅰ类手术间：即无菌净化手术间，主要接受颅脑、心脏、脏器移植等手术。
+    (2)Ⅱ类手术间：即无菌手术间，主要接受脾切除手术、闭合性骨折切开复位术、眼内手术、甲状腺切除术等无菌手术。
+    (3)Ⅲ类手术间：即有菌手术间，接受胃、胆囊、肝、阑尾、肾、肺等部位的手术。
+    (4)Ⅳ类手术间：即感染手术间，主要接受阑尾穿孔腹膜炎手术、结核性脓肿、脓肿切开引流等手术。
+    (5)Ⅴ类手术间：即特殊感染手术间，主要接受绿脓杆菌、气性坏疽杆菌、破伤风杆菌等感染的手术。</span>
+
+  </el-drawer>
+
+  <el-dialog width="40%" :title='stit' v-model="sss">
+    <el-form>
+      <el-row>
+      <el-col :span="10">
+        <el-form-item label="编号：" label-width="120px">
+          <el-input v-model="ssr.operationName" :disabled="true"></el-input>
+        </el-form-item>
+      </el-col>
+      <el-col :offset="1" :span="10">
+        <el-form-item label="科室:" label-width="120px">
+          <el-select v-model="ssr.ksId" placeholder="请选择">
+            <el-option
+                v-for="item in department"
+                :key="item.value"
+                :label="item.ksName"
+                :value="item.ksId">
+            </el-option>
+          </el-select>
+        </el-form-item>
+      </el-col>
+      </el-row>
+      <el-row>
+        <el-col :span="10">
+          <el-form-item label="类别：" label-width="120px">
+            <el-select v-model="ssr.operationType" placeholder="请选择">
+              <el-option
+                  v-for="item in ssml"
+                  :key="item.value"
+                  :label="item.value"
+                  :value="item.value">
+              </el-option>
+            </el-select>
+          </el-form-item>
+        </el-col>
+        <el-col :offset="1" :span="10">
+          <el-form-item label="负责人:" label-width="120px">
+            <el-select v-model="ssr.sid" placeholder="请选择">
+              <el-option
+                  v-for="item in staf"
+                  :key="item.value"
+                  :label="item.sname"
+                  :value="item.sid">
+              </el-option>
+            </el-select>
+          </el-form-item>
+        </el-col>
+      </el-row>
+      <el-row>
+        <el-col :span="21">
+          <el-form-item label="地址：" label-width="120px">
+            <el-input v-model="ssr.operationRoomAddress"></el-input>
+          </el-form-item>
+        </el-col>
+      </el-row>
+      <el-form-item>
+        <el-col :span="1" :offset="11">
+          <el-button type="primary" @click="ssmForm()">确定</el-button>
+        </el-col>
+      </el-form-item>
+    </el-form>
+  </el-dialog>
 	<el-row>
 		<el-col :span="6">
 			结果：<span>2</span>条
@@ -254,54 +387,76 @@
 </template>
 
 <script>
-	export default {
+	import qs from "qs";
+
+  export default {
 		data() {
 			return {
+
+			  staf:[],//员工
+        department:[],//科室
+			  stit:'',//手术室弹框标题
+			  sss:false,//手术室弹框
+			  room:[],//手术室集合
+        drawer: false,
+        direction: 'ltr',//抽屉方向
 				textarea:"",
 				apss: false,
 				centerDialogVisible: false,
 				currentPage3: 5,
-				tableData: [{
-					date: '开膛',
-					name: '20202',
-					address: ' 1518 号',
-					tag: '复诊',
-				},
-				{
-					date: '开颅手术',
-					name: '20202',
-					address: ' 1517 号',
-					tag: '初诊'
-				}],
-				ssTa: [{
-					ssId: '11',
-					ssName: '20202',
-					sscard: ' 15183456789',
-					ssbed: '复诊',
-					sstime: '2121-2-2',
-					ssdemo:'开颅',
-				},
-				{
-					ssId: '12',
-					ssName: '20202',
-					sscard: ' 15183456789',
-					ssbed: '复诊',
-					sstime: '2121-2-1',
-					ssdemo:'开膛'
-				}],
-				
+        ssml:[{
+          text:'Ⅰ类手术间',
+          value:'Ⅰ类手术间'
+        },{
+          text:'Ⅱ类手术间',
+          value:'Ⅱ类手术间'
+        },{
+          text:'Ⅲ类手术间',
+          value:'Ⅲ类手术间'
+        },{
+          text:'Ⅳ类手术间',
+          value:'Ⅳ类手术间'
+        },{
+          text:'Ⅴ类手术间',
+          value:'Ⅴ类手术间'
+        }
+        ],
+        ssrq:{//手术室dx
+          operationId:'',
+          operationName:'',
+          operationZt:0,
+          operationRoomAddress:'',
+          operationType:'',
+          ksId:'',
+          sid:''
+        },
+        ssr:{//手术室dx
+          operationId:'',
+          operationName:'',
+          operationZt:0,
+          operationRoomAddress:'',
+          operationType:'',
+          ksId:'',
+          sid:''
+        }
 			};
 		},
 		 methods: {
-		      filterTag(value, row) {
-		        return row.tag === value;
-		      },
-			  handleSizeChange(val) {
-				console.log(`每页 ${val} 条`);
-			  },
-			  handleCurrentChange(val) {
-				console.log(`当前页: ${val}`);
-			  },
+		  //手术室基础参数
+       getData() {
+         this.axios.get("http://localhost:8089/sssRoom").then((res) => {
+           this.room = res.data;
+         }).catch()
+         //科室
+         this.axios.get("http://localhost:8089/ks-list").then((res)=>{
+           this.department = res.data;
+         }).catch()
+         //员工
+         this.axios.get("http://localhost:8089/staff-ks",{params: {id:4}}).then((res)=>{
+           this.staf = res.data;
+         }).catch()
+       },
+       //抽屉关闭
 			  handleClose(done) {
 				this.$confirm('确认关闭？')
 				  .then(_ => {
@@ -309,12 +464,74 @@
 				  })
 				  .catch(_ => {});
 			  },
+       //打开新增修改手术室
+       sssEdit(row,is) {
+         this.stit = is == 1 ? '新增手术室' : '修改手术室';//设置弹框标题
+         if(row!=''){
+           this.ssr.operationId=row.operationId
+           this.ssr.operationName=row.operationName
+           this.ssr.operationZt=row.operationZt
+           this.ssr.operationRoomAddress=row.operationRoomAddress
+           this.ssr.operationType=row.operationType
+           this.ssr.ksId=row.ksId
+           this.ssr.sid=row.sid
+         }else{
+           //清空弹框
+           this.ssr= {};
+           let aa=new Date().getFullYear()+new Date().getDay();
+           this.ssr.operationName=("SM"+aa+Math.round(Math.random()*1000))
+         }
+
+         this.sss = true
+       },
+       //手术室弹框确认
+       ssmForm(){
+         console.log(this.ssr)
+         this.axios.post("http://localhost:8089/aOrUroom",{proj:this.ssr}).then((res)=>{
+           this.getData();
+         }).catch()
+         this.sss=false
+       },
+       opensss(row,is) {
+         let aa= is == 2 ? '停用' : '启用';
+         this.$confirm('是否确认'+aa+'?', '提示', {
+           confirmButtonText: '确定',
+           cancelButtonText: '取消',
+           type: 'warning'
+         }).then(() => {
+           //调用更改方法
+           this.sssEdit1(row,is);
+           this.$message({
+             type: 'success',
+             message: '成功'+aa
+           });
+         }).catch(() => {
+           this.$message({
+             type: 'info',
+             message: '已取消'+aa
+           });
+         });
+       },
+       //修改手术室状态
+       sssEdit1(row,is){
+         this.axios.post('http://localhost:8089/upd-roomzt', qs.stringify({operationZt:is,operationId:row.operationId}))
+             .then((v)=>{
+               if(v.data == 'ok'){
+                 this.getData()
+               }else{
+                 alert(v.data);
+               }
+             }).catch(function(){
+         })
+       },
 			  apssForm(formName) {
 			  	this.apss = false
 			  	this.$refs[formName].resetFields();
 			  }
-		}
-	};
+		},created() {
+		  this.getData()
+    }
+  };
 </script>
 
 <style>
