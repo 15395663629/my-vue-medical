@@ -1,4 +1,4 @@
-<template>
+<template >
   <div class="app-container">
     <!-- 查询条件开始 -->
     <el-row :gutter="12" style="margin-bottom: 5px">
@@ -47,9 +47,9 @@
                 <el-button type="primary" round icon="el-icon-refresh" size="mini">打印</el-button>
               </el-form-item>
               <el-form-item style="float: right">
-                <el-button type="primary" round icon="el-icon-s-fold" size="small" >上一周</el-button>
-                <el-button type="success" round icon="el-icon-s-operation" size="small" >当前周</el-button>
-                <el-button type="warning" round icon="el-icon-s-unfold" size="small" >下一周</el-button>
+                <el-button type="primary" round icon="el-icon-s-fold" size="small" @click="star()">上一周</el-button>
+                <el-button type="success" round icon="el-icon-s-operation" size="small" @click="thisWeek()">当前周</el-button>
+                <el-button type="warning" round icon="el-icon-s-unfold" size="small" @click="end()">下一周</el-button>
               </el-form-item>
             </el-form-item>
 
@@ -74,19 +74,19 @@
       <el-col :span="2" class="div21 ">
         {{pb.xq}}<br>{{pb.rq}}
       </el-col>
-      <el-col :span="wid" v-for="bc in schedulingTypeOptions">
+      <el-col :span="wid" v-for="bc in schedulingTypeOptions" class="doc">
           <span v-for="ygpb in pb.slist">
             <template v-if="ygpb.frId==bc.fid">
               {{ygpb.staff.sname}}
             </template>
           </span>
-        <el-button type="primary" icon="el-icon-plus"  circle @click="dakai(pb.rq,bc.fid)"></el-button>
+
+        <el-button type="primary" icon="el-icon-plus"  :disabled="pb.state" circle @click="dakai(pb.rq,bc.fid)"></el-button>
       </el-col>
     </el-row>
     <!--    主体结束  -->
     <!--==========================弹框开始===========================-->
     <el-dialog v-model="dialogVisible" title='添加员工' >
-      <el-form-item>
         <!-- 复选情况下使用 check-strictly （默认false）使父子不相互关联 -->
         <el-tree
             ref="tree"
@@ -96,8 +96,8 @@
             node-key="tid"
             default-expand-all
             check-strictly
+
         />
-      </el-form-item>
       <div style="text-align:right;">
         <el-button type="danger" @click="dialogVisible=false">关闭</el-button>
         <el-button type="primary" @click="confirmRole()">确定</el-button>
@@ -113,6 +113,7 @@ import qs from 'qs'
 export default {
   data() {
     return {
+      status:false,
       ksYgs: [],
       //级联选择
       defaultProps: {
@@ -167,7 +168,6 @@ export default {
   },
   created() {
   this.getData()
-
   },
   methods: {
     getData(){
@@ -199,8 +199,8 @@ export default {
         params:{ksId:this.ksId}
       }).then((v)=>{
         this.pbtableData=v.data
-        console.log(this.pbtableData)
       }).catch();
+      // this.domes()
     },
     dakai(rq,bcId){
       this.dialogVisible= true
@@ -219,7 +219,52 @@ export default {
         this.dome(this.bcId)
         this.quit(this.ksId)
       }).catch()
-    }
+    },
+    end(){
+      this.axios.get('end-week').then((v)=>{
+        this.pbtableData=v.data
+        this.getData()
+      }).catch()
+    },
+    star(){
+      this.axios.get('star-week').then((v)=>{
+        this.pbtableData=v.data
+        this.getData()
+      }).catch()
+    },
+    thisWeek(){
+      this.axios.get('this-week').then((v)=>{
+        this.pbtableData=v.data
+        this.getData()
+      }).catch()
+    },
+  // domes(){
+  //   if(this.pbtableData.length!=0){
+  //     var _this = this;
+  //     let yy = new Date().getFullYear();
+  //     let mm = new Date().getMonth()+1;
+  //     let dd = new Date().getDate();
+  //     _this.gettime = yy+'/'+mm+'/'+dd
+  //     console.log(_this.gettime)
+  //     let o= _this.gettime.split('/')
+  //     //当前时间的时间戳
+  //     let nowTime=new Date(o)
+  //     let timec=nowTime * 1
+  //     for (let i = 0; i < this.pbtableData.length; i++) {
+  //       let cs=this.pbtableData[i].rq
+  //       let arr=cs.split('/')
+  //       // console.log(arr)
+  //       //后端查询的时间戳
+  //       let timeout=new Date(arr)
+  //       let times=timeout * 1
+  //       if(timec - times<0){
+  //         this.status=false
+  //       }else{
+  //         this.status=true
+  //       }
+  //     }
+  //   }
+  // }
   }
 }
 
@@ -233,7 +278,7 @@ export default {
 }
 /*日期样式*/
 .div10>.div11{
-  background-color: #42b983;
+  background-color: #909399;
 }
 /*  班次样式 */
 .div10>.div12{
@@ -245,10 +290,12 @@ export default {
   background-color: #008489;
 }
 .div20>.div21{
-
-  background-color: #42b983;
+  background-color: #909399;
 }
 .border{
   border: 1px solid black;
+}
+.doc{
+  background-color: #99a9bf;
 }
 </style>
