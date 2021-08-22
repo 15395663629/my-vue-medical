@@ -126,7 +126,7 @@
 	<el-row>
 		<el-col>
 			<el-table
-			    :data="tableData"
+			    :data="tableData.slice((currentPage-1)*pagesize,currentPage*pagesize)"
 			    style="width: 100%">
 			    <el-table-column type="expand">
               <template #default="props">
@@ -199,16 +199,16 @@
 		</el-col>
 	</el-row>
 	<!-- 分页 -->
-	<el-pagination
-			style="text-align: center;"
-	      @size-change="handleSizeChange"
-	      @current-change="handleCurrentChange"
-	      :current-page="currentPage4"
-	      :page-sizes="[100, 200, 300, 400]"
-	      :page-size="100"
-	      layout="total, sizes, prev, pager, next, jumper"
-	      :total="400">
-	</el-pagination>
+    <el-pagination
+        style="text-align: center"
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"
+        :current-page="currentPage"
+        :page-sizes="[3, 8, 16, 32]"
+        :page-size="pagesize"
+        layout="total, sizes, prev, pager, next, jumper"
+        :total="tableData.length">
+    </el-pagination>
 </template>
 
 <script>
@@ -240,24 +240,23 @@
           drugQuantity:'',//每瓶数量
           drugPrescription:'',//是否为处方药
         },
+        currentPage:1, //初始页
+        pagesize:8,    //    每页的数据
         specfrom:[],
         suppfrom:[],
         drcafrom:[],
       }
     },
 		methods: {
-			handleClick(row) {
-				console.log(row);
-			},
-			handleChange(value) {
-				console.log(value);
-			},
-			handleSizeChange(val) {
-			    console.log(`每页 ${val} 条`);
-			},
-			handleCurrentChange(val) {
-				console.log(`当前页: ${val}`);
-			},
+      handleSizeChange: function (size) {
+        this.pagesize = size;
+        console.log(this.pagesize)  //每页下拉显示数据
+      },
+      handleCurrentChange: function(currentPage){
+        this.currentPage = currentPage;
+        console.log(this.currentPage)  //点击第几页
+      },
+      //跳转链接
       cg() {
         this.$router.push('/CG')
       },

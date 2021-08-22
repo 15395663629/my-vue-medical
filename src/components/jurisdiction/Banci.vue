@@ -87,10 +87,10 @@ import qs from 'qs'
 
 		methods: {
       getData(){
-        this.axios.get('select-fre').then((v)=>{
-          this.fre=v.data
-          console.log(this.fre)
-        }).catch()
+        // this.axios.get('select-fre').then((v)=>{
+        //   this.fre=v.data
+        //   console.log(this.fre)
+        // }).catch()
       },
       //初始每页数据数size和数据data
       HandleSizeChange: function(size) {

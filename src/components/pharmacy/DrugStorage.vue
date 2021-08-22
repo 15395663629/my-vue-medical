@@ -34,7 +34,7 @@
         prop="address"
         label="操作">
       <template #default="scope">
-        <el-button type="primary" plain size="mini" @click="">调拨</el-button>
+        <el-button type="primary" plain size="mini" @click="">调拨申请</el-button>
       </template>
     </el-table-column>
   </el-table>

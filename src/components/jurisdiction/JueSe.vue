@@ -47,12 +47,12 @@
 	</el-dialog>
   <!-- 角色授权弹框-->
   <el-dialog title="角色授权" v-model="dialogVisible" width="30%" >
-    <el-tree ref="tree" :data="funs" node-key="fctionId"
-             :props="props" show-checkbox  default-expand-all
-            >
-    </el-tree>
-
-
+    <el-scrollbar height="200px">
+      <el-tree ref="tree" :data="funs" node-key="fctionId"
+               :props="props" show-checkbox  default-expand-all
+      >
+      </el-tree>
+    </el-scrollbar>
     <template #footer>
 			<span class="dialog-footer">
 				<el-button @click="dialogVisible = false">取 消</el-button>
