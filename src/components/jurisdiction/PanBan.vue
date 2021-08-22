@@ -218,6 +218,7 @@ export default {
         // this.getData()
         this.dome(this.bcId)
         this.quit(this.ksId)
+        this.thisWeek()
       }).catch()
     },
     end(){
