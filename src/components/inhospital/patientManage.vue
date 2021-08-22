@@ -3,173 +3,95 @@
 
 	<!--=====================================================================添加手术申请======================-->
 	
-			<el-dialog title="手术安排" v-model="isSSShow">
-				<el-form  status-icon :rules="rules" ref="ruleForm" label-width="100px" class="">
-					<el-row style="color: red;">
-									  手术信息
-					</el-row>
-					<el-row>
-						<el-col :span="5">
-							<el-form-item label="手术名称:" label-width="80px">
-								<el-input></el-input>
-							</el-form-item>
-						</el-col>
-						<el-col  :span="5">
-							<el-form-item label="手术类型:" label-width="80px">
-								<el-input></el-input>
-							</el-form-item>
-						</el-col>
-						<el-col :offset="1" :span="7">
-										<el-form-item label="手术部位:" label-width="80px">
-											<el-input></el-input>
-										</el-form-item>
-						</el-col>
-					</el-row>
-					<el-row style="color: red;">
-									  病人信息
-					</el-row>
-					<el-row>
-						<el-col :span="5">
-							<el-form-item label="病人姓名:" label-width="80px">
-								<el-input></el-input>
-							</el-form-item>
-						</el-col>
-						<el-col  :span="3">
-							<el-form-item label="床号:" label-width="60px">
-								<el-input></el-input>
-							</el-form-item>
-						</el-col>
-									<el-col :offset="1" :span="2">
-										<el-form-item label="性别:" label-width="60px">
-											<el-input></el-input>
-										</el-form-item>
-									</el-col>
-									<el-col :offset="1" :span="3">
-										<el-form-item label="年龄:" label-width="60px">
-											<el-input></el-input>
-										</el-form-item>
-									</el-col>
-									<el-col :offset="2" :span="7">
-										<el-form-item label="单&emsp;据:" label-width="60px">
-											<el-input></el-input>
-										</el-form-item>
-									</el-col>
-					</el-row>
-				
-				<el-row style="padding-top:6px ;">
-					<el-col :span="5">
-						<el-form-item label="科&emsp;&emsp;室:" label-width="80px">
-							<el-input></el-input>
-						</el-form-item>
-					</el-col>
-					<el-col :offset="3" :span="7">
-						<el-form-item label="入院诊断:" label-width="80px">
-							<el-input></el-input>
-									</el-form-item>
-					</el-col>
-					<el-col :offset="2" :span="7">
-						<el-form-item label="身份证:" label-width="60px">
-								<el-input></el-input>
-						</el-form-item>
-					</el-col>
-				</el-row>
+			<el-dialog title="手术申请" v-model="isSSShow">
+				<el-form  ref="ruleForm" label-width="100px" class="">
+
 				<el-row style="color: red;">
 					申请信息
 				</el-row>
 				<el-row>
-					<el-col :span="7">
+					<el-col :span="6">
 						<el-form-item label="住院号:&emsp;" label-width="80px">
-							<el-input></el-input>
+							<el-input v-model="ssApply.ptNo" size="mini"></el-input>
 						</el-form-item>
 					</el-col>
-					<el-col  :span="3">
-						<el-form-item label="身高:" label-width="80px">
-							<el-input></el-input>
+					<el-col  :span="7">
+						<el-form-item label="姓名:" label-width="80px">
+							<el-input v-model="ssApply.ptName" size="mini"></el-input>
 						</el-form-item>
 					</el-col>
-								<el-col :span="4">
-									<el-form-item label="体重:" label-width="80px">
-										<el-input></el-input>
-									</el-form-item>
-								</el-col>
-								<el-col :offset="2" :span="7">
+								<el-col :offset="2" :span="8">
 										<el-form-item label="术前诊断:" label-width="80px">
-						<el-input></el-input>
+						<el-input v-model="ssApply.ptDiagnoseName"  size="mini"></el-input>
 								</el-form-item>
 					</el-col>
 				</el-row>
 				<el-row style="padding-top:6px ;">
-					<el-col :span="6">
-						<el-form-item label="主刀医生:&emsp;" label-width="80px">
-							<el-input></el-input>
-						</el-form-item>
-					</el-col>
 					<el-col  :span="7">
 						<el-form-item label="拟施手术:" label-width="80px">
-							<el-input></el-input>
+							<el-input style="font-color:red;" readonly="readonly" v-model="ssApply.simulationOperation" size="mini"></el-input>
 						</el-form-item>
 								</el-col>
 								<el-col  :span="10">
 									<el-form-item label="拟施日期:" label-width="80px">
 										<el-date-picker
-										  v-model="value1"
-										  type="daterange"
-										  start-placeholder="Start Date"
-										  end-placeholder="End Date"
-										  :default-value="[new Date(2010, 9, 1), new Date(2010, 10, 1)]">
+                        size="mini"
+                        v-model="ssApply.simulationTime"
+										  type="date"
+										  >
 										</el-date-picker>
 									</el-form-item>
 								</el-col>
 				</el-row>
 			</el-form>
 				<el-row style="color: red;">
-						手术室选择
+						手术选择
 				</el-row>
-			  <el-row > 
-			  	<el-table
-			  	    ref="multipleTable"
-			  	    :data="ssTa"
-			  	    tooltip-effect="dark"
-			  	    style="width:100%;height: 20%;"
-			  	    @selection-change="handleSelectionChange">
-			  	    <el-table-column
-			  	      label="手术室编号"
-			  		  prop="ssId"
-			  	      >
-			  	    </el-table-column>
-			  	    <el-table-column
-			  	      prop="ssName"
-			  	      label="手术名称">
-			  	    </el-table-column>
-			  		<el-table-column
-			  		  label="是否空闲" width="130px">
-			  				是
-			  		</el-table-column>
-			  		<el-table-column label="操  作" width="200px">
-			  		      <template #default="scope">
-			  		        <el-button
-			  		          size="mini"
-			  		          type="primary"
-			  		          @click="handleDelete(scope.$index, scope.row)">选择</el-button>
-			  		      </template>
-			  		    </el-table-column>
-			  					<el-table-column width="150px"
-			  								  align="right">
-			  								  <template  #header>
-			  									<el-input
-			  									  v-model="ssss"
-			  										prefix-icon="el-icon-search"
-			  									  size="small"
-			  									  placeholder="手术室搜索"/>
-			  								  </template>
-			  					</el-table-column>
-			  					
-			  	</el-table>
+			  <el-row >
+          <el-table
+              :data="sproject"
+              tooltip-effect="dark"
+              height="400"
+              size="mini"
+              @select="select"
+              ref="ssdata"
+              style="width: 100%">
+            <el-table-column
+                type="selection"
+                width="55">
+            </el-table-column>
+            <el-table-column
+                label="编号"
+                prop="projectNumber"
+            >
+            </el-table-column>
+            <el-table-column
+                prop="projectName"
+                label="手术名称">
+            </el-table-column>
+            <el-table-column
+                prop="projectType"
+                label="手术类型">
+            </el-table-column>
+            <el-table-column
+                prop="projectPay"
+                label="手术价格">
+            </el-table-column>
+            <el-table-column
+                prop="ksName"
+                label="科室">
+
+            </el-table-column>
+            <el-table-column
+                prop="projectPosition"
+                label="开刀位置">
+            </el-table-column>
+          </el-table>
 				
 			  </el-row>
 			  <el-row>
 				  <el-col :span="3" :offset="11">
-				  <el-button type="primary" @click="apssForm('ruleForm')">提交申请</el-button>
+				  <el-button type="primary" @click="ssdoorApply()">提交申请</el-button>
 				  </el-col>
 			  </el-row>
 			</el-dialog>
@@ -385,7 +307,7 @@
 
                 <el-col :offset="3" :span="5"><el-button @click="openChangeKsFunction(obj.row)" size="mini" type="danger">转科</el-button></el-col>
 
-                <el-col :offset="1" :span="5"><el-button size="mini" @click="isSSShow = true" type="primary">手术申请</el-button></el-col>
+                <el-col :offset="1" :span="5"><el-button size="mini" @click="ssopenApply(obj.row)" type="primary">手术申请</el-button></el-col>
               </el-row>
 
               <el-row v-if="obj.row.ptIs != 1">
@@ -536,9 +458,22 @@
         patientBaseSize:8,//页大小
         patientBaseCurrent:1,//当前页
 
+        sproject:[],//手术集合
+        ssApply:{//手术申请对象
+          applyId:'',
+          ptNo:'',
+          simulationOperation:'',
+          simulationTime:'',
+          sId:'',
+          projectId:'',
+          changeId:'',
+          operationId:'',
 
+          ptDiagnoseName:'',
+          ptName:''
+        },
 
-
+        token:'',
         //===============================================门诊诊断信息数据
         mzDiagnoseIsShow:false,//显示门诊诊断弹框
         mzDiagnoseText:'',//诊断信息
@@ -613,6 +548,10 @@
           this.patientBaseArr = v.data;
         }).catch((date) => {
         });
+        //查询手术
+        this.axios.get("http://localhost:8089/allDescSpro",{params:{input:this.input}}).then((res)=>{
+          this.sproject = res.data;
+        }).catch()
 
         this.axios({url:'zy-ks-list'}).then((v)=>{//查询住院部科室信息
           this.ksArr = v.data;
@@ -621,6 +560,33 @@
         })
       },
 
+
+      //设置单选
+      select(selection, row) {
+        this.$refs.ssdata.clearSelection();
+        if (selection.length === 0) { // 判断selection是否有值存在
+          return;
+        }
+        this.ssApply.simulationOperation=row.projectName;
+        this.$refs.ssdata.toggleRowSelection(row, true);
+
+      },
+      //打开申请手术弹框
+      ssopenApply(row){
+        this.ssApply.ptName=row.ptName
+        this.ssApply.ptDiagnoseName=row.ptDiagnoseName
+        this.token = this.$store.state.token//获取当前用户
+        this.ssApply.sId=this.token.list.sid
+        this.ssApply.ptNo=row.ptNo
+        this.isSSShow=true;
+      },
+      //手术弹框确认按钮
+      ssdoorApply(){
+        this.axios.post("http://localhost:8089/aOrUApply",{proj:this.ssApply}).then((res)=>{
+          this.getData();
+        }).catch()
+        this.isSSShow=false;
+      },
       //============================================申请出院方法
       //打开申请出院弹框
       openDischargeApply(obj){
