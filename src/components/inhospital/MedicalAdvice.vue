@@ -152,27 +152,27 @@
 
                   <el-col :span="2">
                       <el-form-item>
-                        <el-button type="primary" @click="doctorEnjoinExecuteAll" size="mini">全部执行</el-button>
+                        <el-button :disabled="!patientBaseObj.ptName != ''" type="primary" @click="doctorEnjoinExecuteAll" size="mini">全部执行</el-button>
                       </el-form-item>
                   </el-col>
 
                   <el-col :offset="1" :span="2">
                     <el-form-item>
-                      <el-button type="primary" size="mini">执行已选择</el-button>
+                      <el-button  :disabled="!patientBaseObj.ptName != ''" type="primary" @click="doctorEnjoinExecuteSelectChange" size="mini">执行已选择</el-button>
                     </el-form-item>
                   </el-col>
 
 
                   <el-col :offset="3" :span="2">
                     <el-form-item>
-                      <el-button type="success" size="mini">全部打印</el-button>
+                      <el-button :disabled="!patientBaseObj.ptName != ''" type="success" size="mini">全部打印</el-button>
 
                     </el-form-item>
                   </el-col>
 
                   <el-col :offset="1" :span="2">
                     <el-form-item>
-                      <el-button type="success" size="mini">打印已选择</el-button>
+                      <el-button :disabled="!patientBaseObj.ptName != ''" type="success" size="mini">打印已选择</el-button>
                     </el-form-item>
                   </el-col>
 
@@ -188,7 +188,9 @@
               <!--查看所有详表医嘱-->
               <el-row>
                 <el-col>
-                  <el-table :data="doctorEnjoinDetailsArr.slice((doctorEnjoinDetailsCurrentPage-1)*doctorEnjoinDetailsPageSize,doctorEnjoinDetailsCurrentPage*doctorEnjoinDetailsPageSize)" :row-class-name="tableDoctorEnjoinDetailsRowClassName"  height="430px" size="small" >
+                  <el-table
+                      @selection-change="doctorEnjoinSelectChange"
+                      :data="doctorEnjoinDetailsArr.slice((doctorEnjoinDetailsCurrentPage-1)*doctorEnjoinDetailsPageSize,doctorEnjoinDetailsCurrentPage*doctorEnjoinDetailsPageSize)" :row-class-name="tableDoctorEnjoinDetailsRowClassName"  height="430px" size="small" >
                                         <el-table-column  type="selection" width="50px"></el-table-column>
 
                     <el-table-column width="140px" label="下嘱日期" prop="desEnteringDate"></el-table-column>
@@ -301,7 +303,6 @@ export default{
 
       //=======================================================================查看医嘱 数据
       doctorEnjoinArr:[],//医嘱数组
-      doctorEnjoinDetailsArr:[],//医嘱详情数组
       isMainOrMinor:2,//1显示所有数据  2显示主表数据
       isStopDoctorEnjoin:false,//是否显示停嘱弹框
       staffNname:'',//医生名称
@@ -346,6 +347,10 @@ export default{
       DoctorEnjoinMassageIndex:'',//下标 这个方便修改时候用
       DoctorEnjoinMassageTitle:'',//医嘱信息弹框标题
 
+      //=====================================================================执行医嘱数据
+      doctorEnjoinDetailsArr:[],//医嘱详情数组
+      doctorEnjoinSelectDetailsArr:[],//选中的医嘱数组
+
 
 
       //=====================================================================分页数据
@@ -379,7 +384,30 @@ export default{
     //=======================================================================执行医嘱
     //全部执行
     doctorEnjoinExecuteAll(){
-      this.axios.post('addDoctorEnjoinExecute',{doctorEnjoinList:this.doctorEnjoinDetailsArr,sId:this.staff.sid}).then((v)=>{
+      this.axios.post('addDoctorEnjoinExecute',{doctorEnjoinList:this.doctorEnjoinSelectDetailsArr.length == 0 ? this.doctorEnjoinDetailsArr : this.doctorEnjoinSelectDetailsArr,sId:this.staff.sid}).then((v)=>{
+        console.log(v.data);
+        this.$message({
+          type: 'success',
+          message: '执行成功'
+        });
+        this.patientChange();
+      })
+    },
+    //选中医嘱调用
+    doctorEnjoinSelectChange(row){
+      console.log(row)
+      this.doctorEnjoinSelectDetailsArr = row;
+    },
+    //执行已选择
+    doctorEnjoinExecuteSelectChange(){
+      if(this.doctorEnjoinSelectDetailsArr.length == 0){
+        this.$message({
+          type: 'error',
+          message: '未选中医嘱信息'
+        });
+        return;
+      };
+      this.axios.post('addDoctorEnjoinExecute',{doctorEnjoinList:this.doctorEnjoinSelectDetailsArr,sId:this.staff.sid}).then((v)=>{
         console.log(v.data);
         this.$message({
           type: 'success',
@@ -496,7 +524,6 @@ export default{
       this.patientBaseObj.sName = obj.staff.sname;
       this.patientBaseObj.bdName = obj.bed.bdName;
       this.patientBaseObj.ptInDay = parseFloat((new Date().getTime() - Date.parse(obj.ptInDate))  / (1*24*60*60*1000)).toFixed(0) + '天';//算出入院天数
-
       this.patientChange();
     },
     //刷新病人医嘱
@@ -611,7 +638,6 @@ export default{
     doctorEnjoinDetailsCurrentChange: function(currentPage) {
       this.doctorEnjoinDetailsCurrentPage = currentPage;
     },
-
 
   },
   created() {
