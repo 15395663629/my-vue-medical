@@ -249,7 +249,11 @@
                     <span v-if="obj.row.iss != 1">外用药</span>
                   </template>
                 </el-table-column>
-                <el-table-column prop="drugPrice" label="价格"></el-table-column>
+                <el-table-column label="价格">
+                  <template #default="obj">
+                    {{obj.row.drugPrescription == 1 ? obj.row.drugParticle : obj.row.drugPrice}}
+                  </template>
+                </el-table-column>
                 <el-table-column prop="drugUsage" label="药品用法"></el-table-column>
               </el-table>
             </el-col>
@@ -332,7 +336,7 @@
                     </el-table-column>
                     <el-table-column prop="desFrequency" label="频率">
                       <template #default="obj">
-                        <el-input size="mini" v-model="obj.row.desFrequency" placeholder="频次" type="text"/>
+                        <el-input-number :min="1" style="width: 90px" size="mini" v-model="obj.row.desFrequency" type="text"/>
                       </template>
                     </el-table-column>
                     <el-table-column width="160px" label="嘱托">
