@@ -77,6 +77,7 @@
         <el-table-column property="drugId" label="药品编号"></el-table-column>
         <el-table-column property="ykPurchaseId" label="采购编号"></el-table-column>
         <el-table-column prop="yfDruginformation.drugName" label="药品名称"></el-table-column>
+        <el-table-column property="ykSupplier.supplierName" label="生产厂商"></el-table-column>
         <el-table-column label="药品数量">
           <template #default="scope">
             {{scope.row.ykChaseCount}}
