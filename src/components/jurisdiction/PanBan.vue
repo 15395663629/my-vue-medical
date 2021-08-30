@@ -58,6 +58,7 @@
       </el-col>
     </el-row>
     <!-- 查询条件结束 -->
+
     <!--    表头开始  -->
     <el-row class="div10">
       <el-col :span="2" class="div11" >
@@ -163,7 +164,7 @@ export default {
   //  计算属性
   computed: {
     wid(){
-      return Math.floor(22/this.length2)
+      return Math.floor(22/(this.length2))
     }
   },
   created() {
@@ -283,12 +284,12 @@ export default {
 }
 /*  班次样式 */
 .div10>.div12{
-  border: 1px solid red;
-  background-color: #b3c0d1;
+  /*border-right: 1px solid red;*/
+  background-color: #99a9bf;
 }
 .div20{
   text-align: center;
-  background-color: #008489;
+  background-color: #99a9bf;
 }
 .div20>.div21{
   background-color: #909399;

@@ -51,7 +51,7 @@
 
 			</el-option>
 		</el-select><br />
-    科室部门：<el-input type="text"  style="width: 40%;margin-top: 20px" v-model="ksdz"></el-input>
+    科室地址：<el-input type="text"  style="width: 40%;margin-top: 20px" v-model="ksdz"></el-input>
 		<template #footer>
 			<span class="dialog-footer">
 				<el-button @click="cs()">取 消</el-button>
@@ -178,14 +178,23 @@ import  qs from 'qs'
       //编辑
       bj(row){
         //回传值给页面
-        console.log(row)
-        this.ksName=row.ksName
-        this.value=row.dept.deName
-        this.deId=row.deId
+        console.log(row.dept)
+        if(row.dept!==null){
+          this.ksName=row.ksName
+          this.value=row.dept.deName
+          this.deId=row.deId
+          this.ksdz=row.ksDz
+        }else{
+          this.ksName=row.ksName
+          this.ksdz=row.ksDz
+          console.log(2)
+        }
+
         //给对象赋值
         this.ks.ksId=row.ksId
         this.ks.ksName=row.ksName
         this.ks.deId=row.deId
+        this.ks.ksDz=row.ksDz
         this.dialogVisible1=true
       },
       //清空下拉框的值
