@@ -145,7 +145,7 @@
         <el-main  style="background-color: #E9EEF3;color: #333;padding:5px;" ><!-- 主体页面========================================================================-->
           <el-tabs @tab-click="patientSwitchFunction" v-model="maxCard" type="border-card" >
 
-            <!--==========================================================================查看医嘱-->
+            <!--==========================================================================需要执行的医嘱-->
             <el-tab-pane name="需执行医嘱" :key="'需执行医嘱'" label="需执行医嘱">
               <el-form>
                 <el-row style="height: 36px;">
@@ -229,9 +229,107 @@
                   </el-pagination>
                 </el-col>
               </el-row>
+            </el-tab-pane>
 
+            <!--==========================================================================科室药品库存-->
+            <el-tab-pane name="科室药品库存" :key="'科室药品库存'" label="科室药品库存">
+
+              <el-form>
+                <el-row style="height: 36px;">
+
+                  <el-col :offset="16" :span="8">
+                    <el-form-item>
+                      <el-tag type="info">库存正常</el-tag>&nbsp;
+                      <el-tag type="danger">库存低于警戒线</el-tag>&nbsp;
+                      <el-tag type="primary">未设置警戒线</el-tag>
+                    </el-form-item>
+                  </el-col>
+                </el-row>
+              </el-form>
+              <el-row>
+                <el-col>
+                  <el-table @cell-dblclick="tableDbEdit"
+                      :data="drugPharmacyArr" :row-class-name="tablezyDrugPharmacyGuard" height="430px" size="small" >
+                    <el-table-column label="药品名称" prop="dpDrugName"></el-table-column>
+                    <el-table-column label="药品库存" prop="dpInventory"></el-table-column>
+                    <el-table-column label="小单位" prop="dpMinUnit"></el-table-column>
+                    <el-table-column label="价格" prop="dpDrugPrice"></el-table-column>
+                    <el-table-column label="大单位" prop="dpMaxUnit"></el-table-column>
+                    <el-table-column label="库存警戒线"  prop="dpGuard"></el-table-column>
+                  </el-table>
+
+                  <!--分页插件-->
+                  <el-pagination
+                      style="text-align: center;"
+                      @size-change="doctorEnjoinDetailsSizeChange"
+                      @current-change="doctorEnjoinDetailsCurrentChange"
+                      :current-page="doctorEnjoinDetailsCurrentPage"
+                      :page-sizes="[2,4,6,8,10]"
+                      :page-size="doctorEnjoinDetailsPageSize"
+                      layout="total, sizes, prev, pager, next, jumper"
+                      :total="doctorEnjoinDetailsArr.length">
+                  </el-pagination>
+                </el-col>
+              </el-row>
 
             </el-tab-pane>
+
+
+
+            <!--==========================================================================科室药品库存-->
+            <el-tab-pane name="药品调拨" :key="'药品调拨'" label="药品调拨">
+
+              <el-form>
+                <el-row style="height: 36px;">
+
+                  <el-col>
+                    <el-button type="primary" size="mini">药品调拨</el-button>
+                  </el-col>
+
+
+                </el-row>
+              </el-form>
+              <el-row>
+                <el-col>
+                  <el-table
+                      :data="deptDrugAllotAll"  height="430px" size="small" >
+                    <el-table-column label="调拨日期" prop="ddaDate"></el-table-column>
+                    <el-table-column label="调拨科室" prop="ksName"></el-table-column>
+                    <el-table-column label="药品名称" prop="ddaDrugName"></el-table-column>
+                    <el-table-column label="操作员工" prop="sname"></el-table-column>
+                    <el-table-column label="数量(小单位)" prop="ddaMinUnitCount"></el-table-column>
+                    <el-table-column label="调拨状态">
+                      <template #default="obj">
+                        <el-tag v-if="obj.row.ddaIs == 1 " type="info">待调拨</el-tag>&nbsp;
+                        <el-tag v-if="obj.row.ddaIs == 2 " type="primary">已调拨</el-tag>&nbsp;
+                        <el-tag v-if="obj.row.ddaIs == 3 " type="danger">已取消</el-tag>
+                      </template>
+                    </el-table-column>
+
+                    <el-table-column label="操作">
+                      <template #default="obj">
+                        <el-button v-if="obj.row.ddaIs == 1" type="danger" @click="openStopDoctorEnjoin(obj)" size="mini">取消调拨</el-button>
+                      </template>
+                    </el-table-column>
+                  </el-table>
+
+                  <!--分页插件-->
+                  <el-pagination
+                      style="text-align: center;"
+                      @size-change="doctorEnjoinDetailsSizeChange"
+                      @current-change="doctorEnjoinDetailsCurrentChange"
+                      :current-page="doctorEnjoinDetailsCurrentPage"
+                      :page-sizes="[2,4,6,8,10]"
+                      :page-size="doctorEnjoinDetailsPageSize"
+                      layout="total, sizes, prev, pager, next, jumper"
+                      :total="doctorEnjoinDetailsArr.length">
+                  </el-pagination>
+                </el-col>
+              </el-row>
+
+            </el-tab-pane>
+
+
 
           </el-tabs>
         </el-main>
@@ -262,94 +360,30 @@ export default{
       maxCard:'需执行医嘱',//卡片当前位置
 
 
-
-      //========================================================================医嘱数据！！！
-      doctorEnjoinObj:{//医嘱实体类
-        deId:'',//医嘱编号
-        deLongorshort:1,//长期医嘱还是短期医嘱(默认长期)
-        ptNo:'',//连接住院登记表
-        sId:'',//连接医生编号
-        deDoctorName:'',//医生名称
-        vueDate:'',//vue组件使用时间
-        deDate:'',//下医嘱时间
-        deChineseMethod:'',//如果是中药的话就有冲泡方法
-        deExecuteDate:'',//执行时间
-        deText:'',//嘱托
-        deEndDate:'',//结束时间
-        //关系
-        dedList:[]//医嘱详情集合
-      },
-      doctorEnjoinDetailsObj:{//医嘱详情实体类
-        desId:'',//医嘱详细编号
-        deId:'',//连接医嘱编号
-        desDrugId:'',//连接药品编号或者耗材
-        desDrugIs:'',//是药品还是耗材 1是药品 2是耗材
-        desDrugName:'',//药品名称或者耗材名称
-        desText:'',//医嘱内容
-        desSpecification:'',//规格
-        desMeasure:'',//计量
-        desFrequency:'',//频率(一天多少次)
-        desUnit:'',//单位
-        desUsage:'',//用法
-        desCount:'',//今天一天的用量
-        desPrice:'',//价格
-        desEnteringDate:'',//录入时间
-        desExecuteDate:'',//开始执行时间
-        desEndDate:'',//结束时间
-        desIs:'',//是否停止执行医嘱
-        desPresentDate:''//最新执行时间
-      },
-
-
-      //=======================================================================查看医嘱 数据
-      doctorEnjoinArr:[],//医嘱数组
-      isMainOrMinor:2,//1显示所有数据  2显示主表数据
-      isStopDoctorEnjoin:false,//是否显示停嘱弹框
-      staffNname:'',//医生名称
-      //===================停嘱数据
-      stopDoctorEnjoinVue:{//停嘱对象（前台做操作）
+      //====================================================================科室药品库存调拨记录数据
+      deptDrugAllotObj:{//科室药品库存调拨记录对象
 
       },
-      stopDoctorEnjoinDetailsIndex:'',//修改下标
-      stopDoctorEnjoin:{//停嘱对象(返回到后台的)
-        derId:'',//停嘱编号 主表编号或者是详表编号
-        stopIs:'',//1代表主表编号 2代表详表编号
-        sId:'',//医生编号
-        sdeDoctorName:'',//停嘱医生名称
-        sdeStopCause:'',//停嘱原因
-        sdeDate:'',//停嘱日期
-        ptNo:''//病人住院号
-      },
+      deptDrugAllotAll:[],//科室药品库存调拨记录数组
 
-
-      //========================================================================医嘱信息数据
-      isDoctorEnjoinMessageShow:false,//是否显示医嘱信息弹框
-      DoctorEnjoinMassageObj:{//医嘱信息对象
-        desId:'',//医嘱详细编号
-        deId:'',//连接医嘱编号
-        desDrugId:'',//连接药品编号或者耗材
-        desDrugIs:'',//是药品还是耗材 1是药品 2是耗材
-        desDrugName:'',//药品名称或者耗材名称
-        desText:'',//医嘱内容
-        desSpecification:'',//规格
-        desMeasure:'',//计量
-        desFrequency:'',//频率(一天多少次)
-        desUnit:'',//单位
-        desUsage:'',//用法
-        desCount:'',//今天一天的用量
-        desPrice:'',//价格
-        desEnteringDate:'',//录入时间
-        DesExecuteDate:'',//开始执行时间
-        DesEndDate:'',//结束时间
-        desIs:'',//是否停止执行医嘱
-        desPresentDate:''//最新执行时间
-      },
-      DoctorEnjoinMassageIndex:'',//下标 这个方便修改时候用
-      DoctorEnjoinMassageTitle:'',//医嘱信息弹框标题
 
       //=====================================================================执行医嘱数据
       doctorEnjoinDetailsArr:[],//医嘱详情数组
       doctorEnjoinSelectDetailsArr:[],//选中的医嘱数组
+
+      //=====================================================================科室药品库存数据
+      drugPharmacyObj:{
+        dpId: '',//编号
+        ksId:'', //连接科室编号
+        dpInventory:'',//库存数量
+        drugId:'',//药品编号
+        dpDrugPrice:'',//药品价格
+        dpDrugUnit:'',//药品单位名称
+        dpDrugName:''//药品的名称
+      },//药品库存对象
+      drugPharmacyArr:[],//药品库存数组
+      //=============双击科室药品数据
+      dbclickPharmacyObj:{},
 
 
 
@@ -363,15 +397,19 @@ export default{
       //医嘱详情分页
       doctorEnjoinDetailsCurrentPage:1,//页大小
       doctorEnjoinDetailsPageSize:6,//页大小
-
+      // window.tableDbText: this.tableDbText(),
 
 
 
     }
   },
+  mounted() {
+    window.tableDbTexts = this.tableDbText;
+  },
   methods: {
     //========================================================================页面初始化数据方法
     operationInit() {
+      //初始化病人数据
       this.axios({
         url: 'select-patient-sId',
         params: {sId: this.staff.sid, ksId: '', text: this.patientQueryText,is:2}
@@ -379,6 +417,48 @@ export default{
         this.patientBaseArr = v.data;
       }).catch();
 
+      //初始化科室药品库存数据
+      this.axios({
+        url:'select-drug-pharmacyByKsId',
+        params:{ksId:this.staff.ksId}
+      }).then((v)=>{
+        this.drugPharmacyArr = v.data;
+      });
+
+    },
+
+    tableDbEdit(row, column, cell, event) {
+      if (column.label == "库存警戒线") {
+        let cellInput = document.createElement("input");
+        cellInput.value = row.dpGuard;
+        cellInput.setAttribute("type", "text");
+        cellInput.style.width = "40%";
+        cellInput.style.position = 'absolute';
+        cellInput.style.top = '12px';
+        cell.appendChild(cellInput);
+        cellInput.focus();
+        cellInput.onblur = function() {
+          // alert(row.dpId)
+
+          tableDbTexts(row,cellInput,event,cell);
+        };
+      }
+    },
+   tableDbText(row,cellInput,event,cell){
+      // alert('s')
+      this.axios.post('update-byDpId-dpGuard',{bpId:row.dpId,dpGuard:cellInput.value}).then((v)=>{
+        // event.target.innerHTML = cellInput.value;
+        // alert(cellInput.value)
+        cell.removeChild(cellInput);
+        //初始化科室药品库存数据
+        this.axios({
+          url:'select-drug-pharmacyByKsId',
+          params:{ksId:this.staff.ksId}
+        }).then((v)=>{
+          this.drugPharmacyArr = v.data;
+          console.log(this.drugPharmacyArr)
+        });
+      }).catch();
     },
 
     //=======================================================================执行医嘱
@@ -436,55 +516,12 @@ export default{
     //     }
     //   }
     // },
-    //主表数据点击查看详情方法
-    lookDoctorEnjoinDetailsTable(obj){
-      this.doctorEnjoinDetailsArr = obj.dedList;
-      this.isMainOrMinor = 3;
-      this.doctorEnjoinDetailsCurrentPage = 1;//重置医嘱详情里面的当前页
-    },
-    //点击查看所有医嘱方法
-    lookDoctorEnjoinDetailsAll(){
-      this.selectLookDoctorEnjoinTable();
-      this.isMainOrMinor = 1;
-      this.stopDoctorEnjoinVue;
-    },
-    //打开停嘱弹框方法
-    openStopDoctorEnjoin(obj){
-      console.log(obj);
-      this.stopDoctorEnjoinVue = obj.row;
-      if(this.isMainOrMinor == 1 || this.isMainOrMinor == 3){
-        this.stopDoctorEnjoin.derId = obj.row.desId;//将医嘱详情编号赋值
-      }else{
-        this.stopDoctorEnjoin.derId = obj.row.deId;//将医嘱详情编号赋值
-      }
-      this.stopDoctorEnjoinDetailsIndex = obj.$index;//当前选中下标
-      this.staffNname = this.staff.sname;
-      this.isStopDoctorEnjoin = true;
-    },
-    //当停嘱日期改变是调用
-    stopDoctorEnjoinDateChange(){
-      if(this.stopDoctorEnjoin.sdeDate != '' && this.stopDoctorEnjoin.sdeDate != null){
-        if(this.isMainOrMinor == 1 || this.isMainOrMinor == 3){
-          if(this.formatDate(this.stopDoctorEnjoin.sdeDate,'yyyy-MM-dd') < this.formatDate(this.stopDoctorEnjoinVue.desExecuteDate,'yyyy-MM-dd')){
-            this.$message({
-              type: 'warning',
-              message: '停嘱日期不能再执行日期之前'
-            });
-            this.stopDoctorEnjoin.sdeDate = '';
-          }
-        }else{
-          if(this.formatDate(this.stopDoctorEnjoin.sdeDate,'yyyy-MM-dd') < this.formatDate(this.stopDoctorEnjoinVue.deExecuteDate,'yyyy-MM-dd')){
-            this.$message({
-              type: 'warning',
-              message: '停嘱日期不能再执行日期之前'
-            });
-            this.stopDoctorEnjoin.sdeDate = '';
-          }
-        }
-      }
-    },
 
 
+    //=======================================================================表格双击事件
+    dbclickDrugPharmacy(obj){
+      this.dbclickPharmacyObj = obj;
+    },
 
     //========================================================================病人方法
     //==切换我的病人和本科病人是调用
@@ -535,25 +572,32 @@ export default{
 
 
     //========================================================================切换操作时调用方法
-    // patientSwitchFunction(){
-    //     if(this.patientBaseObj.ptNo != undefined) {
-    //       if (this.isMainOrMinor == 2) {
-    //         this.axios({url: 'select-doctorEnjoin-ByPtNo', params: {ptNo: this.patientBaseObj.ptNo}}).then((v) => {
-    //           console.log(v.data);
-    //           this.doctorEnjoinArr = v.data;
-    //         }).catch((data) => {
-    //         })
-    //       } else {
-    //         this.axios({
-    //           url: 'select-doctorEnjoinDetails-ByPtNo',
-    //           params: {ptNo: this.patientBaseObj.ptNo}
-    //         }).then((v) => {
-    //           console.log(v.data)
-    //           this.doctorEnjoinDetailsArr = v.data;
-    //         })
-    //       }
-    //     }
-    // },
+    patientSwitchFunction(){
+        if(this.maxCard == '科室药品库存'){
+
+        //初始化科室药品库存数据
+        this.axios({
+          url:'select-drug-pharmacyByKsId',
+          params:{ksId:this.staff.ksId}
+        }).then((v)=>{
+          this.drugPharmacyArr = v.data;
+        });
+
+      }else if(this.maxCard == '药品调拨'){
+
+          //初始化科室药品库存数据
+          this.axios({
+            url:'select-by-ksId',
+            params:{ksId:this.staff.ksId}
+          }).then((v)=>{
+            console.log(v.data);
+            this.deptDrugAllotAll = v.data;
+          });
+
+      }else{
+
+      }
+    },
 
 
 
@@ -586,30 +630,23 @@ export default{
       }
       return fmt;
     },
+
+    //==========================================================渲染表格数据
     //判断当前选择的病人
     tablePatientBaseRowClassName({row, rowIndex}) {
       if (this.patientBaseObj.ptNo == row.ptNo) {
         return 'success';
       }
     },
-    //判断医嘱是否停用 如果停用的表格就标红
-    tableDoctorEnjoinDetailsRowClassName({row, rowIndex}) {
-      if (row.desEndDate != '' && row.desEndDate != null) {
-        if(this.formatDate(row.desEndDate, 'yyyy-MM-dd') <= this.formatDate(new Date(), 'yyyy-MM-dd')){
+    //判断科室药品是否低于库存警戒线
+    tablezyDrugPharmacyGuard({row, rowIndex}) {
+      //如果该药品没有设置库存警戒线就设置表格字体为黄色
+      if(row.dpGuard == '' || row.dpGuard == null){
+        return 'noGuard';
+      }
+        if(row.dpGuard > row.dpInventory){
           return 'tyyz';
         }
-
-      }
-    },
-    //判断医嘱是否停用 如果停用的表格就标红
-    tableDoctorEnjoinRowClassName({row, rowIndex}) {
-      if (row.deEndDate != '' && row.deEndDate != null) {
-
-        if(this.formatDate(row.deEndDate, 'yyyy-MM-dd') <= this.formatDate(new Date(), 'yyyy-MM-dd')){
-          return 'tyyz';
-        }
-
-      }
     },
 
 
@@ -680,6 +717,10 @@ export default{
 /deep/ .el-table .tyyz {
   /*background: #FF9C9C;*/
   color: #FF4545;
+}
+
+/deep/ .el-table .noGuard {
+  color: blue;
 }
 
 /deep/ .el-divider--horizontal{
