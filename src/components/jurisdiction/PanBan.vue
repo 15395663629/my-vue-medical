@@ -284,7 +284,7 @@ export default {
 }
 /*  班次样式 */
 .div10>.div12{
-  /*border-right: 1px solid red;*/
+  /*border: 1px solid red;*/
   background-color: #99a9bf;
 }
 .div20{
