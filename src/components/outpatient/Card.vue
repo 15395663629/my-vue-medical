@@ -17,6 +17,7 @@
 		  return {
 		    activeName: '/UpPremium',
 		  }
+
 		},
 		methods: {
 		  handleClick(tab, event) {//页面跳转
