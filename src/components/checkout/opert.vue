@@ -274,46 +274,69 @@
 			<el-row style="color: red;">
 					手术室选择
 			</el-row>
-		  <el-row > 
-		  	<el-table
-		  	    ref="multipleTable"
-		  	    :data="ssTa"
-		  	    tooltip-effect="dark"
-		  	    style="width:100%;height: 20%;"
-		  	    @selection-change="handleSelectionChange">
-		  	    <el-table-column
-		  	      label="手术室编号"
-		  		  prop="ssId"
-		  	      >
-		  	    </el-table-column>
-		  	    <el-table-column
-		  	      prop="ssName"
-		  	      label="手术名称">
-		  	    </el-table-column>
-		  		<el-table-column
-		  		  label="是否空闲" width="130px">
-		  				是
-		  		</el-table-column>
-		  		<el-table-column label="操  作" width="200px">
-		  		      <template #default="scope">
-		  		        <el-button
-		  		          size="mini"
-		  		          type="primary"
-		  		          @click="handleDelete(scope.$index, scope.row)">选择</el-button>
-		  		      </template>
-		  		    </el-table-column>
-		  					<el-table-column width="150px"
-		  								  align="right">
-		  								  <template  #header>
-		  									<el-input
-		  									  v-model="ssss"
-		  										prefix-icon="el-icon-search"
-		  									  size="small"
-		  									  placeholder="手术室搜索"/>
-		  								  </template>
-		  					</el-table-column>
-		  					
-		  	</el-table>
+		  <el-row >
+        <el-table
+            size="mini"
+            :data="room1"
+            height="200px"
+        >
+          <el-table-column
+              label="编号"
+              prop="operationName">
+            <template #default="scope">
+              <el-popover effect="light" trigger="hover"  placement="top">
+                <template #default>
+                  <p>地址: {{ scope.row.operationRoomAddress }}</p>
+                </template>
+                <template #reference>
+                  <div class="name-wrapper">
+                    <el-tag size="medium">{{ scope.row.operationName }}</el-tag>
+                  </div>
+                </template>
+              </el-popover>
+            </template>
+          </el-table-column>
+          <el-table-column
+              prop="operationType"
+              label="类别">
+          </el-table-column>
+          <el-table-column
+              prop="deptks.ksName"
+              label="科室">
+          </el-table-column>
+          <el-table-column
+              prop="baseResultMap.sname"
+              label="负责人">
+          </el-table-column>
+          <el-table-column
+              prop="operationZt"
+              label="状态">
+            <template #default="scope">
+              <div class="name-wrapper">
+                <el-tag :type="scope.row.operationZt==0?'success':(scope.row.operationZt==1?'warning':'info')" size="medium">{{ scope.row.operationZt==0?'空闲':(scope.row.operationZt==1?'忙':'停用') }}</el-tag>
+              </div>
+            </template>
+          </el-table-column>
+          <el-table-column label="操作" width="150px">
+            <template #default="scope">
+              <el-button
+                  size="mini"
+                  type="primary"
+
+                  @click="sssEdit(scope.row)">修改</el-button>
+              <el-button
+                  size="mini"
+                  type="danger"
+                  v-show="scope.row.operationZt!=2"
+                  @click="opensss(scope.row,2)">停用</el-button>
+              <el-button
+                  size="mini"
+                  type="success"
+                  v-show="scope.row.operationZt==2"
+                  @click="opensss(scope.row,0)">启用</el-button>
+            </template>
+          </el-table-column>
+        </el-table>
 			
 		  </el-row>
 		  <el-row>
@@ -322,42 +345,54 @@
 			  </el-col>
 		  </el-row>
 		</el-dialog>
-<!-- ====================================================表格 ==========================================-->
+<!-- ====================================================表格                ==========================================-->
 		<el-table
 		    ref="multipleTable"
-		    :data="ssTa"
+		    :data="sApply"
 		    tooltip-effect="dark"
 			height="450"
 		    style="width: 100%"
 		    @selection-change="handleSelectionChange">
 		    <el-table-column
-		      label="编号"
-			  prop="ssId"
+		      label="住院号"
+			  prop="ptNo"
 		      >
 		    </el-table-column>
 		    <el-table-column
-		      prop="ssName"
+		      prop="ptdx.ptName"
 		      label="姓名">
+          <template #default="scope" >
+            <el-popover width="300" effect="light"   trigger="hover" placement="top">
+              <template #default >
+                <p>姓名: {{ scope.row.ptdx.ptName }}</p>
+                <p>年龄: {{ scope.row.ptdx.ptAge }}</p>
+                <p>性别: {{ scope.row.ptdx.ptSex }}</p>
+                <p>电话: {{ scope.row.ptdx.ptIphone }}</p>
+                <p>住址: {{ scope.row.ptdx.ptHomeAdder }}</p>
+              </template>
+              <template #reference>
+                <div class="name-wrapper">
+                  <el-tag size="medium">{{ scope.row.ptdx.ptName }}</el-tag>
+                </div>
+              </template>
+            </el-popover>
+          </template>
 		    </el-table-column>
 		    <el-table-column
-		      prop="sscard"
-		      label="身份证">
+		      prop="ptdx.ptDiagnoseName"
+		      label="术前诊断">
 		    </el-table-column>
 			<el-table-column
-			  prop="ssbed"
-			  label="手术室">
+			  prop="simulationOperation"
+			  label="拟施手术">
 			</el-table-column>
 			<el-table-column
-			  prop="sstime"
-			      sortable
-			      width="180"
-			      column-key="date"
-			      :filter-method="filterHandler"
-			  label="手术时间">
+			  prop="simulationTime"
+			  label="拟施日期">
 			</el-table-column>
 			<el-table-column
-			  prop="ssdemo"
-			  label="手术项目">
+			  prop="ptdx.staff.sname"
+			  label="主治医师">
 			</el-table-column>
 			<el-table-column label="操作" width="400px">
 			      <template #default="scope">
@@ -392,15 +427,17 @@
   export default {
 		data() {
 			return {
-
+        seach:'',//手术申请搜索
 			  staf:[],//员工
         department:[],//科室
 			  stit:'',//手术室弹框标题
 			  sss:false,//手术室弹框
 			  room:[],//手术室集合
+        room1:[],//开始手术时选择手术室
         drawer: false,
         direction: 'ltr',//抽屉方向
 				textarea:"",
+        sApply:[],//手术申请集合
 				apss: false,
 				centerDialogVisible: false,
 				currentPage3: 5,
@@ -446,6 +483,12 @@
        getData() {
          this.axios.get("http://localhost:8089/sssRoom").then((res) => {
            this.room = res.data;
+         }).catch()
+         this.axios.get("http://localhost:8089/sssRoom",{params: {seach:0}}).then((res) => {
+           this.room1 = res.data;
+         }).catch()
+         this.axios.get("http://localhost:8089/sssApply",{params: {seach:this.seach}}).then((res) => {
+           this.sApply = res.data;
          }).catch()
          //科室
          this.axios.get("http://localhost:8089/ks-list").then((res)=>{

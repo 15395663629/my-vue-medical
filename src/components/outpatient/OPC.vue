@@ -775,7 +775,11 @@
       //接诊
       jieZheng(){
         if(this.loading==true){
+			
+			this.axios.post('upRtNumber',{rtNumber:this.leftTopTable[0].rtNumber}).then((v)=>{
+			}).catch(()=>{ })
           return setTimeout(()=>{
+			
             this.headerInput.bnCount = this.leftTopTable[0].bnCount
             this.headerInput.mcCard = this.leftTopTable[0].rtRegObject.cardObject.mcCard
             this.headerInput.rtClass = this.leftTopTable[0].rtRegObject.rtClass
@@ -786,7 +790,7 @@
             this.headerInput.bnIdCard = this.leftTopTable[0].bnIdCard
             this.headerInput.bnKsName = this.leftTopTable[0].bnKsName;
             this.headerInput.bnNumber = this.leftTopTable[0].bnNumber;
-
+			
             var number = this.formatDate(this.leftTopTable[0].bnTime,'yyyyMMddhhmm').toString()
                 +this.token.ksId.toString()+this.token.tid.toString()+this.headerInput.bnCount.toString()
             this.headerInput.mrCount = number;
