@@ -187,8 +187,10 @@ import qs from 'qs'
         }).then((v)=>{
           if(v.data==="ok"){
             this.$message.error("离职成功")
+            this.getData()
           }else{
             this.$message.error("离职失败")
+
           }
         }).catch();
       },

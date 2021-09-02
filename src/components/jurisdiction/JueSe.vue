@@ -139,6 +139,7 @@ import  qs from 'qs'
 	  //获取角色父级编号
       dome(event){
         this.rosid=event
+        console.log(event)
       },
       saveGrant(){
         var funs=this.$refs.tree.getCheckedKeys();
