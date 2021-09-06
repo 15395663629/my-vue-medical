@@ -1,4 +1,5 @@
 <template><!-- 药品缴费 -->
+  430224199805045517{{leftTableList}}
   <el-row>
     <el-col :span="10"  style="margin-top: 10px">
       <el-row >
@@ -235,15 +236,18 @@
 					this.leftRecordObject.mrTotalMoney  = v.data.mrTotalMoney;
 					this.leftRecordList = v.data;
 					//删除原有的数组中的数组
-					if(this.leftTableList.length>0 && this.leftTableList !=undefined){
-						this.leftTableList.forEach((a,i)=>{
-							a.xmContent.splice(i)
-						})
-					}
-					this.leftTableList=[]
+          if(this.leftTableList.length>0){
+            console.log(333)
+            this.leftTableList.forEach((d,i)=>{
+              if(d.xmContent.length>0){
+                d.xmContent.splice(i-1)
+              }
+            })
+            this.leftTableList=[];
+          }
 					//赋值集合 -- 表格显示
 					this.leftRecordListFunction(this.leftRecordList)
-					
+
 				}else{
 					this.$message({
 					  showClose: true,
@@ -267,7 +271,7 @@
 				this.xpObject.xmSum = sum1;
 				this.xpObject.xmText = row.recipeObject.xpNotes;
 
-				
+
 				row.recipeObject.xpList.forEach((b,i)=>{
 					if(b.rdStatePrice==0){
 						//先添加一遍在清空数组
@@ -347,7 +351,7 @@
 
 <style scoped>
 .te /deep/ .el-input__inner {
-  color: red;
+  color: #ff0000;
   font-size: 13px;
   cursor: pointer;
 }

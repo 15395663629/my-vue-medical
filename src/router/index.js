@@ -47,8 +47,8 @@ const routes = [
 				},
 			
 				{
-					name:'ProjectPayment',
-					path:'/ProjectPayment',
+					name:'DrugPayment',
+					path:'/DrugPayment',
 					component:()=>import("/src/components/outpatient/DrugPayment.vue"),
 					meta:{title:'医疗缴费', noCache: true },
 					// children:[//门诊问诊三级路由------------------ProjectPayment.vue
