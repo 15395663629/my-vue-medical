@@ -242,6 +242,7 @@
               if(d.xmContent.length>0){
                 d.xmContent.splice(i-1)
               }
+
             })
             this.leftTableList=[];
           }
