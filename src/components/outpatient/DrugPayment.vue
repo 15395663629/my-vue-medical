@@ -101,7 +101,7 @@
 
           <el-table-column fixed  label="操作" align="center" >
             <template #default="scope">
-              <el-button type="success" size="mini" plain @click="forPrinting(scope.row.xmNumber,scope.row.xmName)">收费打印</el-button>
+              <el-button type="success" size="mini" plain @click="forPrinting(scope.$index,scope.row.xmNumber,scope.row.xmName)">收费打印</el-button>
             </template>
           </el-table-column>
 
@@ -237,7 +237,6 @@
 					this.leftRecordList = v.data;
 					//删除原有的数组中的数组
           if(this.leftTableList.length>0){
-            console.log(333)
             this.leftTableList.forEach((d,i)=>{
               if(d.xmContent.length>0){
                 d.xmContent.splice(i-1)
@@ -261,82 +260,96 @@
 		   },
 		   //项目总览，--赋值
 		   leftRecordListFunction(row){
-			  if(row.recipeObject.xpList[0].rdStatePrice == 0){
-				var sum1 = 0;//西药总价钱
-				row.recipeObject.xpList.forEach((drug,i)=>{//循环判断总价钱
-				  sum1 += (drug.rdPrice*drug.rdCount);
-				})
-				this.xpObject.xmNumber = row.recipeObject.recipeNumber;
-				this.xpObject.xmName="西药处方";
-				this.xpObject.xmSum = sum1;
-				this.xpObject.xmText = row.recipeObject.xpNotes;
+          if(row.recipeObject.xpList[0].rdStatePrice == 0 && row.recipeObject.xpList[0].rdName !=null){
+          var sum1 = 0;//西药总价钱
+          row.recipeObject.xpList.forEach((drug,i)=>{//循环判断总价钱
+            sum1 += (drug.rdPrice*drug.rdCount);
+          })
+          this.xpObject.xmNumber = row.recipeObject.recipeNumber;
+          this.xpObject.xmName="西药处方";
+          this.xpObject.xmSum = sum1;
+          this.xpObject.xmText = row.recipeObject.xpNotes;
 
 
-				row.recipeObject.xpList.forEach((b,i)=>{
-					if(b.rdStatePrice==0){
-						//先添加一遍在清空数组
-						this.contentObject.coName = b.rdName;
-						this.contentObject.coPrice = b.rdPrice;
-						this.contentObject.coCount =b.rdCount;
-						this.contentArr1.push(this.contentObject)
-						//清空数组
-						this.contentObject={};
-					}
-				})
-				this.xpObject.xmContent=this.contentArr1;
-				
-				this.leftTableList.push(this.xpObject)
-			  }
-			 if(row.recipeObject.zpList[0].zpStatePrice ==0){
-			   var sum2 = 0;//中药总价钱
-			   row.recipeObject.zpList.forEach((drug,i)=>{//循环判断总价钱
-				 sum2 += (drug.zpPrice*drug.zpCount);
-			   })
-			   this.zpObject.xmNumber = row.recipeObject.recipeNumber;
-			   this.zpObject.xmName="中药处方";
-			   this.zpObject.xmSum = sum2;
-			   this.zpObject.xmText = row.recipeObject.zpNotes;
+          row.recipeObject.xpList.forEach((b,i)=>{
+            if(b.rdStatePrice==0){
+              //先添加一遍在清空数组
+              this.contentObject.coName = b.rdName;
+              this.contentObject.coPrice = b.rdPrice;
+              this.contentObject.coCount =b.rdCount;
+              this.contentArr1.push(this.contentObject)
+              //清空数组
+              this.contentObject={};
+            }
+          })
+          this.xpObject.xmContent=this.contentArr1;
 
-			   row.recipeObject.zpList.forEach((b,i)=>{
-				   if(b.zpStatePrice==0){
-					   //先添加一遍在清空数组
-					   this.contentObject.coName = b.zpName;
-					   this.contentObject.coPrice = b.zpPrice;
-					   this.contentObject.coCount =b.zpCount;
-					   this.contentArr2.push(this.contentObject)
-					   //清空数组
-					   this.contentObject={};
-				   }
-			   })
-			   this.zpObject.xmContent=this.contentArr2
-			   
-			   this.leftTableList.push(this.zpObject)
-			 }
-			 console.log(this.leftTableList)
+          this.leftTableList.push(this.xpObject)
+
+          }
+
+         if(row.recipeObject.zpList[0].zpStatePrice ==0  && row.recipeObject.xpList[0].zpName !=null){
+           var sum2 = 0;//中药总价钱
+           row.recipeObject.zpList.forEach((drug,i)=>{//循环判断总价钱
+           sum2 += (drug.zpPrice*drug.zpCount);
+           })
+           this.zpObject.xmNumber = row.recipeObject.recipeNumber;
+           this.zpObject.xmName="中药处方";
+           this.zpObject.xmSum = sum2;
+           this.zpObject.xmText = row.recipeObject.zpNotes;
+
+           row.recipeObject.zpList.forEach((b,i)=>{
+             if(b.zpStatePrice==0){
+               //先添加一遍在清空数组
+               this.contentObject.coName = b.zpName;
+               this.contentObject.coPrice = b.zpPrice;
+               this.contentObject.coCount =b.zpCount;
+               this.contentArr2.push(this.contentObject)
+               //清空数组
+               this.contentObject={};
+             }
+           })
+           this.zpObject.xmContent=this.contentArr2
+
+           this.leftTableList.push(this.zpObject)
+         }
 		   },
 		   //打印价格
-		   forPrinting(index,xmName){
-			   console.log(xmName)
-			 this.axios.post("forPrinting",{index:index,xmName:xmName}).then((v)=>{
-			   console.log(v.data)
-				if(v.data=='ok'){
-					this.selectRecord()	
-				}
-			   
-			 }).catch();
+		   forPrinting(index,number,xmName){
+         console.log(index)
+         this.axios.post("forPrinting",{index:number,xmName:xmName}).then((v)=>{
+           console.log(v.data)
+          if(v.data=='ok'){
+
+            if(this.leftTableList.length<=1 ){
+              console.log("======")
+              this.selectRecordsAll()
+              this.leftRecordObject={};
+              this.leftText='';
+
+              this.$message({
+                showClose: true,
+                type: 'success',
+                message: '缴费成功~'
+              });
+            }
+            this.leftTableList.splice(index)
+            this.selectRecord()
+          }
+
+         }).catch();
 		   },
 		   //标签方法
 		   colorType(value) {
-			 if(value=="西药处方" || value == "中药处方"){
-				return 'success';
-			 }else{
-			   return 'primary';
-			 }
+         if(value=="西药处方" || value == "中药处方"){
+          return 'success';
+         }else{
+           return 'primary';
+         }
 		   },
 		//查询所有的缴费记录总记录
 		selectRecordsAll(){
 			this.axios.post("selectRecordsAll",{text:this.rightText}).then((v)=>{
-				console.log(v.data)
 				this.rightList =v.data;
 			}).catch( );
 		},

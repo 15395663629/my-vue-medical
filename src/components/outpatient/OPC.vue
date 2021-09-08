@@ -579,6 +579,7 @@
           recipeSickName:'',
           recipeDoctorName:'',
           recipeDoctorText:'',
+          recipeDrugState:0,
           xpNotes:'',
           zpNotes:'',
           sickNumber:'',
@@ -983,7 +984,9 @@
         this.recipeObject.recipeDoctorText=null;
         this.recipeObject.sickNumber=this.leftTopTable[0].rtRegObject.sickNumber;
         this.recipeObject.sId=this.token.sid;
+        this.recipeObject.recipeDrugState=0;
         this.recipeObject.recipePrice = sum1+sum2;
+
         // 添加西药处方集合
         this.rightTableData1.forEach((drug,i)=>{
           if(drug.xpObject.rdSkin==false){//判断是否皮试
