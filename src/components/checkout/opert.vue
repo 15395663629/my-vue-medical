@@ -1,7 +1,7 @@
 <template >
 	<el-row class="row-one">
 		<el-col :span="24">
-			 病人信息：<el-input class="ss-br-xx" v-model="input" placeholder="请输入你要查询的病人" ></el-input>  
+			 病人信息：<el-input class="ss-br-xx" @input="getData" v-model="seach" placeholder="请输入你要查询的病人" ></el-input>
 			<el-button type="primary" icon="el-icon-search">查询</el-button>
       <el-button  @click="drawer = true" style="margin-left: 500px" type="primary">手术室管理</el-button>
 		</el-col>
@@ -147,11 +147,11 @@
   </el-dialog>
 	<el-row>
 		<el-col :span="6">
-			结果：<span>2</span>条
+			结果：<span>{{sApply.length}}</span>条
 		</el-col>
 	</el-row>
 	<el-row >
-		<!-- ====================================================弹框 ====================================================-->
+		<!-- ====================================================开始手术弹框 ====================================================================-->
 		<el-dialog title="手术安排" v-model="apss">
 			<el-form  status-icon :rules="rules" ref="ruleForm" label-width="100px" class="">
 				<el-row style="color: red;">
@@ -160,17 +160,17 @@
 				<el-row>
 					<el-col :span="5">
 						<el-form-item label="手术名称:" label-width="80px">
-							<el-input></el-input>
+							<el-input size="mini"></el-input>
 						</el-form-item>
 					</el-col>
 					<el-col  :span="5">
 						<el-form-item label="手术类型:" label-width="80px">
-							<el-input></el-input>
+							<el-input size="mini"></el-input>
 						</el-form-item>
 					</el-col>
 					<el-col :offset="1" :span="7">
 									<el-form-item label="手术部位:" label-width="80px">
-										<el-input></el-input>
+										<el-input size="mini"></el-input>
 									</el-form-item>
 					</el-col>
 				</el-row>
@@ -180,27 +180,27 @@
 				<el-row>
 					<el-col :span="5">
 						<el-form-item label="病人姓名:" label-width="80px">
-							<el-input></el-input>
+							<el-input size="mini"></el-input>
 						</el-form-item>
 					</el-col>
-					<el-col  :span="3">
+					<el-col  :span="4">
 						<el-form-item label="床号:" label-width="60px">
-							<el-input></el-input>
+							<el-input size="mini"></el-input>
 						</el-form-item>
 					</el-col>
-								<el-col :offset="1" :span="2">
+								<el-col  :span="2">
 									<el-form-item label="性别:" label-width="60px">
-										<el-input></el-input>
+										<el-input size="mini"></el-input>
 									</el-form-item>
 								</el-col>
 								<el-col :offset="1" :span="3">
 									<el-form-item label="年龄:" label-width="60px">
-										<el-input></el-input>
+										<el-input size="mini"></el-input>
 									</el-form-item>
 								</el-col>
-								<el-col :offset="2" :span="7">
+								<el-col :offset="1" :span="7">
 									<el-form-item label="单&emsp;据:" label-width="60px">
-										<el-input></el-input>
+										<el-input size="mini"></el-input>
 									</el-form-item>
 								</el-col>
 				</el-row>
@@ -208,17 +208,17 @@
 			<el-row style="padding-top:6px ;">
 				<el-col :span="5">
 					<el-form-item label="科&emsp;&emsp;室:" label-width="80px">
-						<el-input></el-input>
+						<el-input size="mini"></el-input>
 					</el-form-item>
 				</el-col>
-				<el-col :offset="3" :span="7">
+				<el-col  :span="7">
 					<el-form-item label="入院诊断:" label-width="80px">
-						<el-input></el-input>
+						<el-input size="mini"></el-input>
 								</el-form-item>
 				</el-col>
 				<el-col :offset="2" :span="7">
 					<el-form-item label="身份证:" label-width="60px">
-							<el-input></el-input>
+							<el-input size="mini"></el-input>
 					</el-form-item>
 				</el-col>
 			</el-row>
@@ -228,45 +228,39 @@
 			<el-row>
 				<el-col :span="7">
 					<el-form-item label="住院号:&emsp;" label-width="80px">
-						<el-input></el-input>
+						<el-input size="mini"></el-input>
 					</el-form-item>
 				</el-col>
 				<el-col  :span="3">
 					<el-form-item label="身高:" label-width="80px">
-						<el-input></el-input>
+						<el-input size="mini"></el-input>
 					</el-form-item>
 				</el-col>
 							<el-col :span="4">
 								<el-form-item label="体重:" label-width="80px">
-									<el-input></el-input>
+									<el-input size="mini"></el-input>
 								</el-form-item>
 							</el-col>
 							<el-col :offset="2" :span="7">
 									<el-form-item label="术前诊断:" label-width="80px">
-					<el-input></el-input>
+					<el-input size="mini"></el-input>
 							</el-form-item>
 				</el-col>
 			</el-row>
 			<el-row style="padding-top:6px ;">
 				<el-col :span="6">
 					<el-form-item label="主刀医生:&emsp;" label-width="80px">
-						<el-input></el-input>
+						<el-input size="mini"></el-input>
 					</el-form-item>
 				</el-col>
 				<el-col  :span="7">
 					<el-form-item label="拟施手术:" label-width="80px">
-						<el-input></el-input>
+						<el-input size="mini"></el-input>
 					</el-form-item>
 							</el-col>
 							<el-col  :span="10">
 								<el-form-item label="拟施日期:" label-width="80px">
-									<el-date-picker
-									  v-model="value1"
-									  type="daterange"
-									  start-placeholder="Start Date"
-									  end-placeholder="End Date"
-									  :default-value="[new Date(2010, 9, 1), new Date(2010, 10, 1)]">
-									</el-date-picker>
+									<el-input size="mini"></el-input>
 								</el-form-item>
 							</el-col>
 			</el-row>
@@ -322,18 +316,7 @@
               <el-button
                   size="mini"
                   type="primary"
-
-                  @click="sssEdit(scope.row)">修改</el-button>
-              <el-button
-                  size="mini"
-                  type="danger"
-                  v-show="scope.row.operationZt!=2"
-                  @click="opensss(scope.row,2)">停用</el-button>
-              <el-button
-                  size="mini"
-                  type="success"
-                  v-show="scope.row.operationZt==2"
-                  @click="opensss(scope.row,0)">启用</el-button>
+                  @click="sssEdit(scope.row)">选择</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -394,16 +377,12 @@
 			  prop="ptdx.staff.sname"
 			  label="主治医师">
 			</el-table-column>
-			<el-table-column label="操作" width="400px">
+			<el-table-column label="操作" width="220px">
 			      <template #default="scope">
-			        <el-button
-			          size="mini"
-					  type="primary"
-			          @click="apss=true">开始</el-button>
-			        <el-button
-			          size="mini"
-			          type="danger"
-			          @click="handleDelete(scope.$index, scope.row)">取消申请</el-button>
+			        <el-button size="mini" type="primary" @click="apss=true"  v-show="scope.row.applyZt==0">开始</el-button>
+              <el-button style="margin-left: 0px" size="mini" type="success" :loading="true" v-show="scope.row.applyZt==1">手术中</el-button>
+              <el-button size="mini" type="warning" @click="apss=true" v-show="scope.row.applyZt==1">结束</el-button>
+			        <el-button v-show="scope.row.applyZt!=1" size="mini" type="danger" @click="handleDelete(scope.$index, scope.row)" >取消申请</el-button>
 			      </template>
 			</el-table-column>
 		</el-table>
@@ -427,6 +406,8 @@
   export default {
 		data() {
 			return {
+        loading: true,
+        url: '../static/img/login.gif',
         seach:'',//手术申请搜索
 			  staf:[],//员工
         department:[],//科室
@@ -481,12 +462,15 @@
 		 methods: {
 		  //手术室基础参数
        getData() {
+         //所有手术室
          this.axios.get("http://localhost:8089/sssRoom").then((res) => {
            this.room = res.data;
          }).catch()
+         //所有空闲手术室（安排用）
          this.axios.get("http://localhost:8089/sssRoom",{params: {seach:0}}).then((res) => {
            this.room1 = res.data;
          }).catch()
+         //所有手术申请
          this.axios.get("http://localhost:8089/sssApply",{params: {seach:this.seach}}).then((res) => {
            this.sApply = res.data;
          }).catch()

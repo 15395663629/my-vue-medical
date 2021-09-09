@@ -1,7 +1,7 @@
 <template>
 	<el-row class="row-one">
 		<el-col :span="12"  >
-						病人信息：<el-input class="myin" v-model="input" placeholder="请输入你要查询的手术" ></el-input>
+						病人信息：<el-input class="myin" @input="getData" v-model="seach" placeholder="请输入你要查询的手术" ></el-input>
 						<el-button type="primary" icon="el-icon-search">查询</el-button>
 		</el-col>
 	</el-row>
@@ -138,47 +138,63 @@
 	<el-row > <!--======= ============================================================表格 ====================-->
 		<el-table
 		    ref="multipleTable"
-		    :data="ssTa"
+		    :data="Ssdetailt"
 		    tooltip-effect="dark"
-			height="450"
+			  height="450"
 		    style="width: 100%"
-		    @selection-change="handleSelectionChange">
+		    >
 		    <el-table-column
 		      label="住院号"
-			  prop="ssId"
+			  prop="ptNo"
 		      >
 		    </el-table-column>
 			<el-table-column
-			  prop="ssName"
+			  prop="ptdx.ptName"
 			  label="姓名">
+        <template #default="scope" >
+          <el-popover width="300" effect="light"   trigger="hover" placement="top">
+            <template #default >
+              <p>姓名: {{ scope.row.ptdx.ptName }}</p>
+              <p>年龄: {{ scope.row.ptdx.ptAge }}</p>
+              <p>性别: {{ scope.row.ptdx.ptSex }}</p>
+              <p>电话: {{ scope.row.ptdx.ptIphone }}</p>
+              <p>住址: {{ scope.row.ptdx.ptHomeAdder }}</p>
+            </template>
+            <template #reference>
+              <div class="name-wrapper">
+                <el-tag size="medium">{{ scope.row.ptdx.ptName }}</el-tag>
+              </div>
+            </template>
+          </el-popover>
+        </template>
 			</el-table-column>
 		    <el-table-column
-		      prop="ssName"
+		      prop="ssdx.projectName"
 		      label="手术名称">
 		    </el-table-column>
 		    <el-table-column
-		      prop="sscard"
+		      prop="ssdx.projectType"
 		      label="手术类型">
 		    </el-table-column>
 			<el-table-column
-			  prop="sscard"
+			  prop="ssdx.projectPosition"
 			  label="手术位置">
 			</el-table-column>
 			<el-table-column
-			  prop="ssbed"
+			  prop="operationHandle"
 			  label="术后处理">
 			</el-table-column>
 			<el-table-column
-			  prop="sstime"
-			      sortable
-			      width="180"
-			      column-key="date"
-			      :filter-method="filterHandler"
+			  prop="operationDate"
 			  label="手术时间">
 			</el-table-column>
 			<el-table-column
-			  prop="ssdemo"
-			  label="手术金额">
+			  prop="operationTime"
+			  label="手术时长">
+      </el-table-column>
+        <el-table-column
+            prop="ssdx.projectPay"
+            label="手术金额">
 			</el-table-column>
 			<el-table-column label="操作" width="400px">
 			      <template #default="scope">
@@ -209,66 +225,15 @@
 <script>
 	export default {
 	    data () {
-			var checkAge = (rule, value, callback) => {
-        if (!value) {
-          return callback(new Error('年龄不能为空'));
-        }
-        setTimeout(() => {
-          if (!Number.isInteger(value)) {
-            callback(new Error('请输入数字值'));
-          } else {
-            if (value < 18) {
-              callback(new Error('必须年满18岁'));
-            } else {
-              callback();
-            }
-          }
-        }, 1000);
-      };
-      var validatePass = (rule, value, callback) => {
-        if (value === '') {
-          callback(new Error('请输入密码'));
-        } else {
-          if (this.ruleForm.checkPass !== '') {
-            this.$refs.ruleForm.validateField('checkPass');
-          }
-          callback();
-        }
-      };
-      var validatePass2 = (rule, value, callback) => {
-        if (value === '') {
-          callback(new Error('请再次输入密码'));
-        } else if (value !== this.ruleForm.pass) {
-          callback(new Error('两次输入密码不一致!'));
-        } else {
-          callback();
-        }
-      }
 	      return {
-			ssTa: [{
-				ssId: '11',
-				ssName: '20202',
-				sscard: ' 15183456789',
-				ssbed: '复诊',
-				sstime: '2121-2-2',
-				ssdemo:'开颅',
-			},
-			{
-				ssId: '12',
-				ssName: '20202',
-				sscard: ' 15183456789',
-				ssbed: '复诊',
-				sstime: '2121-2-1',
-				ssdemo:'开膛'
-			}],
-			
-			        value: '',
+// 手术记录集合
+			Ssdetailt:[],
+          seach:'',//搜索框
+			value: '',
 			isShow:false,
 			xgss:false,
 			input: '',
 			sstime: '',
-	        radio1: '查看全部',
-
 			ruleForm: {
 			          pass: '',
 			          checkPass: '',
@@ -277,6 +242,12 @@
 	      } 
 	    },
 		methods: {
+//手术室基础参数
+      getData() {
+        this.axios.get("http://localhost:8089/ssdDetail",{params: {seach:this.seach}}).then((res) => {
+          this.Ssdetailt = res.data;
+        }).catch()
+      },
 			handleEdit(index, row) {
 				this.isShow = true;
 			},
@@ -301,7 +272,9 @@
 				this.xgss = false;
 				this.$refs[formName].resetFields();
 			}
-		},
+		},created() {
+      this.getData()
+    },
 	  }
 </script>
 

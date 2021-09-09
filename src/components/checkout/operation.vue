@@ -285,7 +285,7 @@
           <template #default="scope">
           <el-button size="mini" @click="xztjEdit(0,scope.row)" type="primary" >修改</el-button>
 				  <el-button size="mini" type="primary" @click="qyryEdit(scope.row)" v-show="getNowFormatDate==scope.row.manTime && scope.row.mcBalance!=null">启用</el-button>
-            <el-button size="mini" type="primary" @click="aMc" v-show="scope.row.mcBalance==null">办卡</el-button>
+          <el-button size="mini" type="primary" @click="aMc" v-show="scope.row.mcBalance==null">办卡</el-button>
 				  <el-button size="mini"   type="danger">取消</el-button>
           </template>
 				</el-table-column>
