@@ -101,7 +101,7 @@
   <!-- ------------------------------------------------------------表格--------------------------------------------------- -->
   <el-row :gutter="20">
 		<el-col>
-			<el-table :data="tableData" style="width: 100%;">
+			<el-table :data="tableData.slice((currentPage-1)*pagesize,currentPage*pagesize)" style="width: 100%;" height="500">
 				<el-table-column prop="ykPurchaseTime" label="采购日期">
 					</el-table-column>
 				<el-table-column prop="ykPurchaseId" label="采购编号">
@@ -126,17 +126,17 @@
 			</el-table>
 		</el-col>
 	</el-row>
-	<!-- 分页 -->
-	<el-pagination
-			style="text-align: center;"
-	      @size-change="handleSizeChange"
-	      @current-change="handleCurrentChange"
-	      :current-page="currentPage4"
-	      :page-sizes="[100, 200, 300, 400]"
-	      :page-size="100"
-	      layout="total, sizes, prev, pager, next, jumper"
-	      :total="400">
-	</el-pagination>
+  <!-- 分页 -->
+  <el-pagination
+      style="text-align: center"
+      @size-change="handleSizeChange"
+      @current-change="handleCurrentChange"
+      :current-page="currentPage"
+      :page-sizes="[3, 8, 16, 32]"
+      :page-size="pagesize"
+      layout="total, sizes, prev, pager, next, jumper"
+      :total="tableData.length">
+  </el-pagination>
 </template>
 
 <script>
@@ -167,9 +167,19 @@
         open:false,
         value1: '',
         drugInfosC:[],
+        currentPage:1, //初始页
+        pagesize:8,    //    每页的数据
       }
     },
 		methods: {
+      handleSizeChange: function (size) {
+        this.pagesize = size;
+        console.log(this.pagesize)  //每页下拉显示数据
+      },
+      handleCurrentChange: function(currentPage){
+        this.currentPage = currentPage;
+        console.log(this.currentPage)  //点击第几页
+      },
       // 生成随机编号     获取当前日期的方法
       getProjectNum () {
         const projectTime = new Date() // 当前中国标准时间

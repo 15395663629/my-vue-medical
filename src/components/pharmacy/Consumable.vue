@@ -6,7 +6,7 @@
     </el-col>
   </el-row>
   <el-table
-      :data="tablemable.filter(data => !search || data.consumablesName.toLowerCase().includes(search.toLowerCase()))"
+      :data="tablemable.filter(data => !search || data.consumablesName.toLowerCase().includes(search.toLowerCase())).slice((currentPage-1)*pagesize,currentPage*pagesize)"
       style="width: 100%"  height="500">
     <el-table-column
         prop="consumablesName"
@@ -31,10 +31,7 @@
     <el-table-column
         align="right">
       <template #header>
-        <el-input
-            v-model="search"
-            size="mini"
-            placeholder="输入关键字搜索"/>
+        <el-input v-model="search" size="mini" placeholder="输入关键字搜索"/>
       </template>
       <template #default="scope">
         <el-button type="primary" plain size="mini" @click="updatemables(scope.row)">编辑</el-button>
@@ -76,17 +73,17 @@
 			    </span>
     </template>
   </el-dialog>
-  <!--分页插件-->
-<!--  <el-pagination-->
-<!--      style="text-align: center;"-->
-<!--      @size-change="handleSizeChange"-->
-<!--      @current-change="handleCurrentChange"-->
-<!--      :current-page="currentPage4"-->
-<!--      :page-sizes="[100, 200, 300, 400]"-->
-<!--      :page-size="100"-->
-<!--      layout="total, sizes, prev, pager, next, jumper"-->
-<!--      :total="400">-->
-<!--  </el-pagination>-->
+  <!-- 分页 -->
+  <el-pagination
+      style="text-align: center"
+      @size-change="handleSizeChange"
+      @current-change="handleCurrentChange"
+      :current-page="currentPage"
+      :page-sizes="[3, 8, 16, 32]"
+      :page-size="pagesize"
+      layout="total, sizes, prev, pager, next, jumper"
+      :total="tablemable.length">
+  </el-pagination>
 </template>
 
 <script>
@@ -103,9 +100,20 @@ export default {
         consumablesUnit:'',
         consumablesPrice:'',
       },
+      search: '',//搜索框
+      currentPage:1, //初始页
+      pagesize:8,    //    每页的数据
     }
   },
   methods:{
+    handleSizeChange: function (size) {
+      this.pagesize = size;
+      console.log(this.pagesize)  //每页下拉显示数据
+    },
+    handleCurrentChange: function(currentPage){
+      this.currentPage = currentPage;
+      console.log(this.currentPage)  //点击第几页
+    },
     getData(){
       this.axios.post("all-mables").then((v) => {
         this.tablemable = v.data;
