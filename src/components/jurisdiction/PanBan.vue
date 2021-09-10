@@ -78,7 +78,7 @@
       <el-col :span="wid" v-for="bc in schedulingTypeOptions" class="doc">
           <span v-for="ygpb in pb.slist">
             <template v-if="ygpb.frId==bc.fid">
-              {{ygpb.staff.sname}}
+              {{ygpb.staff.sname+"&#32"}}
             </template>
           </span>
 

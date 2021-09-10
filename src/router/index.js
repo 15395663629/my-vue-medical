@@ -190,7 +190,7 @@ const routes = [
 				name:'settings',//命名路由
 				path:'/settings',
 				component:()=>import("/src/components/jurisdiction/settings.vue"),
-				meta:{title:'系统设置', noCache: true },
+				meta:{title:'今日排班', noCache: true },
 			},
 			/* ======================================================pharmacy 二级 药房路由===================================================== */
 				{
