@@ -120,14 +120,14 @@ import { ElMessage } from 'element-plus'
 				input1:"",//查询搜索框
         input2:"",//查询搜索框
         leftTable: [{  /* 表格部分1 */
-            sDate: '2021-08-20 10:10',
+            sDate: '2021-09-06 10:10',
             sOverKsName:'内科',
             sDoctor:'徐宏鱼',
             sScience:'普通号',
             sType:'主任医师',
             sPrice:'19',
 				},{  /* 表格部分1 */
-            sDate: '2021-08-20 10:11',
+            sDate: '2021-09-06 10:11',
             sOverKsName:'内科',
             sDoctor:'雷啊狗',
             sScience:'专家号',
