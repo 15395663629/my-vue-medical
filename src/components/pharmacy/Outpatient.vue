@@ -2,138 +2,11 @@
 	<el-tabs type="border-card">
 	<!-- 门诊发药 -->
 	  <el-tab-pane label="门诊发药">
-		  <el-dialog title="选择患者" v-model="isShowXZBR">
-		  	<el-table
-		  	    ref="multipleTable"
-		  	    :data="empArr"
-		  	    tooltip-effect="dark"
-		  	    style="width: 100%"
-		  	    @selection-change="handleSelectionChange">
-				
-		  	    <el-table-column
-		  	      label="病人姓名"
-		  		  prop="empId">
-		  	    </el-table-column>
-		  	    
-		  		<el-table-column
-		  		  label="病人性别"
-		  		  prop="empId">
-		  		</el-table-column>
-		  		
-		  		<el-table-column
-		  		  label="就诊科室"
-		  		  prop="empId">
-		  		</el-table-column>
-				
-				<el-table-column
-				  label="主治医生"
-				  prop="empId">
-				</el-table-column>
-				
-		  		<el-table-column width="200px"
-		  		      align="right">
-		  		      <template  #header>
-		  		        <el-input
-		  		          v-model="fromSearch"
-		  					prefix-icon="el-icon-search"
-		  		          size="small"
-		  		          placeholder="病人名称搜索"/>
-		  		      </template>
-		  			  <!--这里放操作按钮-->
-		  			  <template  #default='scope'>
-		  			  	<el-button type="danger" icon="el-icon-delete" @click="delEmp(scope.row)" circle>删除</el-button>
-		  			  </template>
-		  		    </el-table-column>
-		  		
-		  	  </el-table>
-		  	  <!--分页插件-->
-		  	   <el-pagination
-		  	  					style="text-align: center;"
-		  	        @size-change="totalCut"
-		  	        @current-change="pageCut"
-		  	        :current-page="1"
-		  	        :page-sizes="[2,4,6,8,10]"
-		  	        :page-size="size"
-		  	        layout="total, sizes, prev, pager, next, jumper"
-		  	        :total="total">
-		  	      </el-pagination>
-		  </el-dialog>
-		  <!--=============================================选择患者信息弹框===================================-->
-		  <el-dialog title="患者信息" v-model="isShowZY">
-		  	<el-form>
-		  		<el-row>
-		  			<el-col :span="6">
-		  				<el-form-item label="姓名" label-width="80px">
-		  					<el-input></el-input>
-		  				</el-form-item>
-		  			</el-col>
-		  			<el-col :span="1">
-		  				<el-button @click="isShowXZBR = true" type="primary" icon="el-icon-user-solid"></el-button>
-		  			</el-col>
-		  		</el-row>
-		  		<el-row>
-		  			<el-col :span="6">
-		  				<el-form-item label="性别" label-width="80px">
-		  				 <el-radio-group v-model="isSex">
-		  				    <el-radio label="男">男</el-radio>
-		  				    <el-radio label="女">女</el-radio>
-		  				  </el-radio-group>
-		  				</el-form-item>
-		  			</el-col>
-		  			<el-col :span="2">
-		  			</el-col>
-		  		</el-row>
-				<el-row>
-					<el-col :offset="1" :span="9">
-						<el-form-item label="科室" label-width="80px">
-							<el-select v-model="isSex" placeholder="请选择">
-							    <el-option
-									key="s"
-							      label="item.label"
-							      value="item.value">
-							    </el-option>
-								<el-option
-								key="ss"
-								  label="item.label"
-								  value="item.value">
-								</el-option>
-							  </el-select>
-						</el-form-item>
-					</el-col>
-				</el-row>
-				<el-row>
-		  			<el-col :offset="1" :span="9">
-		  				<el-form-item label="治疗医生" label-width="80px">
-		  					<el-select v-model="isSex" placeholder="请选择">
-		  					    <el-option
-		  							key="s"
-		  					      label="item.label"
-		  					      value="item.value">
-		  					    </el-option>
-		  						<el-option
-		  						key="ss"
-		  						  label="item.label"
-		  						  value="item.value">
-		  						</el-option>
-		  					  </el-select>
-		  				</el-form-item>
-		  			</el-col>
-		  		</el-row>
-		  	</el-form>
-
-		  	<template #footer>
-		  			<el-button @click="addEmp('empFrom')" type="primary">确定</el-button>
-		  			<el-button @click="isShowZY = false" type="danger">取消</el-button>
-		  	</template>
-		  </el-dialog>
-		  
 		  <el-row>
 		  	<el-col>
-		  		<el-button @click="isShowZY = true" type="primary">选择患者</el-button>
-				<el-button type="success">门诊发药</el-button>
+				  <el-button type="success">门诊发药</el-button>
 		  	</el-col>
 		  </el-row>
-		  
 		  <!--=============================================药品表格===================================-->
 		  <el-row>
 		  	<el-col>
@@ -141,27 +14,45 @@
 		  		    :data="InhospitalApplyArr"
 		  		    tooltip-effect="dark"
 		  		    style="width: 100%">
+              <el-table-column type="selection" width="55"/>
+            <el-table-column
+                label="发药编号"
+                prop="empId">
+            </el-table-column>
 		  		    <el-table-column
-		  		      label="药品名称"
+		  		      label="发药时间"
 		  			  prop="empId">
 		  		    </el-table-column>
 		  		    <el-table-column
 		  		      prop="empName"
-		  		      label="药品数量">
+		  		      label="处方编号">
 		  		    </el-table-column>
 		  		    <el-table-column
 		  		      prop="empDate"
-		  		      label="单价">
+		  		      label="操作员">
 		  		    </el-table-column>
 		  			<el-table-column
 		  			  prop="empSalary"
-		  			  label="小计">
+		  			  label="药品去向">
 		  			</el-table-column>
-		  			<el-table-column
-		  			  prop="emp"
-		  			  label="类别">
-		  			</el-table-column>
-		  		  </el-table>
+            <el-table-column label="操作">
+              <template #default="scope">
+                <el-button type="primary" plain size="small" @click="">查看药品</el-button>
+                <el-button type="success" plain size="small">发药</el-button>
+              </template>
+            </el-table-column>
+          </el-table>
+        </el-col>
+        <!--        发药详情里面的药品-->
+          <el-dialog title="药品详情" v-model="mzfy">
+            <el-table>
+              <el-table-column property="" label="备注"/>
+              <el-table-column property="" label="发药编号"/>
+              <el-table-column property="" label="药品名称"/>
+              <el-table-column property="" label="药品数量"/>
+              <el-table-column property="" label="药品编号"/>
+            </el-table>
+          </el-dialog>
 		  		  <!--分页插件-->
 		  		   <el-pagination
 		  				style="text-align: center;"
@@ -172,8 +63,7 @@
 		  		        :page-size="size"
 		  		        layout="total, sizes, prev, pager, next, jumper"
 		  		        :total="total">
-		  		      </el-pagination>
-		  	</el-col>
+             </el-pagination>
 		  </el-row>
 	  </el-tab-pane>
 
@@ -395,12 +285,10 @@
 		  		<el-table
 		  		    :data="InhospitalApplyArr"
 		  		    tooltip-effect="dark"
-		  		    style="width: 100%"
-		  			>
+		  		    style="width: 100%">
 		  		    <el-table-column
 		  		      label="药品名称"
-		  			  prop="empId"
-		  		      >
+		  			  prop="empId">
 		  		    </el-table-column>
 		  		    <el-table-column
 		  		      prop="empName"
@@ -419,8 +307,6 @@
 		  			  label="类别">
 		  			</el-table-column>
 		  		  </el-table>
-		  		  
-		  		  
 		  		  <!--分页插件-->
 		  		   <el-pagination
 		  				style="text-align: center;"
@@ -448,14 +334,12 @@
 					empName:'2',
 					empDate:'15',
 					empSalary:'30',
-					emp:'感冒冲剂',
 					},
 					{
 					empId:'999感冒灵',
 					empName:'2',
 					empDate:'15',
 					empSalary:'30',
-					emp:'感冒冲剂',
 					},
 				],
 				InhospitalApply:{
