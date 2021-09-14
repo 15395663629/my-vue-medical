@@ -206,6 +206,12 @@ const routes = [
 					meta:{title:'药库', noCache: true },
 				},
 				{
+					name:'YaoFang',
+					path:'/YaoFang',
+					component:()=>import("/src/components/pharmacy/Yfstockpile.vue"),
+					meta:{title:'药房', noCache: true },
+				},
+				{
 					name:'Haocai',
 					path:'/Haocai',
 					component:()=>import("/src/components/pharmacy/Consumable.vue"),
