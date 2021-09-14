@@ -97,7 +97,8 @@ import qs from 'qs'
                 }).then((d)=>{
                  console.log(d.data)
                   this.$store.state.token = d.data;
-                  sessionStorage.setItem("token",JSON.stringify(v.data))
+                  // this.$store.commit("initMenu",d.data)
+                  sessionStorage.setItem("token",JSON.stringify(d.data))
                   this.$router.push('/home')
                 }).catch();
               }else{
@@ -111,7 +112,7 @@ import qs from 'qs'
 
 			},
       dome(){
-			  console.log(122)
+			  // console.log(122)
         //清空sessionStorage
         this.$store.state.token = ''
         sessionStorage.removeItem("token")
