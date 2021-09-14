@@ -163,15 +163,10 @@
 							<el-input size="mini"></el-input>
 						</el-form-item>
 					</el-col>
-					<el-col  :span="5">
-						<el-form-item label="手术类型:" label-width="80px">
-							<el-input size="mini"></el-input>
+					<el-col  :span="8">
+						<el-form-item label="" label-width="120px">
+							<el-button size="mini" type="primary">重新选择手术</el-button>
 						</el-form-item>
-					</el-col>
-					<el-col :offset="1" :span="7">
-									<el-form-item label="手术部位:" label-width="80px">
-										<el-input size="mini"></el-input>
-									</el-form-item>
 					</el-col>
 				</el-row>
 				<el-row style="color: red;">
@@ -195,11 +190,6 @@
 								</el-col>
 								<el-col :offset="1" :span="3">
 									<el-form-item label="年龄:" label-width="60px">
-										<el-input size="mini"></el-input>
-									</el-form-item>
-								</el-col>
-								<el-col :offset="1" :span="7">
-									<el-form-item label="单&emsp;据:" label-width="60px">
 										<el-input size="mini"></el-input>
 									</el-form-item>
 								</el-col>
@@ -231,17 +221,7 @@
 						<el-input size="mini"></el-input>
 					</el-form-item>
 				</el-col>
-				<el-col  :span="3">
-					<el-form-item label="身高:" label-width="80px">
-						<el-input size="mini"></el-input>
-					</el-form-item>
-				</el-col>
-							<el-col :span="4">
-								<el-form-item label="体重:" label-width="80px">
-									<el-input size="mini"></el-input>
-								</el-form-item>
-							</el-col>
-							<el-col :offset="2" :span="7">
+				<el-col :offset="2" :span="7">
 									<el-form-item label="术前诊断:" label-width="80px">
 					<el-input size="mini"></el-input>
 							</el-form-item>
