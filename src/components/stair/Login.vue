@@ -1,8 +1,8 @@
-<template>
-	<div class="div-login">
+<template @keyup.enter="onSubmit('form')">
+	<div  class="div-login">
 		<video style="width: 100%;" data-v-10a6bc2b="" autoplay="autoplay" loop="loop" muted="muted"><source  data-v-10a6bc2b="" src="../../../public/static/img/jl.mp4" type="video/mp4">
 		</video>
-		<div class="div-w">
+		<div  class="div-w">
 			<el-form  ref="form" :model="form" :rules="rules" class="login-box">
 					  <h3 class="login-title">柿子医疗后台登录</h3>
 					  <el-form-item prop="uName" :error="errors.user" >
@@ -18,7 +18,7 @@
 							</el-col>
 							
 							<el-col :offset="2" :span="11">
-								 <el-button type="primary" @click="onSubmit('form')">登录</el-button>
+								 <el-button  type="primary"   @click="onSubmit('form')">登录</el-button>
 							</el-col>
 						</el-row>
 					  </el-form-item>
@@ -70,7 +70,6 @@ import qs from 'qs'
 				dialogVisible: false
 			}
 		},
-
 		methods:{
 			resetForm(){
 				this.$refs['loginForm'].resetFields();
@@ -86,22 +85,22 @@ import qs from 'qs'
 				}
 			},
 			onSubmit(formName) {
+
         this.$refs[formName].validate(valid =>{
           if(valid){
-            this.axios.post('http://localhost:8089/jwt',qs.stringify(this.form)).then((v)=>{
-             console.log(v.data)
-              if(v.data.success===true){
-                this.axios({
-                  url:"test",
-                  params:{token:v.data.data,uName:this.form.uName}
-                }).then((d)=>{
-                 console.log(d.data)
-                  this.$store.state.token = d.data;
-                  sessionStorage.setItem("token",JSON.stringify(v.data))
-                  this.$router.push('/home')
-                }).catch();
+            this.axios.post('http://localhost:8089/login',qs.stringify(this.form)).then((v)=>{
+              if(v.data !== 0){
+                console.log(v.data.list.szt)
+                  if(v.data.list.szt ===0){
+                    this.$store.state.token = v.data;
+                    sessionStorage.setItem("token",JSON.stringify(v.data))
+                    // console.log(token)
+                    this.$router.push('/home')
+                  }else{
+                    this.$message.error("你已离职无法登录")
+                  }
               }else{
-                this.$message.error(v.data.message)
+                this.$message.error("账号密码错误")
               }
             }).catch()
           }else{
@@ -109,27 +108,33 @@ import qs from 'qs'
           }
         });
 
-			},
-      dome(){
-			  console.log(122)
-        //清空sessionStorage
-        this.$store.state.token = ''
-        sessionStorage.removeItem("token")
-        this.axios.interceptors.request.use((config)=>{
-          if(this.$store.state.token.uid===null||this.$store.state.token.uid===undefined){
-            this.$router.push('/')
-          }else{
-            this.$router.push('/home')
-          }
-          return config;
-        })
+			}
+			
+		},
+    created() {
+      console.log("ads")
+      var lett = this;
+      document.onkeydown = function(e) {
+        var key = window.event.keyCode;
+        if (key == 13) {
+          lett.onSubmit('form');
+        }
       }
 
-		},
-    created(){
-      this.dome()
+      //清空sessionStorage
+      this.$store.state.token = ''
+      sessionStorage.removeItem("token")
+      this.axios.interceptors.request.use((config)=>{
+        if(this.$store.state.token.uid===null||this.$store.state.token.uid===undefined){
+          this.$router.push('/')
+        }else{
+          this.$router.push('/home')
+        }
+        return config;
+      });
 
-    },
+
+    }
 
   }
 </script>
