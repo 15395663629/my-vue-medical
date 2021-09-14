@@ -1,8 +1,8 @@
-<template>
-	<div class="div-login">
+<template @keyup.enter="onSubmit('form')">
+	<div  class="div-login">
 		<video style="width: 100%;" data-v-10a6bc2b="" autoplay="autoplay" loop="loop" muted="muted"><source  data-v-10a6bc2b="" src="../../../public/static/img/jl.mp4" type="video/mp4">
 		</video>
-		<div class="div-w">
+		<div  class="div-w">
 			<el-form  ref="form" :model="form" :rules="rules" class="login-box">
 					  <h3 class="login-title">柿子医疗后台登录</h3>
 					  <el-form-item prop="uName" :error="errors.user" >
@@ -18,7 +18,7 @@
 							</el-col>
 							
 							<el-col :offset="2" :span="11">
-								 <el-button type="primary" @click="onSubmit('form')">登录</el-button>
+								 <el-button  type="primary"   @click="onSubmit('form')">登录</el-button>
 							</el-col>
 						</el-row>
 					  </el-form-item>
@@ -70,19 +70,6 @@ import qs from 'qs'
 				dialogVisible: false
 			}
 		},
-    created() {
-      //清空sessionStorage
-      this.$store.state.token = ''
-      sessionStorage.removeItem("token")
-      this.axios.interceptors.request.use((config)=>{
-        if(this.$store.state.token.uid===null||this.$store.state.token.uid===undefined){
-          this.$router.push('/')
-        }else{
-          this.$router.push('/home')
-        }
-        return config;
-      })
-    },
 		methods:{
 			resetForm(){
 				this.$refs['loginForm'].resetFields();
@@ -123,7 +110,31 @@ import qs from 'qs'
 
 			}
 			
-		}
+		},
+    created() {
+      console.log("ads")
+      var lett = this;
+      document.onkeydown = function(e) {
+        var key = window.event.keyCode;
+        if (key == 13) {
+          lett.onSubmit('form');
+        }
+      }
+
+      //清空sessionStorage
+      this.$store.state.token = ''
+      sessionStorage.removeItem("token")
+      this.axios.interceptors.request.use((config)=>{
+        if(this.$store.state.token.uid===null||this.$store.state.token.uid===undefined){
+          this.$router.push('/')
+        }else{
+          this.$router.push('/home')
+        }
+        return config;
+      });
+
+
+    }
 
   }
 </script>

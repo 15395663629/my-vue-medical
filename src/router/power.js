@@ -12,7 +12,7 @@ export const initMenu = (router,store)=>{
 	if(JSON.parse(sessionStorage.getItem("token")) != null || store.state.token != ''){
 		axios.get("menus",{params:{userId:uid}}).then(resp=>{
 			if (resp && resp.status == 200) {
-			    let res = resp.data;W
+			    let res = resp.data;
 			    if(res.length>0){
 			        //1、对后台查询到的菜单信息，就行格式化，主要目的是：要符合Vue的路由的要求
 			        var fmtRoutes = formatRoutes(res);

@@ -111,6 +111,12 @@ const routes = [
 					meta:{title:'病床管理', noCache: true },
 				},
 				{
+					name:'DrugPharmacyAllot',
+					path:'/drugPharmacyAllot',
+					component: () => import('/src/components/inhospital/DrugPharmacyAllot.vue'),
+					meta:{title:'医嘱扣除库粗管理', noCache: true },
+				},
+				{
 					name:'Discharge',
 					path:'/discharge',
 					component: () => import('/src/components/inhospital/discharge.vue'),
@@ -186,6 +192,12 @@ const routes = [
 					component:()=>import("/src/components/jurisdiction/JueSe.vue"),
 					meta:{title:'角色', noCache: true },
 				},
+			{
+				name:'settings',//命名路由
+				path:'/settings',
+				component:()=>import("/src/components/jurisdiction/settings.vue"),
+				meta:{title:'今日排班', noCache: true },
+			},
 			/* ======================================================pharmacy 二级 药房路由===================================================== */
 				{
 					name:'YF',
