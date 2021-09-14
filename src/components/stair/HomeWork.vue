@@ -1,75 +1,7 @@
 <template>
 	<h1>工作台</h1>
 	<button @click="logout()">退出登入</button>
-  {{token}}
-<!--  <div class="app-content">-->
-<!--    <el-table-->
-<!--        :span-method="objectSpanMethod"-->
-<!--        :data="tableData"-->
-<!--        style="width: 100%" :header-cell-style="{'text-align':'center'}">-->
-<!--      <el-table-column-->
-<!--          prop="ks.ksName"-->
-<!--          label="科室"-->
-<!--      >-->
-<!--      </el-table-column>-->
-<!--      <el-table-column-->
-<!--          prop="staff.sname"-->
-<!--          label="医生"-->
-<!--      >-->
-<!--      </el-table-column>-->
-<!--      <el-table-column label="出诊时间" >-->
-<!--        <el-table-column-->
-<!--            label="周一"-->
-<!--        >-->
-<!--          <template v-slot="scope">-->
-<!--            <p>{{scope.row.scStartDate}}~{{scope.row.scEndDate}}</p>-->
-<!--&lt;!&ndash;            <p v-if="scope.row.scStartDate==='08:00:00' && scope.row.scEndDate==='16:00:00'">早班</p>&ndash;&gt;-->
-<!--          </template>-->
-<!--        </el-table-column>-->
-<!--        <el-table-column-->
-<!--            label="周二"-->
-<!--        >-->
-<!--          <template v-slot="scope">-->
-<!--            <p>{{scope.row.scStartDate}}~{{scope.row.scEndDate}}</p>-->
-<!--          </template>-->
-<!--        </el-table-column>-->
-<!--        <el-table-column-->
-<!--            label="周三">-->
-<!--          <template v-slot="scope">-->
-<!--            <p>{{scope.row.scStartDate}}~{{scope.row.scEndDate}}</p>-->
-<!--          </template>-->
-<!--        </el-table-column>-->
-<!--        <el-table-column-->
-<!--            label="周四"-->
-<!--        >-->
-<!--          <template v-slot="scope">-->
-<!--            <p>{{scope.row.scStartDate}}~{{scope.row.scEndDate}}</p>-->
-<!--          </template>-->
-<!--        </el-table-column>-->
-<!--        <el-table-column-->
-<!--            label="周五"-->
-<!--        >-->
-<!--          <template v-slot="scope">-->
-<!--            <p>{{scope.row.scStartDate}}~{{scope.row.scEndDate}}</p>-->
-<!--          </template>-->
-<!--        </el-table-column>-->
-<!--        <el-table-column-->
-<!--            label="周六"-->
-<!--        >-->
-<!--          <template v-slot="scope">-->
-<!--            <p>{{scope.row.scStartDate}}~{{scope.row.scEndDate}}</p>-->
-<!--          </template>-->
-<!--        </el-table-column>-->
-<!--        <el-table-column-->
-<!--            label="周日"-->
-<!--        >-->
-<!--          <template v-slot="scope">-->
-<!--            <p>{{scope.row.scStartDate}}~{{scope.row.scEndDate}}</p>-->
-<!--          </template>-->
-<!--        </el-table-column>-->
-<!--      </el-table-column>-->
-<!--    </el-table>-->
-<!--  </div>-->
+
 </template>
 
 <script>
