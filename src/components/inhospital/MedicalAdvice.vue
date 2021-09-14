@@ -231,103 +231,7 @@
               </el-row>
             </el-tab-pane>
 
-            <!--==========================================================================科室药品库存-->
-            <el-tab-pane name="科室药品库存" :key="'科室药品库存'" label="科室药品库存">
 
-              <el-form>
-                <el-row style="height: 36px;">
-
-                  <el-col :offset="16" :span="8">
-                    <el-form-item>
-                      <el-tag type="info">库存正常</el-tag>&nbsp;
-                      <el-tag type="danger">库存低于警戒线</el-tag>&nbsp;
-                      <el-tag type="primary">未设置警戒线</el-tag>
-                    </el-form-item>
-                  </el-col>
-                </el-row>
-              </el-form>
-              <el-row>
-                <el-col>
-                  <el-table @cell-dblclick="tableDbEdit"
-                      :data="drugPharmacyArr" :row-class-name="tablezyDrugPharmacyGuard" height="430px" size="small" >
-                    <el-table-column label="药品名称" prop="dpDrugName"></el-table-column>
-                    <el-table-column label="药品库存" prop="dpInventory"></el-table-column>
-                    <el-table-column label="小单位" prop="dpMinUnit"></el-table-column>
-                    <el-table-column label="价格" prop="dpDrugPrice"></el-table-column>
-                    <el-table-column label="大单位" prop="dpMaxUnit"></el-table-column>
-                    <el-table-column label="库存警戒线"  prop="dpGuard"></el-table-column>
-                  </el-table>
-
-                  <!--分页插件-->
-                  <el-pagination
-                      style="text-align: center;"
-                      @size-change="doctorEnjoinDetailsSizeChange"
-                      @current-change="doctorEnjoinDetailsCurrentChange"
-                      :current-page="doctorEnjoinDetailsCurrentPage"
-                      :page-sizes="[2,4,6,8,10]"
-                      :page-size="doctorEnjoinDetailsPageSize"
-                      layout="total, sizes, prev, pager, next, jumper"
-                      :total="doctorEnjoinDetailsArr.length">
-                  </el-pagination>
-                </el-col>
-              </el-row>
-
-            </el-tab-pane>
-
-
-
-            <!--==========================================================================科室药品库存-->
-            <el-tab-pane name="药品调拨" :key="'药品调拨'" label="药品调拨">
-
-              <el-form>
-                <el-row style="height: 36px;">
-
-                  <el-col>
-                    <el-button type="primary" size="mini">药品调拨</el-button>
-                  </el-col>
-
-
-                </el-row>
-              </el-form>
-              <el-row>
-                <el-col>
-                  <el-table
-                      :data="deptDrugAllotAll"  height="430px" size="small" >
-                    <el-table-column label="调拨日期" prop="ddaDate"></el-table-column>
-                    <el-table-column label="调拨科室" prop="ksName"></el-table-column>
-                    <el-table-column label="药品名称" prop="ddaDrugName"></el-table-column>
-                    <el-table-column label="操作员工" prop="sname"></el-table-column>
-                    <el-table-column label="数量(小单位)" prop="ddaMinUnitCount"></el-table-column>
-                    <el-table-column label="调拨状态">
-                      <template #default="obj">
-                        <el-tag v-if="obj.row.ddaIs == 1 " type="info">待调拨</el-tag>&nbsp;
-                        <el-tag v-if="obj.row.ddaIs == 2 " type="primary">已调拨</el-tag>&nbsp;
-                        <el-tag v-if="obj.row.ddaIs == 3 " type="danger">已取消</el-tag>
-                      </template>
-                    </el-table-column>
-
-                    <el-table-column label="操作">
-                      <template #default="obj">
-                        <el-button v-if="obj.row.ddaIs == 1" type="danger" @click="openStopDoctorEnjoin(obj)" size="mini">取消调拨</el-button>
-                      </template>
-                    </el-table-column>
-                  </el-table>
-
-                  <!--分页插件-->
-                  <el-pagination
-                      style="text-align: center;"
-                      @size-change="doctorEnjoinDetailsSizeChange"
-                      @current-change="doctorEnjoinDetailsCurrentChange"
-                      :current-page="doctorEnjoinDetailsCurrentPage"
-                      :page-sizes="[2,4,6,8,10]"
-                      :page-size="doctorEnjoinDetailsPageSize"
-                      layout="total, sizes, prev, pager, next, jumper"
-                      :total="doctorEnjoinDetailsArr.length">
-                  </el-pagination>
-                </el-col>
-              </el-row>
-
-            </el-tab-pane>
 
 
 
@@ -371,19 +275,19 @@ export default{
       doctorEnjoinDetailsArr:[],//医嘱详情数组
       doctorEnjoinSelectDetailsArr:[],//选中的医嘱数组
 
-      //=====================================================================科室药品库存数据
-      drugPharmacyObj:{
-        dpId: '',//编号
-        ksId:'', //连接科室编号
-        dpInventory:'',//库存数量
-        drugId:'',//药品编号
-        dpDrugPrice:'',//药品价格
-        dpDrugUnit:'',//药品单位名称
-        dpDrugName:''//药品的名称
-      },//药品库存对象
-      drugPharmacyArr:[],//药品库存数组
-      //=============双击科室药品数据
-      dbclickPharmacyObj:{},
+      // //=====================================================================科室药品库存数据
+      // drugPharmacyObj:{
+      //   dpId: '',//编号
+      //   ksId:'', //连接科室编号
+      //   dpInventory:'',//库存数量
+      //   drugId:'',//药品编号
+      //   dpDrugPrice:'',//药品价格
+      //   dpDrugUnit:'',//药品单位名称
+      //   dpDrugName:''//药品的名称
+      // },//药品库存对象
+      // drugPharmacyArr:[],//药品库存数组
+      // //=============双击科室药品数据
+      // dbclickPharmacyObj:{},
 
 
 
