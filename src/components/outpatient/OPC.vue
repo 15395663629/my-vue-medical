@@ -2,7 +2,7 @@
 	<el-container style="height: 100%;">
 		<el-header height="30px"  style="line-height: 30px; background-color: #B3C0D1;color: #333;">
 			<!-- <newDateOPC style="margin: 0px; padding: 0px;"></newDateOPC> -->
-		{{leftRecord}}
+		{{tjList}}
     </el-header>
 		<el-container style="height: 100%;">
 			<el-aside width="400px" style="background-color: #D3DCE6;color: #333;"> <!-- 右边 -->
@@ -120,7 +120,7 @@
 							</el-col>
 							<el-col >
 								<el-form-item label-width="15px" >
-									<el-button size="mini"  @click="centerDialogVisible2 = true"  type="primary">病理检验</el-button>
+									<el-button size="mini"  @click="openTjpro"  type="primary">病理检验</el-button>
 								</el-form-item>
 							</el-col>
 							<el-col >
@@ -261,17 +261,8 @@
 
             </el-row>
           </el-form>
-
-
-          <el-table
-              height="500px"
-              :data="drugArr"
-              ref="drugTable"
-              @selection-change="drugSelectChange"
-              style="width: 100%">
-            <el-table-column
-                type="selection"
-                width="55"/>
+          <el-table height="500px" :data="drugArr" ref="drugTable" @selection-change="drugSelectChange" style="width: 100%">
+            <el-table-column type="selection" width="55"/>
             <el-table-column prop="drugName" label="药品名称"> </el-table-column>
             <el-table-column prop="drugRemark" label="功效"> </el-table-column>
             <el-table-column prop="specSpecification" label="药品规格"> </el-table-column>
@@ -284,119 +275,45 @@
 				</el-dialog>
 				
 				<!-- 病理检验=================================================================================================================================================== -->
-				<el-dialog title="项目检验" v-model="centerDialogVisible2" width="80%"  destroy-on-close center>
+				<el-dialog title="项目检验" top="30px" v-model="isShowTj" width="80%"  destroy-on-close center>
           <el-form >
             <el-row>
-
-              <el-col :offset="2" :span="5">
+              <el-col :span="5">
                 <el-form-item label=检验名称 label-width="80px">
-                  <el-input type="text" size="small" v-model="drugSearch.drugNameSearch" placeholder="检验名称"></el-input>
+                  <el-input type="text" size="small" v-model="textTj" placeholder="检验类型名称"></el-input>
                 </el-form-item>
               </el-col>
               <el-col :span="1">
                 <el-form-item>
-                  <el-button  size="small" @click="drugSearchFunction" icon="el-icon-search" type="primary" ></el-button>
-                </el-form-item>
-
-              </el-col>
-
-
-              <el-col :span="4">
-                <el-form-item label="类别" label-width="80px">
-                  <el-select @change="drugSearchFunction"  size="small" v-model="drugSearch.searchYfDrcaName">
-                    <el-option
-                        label="全部类别"
-                        value="">
-                    </el-option>
-                    <el-option
-                        label="外用药"
-                        value="外用药">
-                    </el-option>
-
-                    <el-option v-for="yf in searchYfDrcaNameArr"
-                               :label="yf.yfDrcaName"
-                               :value="yf.yfDrcaName">
-                    </el-option>
-                  </el-select>
+                  <el-button  size="small" @click="ccooTjpro" icon="el-icon-search" type="primary" ></el-button>
                 </el-form-item>
               </el-col>
 
-              <el-col  :span="4">
-                <el-form-item label="药品规格" label-width="80px">
-                  <el-select @change="drugSearchFunction" size="small" v-model="drugSearch.searchSpecId">
-                    <el-option
-                        label="全部规格"
-                        value="">
-                    </el-option>
-
-                    <el-option v-for="ut in searchSpecifcationsArr"
-                               :label="ut.specSpecification"
-                               :value="ut.specId">
-                    </el-option>
-                  </el-select>
-                </el-form-item>
-              </el-col>
-
-              <el-col  :span="4">
-                <el-form-item label="药品用法" label-width="80px">
-                  <el-select @change="drugSearchFunction" size="small"  v-model="drugSearch.searchDrugUsage">
-                    <el-option
-                        label="全部用法"
-                        value="">
-                    </el-option>
-                    <el-option v-for="uts in searchDrugUsageArr"
-                               :label="uts"
-                               :value="uts">
-                    </el-option>
-                  </el-select>
-                </el-form-item>
-              </el-col>
-
-              <el-col  :offset="1" :span="2">
-                <el-form-item >
-                  <el-button size="mini" @click="yesDrugAddDoctorEnjoin" type="primary" icon="el-icon-check">一键添加</el-button>
-                </el-form-item>
+              <el-col :offset="15"  :span="3">
+                <el-form>
+                  <el-form-item label-width="20px">
+                    <el-button size="small" icon="el-icon-check" type="primary">一件添加</el-button>
+                  </el-form-item>
+                </el-form>
               </el-col>
             </el-row>
           </el-form>
+          <el-table row-key="date"  :data="tjList" style="width: 100%" height="500">
+            <el-table-column  type="selection" width="55"/>
+            <el-table-column fixed  label="检验类型" prop="checkName" width="120"></el-table-column>
+            <el-table-column fixed  label="价格" prop="checkPay" width="120"></el-table-column>
+            <el-table-column fixed  label="功能属性">
+              <template #default="scope">
+                <el-button size="mini" type="primary" plain>
+                  <div class="fontType">
+                    {{scope.row.indexSignificance}}
+                  </div>
+                </el-button>
+              </template>
+            </el-table-column>
 
 
-				 <el-table row-key="date"  :data="tableData" style="width: 100%" height="330">
-					 <el-table-column type="selection" width="55">
-					 </el-table-column>
-					<el-table-column fixed  label="序号"  width="120"></el-table-column>
-					<el-table-column fixed  label="操作"  width="120">
-						<template #default="scope">
-						  <el-button
-							size="mini"
-							type="success"
-							@click="handleEdit(scope.$index, scope.row)">选择</el-button>
-						</template>
-					</el-table-column>
-					<el-table-column prop="tag" label="标签"
-					width="100" :filters="[{ text: '复诊', value: '复诊' }, { text: '初诊', value: '初诊' }]"
-					:filter-method="filterTag"  filter-placement="bottom-end">
-						<template #default="scope">
-							<el-tag :type="scope.row.tag === '复诊' ? 'primary' : 'success'" disable-transitions>
-							{{scope.row.tag}}
-							</el-tag>
-						</template>
-					</el-table-column>
-				 </el-table>
-				 <div class="block">
-					 <span class="demonstration"></span>
-					 <!--分页插件-->
-						<el-pagination
-				 					style="text-align: center;"
-				       @size-change="totalCut"
-				       @current-change="pageCut"
-				       :current-page="1"
-				       :page-sizes="[2,4,6,8,10]"
-				       :page-size="size"
-				       layout="total, sizes, prev, pager, next, jumper"
-				       :total="total">
-				     </el-pagination>
-				   </div>
+          </el-table>
 				</el-dialog>
 				
 				
@@ -446,20 +363,6 @@
 						</template>
 					</el-table-column>
 				 </el-table>
-				 <div class="block">
-					 <span class="demonstration"></span>
-					 <!--分页插件-->
-						<el-pagination
-				 					style="text-align: center;"
-				       @size-change="totalCut"
-				       @current-change="pageCut"
-				       :current-page="1"
-				       :page-sizes="[2,4,6,8,10]"
-				       :page-size="size"
-				       layout="total, sizes, prev, pager, next, jumper"
-				       :total="total">
-				     </el-pagination>
-				   </div>
 				</el-dialog>
 				
 				<!-- 病理查看=================================================================================================================================================== -->
@@ -644,7 +547,10 @@
         indexRecord:'2',//切换默认值
         loading:false, // 呼叫的登入加载
         testDuqu:'',//正在呼叫
-
+        //体检======================
+        isShowTj:false,//开关选项
+        tjList:[],//体检项目集合
+        textTj:"",//搜索条件
 			}
 		},
 		methods: {
@@ -829,6 +735,18 @@
           optionsValue:'',//病人类型 老人还是。。。
         };
       },
+      // allDescTjpro
+      openTjpro(){
+        if(this.headerInput.sickSex == ''){
+          this.$message({
+            showClose: true,
+            type: 'warning',
+            message: '请选择病人'
+          });
+          return;
+        }
+        this.isShowTj = true;//显示
+      },
       // 动态刷新所有的标签选择和病人资料
       operationInit(){
         this.countLeftTopTable();
@@ -844,11 +762,21 @@
           this.searchYfDrcaNameArr = v.data;
           this.drugSearchFunction();//调用搜索药品方法
         }).catch();
+
+        //搜索检验项目
+        this.ccooTjpro()
+
       },
       //搜索药品方法
       drugSearchFunction(){
         this.axios.post('select-drug-drugName',this.drugSearch).then((v)=>{
           this.drugArr = v.data;
+        }).catch();
+      },
+      //搜索检验项目
+      ccooTjpro(){
+        this.axios.get('allDescTjpro',{params:{seach:this.textTj} }).then((v) => {
+          this.tjList = v.data;
         }).catch();
       },
       //关闭药品弹框时候调用
@@ -1219,4 +1147,12 @@
    >>> .el-table tbody tr:hover > td {
      background-color: transparent !important
   }
+  .fontType{
+    width: 100%;   /*一定要设置宽度，或者元素内含的百分比*/
+    overflow:hidden; /*溢出的部分隐藏*/
+    white-space: nowrap; /*文本不换行*/
+    text-overflow:ellipsis;/*ellipsis:文本溢出显示省略号（...）；clip：不显示省略标记（...），而是简单的裁切*/
+  }
+
+
 </style>
