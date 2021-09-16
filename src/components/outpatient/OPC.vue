@@ -2,7 +2,7 @@
 	<el-container style="height: 100%;">
 		<el-header height="30px"  style="line-height: 30px; background-color: #B3C0D1;color: #333;">
 			<!-- <newDateOPC style="margin: 0px; padding: 0px;"></newDateOPC> -->
-		{{tjList}}
+		{{}}
     </el-header>
 		<el-container style="height: 100%;">
 			<el-aside width="400px" style="background-color: #D3DCE6;color: #333;"> <!-- 右边 -->
@@ -115,17 +115,17 @@
 					<!-- =========== -->
 							<el-col >
 								<el-form-item label-width="15px" >
-									<el-button size="mini" @click="openAddDrug" type="primary">新开药品</el-button>
+									<el-button size="mini" @click="openAddDrug(0)" type="primary">新开药品</el-button>
 								</el-form-item>
 							</el-col>
 							<el-col >
 								<el-form-item label-width="15px" >
-									<el-button size="mini"  @click="openTjpro"  type="primary">病理检验</el-button>
+									<el-button size="mini"  @click="openAddDrug(1)"  type="primary">病理检验</el-button>
 								</el-form-item>
 							</el-col>
 							<el-col >
 								<el-form-item label-width="15px" >
-									<el-button size="mini" @click="centerDialogVisible3 = true" type="primary">手术项目</el-button>
+									<el-button size="mini" @click="openAddDrug(2)" type="primary">手术项目</el-button>
 								</el-form-item>
 							</el-col>
 							<el-col >
@@ -140,7 +140,7 @@
 							</el-col>
 							<el-col >
 								<el-form-item label-width="15px" >
-									<el-button size="mini" type="primary">转住院</el-button>
+									<el-button size="mini" @click="zysqShow=true" type="primary">转住院</el-button>
 								</el-form-item>
 							</el-col>
 
@@ -189,7 +189,7 @@
 
               <el-col :offset="2" :span="5">
                 <el-form-item label="药品名称" label-width="80px">
-                  <el-input type="text" size="small" v-model="drugSearch.drugNameSearch" placeholder="药品名称"></el-input>
+                  <el-input type="text" size="small" v-model="drugSearch.drugNameSearch" clearable placeholder="药品名称"></el-input>
                 </el-form-item>
               </el-col>
               <el-col :span="1">
@@ -280,7 +280,7 @@
             <el-row>
               <el-col :span="5">
                 <el-form-item label=检验名称 label-width="80px">
-                  <el-input type="text" size="small" v-model="textTj" placeholder="检验类型名称"></el-input>
+                  <el-input type="text" size="small" v-model="textTj" clearable placeholder="检验类型名称"></el-input>
                 </el-form-item>
               </el-col>
               <el-col :span="1">
@@ -298,40 +298,49 @@
               </el-col>
             </el-row>
           </el-form>
-          <el-table row-key="date"  :data="tjList" style="width: 100%" height="500">
-            <el-table-column  type="selection" width="55"/>
+          <el-table height="500px" :data="tjList" style="width: 100%" ref="drugTable" @selection-change="drugSelectChange" >
+            <el-table-column  type="selection" width="55" />
+
             <el-table-column fixed  label="检验类型" prop="checkName" width="120"></el-table-column>
             <el-table-column fixed  label="价格" prop="checkPay" width="120"></el-table-column>
             <el-table-column fixed  label="功能属性">
               <template #default="scope">
-                <el-button size="mini" type="primary" plain>
-                  <div class="fontType">
+                <el-popover effect="light" trigger="hover" placement="top" width="580px">
+                  <template #default>
                     {{scope.row.indexSignificance}}
-                  </div>
-                </el-button>
+                  </template>
+                  <template #reference>
+                    <div  class="name-wrapper fontType">
+                      <el-tag  size="small">{{scope.row.indexSignificance}}</el-tag>
+                    </div>
+                  </template>
+                </el-popover>
               </template>
             </el-table-column>
-
 
           </el-table>
 				</el-dialog>
 				
 				
 				<!-- 手术项目=================================================================================================================================================== -->
-				<el-dialog title="手术下达" v-model="centerDialogVisible3"
-				 width="80%"  destroy-on-close center>
+				<el-dialog title="手术下达" top="30px" v-model="isShowSs" width="80%"  destroy-on-close center>
 				 <el-row>
 					 <el-col :span="7">
-						<el-input size="small" style="width: 200px;" placeholder="请输入你要查询的内容" ></el-input>
-						<el-button size="small" type="primary" icon="el-icon-search">查询</el-button>
+						<el-input size="small" style="width: 200px;" v-model="textSpro"  clearable placeholder="请输入你要查询的内容" ></el-input>
+						<el-button size="small" type="primary" @click="allDescSpro" icon="el-icon-search">查询</el-button>
 					</el-col>
 					<el-col :span="14">
-						<el-form>
-							<el-form-item label-width="20px">
-								<el-radio v-model="radio" label="1">一级</el-radio>
-								<el-radio v-model="radio" label="2">二级</el-radio>
-							</el-form-item>
-						</el-form>
+            <el-select @change="allDescSpro"  size="small" v-model="ssOption">
+              <el-option
+                  label="全部类别"
+                  value="">
+              </el-option>
+              <el-option v-for="yf in ssClass"
+                         :label="yf"
+                         :value="yf">
+              </el-option>
+
+            </el-select>
 					</el-col>
 					<el-col :span="3">
 						<el-form>
@@ -341,28 +350,44 @@
 						</el-form>
 					</el-col>
 				 </el-row>
-				 <el-table row-key="date"  :data="tableData" style="width: 100%" height="330">
-					 <el-table-column type="selection" width="55">
-					 </el-table-column>
-					<el-table-column fixed  label="单据编号"  width="120"></el-table-column>
-					<el-table-column fixed  label="操作"  width="120">
-						<template #default="scope">
-						  <el-button
-							size="mini"
-							type="success"
-							@click="handleEdit(scope.$index, scope.row)">选择</el-button>
-						</template>
-					</el-table-column>
-					<el-table-column prop="tag" label="标签"
-					width="100" :filters="[{ text: '复诊', value: '复诊' }, { text: '初诊', value: '初诊' }]"
-					:filter-method="filterTag"  filter-placement="bottom-end">
-						<template #default="scope">
-							<el-tag :type="scope.row.tag === '复诊' ? 'primary' : 'success'" disable-transitions>
-							{{scope.row.tag}}
-							</el-tag>
-						</template>
-					</el-table-column>
-				 </el-table>
+
+          <el-table height="500px" :row-class-name="tableClass"  :data="ssSproList" ref="drugTable" @selection-change="drugSelectChange" style="width: 100%">
+            <el-table-column :selectable='checkboxt' type="selection" width="55" />
+            <el-table-column prop="projectName" label="项目名称"> </el-table-column>
+            <el-table-column prop="projectPay" label="价格"> </el-table-column>
+            <el-table-column prop="projectType" label="项目类型"> </el-table-column>
+            <el-table-column prop="projectPosition" label="手术位置"> </el-table-column>
+            <el-table-column   label="适应症">
+              <template #default="scope">
+                <el-popover effect="light" trigger="hover" placement="top" width="420px">
+                  <template #default>
+                    {{scope.row.projectMatters}}
+                  </template>
+                  <template #reference>
+                    <div  class="name-wrapper fontType">
+                      <el-tag  size="small">{{scope.row.projectMatters}}</el-tag>
+                    </div>
+                  </template>
+                </el-popover>
+              </template>
+            </el-table-column>
+
+            <el-table-column label="手术禁忌">
+              <template #default="scope">
+                <el-popover effect="light" trigger="hover" placement="top" width="210px">
+                  <template #default>
+                    {{scope.row.projectTaboo}}
+                  </template>
+                  <template #reference>
+                    <div  class="name-wrapper fontType">
+                      <el-tag  size="small">{{scope.row.projectTaboo}}</el-tag>
+                    </div>
+                  </template>
+                </el-popover>
+              </template>
+            </el-table-column>
+          </el-table>
+
 				</el-dialog>
 				
 				<!-- 病理查看=================================================================================================================================================== -->
@@ -391,6 +416,47 @@
 					 </el-table>
 				 
 				</el-dialog>
+
+        <!-- 住院申请============================================================================= -->
+        <el-dialog title="住院申请" v-model="zysqShow" width="50%"  destroy-on-close center>
+          <el-row>
+            <el-form ref="form" :model="zyInhospitalApply" label-width="80px" >
+              <el-col :span="24">
+                <el-form-item label="诊断结果：" label-width="100px">
+                  <el-input style="width:600px;" v-model="textarea2"  placeholder="请输入诊断结果"
+                            rows="3" type="textarea" size="mini" maxlength="1000"
+                            show-word-limit>
+                  </el-input>
+                </el-form-item>
+
+              </el-col>
+              <el-col :span="24">
+                <el-form-item label="医生建议：" label-width="100px">
+                  <el-input style="width: 600px;" v-model="textarea2"  placeholder="请输给出相对的建议"
+                            rows="3" type="textarea" size="mini" maxlength="1000"
+                            show-word-limit>
+                  </el-input>
+                </el-form-item>
+              </el-col>
+              <el-col :span="24">
+                <el-form-item label="申请科室：" label-width="100px">
+                  <el-select @change="allDescSpro"  size="small" v-model="ssOption">
+                    <el-option
+                        label="全部类别"
+                        value="">
+                    </el-option>
+                    <el-option v-for="yf in ssClass"
+                               :label="yf"
+                               :value="yf">
+                    </el-option>
+                  </el-select>
+                  <el-button size="mini" style="margin-left: 315px" type="primary">申请住院</el-button>
+                </el-form-item>
+
+              </el-col>
+            </el-form>
+          </el-row>
+        </el-dialog>
 				
 			</el-container>
 		</el-container>
@@ -406,9 +472,6 @@
     data(){
 			return{
 				bingli:false,//病理查看
-				centerDialogVisible1: false,
-				centerDialogVisible2: false,
-				centerDialogVisible3: false,
 				currentPage1: 5,
 				currentPage2: 5,
         radio: '1',
@@ -551,6 +614,28 @@
         isShowTj:false,//开关选项
         tjList:[],//体检项目集合
         textTj:"",//搜索条件
+        //手术======================
+        textSpro:'',//手术搜索条件
+        ssSproList:[],//手术项目集合
+        isShowSs:false,//手术开关选项
+        ssClass:[],//手术等级列表
+        ssOption:'',//选择对象等级
+        //转住院======================
+        /*住院集合表*/
+        zyInhospitalApply:{
+          sickNumber:'',
+          inDiagnosis:'',
+          inApplyDate:'',
+          ksId:'',
+          ksName:'',
+          inProposer:'',
+          sId:'',
+          inIs:'',
+        },
+        zysqShow:false,/*弹窗*/
+
+
+
 			}
 		},
 		methods: {
@@ -735,18 +820,6 @@
           optionsValue:'',//病人类型 老人还是。。。
         };
       },
-      // allDescTjpro
-      openTjpro(){
-        if(this.headerInput.sickSex == ''){
-          this.$message({
-            showClose: true,
-            type: 'warning',
-            message: '请选择病人'
-          });
-          return;
-        }
-        this.isShowTj = true;//显示
-      },
       // 动态刷新所有的标签选择和病人资料
       operationInit(){
         this.countLeftTopTable();
@@ -763,21 +836,47 @@
           this.drugSearchFunction();//调用搜索药品方法
         }).catch();
 
-        //搜索检验项目
-        this.ccooTjpro()
+        this.axios.post('ssType').then((v) => {
+          this.ssClass = v.data;
+        }).catch();
 
+        //搜索检验项目
+        this.ccooTjpro();
+        //搜索手术项目
+        this.allDescSpro();
       },
-      //搜索药品方法
+      //搜索药品方法=================药药药药药药药药药药药药药药
       drugSearchFunction(){
         this.axios.post('select-drug-drugName',this.drugSearch).then((v)=>{
           this.drugArr = v.data;
         }).catch();
       },
-      //搜索检验项目
+      //搜索检验项目=================检验检验检验检验检验检验检验
       ccooTjpro(){
         this.axios.get('allDescTjpro',{params:{seach:this.textTj} }).then((v) => {
           this.tjList = v.data;
         }).catch();
+      },
+      //搜索项目手术================手术手术手术手术手术手术手术
+      allDescSpro(){
+        this.axios.post('mzAllDescSpro',{projectName:this.textSpro,projectType:this.ssOption}).then((v) => {
+          this.ssSproList = v.data;
+        }).catch();
+      },
+      //手术选择权限
+      checkboxt(row){
+        if(row.projectType=="一级手术" || row.projectType=="二级手术"){
+          return true;
+        }else{
+          return false;
+        }
+      },
+      //表格样式判断禁用
+      tableClass({row, rowIndex}){
+        console.log(row.projectType)
+        if(row.projectType != "一级手术" && row.projectType != "二级手术"){
+          return 'tyzz';
+        }
       },
       //关闭药品弹框时候调用
       closeAddDrugFunction(){
@@ -789,7 +888,7 @@
         this.selectDrugArr = obj;
       },
       //打开添加药品方法
-      openAddDrug(){
+      openAddDrug(index){
         if(this.headerInput.sickSex == ''){
           this.$message({
             showClose: true,
@@ -797,8 +896,15 @@
             message: '请选择病人'
           });
           return;
+        }else{
+          if(index==0){
+            this.isShowAddDrug = true;//药品
+          }else if(index ==1){
+            this.isShowTj = true;//检验
+          }else{
+            this.isShowSs = true;//手术
+          }
         }
-        this.isShowAddDrug = true;//显示
       },
       //确定将选中的药品放入中药和西药处方中
       yesDrugAddDoctorEnjoin(){
@@ -1153,6 +1259,8 @@
     white-space: nowrap; /*文本不换行*/
     text-overflow:ellipsis;/*ellipsis:文本溢出显示省略号（...）；clip：不显示省略标记（...），而是简单的裁切*/
   }
-
-
+  /deep/ .el-table .tyzz {
+    /*background: #FF9C9C;*/
+    color: #FF4545;
+  }
 </style>
