@@ -322,16 +322,16 @@ const router = createRouter({
 	history:createWebHistory(),
 	routes //这里是把上面的routes赋到这里来
 })
-//路由
-router.beforeEach((to,from,next)=>{
-	if(to.path=='/login' || sessionStorage.getItem('token')){
-		// console.log("123")
-		next()
-	}else{
-		// console.log("456")
-			next('/login');
-	}
-})
+// //路由
+// router.beforeEach((to,from,next)=>{
+// 	if(to.path=='/login' || sessionStorage.getItem('token')){
+// 		// console.log("123")
+// 		next()
+// 	}else{
+// 		// console.log("456")
+// 			next('/login');
+// 	}
+// })
 // router.beforeEach(function (to,from,next){
 // 	const  state=JSON.parse(sessionStorage.getItem("state"))
 // 	if(to.name!=="/"&& state==null || to.name!=="/"&& !state.token.isValidate){}
