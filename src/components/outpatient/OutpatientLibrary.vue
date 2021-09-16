@@ -212,9 +212,13 @@
 				this.drawer=true;
 				console.log(row)
 				//西药集合
-				this.xpListTable=row.recipeObject.xpList;
+        if(row.recipeObject.xpList[0].rdNumber != 0){
+          this.xpListTable=row.recipeObject.xpList;
+        }
 				//中药集合
-				this.zpListTable=row.recipeObject.zpList;
+        if( row.recipeObject.zpList[0].zpNumber != 0){
+          this.zpListTable=row.recipeObject.zpList;
+        }
 				// //检验项目
 				// this.testListTable=
 				// //手术项目
