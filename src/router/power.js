@@ -1,4 +1,5 @@
 import axios from 'axios'
+import qs from 'qs'
 
 //初始化菜单
 export const initMenu = (router,store)=>{
@@ -14,7 +15,7 @@ export const initMenu = (router,store)=>{
 	//获取用户信息
 	if(JSON.parse(sessionStorage.getItem("token")) != null && store.state.token != ''){
 		window.console.log(sessionStorage.getItem("token")+"-*-*-*-*")
-		axios.get("/home-menus",{params:{userId:store.state.token.uid}}).then(v=>{
+		axios.post("/home-menus",qs.stringify({userId:100})).then(v=>{
 			window.console.log(v.data+"动态路由")
 		}).catch()
 	}

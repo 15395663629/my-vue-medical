@@ -63,7 +63,7 @@
     </el-col>
   </el-row>
   <!-- 供应商表格 -->
-  <el-table :data="tableData.filter(data => !search || data.supplierName.toLowerCase().includes(search.toLowerCase()))"
+  <el-table :data="tableData.filter(data => !search || data.supplierName.toLowerCase().includes(search.toLowerCase())).slice((currentPage-1)*pagesize,currentPage*pagesize)"
             style="width: 100%"  height="500">
     <el-table-column label="供应商编号" prop="supplierId" >
     </el-table-column>
@@ -85,17 +85,16 @@
       </template>
     </el-table-column>
   </el-table>
-  <!-- 分页插件 -->
-
+  <!-- 分页 -->
   <el-pagination
-      style="text-align: center;"
+      style="text-align: center"
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
-      :current-page="currentPage4"
-      :page-sizes="[100, 200, 300, 400]"
-      :page-size="100"
+      :current-page="currentPage"
+      :page-sizes="[3, 8, 16, 32]"
+      :page-size="pagesize"
       layout="total, sizes, prev, pager, next, jumper"
-      :total="400">
+      :total="tableData.length">
   </el-pagination>
 </template>
 
@@ -117,18 +116,18 @@ export default {
       // 修改弹窗
       handleEdit:false,
       formLabelWidth: '',
-      currentPage4: 4,
+      currentPage:1, //初始页
+      pagesize:8,    //    每页的数据
     }
   },
   methods: {
-    handleDelete(index, row) {
-      console.log(index, row);
+    handleSizeChange: function (size) {
+      this.pagesize = size;
+      console.log(this.pagesize)  //每页下拉显示数据
     },
-    handleSizeChange(val) {
-      console.log(`每页 ${val} 条`);
-    },
-    handleCurrentChange(val) {
-      console.log(`当前页: ${val}`);
+    handleCurrentChange: function(currentPage){
+      this.currentPage = currentPage;
+      console.log(this.currentPage)  //点击第几页
     },
     //查询
     getData(){

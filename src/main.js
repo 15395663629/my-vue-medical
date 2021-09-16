@@ -4,10 +4,10 @@ import App from './App.vue'
 //导包axios--------------------------------
 import VueAxios from 'vue-axios'
 import axios from 'axios'
+import qs from 'qs'
 
 //引入路由--------------------------------
 import router from './router/index.js'
-import {initMenu} from './router/power.js'
 
 //引入store--------------------------
 import store from './store/index.js'
@@ -41,27 +41,6 @@ import regDialog2 from "./components/outpatient/reg/RegDialog2.vue"
 axios.defaults.baseURL = 'http://localhost:8089/';
 //设置默认的请求超时时间。例如超过了5s，就会告知用户当前请求超时，请刷新等。
 axios.defaults.timeout = 5000;
-//路由
-router.beforeEach((to,from,next)=>{
-    console.log(store.state.token,"-+")
-    console.log(sessionStorage.getItem('token'),"-=-=-")
-    let i=1
-
-    if(to.path=='/login' ){
-        console.log(sessionStorage.getItem('token')+"token")
-        // initMenu(router,store,to,next);
-        return  next();
-    }
-    if(sessionStorage.getItem('token')==null || store.state.token==null){
-        console.log("token为空")
-        return next("/login")
-    }else{
-        console.log(sessionStorage.getItem('token'),"=")
-        initMenu(router,store,to,next);
-        // next()
-        // next('/login');
-    }
-})
 
 createApp(App)
 .use(router)
