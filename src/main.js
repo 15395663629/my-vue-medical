@@ -4,10 +4,10 @@ import App from './App.vue'
 //导包axios--------------------------------
 import VueAxios from 'vue-axios'
 import axios from 'axios'
+import qs from 'qs'
 
 //引入路由--------------------------------
 import router from './router/index.js'
-import {initMenu} from './router/power.js'
 
 //引入store--------------------------
 import store from './store/index.js'

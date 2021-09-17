@@ -99,41 +99,57 @@
         },
 
         dome(){
-          if(this.valus.deId===0){
-            //新增部门
-            this.valus.deName=this.value
-             this.valus.deDate=new Date()
-            console.log(this.valus.deId)
-            this.axios({
-              url:"add-dept",
-              params:{depts:this.valus}
-            }).then((v)=>{
-              if(v.data==='ok'){
-                this.clearForm()
-                this.getData()
-              }else{
-                console.log(v.data)
-              }
-            }).catch();
-            // this.axios.post("http://localhost:8089/add-list",qs.stringify(this.valus)).then((v)=>{
-            //
-            //
-            // }).catch()
-          }else{
-            //修改部门
-            this.valus.deName=this.value
-            this.axios.post("http://localhost:8089/upa-list",this.valus).then((v)=>{
-              if(v.data==='ok'){
-                this.clearForm()
-                this.getData()
-              }else{
-                console.log(v.data)
-              }
-            }).catch()
-            console.log(this.valus)
+          if(this.value==='' || this.value===undefined){
+            return this.$message.error("不能为空");
           }
+        for (let i=0;i<this.dept.length;i++){
+            if(this.dept[i].deName===this.value){
+              this.$message.error("重复")
+              return;
+            }else{
+              if(this.dept.deName===this.value){
+                console.log("重复")
+              }else {
+                if (this.valus.deId === 0) {
+                  //新增部门
+                  this.valus.deName = this.value
+                  this.valus.deDate = new Date()
+                  console.log(this.valus.deId)
+                  this.axios({
+                    url: "add-dept",
+                    params: {depts: this.valus}
+                  }).then((v) => {
+                    if (v.data === 'ok') {
+                      this.clearForm()
+                      this.getData()
+                    } else {
+                      console.log(v.data)
+                    }
+                  }).catch();
+                  // this.axios.post("http://localhost:8089/add-list",qs.stringify(this.valus)).then((v)=>{
+                  //
+                  //
+                  // }).catch()
+                } else {
+                  //修改部门
+                  this.valus.deName = this.value
+                  this.axios.post("http://localhost:8089/upa-list", this.valus).then((v) => {
+                    if (v.data === 'ok') {
+                      this.clearForm()
+                      this.getData()
+                    } else {
+                      console.log(v.data)
+                    }
+                  }).catch()
+                  console.log(this.valus)
+                }
 
-          this.dialogVisible1=false
+                this.dialogVisible1 = false
+              }
+              return
+            }
+        }
+
         },
   //删除 （待确定，部门一般不要删除）
 	// 	  open(row) {

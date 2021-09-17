@@ -154,26 +154,41 @@ import  qs from 'qs'
         this.ks.ksName =this.ksName
         this.ks.ksDz=this.ksdz
         this.ks.deId =this.deId
-       if(this.ks.ksId===0){
-         this.axios.post("http://localhost:8089/add-ks",this.ks).then((v)=>{
-           if(v.data===1){
-             this.qc()
-             this.getData()
-           }else{
-             console.log(v.data)
-           }
-         }).catch()
-       }else{
-         this.axios.post("http://localhost:8089/upa-ks",this.ks).then((v)=>{
-           if(v.data===1){
-             this.qc()
-             this.getData()
-           }else{
-             console.log(v.data)
-           }
-         }).catch()
-       }
-        this.dialogVisible1=false
+        if(this.ksName==='' && this.ksdz===''){
+          return this.$message.error("请先选择");
+        }else if(this.ksdz===''){
+          return this.$message.error("科室地址不能为空");
+        }else if(this.ksName===''){
+          return this.$message.error("科室名称不能为空");
+        }
+        for (let i=0;i<this.kslist.length;i++){
+          if(this.kslist[i].ksName===this.value){
+            return this.$message.error("重复");
+          }else{
+            if(this.ks.ksId===0){
+              this.axios.post("http://localhost:8089/add-ks",this.ks).then((v)=>{
+                if(v.data===1){
+                  this.qc()
+                  this.getData()
+                }else{
+                  console.log(v.data)
+                }
+              }).catch()
+            }else{
+              this.axios.post("http://localhost:8089/upa-ks",this.ks).then((v)=>{
+                if(v.data===1){
+                  this.qc()
+                  this.getData()
+                }else{
+                  console.log(v.data)
+                }
+              }).catch()
+            }
+            this.dialogVisible1=false
+            return
+          }
+        }
+
       },
       //编辑
       bj(row){
