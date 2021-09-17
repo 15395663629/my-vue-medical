@@ -2,7 +2,7 @@
 	<el-container style="height: 100%;">
 		<el-header height="30px"  style="line-height: 30px; background-color: #B3C0D1;color: #333;">
 			<!-- <newDateOPC style="margin: 0px; padding: 0px;"></newDateOPC> -->
-		{{}}
+		{{headerInput}}
     </el-header>
 		<el-container style="height: 100%;">
 			<el-aside width="400px" style="background-color: #D3DCE6;color: #333;"> <!-- 右边 -->
@@ -135,12 +135,12 @@
 							</el-col>
 							<el-col >
 								<el-form-item label-width="15px" >
-									<el-button size="mini" @click="bingli=true" type="primary">历史病例</el-button>
+									<el-button size="mini" @click="openAddDrug(3)"  type="primary">历史病例</el-button>
 								</el-form-item>
 							</el-col>
 							<el-col >
 								<el-form-item label-width="15px" >
-									<el-button size="mini" @click="zysqShow=true" type="primary">转住院</el-button>
+									<el-button size="mini" @click="openAddDrug(4)" type="primary">转住院</el-button>
 								</el-form-item>
 							</el-col>
 
@@ -183,7 +183,7 @@
 
 
 				<!-- 新开药品==============================================================================================================================这里的”标“签是判断药品的类型 -->
-				<el-dialog title="药品筛选" width="80%" top="30px" @close="closeAddDrugFunction"  v-model="isShowAddDrug"  destroy-on-close center>
+				<el-dialog title="药品筛选" width="80%" top="30px" @close="closeAddDrugFunction(0)"  v-model="isShowAddDrug"  destroy-on-close center>
           <el-form >
             <el-row>
 
@@ -275,7 +275,7 @@
 				</el-dialog>
 				
 				<!-- 病理检验=================================================================================================================================================== -->
-				<el-dialog title="项目检验" top="30px" v-model="isShowTj" width="80%"  destroy-on-close center>
+				<el-dialog title="项目检验" top="30px" @close="closeAddDrugFunction(1)" v-model="isShowTj" width="80%"  destroy-on-close center>
           <el-form >
             <el-row>
               <el-col :span="5">
@@ -298,7 +298,7 @@
               </el-col>
             </el-row>
           </el-form>
-          <el-table height="500px" :data="tjList" style="width: 100%" ref="drugTable" @selection-change="drugSelectChange" >
+          <el-table height="500px" :data="tjList" style="width: 100%" ref="drugTable1" @selection-change="drugSelectChange" >
             <el-table-column  type="selection" width="55" />
 
             <el-table-column fixed  label="检验类型" prop="checkName" width="120"></el-table-column>
@@ -323,7 +323,7 @@
 				
 				
 				<!-- 手术项目=================================================================================================================================================== -->
-				<el-dialog title="手术下达" top="30px" v-model="isShowSs" width="80%"  destroy-on-close center>
+				<el-dialog title="手术下达" top="30px" @close="closeAddDrugFunction(2)" v-model="isShowSs" width="80%"  destroy-on-close center>
 				 <el-row>
 					 <el-col :span="7">
 						<el-input size="small" style="width: 200px;" v-model="textSpro"  clearable placeholder="请输入你要查询的内容" ></el-input>
@@ -351,7 +351,7 @@
 					</el-col>
 				 </el-row>
 
-          <el-table height="500px" :row-class-name="tableClass"  :data="ssSproList" ref="drugTable" @selection-change="drugSelectChange" style="width: 100%">
+          <el-table height="500px" :row-class-name="tableClass"  :data="ssSproList" ref="drugTable2" @selection-change="drugSelectChange" style="width: 100%">
             <el-table-column :selectable='checkboxt' type="selection" width="55" />
             <el-table-column prop="projectName" label="项目名称"> </el-table-column>
             <el-table-column prop="projectPay" label="价格"> </el-table-column>
@@ -391,8 +391,7 @@
 				</el-dialog>
 				
 				<!-- 病理查看=================================================================================================================================================== -->
-				<el-dialog title="过往病理" v-model="bingli"
-				 width="50%"  destroy-on-close center>
+				<el-dialog title="过往病理"  @close="closeAddDrugFunction(3)" v-model="bingli" width="50%"  destroy-on-close center>
 					 <el-table row-key="date"  :data="tableData" style="width: 100%" height="380">
 						<el-table-column fixed  label="日期"  width="180">
 						  <template #default="scope">
@@ -418,12 +417,12 @@
 				</el-dialog>
 
         <!-- 住院申请============================================================================= -->
-        <el-dialog title="住院申请" v-model="zysqShow" width="50%"  destroy-on-close center>
+        <el-dialog title="住院申请" @close="closeAddDrugFunction(4)" ref="zyForm" v-model="zysqShow" width="50%"  destroy-on-close center>
           <el-row>
             <el-form ref="form" :model="zyInhospitalApply" label-width="80px" >
               <el-col :span="24">
                 <el-form-item label="诊断结果：" label-width="100px">
-                  <el-input style="width:600px;" v-model="textarea2"  placeholder="请输入诊断结果"
+                  <el-input style="width:600px;" v-model="zyInhospitalApply.inDiagnosis"  placeholder="请输入诊断结果"
                             rows="3" type="textarea" size="mini" maxlength="1000"
                             show-word-limit>
                   </el-input>
@@ -432,7 +431,7 @@
               </el-col>
               <el-col :span="24">
                 <el-form-item label="医生建议：" label-width="100px">
-                  <el-input style="width: 600px;" v-model="textarea2"  placeholder="请输给出相对的建议"
+                  <el-input style="width: 600px;" v-model="zyInhospitalApply.inSuggest"  placeholder="请输给出相对的建议"
                             rows="3" type="textarea" size="mini" maxlength="1000"
                             show-word-limit>
                   </el-input>
@@ -440,17 +439,13 @@
               </el-col>
               <el-col :span="24">
                 <el-form-item label="申请科室：" label-width="100px">
-                  <el-select @change="allDescSpro"  size="small" v-model="ssOption">
-                    <el-option
-                        label="全部类别"
-                        value="">
-                    </el-option>
-                    <el-option v-for="yf in ssClass"
-                               :label="yf"
-                               :value="yf">
+                  <el-select @change="allDescSpro"  size="small" v-model="zyInhospitalApply.ksName">
+                    <el-option v-for="yf in ksList"
+                               :label="yf.ksName"
+                               :value="yf.ksName">
                     </el-option>
                   </el-select>
-                  <el-button size="mini" style="margin-left: 315px" type="primary">申请住院</el-button>
+                  <el-button size="mini" style="margin-left: 315px" @click="addZy" type="primary">申请住院</el-button>
                 </el-form-item>
 
               </el-col>
@@ -471,7 +466,6 @@
     components: {LeftTable3, LeftTable2},
     data(){
 			return{
-				bingli:false,//病理查看
 				currentPage1: 5,
 				currentPage2: 5,
         radio: '1',
@@ -586,6 +580,7 @@
           sickSex:'',
           sickAge:'',
           sickPhone:'',
+          sickNumber:0,
           rtClass:'',
           mrCount:'',
           optionsValue:'',//病人类型 老人还是。。。
@@ -620,19 +615,21 @@
         isShowSs:false,//手术开关选项
         ssClass:[],//手术等级列表
         ssOption:'',//选择对象等级
+        //病例====================
+        bingli:false,//病理开关
         //转住院======================
         /*住院集合表*/
         zyInhospitalApply:{
-          sickNumber:'',
           inDiagnosis:'',
-          inApplyDate:'',
-          ksId:'',
+          inSuggest:'',
+          sickNumber:'',
           ksName:'',
-          inProposer:'',
-          sId:'',
-          inIs:'',
+          ksId:'',//科室id
+          inProposer:'',//医生名字
+          sId:'',//医生外键
         },
         zysqShow:false,/*弹窗*/
+        ksList:[],/*科室信息*/
 
 
 
@@ -768,27 +765,27 @@
       jieZheng(){
         if(this.loading==true){
 			
-			this.axios.post('upRtNumber',{rtNumber:this.leftTopTable[0].rtNumber}).then((v)=>{
-			}).catch(()=>{ })
-          return setTimeout(()=>{
-			
-            this.headerInput.bnCount = this.leftTopTable[0].bnCount
-            this.headerInput.mcCard = this.leftTopTable[0].rtRegObject.cardObject.mcCard
-            this.headerInput.rtClass = this.leftTopTable[0].rtRegObject.rtClass
-            this.headerInput.sickPhone = this.leftTopTable[0].rtRegObject.cardObject.mzSick.sickPhone
-            this.headerInput.sickAge = this.leftTopTable[0].rtRegObject.cardObject.mzSick.sickAge
-            this.headerInput.bnSickName = this.leftTopTable[0].bnSickName
-            this.headerInput.sickSex = this.leftTopTable[0].rtRegObject.cardObject.mzSick.sickSex
-            this.headerInput.bnIdCard = this.leftTopTable[0].bnIdCard
-            this.headerInput.bnKsName = this.leftTopTable[0].bnKsName;
-            this.headerInput.bnNumber = this.leftTopTable[0].bnNumber;
-			
-            var number = this.formatDate(this.leftTopTable[0].bnTime,'yyyyMMddhhmm').toString()
-                +this.token.ksId.toString()+this.token.tid.toString()+this.headerInput.bnCount.toString()
-            this.headerInput.mrCount = number;
-            this.loading=false;
-            return 'success';
-          },500)
+          this.axios.post('upRtNumber',{rtNumber:this.leftTopTable[0].rtNumber}).then((v)=>{
+          }).catch(()=>{ })
+            return setTimeout(()=>{
+              this.headerInput.sickNumber=this.leftTopTable[0].rtRegObject.sickNumber;
+              this.headerInput.bnCount = this.leftTopTable[0].bnCount
+              this.headerInput.mcCard = this.leftTopTable[0].rtRegObject.cardObject.mcCard
+              this.headerInput.rtClass = this.leftTopTable[0].rtRegObject.rtClass
+              this.headerInput.sickPhone = this.leftTopTable[0].rtRegObject.cardObject.mzSick.sickPhone
+              this.headerInput.sickAge = this.leftTopTable[0].rtRegObject.cardObject.mzSick.sickAge
+              this.headerInput.bnSickName = this.leftTopTable[0].bnSickName
+              this.headerInput.sickSex = this.leftTopTable[0].rtRegObject.cardObject.mzSick.sickSex
+              this.headerInput.bnIdCard = this.leftTopTable[0].bnIdCard
+              this.headerInput.bnKsName = this.leftTopTable[0].bnKsName;
+              this.headerInput.bnNumber = this.leftTopTable[0].bnNumber;
+
+              var number = this.formatDate(this.leftTopTable[0].bnTime,'yyyyMMddhhmm').toString()
+                  +this.token.ksId.toString()+this.token.tid.toString()+this.headerInput.bnCount.toString()
+              this.headerInput.mrCount = number;
+              this.loading=false;
+              return 'success';
+            },500)
         }else {
           this.$message({
             showClose: true,
@@ -844,6 +841,10 @@
         this.ccooTjpro();
         //搜索手术项目
         this.allDescSpro();
+        //转住院科室查询
+        this.axios.post('selectKs').then((v) => {
+          this.ksList = v.data;
+        }).catch();
       },
       //搜索药品方法=================药药药药药药药药药药药药药药
       drugSearchFunction(){
@@ -878,10 +879,49 @@
           return 'tyzz';
         }
       },
-      //关闭药品弹框时候调用
-      closeAddDrugFunction(){
-        this.$refs.drugTable.clearSelection();
-        this.isShowAddDrug = false;
+      //添加住院
+      addZy(){
+        console.log(this.zyInhospitalApply)
+        this.$refs[headerInput].validate((valid)=>{
+          if(valid){
+            this.axios.post('addInHospita',this.zyInhospitalApply).then((v)=>{
+              if(v.data=='ok'){
+                this.$message({
+                  showClose: true,
+                  type: 'success',
+                  message: '转院成功~'
+                });
+                this.closeAddDrugFunction(4);
+                this.resultVo();
+              }
+            }).catch();
+          }else{
+            this.$message({
+              showClose: true,
+              type: 'error',
+              message: '请选择病人类型~'
+            });
+          }
+        });
+
+      },
+      //关闭药品弹框时候调用（以及和关闭掉其他检验项目时的操作）
+      closeAddDrugFunction(index){
+        if(index==0){//药品
+          this.$refs.drugTable.clearSelection();
+          this.isShowAddDrug = false;
+        }else if(index==1){// 体检
+          this.$refs.drugTable1.clearSelection();
+          this.isShowTj = false;
+        }else if(index==2){// 手术
+          this.$refs.drugTable2.clearSelection();
+          this.isShowSs = false;
+        }else if(index==3){//病例
+          this.bingli=false;
+        }else if(index==4){ //转住院
+          this.zyInhospitalApply={}
+          this.zysqShow = false;
+        }
       },
       //药品选中调用方法
       drugSelectChange(obj){
@@ -901,9 +941,18 @@
             this.isShowAddDrug = true;//药品
           }else if(index ==1){
             this.isShowTj = true;//检验
-          }else{
+          }else if(index==2){
             this.isShowSs = true;//手术
+          }else if(index==3){//病例
+            this.bingli=true;
+          }else if(index==4){//转住院
+            this.zyInhospitalApply.sickNumber=this.headerInput.sickNumber;
+            this.zyInhospitalApply.ksId=this.token.ksId;//科室id
+            this.zyInhospitalApply.inProposer=this.token.sname;//医生名字
+            this.zyInhospitalApply.sId=this.token.sid;//医生外键
+            this.zysqShow=true;
           }
+
         }
       },
       //确定将选中的药品放入中药和西药处方中
@@ -980,9 +1029,9 @@
           }
 
         }
-        this.closeAddDrugFunction();
+        this.closeAddDrugFunction(0);
       },
-      tableRowClassName({row, rowIndex}) { // 暂时没用到
+      tableRowClassName({row, rowIndex}) { // 暂时没用到XXXXXXXXXXXXXXXXXXXXXX
         if (this.headerInput.bnCount == row.bnCount) {
           return 'success';
         }
