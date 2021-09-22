@@ -209,7 +209,6 @@
       //大表格
       selectionLineChangeHandle2 (val) {
         this.drugInfosC = val;
-        console.log(this.drugInfosC);
         for(var i = 0; i< this.drugInfosC.length; i++){
           console.log('id:'+this.drugInfosC[i].drugId)
           console.log('number:'+this.drugInfosC[i])
