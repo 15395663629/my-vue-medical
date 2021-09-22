@@ -66,12 +66,12 @@
         </el-col>
         <el-col>
           <el-form-item prop="sickAge"  label="年龄" >
-            <el-input  v-model="mzSickArr.sickAge"></el-input>
+            <el-input  v-model="mzSickArr.sickAge" disabled></el-input>
           </el-form-item>
         </el-col>
         <el-col >
           <el-form-item prop="sickSex" label="性别" >
-            <el-select v-model="mzSickArr.sickSex" placeholder="请选择"  style="width: 188px">
+            <el-select v-model="mzSickArr.sickSex" placeholder="请选择"  style="width: 188px" disabled>
               <el-option
                   v-for="item in optionsSex"
                   :key="item.value"
@@ -120,14 +120,14 @@ import { ElMessage } from 'element-plus'
 				input1:"",//查询搜索框
         input2:"",//查询搜索框
         leftTable: [{  /* 表格部分1 */
-            sDate: '2021-09-10 10:10',
+            sDate: '2021-09-22 16:10',
             sOverKsName:'内科',
             sDoctor:'徐宏鱼',
             sScience:'普通号',
             sType:'主任医师',
             sPrice:'19',
 				},{  /* 表格部分1 */
-            sDate: '2021-09-14 10:11',
+            sDate: '2021-09-22 16:11',
             sOverKsName:'内科',
             sDoctor:'雷啊狗',
             sScience:'专家号',
