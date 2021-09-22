@@ -3,6 +3,7 @@
 </template>
 
 <script >
+
 	export default {
 	  name: 'App',
 	  created: function() {
@@ -21,7 +22,8 @@
 	      //刷新前将目前登录的用户保存到sessionStorage中
 	      sessionStorage.setItem('state', JSON.stringify(this.$store.state))
 	    })
-	  }
+	  },
+
 	}
 </script>
 

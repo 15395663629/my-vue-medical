@@ -2,8 +2,7 @@
 	<div>
 		<el-button type="primary" @click="dialogVisible1 = true">新增班次</el-button>
 	</div>
-		
-	<!-- <el-button type="primary">重置密码</el-button> -->
+  <!-- <el-button type="primary">重置密码</el-button> -->
 	<el-table ref="multipleTable" :data="fre.slice((page-1)*size,page*size)" tooltip-effect="dark" style="width: 100%"
 	 class="dome" id="printMe">
 		<el-table-column type="selection">
@@ -53,6 +52,7 @@
 					<el-row style="margin-top: 20px !important;">
 						请选择：<el-time-select placeholder="起始时间" v-model="startTime" start='08:00' step='00:30:00' end='23:59' >
 						</el-time-select>
+            <span style="margin-left: 10px"></span>
 					<el-time-select placeholder="结束时间" v-model="endTime" start='08:00' step='00:30:00' end='23:59:59'   :minTime="startTime">
 						</el-time-select>
 					</el-row>
@@ -60,6 +60,7 @@
              <el-row style="margin-top: 20px !important;" v-show="dialogVisible2">
                请选择：<el-time-select placeholder="起始时间" v-model="startTime1" start='08:00' step='00:30:00' end='23:59' :minTime="endTime">
              </el-time-select>
+               <span style="margin-left: 10px"></span>
                <el-time-select placeholder="结束时间" v-model="endTime1" start='08:00' step='00:30:00' end='23:59:59' :minTime="startTime1">
                </el-time-select>
              </el-row>
@@ -68,6 +69,7 @@
                <el-row style="margin-top: 20px !important;" v-show="dialogVisible3">
                  请选择：<el-time-select placeholder="起始时间" v-model="startTime2" start='08:00' step='00:30:00' end='23:59' :minTime="endTime1" >
                </el-time-select>
+                 <span style="margin-left: 10px"></span>
                  <el-time-select placeholder="结束时间" v-model="endTime2" start='08:00' step='00:30:00' end='23:59:59' :minTime="startTime2">
                  </el-time-select>
                </el-row>

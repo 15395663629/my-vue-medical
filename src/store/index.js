@@ -13,6 +13,7 @@ const store = createStore({
             state.children = menus;
             window.console.log("存储成功");
             window.localStorage.setItem('children',JSON.stringify(menus));
+            window.console.log("children:"+JSON.stringify(menus))
         },
     }
 })
