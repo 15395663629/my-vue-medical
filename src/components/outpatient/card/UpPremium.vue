@@ -1,5 +1,6 @@
 <template>
   <el-row style="height: 40px"> <!-- 选择操作人员================== -->
+    {{upList2}}
     <el-form  status-icon label-width="100px" class="demo-ruleForm">
       <el-col>
         <el-form-item  label-width="0px">

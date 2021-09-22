@@ -44,7 +44,7 @@
 
     <el-table-column label="身份证" width="200">
       <template #default="scope">
-        <span >{{ scope.row.cardObject.mzSick.sickIdCard}}</span>
+        <span >{{scope.row.cardObject.mzSick.sickIdCard}}</span>
       </template>
     </el-table-column>
     <el-table-column label="操作金额" width="150" align="center">
