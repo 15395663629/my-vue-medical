@@ -33,7 +33,7 @@
         </el-col>
 			</el-row>
 			<el-row>
-					<el-col :span="7">
+					<el-col :span="8">
 									<el-form-item label="性别:" prop="name">
 									    <el-radio v-model="man.manGender" label="男">男</el-radio>
 									    <el-radio v-model="man.manGender" label="女">女</el-radio>

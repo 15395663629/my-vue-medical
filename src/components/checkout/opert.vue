@@ -151,155 +151,258 @@
 		</el-col>
 	</el-row>
 	<el-row >
+
+
+
+    <!--=====================================================================重新选择手术弹框======================-->
+
+    <el-dialog title="手术项目" v-model="cxxzss">
+      <el-row >
+        <el-table
+            :data="sproject"
+            tooltip-effect="dark"
+            height="400"
+            size="mini"
+            ref="ssdata"
+            style="width: 100%">
+          <el-table-column
+              label="编号"
+              prop="projectNumber"
+          >
+          </el-table-column>
+          <el-table-column
+              prop="projectName"
+              label="手术名称">
+          </el-table-column>
+          <el-table-column
+              prop="projectType"
+              label="手术类型">
+          </el-table-column>
+          <el-table-column
+              prop="projectPay"
+              label="手术价格">
+          </el-table-column>
+          <el-table-column
+              prop="ksName"
+              label="科室">
+
+          </el-table-column>
+          <el-table-column
+              prop="projectPosition"
+              label="开刀位置">
+          </el-table-column>
+          <el-table-column width="150px" align="right">
+            <template  #header>
+              <el-input
+                  @input="getData"
+                  v-model="input"
+                  prefix-icon="el-icon-search"
+                  size="small"
+                  placeholder="项目搜索"/>
+            </template>
+            <template #default="scope">
+              <el-button size="mini" type="primary" @click="xzss(scope.row)">选择</el-button>
+            </template>
+
+          </el-table-column>
+        </el-table>
+
+      </el-row>
+    </el-dialog>
+
+
+
 		<!-- ====================================================开始手术弹框 ====================================================================-->
 		<el-dialog title="手术安排" v-model="apss">
-			<el-form  status-icon :rules="rules" ref="ruleForm" label-width="100px" class="">
-				<el-row style="color: red;">
-								  手术信息
-				</el-row>
-				<el-row>
-					<el-col :span="5">
-						<el-form-item label="手术名称:" label-width="80px">
-							<el-input size="mini"></el-input>
-						</el-form-item>
-					</el-col>
-					<el-col  :span="8">
-						<el-form-item label="" label-width="120px">
-							<el-button size="mini" type="primary">重新选择手术</el-button>
-						</el-form-item>
-					</el-col>
-				</el-row>
+			<el-form ref="ruleForm" label-width="100px" class="">
+
 				<el-row style="color: red;">
 								  病人信息
 				</el-row>
 				<el-row>
 					<el-col :span="5">
 						<el-form-item label="病人姓名:" label-width="80px">
-							<el-input size="mini"></el-input>
+							<el-input size="mini"  v-model="ssApply1.ptname"></el-input>
 						</el-form-item>
 					</el-col>
-					<el-col  :span="4">
-						<el-form-item label="床号:" label-width="60px">
-							<el-input size="mini"></el-input>
-						</el-form-item>
-					</el-col>
-								<el-col  :span="2">
-									<el-form-item label="性别:" label-width="60px">
-										<el-input size="mini"></el-input>
-									</el-form-item>
-								</el-col>
-								<el-col :offset="1" :span="3">
-									<el-form-item label="年龄:" label-width="60px">
-										<el-input size="mini"></el-input>
-									</el-form-item>
-								</el-col>
+          <el-col  :span="4">
+              <el-form-item label="床号:" label-width="60px">
+                <el-input size="mini" v-model="ssApply1.ptcno"></el-input>
+              </el-form-item>
+          </el-col>
+          <el-col :offset="1" :span="8">
+            <el-form-item label="身份证:" label-width="60px">
+              <el-input size="mini" v-model="ssApply1.sidc"></el-input>
+            </el-form-item>
+          </el-col>
 				</el-row>
-			
-			<el-row style="padding-top:6px ;">
-				<el-col :span="5">
-					<el-form-item label="科&emsp;&emsp;室:" label-width="80px">
-						<el-input size="mini"></el-input>
-					</el-form-item>
-				</el-col>
-				<el-col  :span="7">
-					<el-form-item label="入院诊断:" label-width="80px">
-						<el-input size="mini"></el-input>
-								</el-form-item>
-				</el-col>
-				<el-col :offset="2" :span="7">
-					<el-form-item label="身份证:" label-width="60px">
-							<el-input size="mini"></el-input>
-					</el-form-item>
-				</el-col>
-			</el-row>
+
 			<el-row style="color: red;">
 				申请信息
 			</el-row>
 			<el-row>
 				<el-col :span="7">
 					<el-form-item label="住院号:&emsp;" label-width="80px">
-						<el-input size="mini"></el-input>
+						  <el-input size="mini" v-model="ssApply.ptNo"></el-input>
 					</el-form-item>
 				</el-col>
-				<el-col :offset="2" :span="7">
-									<el-form-item label="术前诊断:" label-width="80px">
-					<el-input size="mini"></el-input>
-							</el-form-item>
+				<el-col :offset="1" :span="7">
+						<el-form-item label="术前诊断:" label-width="80px">
+					    <el-input size="mini" v-model="ssApply1.ptryzd"></el-input>
+            </el-form-item>
 				</el-col>
+        <el-col :offset="1"  :span="7">
+          <el-form-item label="手术室:&emsp;" label-width="80px">
+            <el-input size="mini" v-model="ssApply1.ssrname"></el-input>
+          </el-form-item>
+        </el-col>
 			</el-row>
-			<el-row style="padding-top:6px ;">
-				<el-col :span="6">
-					<el-form-item label="主刀医生:&emsp;" label-width="80px">
-						<el-input size="mini"></el-input>
-					</el-form-item>
-				</el-col>
-				<el-col  :span="7">
-					<el-form-item label="拟施手术:" label-width="80px">
-						<el-input size="mini"></el-input>
-					</el-form-item>
-							</el-col>
-							<el-col  :span="10">
-								<el-form-item label="拟施日期:" label-width="80px">
-									<el-input size="mini"></el-input>
-								</el-form-item>
-							</el-col>
-			</el-row>
+
+      <el-row>
+          <el-col :span="6">
+            <el-form-item label="主治医生:" label-width="80px">
+              <el-input size="mini" v-model="ssApply1.zddc"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col  :span="7">
+            <el-form-item label="拟施手术:" label-width="80px">
+              <el-input size="mini"  v-model="ssApply.simulationOperation"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col  :span="10">
+            <el-form-item label="拟施日期:" label-width="80px">
+              <el-input size="mini" v-model="ssApply.simulationTime"></el-input>
+            </el-form-item>
+          </el-col>
+        </el-row>
+
+        <el-row style="color: red;">
+          手术信息
+        </el-row>
+        <el-row>
+          <el-col :span="10">
+            <el-form-item label="手术名称:" label-width="80px">
+              <el-input size="mini" v-model="ssApply1.ssname"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col  :span="8">
+            <el-form-item label="" label-width="100px">
+              <el-button size="mini" @click="ksEdit" type="primary">重新选择手术</el-button>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="9">
+            <el-form-item label="所需麻醉:" prop="name"  label-width="80px">
+              <el-select size="mini" v-model="ssApply.changeId" placeholder="请选择" style="width: 120px;">
+                <el-option
+                    v-for="item in mzproject"
+                    :key="item.anaesthesiaId"
+                    :label="item.operationAnaesthesia"
+                    :value="item.anaesthesiaId">
+                </el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col  :span="8">
+            <el-form-item label="麻醉药品:" label-width="80px">
+              <el-input size="mini" v-model="ssApply1.mzyp"></el-input>
+            </el-form-item>
+          </el-col>
+        </el-row>
 		</el-form>
-			<el-row style="color: red;">
-					手术室选择
-			</el-row>
 		  <el-row >
-        <el-table
-            size="mini"
-            :data="room1"
-            height="200px"
-        >
-          <el-table-column
-              label="编号"
-              prop="operationName">
-            <template #default="scope">
-              <el-popover effect="light" trigger="hover"  placement="top">
-                <template #default>
-                  <p>地址: {{ scope.row.operationRoomAddress }}</p>
+        <el-tabs v-model="activeName" @tab-click="handleClick">
+          <el-tab-pane style="width:730px" label="手术室选择" name="first">
+            <el-table
+                size="mini"
+                :data="room1"
+                height="200px"
+            >
+              <el-table-column
+                  label="编号"
+                  prop="operationName">
+                <template #default="scope">
+                  <el-popover effect="light" trigger="hover"  placement="top">
+                    <template #default>
+                      <p>地址: {{ scope.row.operationRoomAddress }}</p>
+                    </template>
+                    <template #reference>
+                      <div class="name-wrapper">
+                        <el-tag size="medium">{{ scope.row.operationName }}</el-tag>
+                      </div>
+                    </template>
+                  </el-popover>
                 </template>
-                <template #reference>
+              </el-table-column>
+              <el-table-column
+                  prop="operationType"
+                  label="类别">
+              </el-table-column>
+              <el-table-column
+                  prop="deptks.ksName"
+                  label="科室">
+              </el-table-column>
+              <el-table-column
+                  prop="baseResultMap.sname"
+                  label="负责人">
+              </el-table-column>
+              <el-table-column
+                  prop="operationZt"
+                  label="状态">
+                <template #default="scope">
                   <div class="name-wrapper">
-                    <el-tag size="medium">{{ scope.row.operationName }}</el-tag>
+                    <el-tag :type="scope.row.operationZt==0?'success':(scope.row.operationZt==1?'warning':'info')" size="medium">{{ scope.row.operationZt==0?'空闲':(scope.row.operationZt==1?'忙':'停用') }}</el-tag>
                   </div>
                 </template>
-              </el-popover>
-            </template>
-          </el-table-column>
-          <el-table-column
-              prop="operationType"
-              label="类别">
-          </el-table-column>
-          <el-table-column
-              prop="deptks.ksName"
-              label="科室">
-          </el-table-column>
-          <el-table-column
-              prop="baseResultMap.sname"
-              label="负责人">
-          </el-table-column>
-          <el-table-column
-              prop="operationZt"
-              label="状态">
-            <template #default="scope">
-              <div class="name-wrapper">
-                <el-tag :type="scope.row.operationZt==0?'success':(scope.row.operationZt==1?'warning':'info')" size="medium">{{ scope.row.operationZt==0?'空闲':(scope.row.operationZt==1?'忙':'停用') }}</el-tag>
-              </div>
-            </template>
-          </el-table-column>
-          <el-table-column label="操作" width="150px">
-            <template #default="scope">
-              <el-button
-                  size="mini"
-                  type="primary"
-                  @click="sssEdit(scope.row)">选择</el-button>
-            </template>
-          </el-table-column>
-        </el-table>
+              </el-table-column>
+              <el-table-column label="操作" width="150px">
+                <template #default="scope">
+                  <el-button
+                      size="mini"
+                      type="primary"
+                      @click="this.ssApply1.ssrname=scope.row.operationName,this.activeName='second',this.ssApply.operationId=scope.row.operationId">选择</el-button>
+                </template>
+              </el-table-column>
+            </el-table>
+          </el-tab-pane>
+          <!-- ==================================================================麻醉表格 ==================================================================-->
+
+          <el-tab-pane style="width:730px"  label="麻醉选择" name="second">
+            <el-table
+                size="mini"
+                :data="tableData"
+                height="200px"
+                style="width: 100%">
+              <el-table-column
+                  label="药品名称"
+                  prop="drugName">
+              </el-table-column>
+              <el-table-column
+                  label="药品类别"
+                  prop="yfDrugcategory.yfDrcaName">
+              </el-table-column>
+              <el-table-column
+                  label="药品功效"
+                  prop="drugRemark">
+              </el-table-column>
+              <el-table-column
+                  label="处方药"
+                  prop="drugPrescription">
+                <template #default="scope">
+                  {{scope.row.drugPrescription == 1?'处方药':'非处方药'}}
+                </template>
+              </el-table-column>
+              <el-table-column
+                  label="操作">
+                <template #default="scope">
+                  <el-button type="primary" plain size="mini" @click="this.ssApply1.mzyp=scope.row.drugName,this.ssDetail.drugId">选择</el-button>
+                </template>
+              </el-table-column>
+            </el-table>
+          </el-tab-pane>
+        </el-tabs>
+
 			
 		  </el-row>
 		  <el-row>
@@ -359,7 +462,7 @@
 			</el-table-column>
 			<el-table-column label="操作" width="220px">
 			      <template #default="scope">
-			        <el-button size="mini" type="primary" @click="apss=true"  v-show="scope.row.applyZt==0">开始</el-button>
+			        <el-button size="mini" type="primary" @click="apssEdit(scope.row)"  v-show="scope.row.applyZt==0">开始</el-button>
               <el-button style="margin-left: 0px" size="mini" type="success" :loading="true" v-show="scope.row.applyZt==1">手术中</el-button>
               <el-button size="mini" type="warning" @click="apss=true" v-show="scope.row.applyZt==1">结束</el-button>
 			        <el-button v-show="scope.row.applyZt!=1" size="mini" type="danger" @click="handleDelete(scope.$index, scope.row)" >取消申请</el-button>
@@ -386,11 +489,49 @@
   export default {
 		data() {
 			return {
+        mzproject:[],//单个项目所选麻醉
+        tableData: [],//麻醉药品
+			  input:'',//手术搜索
+        cxxzss:false,//重新选择手术弹框
+        ssApply:{//手术申请对象
+          applyId:'',
+          ptNo:'',
+          simulationOperation:'',
+          simulationTime:'',
+          sId:'',
+          projectId:'',
+          changeId:'',
+          operationId:'',
+          applyZt:'',
+        },
+        ssApply1:{//手术安排对象
+          ssname:'',
+          ptname:'',
+          ptcno:'',
+          ptryzd:'',
+          sidc:'',
+          zddc:'',
+          mzyp:'',
+          ssrname:''
+        },
+        ssDetail:{//手术记录对象
+          operationNum:'',
+          OperationTime:'',
+          operationDate:'',
+          projectId:'',
+          operationHandle:'',
+          operationHocus:'',
+          operationDoctorName:'',
+          ptNo:''
+        },
+        // 安排手术卡片
+        activeName: 'first',
         loading: true,
         url: '../static/img/login.gif',
         seach:'',//手术申请搜索
 			  staf:[],//员工
         department:[],//科室
+        sproject:[],//手术集合
 			  stit:'',//手术室弹框标题
 			  sss:false,//手术室弹框
 			  room:[],//手术室集合
@@ -442,6 +583,15 @@
 		 methods: {
 		  //手术室基础参数
        getData() {
+         //查询麻醉药
+         this.axios.post("http://localhost:8089/yp-ss").then((res)=>{
+           console.log(res)
+           this.tableData = res.data;
+         }).catch()
+         //查询手术
+         this.axios.get("http://localhost:8089/allDescSpro",{params:{input:this.input}}).then((res)=>{
+           this.sproject = res.data;
+         }).catch()
          //所有手术室
          this.axios.get("http://localhost:8089/sssRoom").then((res) => {
            this.room = res.data;
@@ -471,6 +621,58 @@
 				  })
 				  .catch(_ => {});
 			  },
+       xzss(row){
+         this.ssApply.projectId=row.projectId,
+         this.ssApply1.ssname=row.projectName,
+         this.axios.get("http://localhost:8089/mzprot",{params:{projectId:this.ssApply.projectId}}).then((res)=>{
+               this.mzproject = res.data;
+         }).catch()
+         this.cxxzss=false
+       },
+       //开始手术弹框
+       apssEdit(row){
+         if(row!=''){
+           this.ssApply1.ssname=row.simulationOperation
+           this.ssApply1.ptname=row.ptdx.ptName
+           this.ssApply1.ptcno=row.ptdx.bdId
+           this.ssApply1.ptryzd=row.ptdx.ptDiagnoseName
+           this.ssApply1.sidc=row.ptdx.ptCapacityNo
+           this.ssApply1.zddc=row.ptdx.staff.sname
+
+           this.ssApply.applyId=row.applyId
+           this.ssApply.projectId=row.projectId
+           this.ssApply.simulationOperation=row.simulationOperation
+           this.ssApply.simulationTime=row.simulationTime
+           this.ssApply.ptNo=row.ptdx.ptNo
+           this.ssApply.sId=row.ys.sid
+           alert(row.ys.sid)
+
+
+
+         }
+         this.axios.get("http://localhost:8089/mzprot",{params:{projectId:this.ssApply.projectId}}).then((res)=>{
+           this.mzproject = res.data;
+         }).catch()
+         this.apss=true;
+
+       },
+       //手术安排弹框确认按钮
+       apssForm(formName) {
+         this.ssDetail.operationDate=this.getNowFormatDate()
+
+         this.ssApply.applyZt=1
+         this.apss = false
+         //修改手术申请
+         this.axios.post("http://localhost:8089/aOrUApply",{proj:this.ssApply}).then((res)=>{
+           this.getData();
+         }).catch()
+         this.$refs[formName].resetFields();
+       },
+       //重新选择手术弹框
+       ksEdit(){
+
+         this.cxxzss=true;
+       },
        //打开新增修改手术室
        sssEdit(row,is) {
          this.stit = is == 1 ? '新增手术室' : '修改手术室';//设置弹框标题
@@ -490,6 +692,28 @@
          }
 
          this.sss = true
+       },
+
+       //获取当前时间
+       getNowFormatDate() {
+         var date = new Date();
+         var seperator1 = "-";
+         var seperator = ":";
+         var year = date.getFullYear();
+         var month = date.getMonth() + 1;
+         var strDate = date.getDate();
+         var hour = date.getHours ();//状取兰刖时回的时
+         var minute = date.getMinutes() ; //获取当前时间的分
+         var second = date.getSeconds() ; //获取当前时间的秒
+         if (month >= 1 && month <= 9) {
+           month = "0" + month;
+         }
+         if (strDate >= 0 && strDate <= 9) {
+           strDate = "0" + strDate;
+         }
+          var showTime = year+seperator1+month+seperator1+strDate+" "+hour+seperator+minute+seperator+second;
+         // var currentdate = year + seperator1 + month + seperator1 + strDate +hour +minute+second;
+         return showTime;
        },
        //手术室弹框确认
        ssmForm(){
@@ -530,11 +754,7 @@
                }
              }).catch(function(){
          })
-       },
-			  apssForm(formName) {
-			  	this.apss = false
-			  	this.$refs[formName].resetFields();
-			  }
+       }
 		},created() {
 		  this.getData()
     }
