@@ -175,9 +175,8 @@
 						      :value="item.anaesthesiaId">
                 </el-option>
 						  </el-select>
-
 						</el-form-item>
-					</el-col>
+				</el-col>
 			</el-row>
 			<el-row>
 								<el-col :span="9">
