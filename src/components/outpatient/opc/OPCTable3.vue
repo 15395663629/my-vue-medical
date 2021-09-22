@@ -1,75 +1,81 @@
 
 <template>
-	<el-table
-		:data="rightTableData3"
-		style="width: 100%"
-		height="450"
-		>
-		 <el-table-column type="selection" width="55">
-		</el-table-column>
+	<el-table :data="rightTableData3" :summary-method="getSummaries2" show-summary style="width: 100%" size="mini" height="450" 	>
 		
-		<el-table-column
-		  label="日期"
-		  width="180">
+    <el-table-column label="项目名称" width="180">
+      <template #default="scope">
+        <span>{{scope.row.checkName}}</span>
+      </template>
+    </el-table-column>
+
+		<el-table-column label="价格" width="180">
 		  <template #default="scope">
-			<i class="el-icon-time"></i>
-			<span style="margin-left: 10px">{{ scope.row.date }}</span>
+        <span>{{scope.row.checkPay}}</span>
 		  </template>
 		</el-table-column>
-		<el-table-column label="姓名" width="180">
-		  <template #default="scope">
-			<el-popover effect="light" trigger="hover" placement="top">
-			  <template #default>
-				<p>姓名: {{ scope.row.name }}</p>
-				<p>住址: {{ scope.row.address }}</p>
-			  </template>
-			  <template #reference>
-				<div class="name-wrapper">
-				  <el-tag size="medium">{{ scope.row.name }}</el-tag>
-				</div>
-			  </template>
-			</el-popover>
-		  </template>
-		</el-table-column>
-		<el-table-column align="center" label="操作">
-		  <template #default="scope">
-			<el-button
-			  size="mini"
-			  @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
-			<el-button
-			  size="mini"
-			  type="danger"
-			  @click="handleDelete(scope.$index, scope.row)">删除</el-button>
-		  </template>
-		</el-table-column>
+
+    <el-table-column label="嘱托" width="220" class="patientText">
+      <template #default="scope">
+        <el-input type="textarea" size="mini" v-model="scope.row.tjObject.labDoctorText" rows="1" maxlength="400" ></el-input>
+      </template>
+    </el-table-column>
+    <el-table-column align="center" label="操作" width="50">
+      <template #default="scope">
+        <el-button type="danger" icon="el-icon-delete" size="mini" @click="handleDelete(scope.$index)" circle></el-button>
+      </template>
+    </el-table-column>
+
+
 	  </el-table>
-	  <h4>项目留言：</h4>
-	  <el-input
-	  		type="textarea"
-	  		placeholder="请输入病理原因"
-	  		v-model="textarea3"
-	  		maxlength="400"
-	  		:rows="4"
-	  		show-word-limit>
-	  </el-input>
+  <h4>检验项目留言：</h4>
+  <el-input type="textarea" placeholder="请输入病理原因"  @change="textareas" v-model="textValues" maxlength="400" :rows="3"
+            show-word-limit>
+  </el-input>
 </template>
 
 <script>
     export default{
+        emits:['func'],
         props:{
             rightTableData3:{
                 type:Array,
                 required:true
             },
-            textarea3:{
-                type:String,
-                required:true
-            }
+          textValues:{
+            type:String,
+            required: true
+          },
         },
         data(){
             return {
                 
             }
+        },
+        methods: {
+          //删除
+          handleDelete(index) {
+            this.rightTableData3.splice(index, 1);
+          },
+          //计算总和
+          getSummaries2(param) {
+            const { columns} = param;//获取到的整个表格的总栏位数
+            const sums = [];//合计表个数组
+            var sum = 0;//总价钱
+            this.rightTableData3.forEach((drug,i)=>{//循环判断总价钱
+              sum += drug.checkPay;
+            })
+            columns.forEach((column, index) => {//获取合计的位置
+              if (index === 0) {
+                sums[index] = '合计';
+                sums[index+1]=sum.toFixed(2)+"元";
+                return;
+              }
+            });
+            return sums;
+          },
+          textareas(){
+            this.$emit('func',this.textValues)
+          },
         }
     }
 </script>

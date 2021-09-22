@@ -2,7 +2,7 @@
 	<el-container style="height: 100%;">
 		<el-header height="30px"  style="line-height: 30px; background-color: #B3C0D1;color: #333;">
 			<!-- <newDateOPC style="margin: 0px; padding: 0px;"></newDateOPC> -->
-		{{headerInput}}
+		{{rightTableData1}}
     </el-header>
 		<el-container style="height: 100%;">
 			<el-aside width="400px" style="background-color: #D3DCE6;color: #333;"> <!-- 右边 -->
@@ -167,10 +167,10 @@
               <opcTable2 @func="getTest2" :textValues="recipeObject.zpNotes"  :rightTableData2="rightTableData2"></opcTable2>
             </el-tab-pane>
             <el-tab-pane label="病理检验">
-              <opcTable3 :textarea3="textarea3" :rightTableData3="rightTableData3"></opcTable3>
+              <opcTable3 @func="getTest3" :textValues="laboratoryObject.labText" :rightTableData3="rightTableData3"></opcTable3>
             </el-tab-pane>
             <el-tab-pane label="手术项目">
-              <opcTable4 :textarea4="textarea4" :rightTableData4="rightTableData4"></opcTable4>
+              <opcTable4 @func="getTest4" :textValues="surgeryStampObject.susText"  :rightTableData4="rightTableData4"></opcTable4>
             </el-tab-pane>
 
             <el-tab-pane label="病历填写" >
@@ -253,7 +253,7 @@
 
               <el-col  :offset="1" :span="2">
                 <el-form-item >
-                  <el-button size="mini" @click="yesDrugAddDoctorEnjoin" type="primary" icon="el-icon-check">一键添加</el-button>
+                  <el-button size="mini" @click="yesDrugAddDoctorEnjoin(0)" type="primary" icon="el-icon-check">一键添加</el-button>
                 </el-form-item>
 
               </el-col>
@@ -292,7 +292,7 @@
               <el-col :offset="15"  :span="3">
                 <el-form>
                   <el-form-item label-width="20px">
-                    <el-button size="small" icon="el-icon-check" type="primary">一件添加</el-button>
+                    <el-button size="small" @click="yesDrugAddDoctorEnjoin(1)" icon="el-icon-check" type="primary">一件添加</el-button>
                   </el-form-item>
                 </el-form>
               </el-col>
@@ -345,7 +345,7 @@
 					<el-col :span="3">
 						<el-form>
 							<el-form-item label-width="20px">
-								<el-button size="small" icon="el-icon-check" type="primary">一件添加</el-button>
+								<el-button size="small" @click="yesDrugAddDoctorEnjoin(2)" icon="el-icon-check" type="primary">一件添加</el-button>
 							</el-form-item>
 						</el-form>
 					</el-col>
@@ -439,7 +439,7 @@
               </el-col>
               <el-col :span="24">
                 <el-form-item label="申请科室：" label-width="100px">
-                  <el-select @change="allDescSpro"  size="small" v-model="zyInhospitalApply.ksName">
+                  <el-select @change="allDescSpro"  size="small" placeholder="选择" v-model="zyInhospitalApply.ksName">
                     <el-option v-for="yf in ksList"
                                :label="yf.ksName"
                                :value="yf.ksName">
@@ -606,15 +606,27 @@
         loading:false, // 呼叫的登入加载
         testDuqu:'',//正在呼叫
         //体检======================
+        laboratoryObject:{
+          labText:"",
+          sickNumber:0,
+          sId:0,
+        },
         isShowTj:false,//开关选项
         tjList:[],//体检项目集合
         textTj:"",//搜索条件
+        rightTableData3:[],/*检验处方列表*/
         //手术======================
+        surgeryStampObject:{
+          susText:"",
+          sickNumber:"",
+          sId:"",
+        },
         textSpro:'',//手术搜索条件
         ssSproList:[],//手术项目集合
         isShowSs:false,//手术开关选项
         ssClass:[],//手术等级列表
         ssOption:'',//选择对象等级
+        rightTableData4:[],/*手术处方表*/
         //病例====================
         bingli:false,//病理开关
         //转住院======================
@@ -652,7 +664,12 @@
       getTest2(data){
         this.recipeObject.zpNotes = data
       },
-
+      getTest3(data){
+        this.laboratoryObject.labText= data
+      },
+      getTest4(data){
+        this.surgeryStampObject.susText = data
+      },
       getLeft(data){
         this.leftText = data
       },
@@ -881,29 +898,17 @@
       },
       //添加住院
       addZy(){
-        console.log(this.zyInhospitalApply)
-        this.$refs[headerInput].validate((valid)=>{
-          if(valid){
-            this.axios.post('addInHospita',this.zyInhospitalApply).then((v)=>{
-              if(v.data=='ok'){
-                this.$message({
-                  showClose: true,
-                  type: 'success',
-                  message: '转院成功~'
-                });
-                this.closeAddDrugFunction(4);
-                this.resultVo();
-              }
-            }).catch();
-          }else{
+        this.axios.post('addInHospita',this.zyInhospitalApply).then((v)=>{
+          if(v.data=='ok'){
             this.$message({
               showClose: true,
-              type: 'error',
-              message: '请选择病人类型~'
+              type: 'success',
+              message: '转院成功~'
             });
+            this.closeAddDrugFunction(4);
+            this.resultVo();
           }
-        });
-
+        }).catch();
       },
       //关闭药品弹框时候调用（以及和关闭掉其他检验项目时的操作）
       closeAddDrugFunction(index){
@@ -955,82 +960,12 @@
 
         }
       },
-      //确定将选中的药品放入中药和西药处方中
-      yesDrugAddDoctorEnjoin(){
-        if(this.selectDrugArr.length == 0){
-          this.$message({
-            showClose: true,
-            type: 'warning',
-            message: '未选中药品！'
-          });
-        }
-        let is = false;
-        for (let drug of this.selectDrugArr){
-          this.rightTableData1.forEach((list,i)=>{
-            if(drug.drugName==list.drugName){
-              is = true;
-              this.$message({
-                showClose: true,
-                type: 'warning',
-                message: '药品已存在！'
-              });
-              return;
-            }
-          });
-          this.rightTableData2.forEach((list,i)=>{
-            if(drug.drugName==list.drugName){
-              is = true;
-              this.$message({
-                showClose: true,
-                type: 'warning',
-                message: '药品已存在！'
-              });
-              return ;
-            }
-          });
 
-          if(is){//当条件满足终止循环
-            return false;
-          }
 
-          if(drug.yfDrcaName=="中药"){
-            drug.zpObject={
-              zpName:drug.drugName,//中药名字
-              drugId:drug.drugId,//药品id
-              zpSpecification:drug.specSpecification,//规格
-              zpCount:1,//数量
-              zpUsage:drug.drugSpecification,//用法
-              zpPrice:drug.drugPrice,//单价
-              zpEntrust:null,//嘱托
-              recipeNumber:null,//处方编号
-            },
-            this.rightTableData2.push(drug);
-            console.log(this.rightTableData2)
-          }else{
-            drug.xpObject={//格外在添加个对象进去
-              rdName:drug.drugName,//名字
-              rdCount:1,//数量
-              rdWay:drug.drugSpecification,//用法
-              rdPrice:drug.drugPrice,//单价
-              rdTyppe:drug.yfDrcaName,//类型
-              rdSkin:false,//是否皮试
 
-              rdGrouping:null,//输液分组
-              rdEntrust:null,//嘱托
-              drugId:drug.drugId,//药品编号
-              recipeNumber:null,//处方编号
-              rdDosage:null,//用量
-              rdFrequency:null,//频次
-              rdSkinResult:null,//皮试结果
 
-            }
-            this.rightTableData1.push(drug);
-            console.log(this.rightTableData1)
-          }
 
-        }
-        this.closeAddDrugFunction(0);
-      },
+
       tableRowClassName({row, rowIndex}) { // 暂时没用到XXXXXXXXXXXXXXXXXXXXXX
         if (this.headerInput.bnCount == row.bnCount) {
           return 'success';
@@ -1151,45 +1086,128 @@
         };
 
       },
-      //添加到右边头部去 -- 暂时没用到撤销因为排号原因撤销掉了\======================================
-      async addTopHeader(row){
-        if(this.headerInput.bnCount !=''){
-          if(this.headerInput.bnCount != row.bnCount){
-            if(this.rightTableData1.length>0 || this.rightTableData2.length>0){
-              let is = await this.$confirm('当前正在执行【' + this.headerInput.bnSickName + '】 的问诊操作！如果切换将把该病人的问诊数据移除  是否切换？', '确认信息', {
-                distinguishCancelAndClose: true,
-                showClose:false,
-                closeOnClickModal:false,
-                confirmButtonText: '取消切换',
-                cancelButtonText: '切换',
-                type: 'warning'
-              }).then(() => {
+      //确定将选中的药品放入到对应的表格中，0处方1检验2手术
+      yesDrugAddDoctorEnjoin(index){
+        if(this.selectDrugArr.length == 0){
+          this.$message({
+            showClose: true,
+            type: 'warning',
+            message: '未选中药品！'
+          });
+        }
+        let is = false;/*终止添加，的判断属性*/
+        for (let drug of this.selectDrugArr){
+          if(index==0){ /*对处方药品的添加去重和提示*/
+            this.rightTableData1.forEach((list,i)=>{
+              if(drug.drugName==list.drugName){
+                is = true;
                 this.$message({
                   showClose: true,
-                  type: 'info',
-                  message: '已取消'
+                  type: 'warning',
+                  message: '药品已存在！'
                 });
-                return true;
-              }).catch(action => {
-                this.resultLeftTopTable();
-                return false;
-              });
-              if(is){
-                return false;
+                return;
               }
+            });
+            this.rightTableData2.forEach((list,i)=>{
+              if(drug.drugName==list.drugName){
+                is = true;
+                this.$message({
+                  showClose: true,
+                  type: 'warning',
+                  message: '药品已存在！'
+                });
+                return ;
+              }
+            });
+          }else if(index == 1){/*对检验的添加去重和提示*/
+            this.rightTableData3.forEach((list,i)=>{
+              if(drug.checkId==list.checkId){
+                is = true;
+                this.$message({
+                  showClose: true,
+                  type: 'warning',
+                  message: '项目已存在列表中！'
+                });
+                return;
+              }
+            });
+          }else if(index == 2){/*对手术的添加去重和提示*/
+            this.rightTableData4.forEach((list,i)=>{
+              if(drug.projectId==list.projectId){
+                is = true;
+                this.$message({
+                  showClose: true,
+                  type: 'warning',
+                  message: '项目已存在列表中！'
+                });
+                return;
+              }
+            });
+          }
+
+
+
+
+          if(is){//当条件满足终止循环
+            return false;
+          }
+
+
+
+
+          if(index==0){/*对处方药品的添加*/
+            if(drug.yfDrcaName=="中药"){
+              drug.zpObject={
+                zpName:drug.drugName,//中药名字
+                drugId:drug.drugId,//药品id
+                zpSpecification:drug.specSpecification,//规格
+                zpCount:1,//数量
+                zpUsage:drug.drugSpecification,//用法
+                zpPrice:drug.drugPrice,//单价
+                zpEntrust:null,//嘱托
+                recipeNumber:null,//处方编号
+              },
+                  this.rightTableData2.push(drug);
+              console.log(this.rightTableData2)
+            }else{
+              drug.xpObject={//格外在添加个对象进去
+                rdName:drug.drugName,//名字
+                rdCount:1,//数量
+                rdWay:drug.drugSpecification,//用法
+                rdPrice:drug.drugPrice,//单价
+                rdTyppe:drug.yfDrcaName,//类型
+                rdSkin:false,//是否皮试
+
+                rdGrouping:null,//输液分组
+                rdEntrust:null,//嘱托
+                drugId:drug.drugId,//药品编号
+                recipeNumber:null,//处方编号
+                rdDosage:null,//用量
+                rdFrequency:null,//频次
+                rdSkinResult:null,//皮试结果
+
+              }
+              this.rightTableData1.push(drug);
+              console.log(this.rightTableData1)
             }
+          }else if(index == 1){/*对检验的添加*/
+            drug.tjObject={
+              checkId:drug.checkId,
+              labDoctorText:'',
+            }
+            this.rightTableData3.push(drug);
+          }else if(index == 2){/*对手术的添加*/
+            drug.ssObject={
+              projectId:drug.projectId,
+              susDoctorText:'',
+            }
+            this.rightTableData4.push(drug);
           }
         }
-        this.headerInput.bnCount = row.bnCount
-        this.headerInput.mcCard = row.rtRegObject.cardObject.mcCard
-        this.headerInput.rtClass = row.rtRegObject.rtClass
-        this.headerInput.sickPhone = row.rtRegObject.cardObject.mzSick.sickPhone
-        this.headerInput.sickAge = row.rtRegObject.cardObject.mzSick.sickAge
-        this.headerInput.bnSickName = row.bnSickName
-        this.headerInput.sickSex = row.rtRegObject.cardObject.mzSick.sickSex
-        this.headerInput.bnIdCard = row.bnIdCard
-
+        this.closeAddDrugFunction(index);/*关闭药品弹框时候调用（根据index值来关闭相对应的集合属性）*/
       },
+
       //没有加入后台的部分-----------------------------------------------------------------------
 		      handleEdit(index, row) {
 		        console.log(index, row);
