@@ -24,6 +24,11 @@
 		      label="诊断结果">
 		    </el-table-column>
       <el-table-column
+          prop="inSuggest"
+          label="医生建议">
+      </el-table-column>
+
+      <el-table-column
       prop="ksName"
       label="科室">
       </el-table-column>
@@ -32,8 +37,7 @@
 			  prop="staff.sname"
 			  label="申请人">
 			</el-table-column>
-			
-			
+
 			<el-table-column width="120px"
 			      align="right">
 			      <template  #header>
@@ -104,7 +108,6 @@
 				</el-col>
 				
 			</el-row>
-			
 			
 			<el-row>
 				<el-col :span="8">
@@ -384,6 +387,20 @@
 						ksName:''
 					}
 				},
+        inHospitalApplyObj:{
+          inId:'',
+          sickNumber:'',
+          inDiagnosis:'',//诊断结果
+          inSuggest:'',//医生建议
+          inApplyDate:'',
+          ksId:'',
+          ksName:'',
+          inProposer:'',
+          sId:'',
+          inIs:'',
+          mrNumber:'',//就诊记录表
+          ptNo:''//住院号
+        },
 				csrq:'',
 				isShowXZBR:false,//选择住院病人弹框
 				isShowZY:false,//住院申请弹框
@@ -505,7 +522,6 @@
 
       //选择住院申请
       hospitalXZ(obj){
-        console.log(obj)
             this.patientBaseObj.ptName = obj.sick.sickName;//病人名称
             this.patientBaseObj.ptSex = obj.sick.sickSex;//性别
             this.patientBaseObj.ptBirthDate = obj.sick.sickTime;//出生日期
@@ -516,6 +532,7 @@
             this.patientBaseObj.ptDiagnoseName = obj.inDiagnosis;//诊断结果
             this.patientBaseObj.ptAge= obj.sick.sickAge;//年龄
             this.patientBaseObj.inId = obj.inId;//住院申请编号
+
         this.ksChangeStaff(obj.ksId);//调用查询员工
         this.isShowXZBR = false;
       },

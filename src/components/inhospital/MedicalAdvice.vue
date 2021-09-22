@@ -143,12 +143,12 @@
 
 
         <el-main  style="background-color: #E9EEF3;color: #333;padding:5px;" ><!-- 主体页面========================================================================-->
-          <el-tabs @tab-click="patientSwitchFunction" v-model="maxCard" type="border-card" >
+<!--          <el-tabs @tab-click="patientSwitchFunction" v-model="maxCard" type="border-card" >-->
 
-            <!--==========================================================================需要执行的医嘱-->
-            <el-tab-pane name="需执行医嘱" :key="'需执行医嘱'" label="需执行医嘱">
+<!--            &lt;!&ndash;==========================================================================需要执行的医嘱&ndash;&gt;-->
+<!--            <el-tab-pane name="需执行医嘱" :key="'需执行医嘱'" label="需执行医嘱">-->
               <el-form>
-                <el-row style="height: 36px;">
+                <el-row style="height: 45px; line-height: 45px">
 
                   <el-col :span="2">
                       <el-form-item>
@@ -160,6 +160,58 @@
                     <el-form-item>
                       <el-button  :disabled="!patientBaseObj.ptName != ''" type="primary" @click="doctorEnjoinExecuteSelectChange" size="mini">执行已选择</el-button>
                     </el-form-item>
+                  </el-col>
+
+
+                  <el-col :offset="1" :span="3">
+                    <el-form-item>
+                      <el-button  :disabled="!patientBaseObj.ptName != ''" type="primary" @click="openPayText" size="mini">新增费用信息</el-button>
+                    </el-form-item>
+
+
+                    <el-dialog title="费用信息" v-model="isShowAddPayText" @close="closePatientPay">
+
+                      <el-form>
+                        <el-row>
+                          <el-col>
+                            <el-form-item label="当前操作人：" label-width="100px">
+                              <el-input readonly disabled v-model="staff.sname"></el-input>
+                            </el-form-item>
+                          </el-col>
+                        </el-row>
+
+                        <el-row>
+                          <el-col  :span="12">
+                            <el-form-item label="费用内容：" label-width="100px">
+                              <el-input type="textarea" v-model="patientPayObj.poText" placeholder="扣费内容"></el-input>
+                            </el-form-item>
+                          </el-col>
+
+                          <el-col :offset="1" :span="8">
+                            <el-form-item label="费用：" label-width="70px">
+                              <el-input v-model="patientPayObj.poPrice"  placeholder="费用"></el-input>
+                            </el-form-item>
+                          </el-col>
+                        </el-row>
+
+                      </el-form>
+
+                      <template #footer>
+                        <el-row>
+                          <el-col :span="18"></el-col>
+                          <el-col :span="2">
+                            <el-button @click="addPatientPay" size="small" type="primary">确定</el-button>
+                          </el-col>
+                          <el-col :span="1"></el-col>
+                          <el-col :span="2">
+                            <el-button @click="closePatientPay"  size="small" type="danger">取消</el-button>
+                          </el-col>
+                          <el-col :span="1"></el-col>
+                        </el-row>
+                      </template>
+
+                    </el-dialog>
+
                   </el-col>
 
 
@@ -229,13 +281,13 @@
                   </el-pagination>
                 </el-col>
               </el-row>
-            </el-tab-pane>
+<!--            </el-tab-pane>-->
 
 
 
 
 
-          </el-tabs>
+<!--          </el-tabs>-->
         </el-main>
 
       </el-container>
@@ -269,6 +321,15 @@ export default{
 
       },
       deptDrugAllotAll:[],//科室药品库存调拨记录数组
+
+      //============================================病人费用信息
+      isShowAddPayText:false,//是否显示病人费用信息弹框
+      patientPayObj:{//病人新开费用对象
+        poText:'',
+        poSid:'',
+        poPrice:'',
+        poPtNo:''
+      },
 
 
       //=====================================================================执行医嘱数据
@@ -313,6 +374,7 @@ export default{
   methods: {
     //========================================================================页面初始化数据方法
     operationInit() {
+      console.log(this.staff)
       //初始化病人数据
       this.axios({
         url: 'select-patient-sId',
@@ -330,40 +392,40 @@ export default{
       });
 
     },
-
-    tableDbEdit(row, column, cell, event) {
-      if (column.label == "库存警戒线") {
-        let cellInput = document.createElement("input");
-        cellInput.value = row.dpGuard;
-        cellInput.setAttribute("type", "text");
-        cellInput.style.width = "40%";
-        cellInput.style.position = 'absolute';
-        cellInput.style.top = '12px';
-        cell.appendChild(cellInput);
-        cellInput.focus();
-        cellInput.onblur = function() {
-          // alert(row.dpId)
-
-          tableDbTexts(row,cellInput,event,cell);
-        };
-      }
-    },
-   tableDbText(row,cellInput,event,cell){
-      // alert('s')
-      this.axios.post('update-byDpId-dpGuard',{bpId:row.dpId,dpGuard:cellInput.value}).then((v)=>{
-        // event.target.innerHTML = cellInput.value;
-        // alert(cellInput.value)
-        cell.removeChild(cellInput);
-        //初始化科室药品库存数据
-        this.axios({
-          url:'select-drug-pharmacyByKsId',
-          params:{ksId:this.staff.ksId}
-        }).then((v)=>{
-          this.drugPharmacyArr = v.data;
-          console.log(this.drugPharmacyArr)
-        });
-      }).catch();
-    },
+    //
+    // tableDbEdit(row, column, cell, event) {
+    //   if (column.label == "库存警戒线") {
+    //     let cellInput = document.createElement("input");
+    //     cellInput.value = row.dpGuard;
+    //     cellInput.setAttribute("type", "text");
+    //     cellInput.style.width = "40%";
+    //     cellInput.style.position = 'absolute';
+    //     cellInput.style.top = '12px';
+    //     cell.appendChild(cellInput);
+    //     cellInput.focus();
+    //     cellInput.onblur = function() {
+    //       // alert(row.dpId)
+    //
+    //       tableDbTexts(row,cellInput,event,cell);
+    //     };
+    //   }
+   //  // },
+   // tableDbText(row,cellInput,event,cell){
+   //    // alert('s')
+   //    this.axios.post('update-byDpId-dpGuard',{bpId:row.dpId,dpGuard:cellInput.value}).then((v)=>{
+   //      // event.target.innerHTML = cellInput.value;
+   //      // alert(cellInput.value)
+   //      cell.removeChild(cellInput);
+   //      //初始化科室药品库存数据
+   //      this.axios({
+   //        url:'select-drug-pharmacyByKsId',
+   //        params:{ksId:this.staff.ksId}
+   //      }).then((v)=>{
+   //        this.drugPharmacyArr = v.data;
+   //        console.log(this.drugPharmacyArr)
+   //      });
+   //    }).catch();
+   //  },
 
     //=======================================================================执行医嘱
     //全部执行
@@ -472,6 +534,31 @@ export default{
       this.axios({url:'selectDoctorEnjoinDetailsByPtNo',params:{ptNo:this.patientBaseObj.ptNo}}).then((v)=>{
         this.doctorEnjoinDetailsArr = v.data;
       }).catch();
+    },
+
+    //===========================新增费用信息方法
+    //打开新开费用弹框
+    openPayText(){
+      this.isShowAddPayText = true;//显示病人费用信息弹框
+      this.patientPayObj.poPtNo = this.patientBaseObj.ptNo;//病人编号
+      this.patientPayObj.poSid = this.staff.sid;//员工编号
+    },
+    //新增病人费用信息方法
+    addPatientPay(){
+      console.log(this.patientPayObj)
+      this.axios.post("addPatientPay",this.patientPayObj).then((v)=>{
+        console.log(v);
+      }).catch();
+    },
+    //关闭新增病人费用弹框
+    closePatientPay(){
+      this.isShowAddPayText = false;//关闭病人费用信息弹框
+      this.patientPayObj = {//病人新开费用对象
+        poText:'',
+        poSid:'',
+        poPrice:'',
+        poPtNo:''
+      };
     },
 
 
