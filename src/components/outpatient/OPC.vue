@@ -2,7 +2,7 @@
 	<el-container style="height: 100%;">
 		<el-header height="30px"  style="line-height: 30px; background-color: #B3C0D1;color: #333;">
 			<!-- <newDateOPC style="margin: 0px; padding: 0px;"></newDateOPC> -->
-		{{sickBlArr}}
+		{{zyInhospitalApply}}
     </el-header>
 		<el-container style="height: 100%;">
 			<el-aside width="400px" style="background-color: #D3DCE6;color: #333;"> <!-- 右边 -->
@@ -401,7 +401,7 @@
 				</el-dialog>
 
         <!-- 住院申请============================================================================= -->
-        <el-dialog title="住院申请" @close="closeAddDrugFunction(4)" ref="zyForm" v-model="zysqShow" width="50%"  destroy-on-close center>
+        <el-dialog title="住院申请" @close="closeAddDrugFunction(4)" v-model="zysqShow" width="50%"  destroy-on-close center>
           <el-row>
             <el-form ref="form" :model="zyInhospitalApply" label-width="80px" >
               <el-col :span="24">
@@ -426,8 +426,8 @@
                   <el-select @change="ksDzChange" value-key="ksId"  size="small" placeholder="选择" v-model="zyInhospitalApply.ksObj" >
                     <el-option v-for="yf in ksList" :key="yf.ksId" :label="yf.ksName" :value="yf" >
                     </el-option>
-                  </el-select>
-                  <span style="color:red; margin-left: 20px">{{zyInhospitalApply.ksObj.ksDz}}</span>
+                 </el-select>
+                  <span style="color:red; margin-left: 20px"> {{ksDzs}}</span>
                 </el-form-item>
               </el-col>
               <el-col :span="24">
@@ -629,7 +629,7 @@
         },
         zysqShow:false,/*弹窗*/
         ksList:[],/*科室信息*/
-
+        ksDzs:'',
 
 
 			}
@@ -898,7 +898,12 @@
       },
       //选项卡对象属性确定后change改变事件赋值
       ksDzChange(){
-        this.zyInhospitalApply.ksName=this.zyInhospitalApply.ksObj.ksName;
+        if(this.zyInhospitalApply.ksObj != null){
+          this.zyInhospitalApply.ksId=this.zyInhospitalApply.ksObj.ksId//科室id
+          this.zyInhospitalApply.ksName=this.zyInhospitalApply.ksObj.ksName;
+          this.ksDzs =this.zyInhospitalApply.ksObj.ksDz
+        }
+
       },
       //关闭药品弹框时候调用（以及和关闭掉其他检验项目时的操作）
       closeAddDrugFunction(index){
@@ -947,7 +952,6 @@
             this.bingli=true;
           }else if(index==4){//转住院
             this.zyInhospitalApply.sickNumber=this.headerInput.sickNumber;
-            this.zyInhospitalApply.ksId=this.token.ksId;//科室id
             this.zyInhospitalApply.inProposer=this.token.sname;//医生名字
             this.zyInhospitalApply.sId=this.token.sid;//医生外键
             this.zysqShow=true;
