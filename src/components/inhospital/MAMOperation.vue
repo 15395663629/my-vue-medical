@@ -291,7 +291,7 @@
 
 
                 <el-col :offset="1" style="line-height: 30px" :span="5">
-                    <el-radio-group v-model="doctorEnjoinObj.deLongorshort"  @change="selectLookDoctorEnjoinTable">
+                    <el-radio-group v-model="doctorEnjoinObj.deLongorshort"  @change="selectAddDoctorEnjoinTable">
                       <el-radio :label="2">临时医嘱</el-radio>
                       <el-radio :label="1">长期医嘱</el-radio>
                     </el-radio-group>
@@ -610,7 +610,7 @@
             </el-tab-pane>
 
             <el-tab-pane name="检验项目" :key="'化验项目'" label="化验项目">
-                <h1>as</h1>
+              <labWork></labWork>
             </el-tab-pane>
             <el-tab-pane name="检验结果" :key="'化验结果'" label="化验结果">
                <h1>3</h1>
@@ -624,8 +624,9 @@
 </template>
 
 <script>
-
+import labWork from "./MAMOperation/labWork.vue";
 export default{
+  components:{labWork},
   data(){
     return{
       //========================================================================员工数据
@@ -649,6 +650,7 @@ export default{
         drugNameSearch:'',//药品模糊查询
         searchSpecId:'',//药品单位
         searchYfDrcaName:'',//类别搜索（中药、西药）
+        searchIs:''//查询是否处方药
       },
       searchDrugUsageArr:[],//药品用法集合
       searchSpecifcationsArr:[],//药品规格集合
@@ -786,6 +788,27 @@ export default{
         this.searchYfDrcaNameArr = v.data;
         this.drugSearchFunction();//调用搜索药品方法
       }).catch();
+    },
+
+    //=======================================新开医嘱切换长期医嘱短期医嘱
+    selectAddDoctorEnjoinTable(){
+      if(this.doctorEnjoinObj.deLongorshort == 1){
+        if(this.doctorEnjoinObj.dedList.length > 0){
+          this.$confirm("切换长期医嘱需要将药品数据情况  是否清空", '提示信息', {
+            distinguishCancelAndClose: true,
+            confirmButtonText: "清空",
+            cancelButtonText: "取消"
+          }).then(() => {
+            this.doctorEnjoinObj.dedList = [];
+          }).catch(action => {
+            this.doctorEnjoinObj.deLongorshort = 2;
+            this.$message({
+              type: 'warning',
+              message:'取消切换'
+            })
+          });
+        }
+      }
     },
 
 
@@ -1088,9 +1111,15 @@ export default{
         return;
       }
       this.isShowAddDrug = true;//显示
+      this.drugSearchFunction();
     },
     //搜索药品方法
     drugSearchFunction() {
+      if(this.doctorEnjoinObj.deLongorshort == 1){
+        this.drugSearch.searchIs = 1;
+      }else{
+        this.drugSearch.searchIs = null;
+      }
       this.axios.post('select-drug-drugName', this.drugSearch).then((v) => {
         console.log(v.data)
         this.drugArr = v.data;
@@ -1100,6 +1129,13 @@ export default{
     closeAddDrugFunction() {
       this.$refs.drugTable.clearSelection();
       this.isShowAddDrug = false;
+      this.drugSearch = {//药品搜索对象
+            searchDrugUsage:'',//药品用法
+            drugNameSearch:'',//药品模糊查询
+            searchSpecId:'',//药品单位
+            searchYfDrcaName:'',//类别搜索（中药、西药）
+            searchIs:''//查询是否处方药
+      }
     },
 
 
