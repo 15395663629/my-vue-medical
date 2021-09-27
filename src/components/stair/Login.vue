@@ -5,7 +5,7 @@
 		<div  class="div-w">
 			<el-form  ref="form" :model="form" :rules="rules" class="login-box">
 					  <h3 class="login-title">柿子医疗后台登录</h3>
-					  <el-form-item prop="uName" :error="errors.user" >
+					  <el-form-item prop="uName" >
 					    <el-input type="text" style="margin-top: 20px;" placeholder="请输入账号" v-model="form.uName"/>
 					  </el-form-item>
 					  <el-form-item  prop="uPswd" :error="errors.user">
@@ -92,8 +92,6 @@ import qs from 'qs'
                   url:"test",
                   params:{token:v.data.data,uName:this.form.uName}
                 }).then((d)=>{
-                  console.log(d.data,"*****")
-                  console.log(d.data.list.szt)
                   if(v.data.size!=0){
                     if(d.data.list.szt===0){
                       this.$store.state.token =d.data;

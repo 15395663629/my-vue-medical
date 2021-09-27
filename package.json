@@ -17,6 +17,7 @@
     "vuex": "^4.0.2"
   },
   "devDependencies": {
+    "@types/qs": "^6.9.7",
     "@vitejs/plugin-vue": "^1.2.3",
     "@vue/compiler-sfc": "^3.0.5",
     "dart-sass": "^1.25.0",

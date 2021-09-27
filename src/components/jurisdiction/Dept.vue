@@ -1,5 +1,4 @@
 <template>
-	<div>部门管理</div>
 	<div class="wz">
 		<el-button type="primary" @click="dialogVisible1 = true">新增部门</el-button>
 		<span style="margin-left: 20px;">
@@ -99,22 +98,21 @@
         },
 
         dome(){
+
           if(this.value==='' || this.value===undefined){
             return this.$message.error("不能为空");
           }
-        for (let i=0;i<this.dept.length;i++){
-            if(this.dept[i].deName===this.value){
-              this.$message.error("重复")
-              return;
-            }else{
-              if(this.dept.deName===this.value){
-                console.log("重复")
-              }else {
+
                 if (this.valus.deId === 0) {
                   //新增部门
                   this.valus.deName = this.value
                   this.valus.deDate = new Date()
                   console.log(this.valus.deId)
+                  for (let i=0;i<this.dept.length;i++){
+                    if(this.valus.deName==this.dept[i].deName){
+                      return this.$message.error("不能为空")
+                    }
+                  }
                   this.axios({
                     url: "add-dept",
                     params: {depts: this.valus}
@@ -122,14 +120,13 @@
                     if (v.data === 'ok') {
                       this.clearForm()
                       this.getData()
+                      this.$message.success("新增成功")
+                      this.dialogVisible1=false
                     } else {
                       console.log(v.data)
                     }
                   }).catch();
-                  // this.axios.post("http://localhost:8089/add-list",qs.stringify(this.valus)).then((v)=>{
-                  //
-                  //
-                  // }).catch()
+
                 } else {
                   //修改部门
                   this.valus.deName = this.value
@@ -144,11 +141,6 @@
                   console.log(this.valus)
                 }
 
-                this.dialogVisible1 = false
-              }
-              return
-            }
-        }
 
         },
   //删除 （待确定，部门一般不要删除）

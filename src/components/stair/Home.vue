@@ -36,7 +36,7 @@
                 <i :class="menu.fctionIcon"></i>
                 <span>{{menu.fctionAssembly}}</span>
               </template>
-              <el-menu-item v-for="c in menu.list"  :index="c.fctionSrc+''">
+              <el-menu-item v-for="c in menu.list" :index="c.fctionSrc+''">
                 <i :class="c.fctionIcon"></i>
                 <template #title>{{c.fctionAssembly}}</template>
               </el-menu-item>
