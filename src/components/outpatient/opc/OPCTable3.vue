@@ -1,25 +1,29 @@
 
 <template>
-	<el-table :data="rightTableData3" :summary-method="getSummaries2" show-summary style="width: 100%" size="mini" height="450" 	>
+	<el-table :data="rightTableData3" :summary-method="getSummaries2" show-summary
+            style="width: 100%" size="mini" height="450" 	>
 		
-    <el-table-column label="项目名称" width="180">
+    <el-table-column label="项目名称" align="center" width="200px">
       <template #default="scope">
         <span>{{scope.row.checkName}}</span>
       </template>
     </el-table-column>
 
-		<el-table-column label="价格" width="180">
+		<el-table-column label="价格"  align="center" width="100px">
 		  <template #default="scope">
         <span>{{scope.row.checkPay}}</span>
 		  </template>
 		</el-table-column>
 
-    <el-table-column label="嘱托" width="220" class="patientText">
-      <template #default="scope">
-        <el-input type="textarea" size="mini" v-model="scope.row.tjObject.labDoctorText" rows="1" maxlength="400" ></el-input>
+    <el-table-column label="功能" align="center">
+      <template #default="scope" >
+        <div class="fontType">
+          {{scope.row.indexSignificance}}
+        </div>
       </template>
     </el-table-column>
-    <el-table-column align="center" label="操作" width="50">
+
+    <el-table-column align="center" label="操作" width="100">
       <template #default="scope">
         <el-button type="danger" icon="el-icon-delete" size="mini" @click="handleDelete(scope.$index)" circle></el-button>
       </template>
@@ -66,8 +70,8 @@
             })
             columns.forEach((column, index) => {//获取合计的位置
               if (index === 0) {
-                sums[index] = '合计';
-                sums[index+1]=sum.toFixed(2)+"元";
+                sums[index] = '合计：'+sum.toFixed(2)+"   元";
+                // sums[index+1]=
                 return;
               }
             });
@@ -80,6 +84,12 @@
     }
 </script>
 
-<style>
+<style scoped>
+.fontType{
+  width: 95%;   /*一定要设置宽度，或者元素内含的百分比*/
+  overflow:hidden; /*溢出的部分隐藏*/
+  white-space: nowrap; /*文本不换行*/
+  text-overflow:ellipsis;/*ellipsis:文本溢出显示省略号（...）；clip：不显示省略标记（...），而是简单的裁切*/
+}
 </style>
 

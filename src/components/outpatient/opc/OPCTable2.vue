@@ -86,8 +86,8 @@
             })
             columns.forEach((column, index) => {//获取合计的位置
               if (index === 0) {
-                sums[index] = '合计';
-				sums[index+1]=sum.toFixed(2)+"元";
+                sums[index] = '合计：';
+				sums[index+1]=sum.toFixed(2)+"  元";
                 return;
               }
             });

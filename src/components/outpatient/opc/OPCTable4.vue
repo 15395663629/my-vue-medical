@@ -1,31 +1,31 @@
 
 <template>
-	<el-table :data="rightTableData4" :summary-method="getSummaries2" show-summary size="mini" style="width: 100%" height="450" >
-    <el-table-column label="项目名称" width="180">
+	<el-table  :data="rightTableData4" :summary-method="getSummaries2" show-summary size="mini" style="width: 100%" height="450" >
+    <el-table-column label="项目名称" >
       <template #default="scope">
         <span>{{scope.row.projectName}}</span>
       </template>
     </el-table-column>
 
-    <el-table-column label="价格" width="180">
+    <el-table-column label="价格" >
       <template #default="scope">
         <span>{{scope.row.projectPay}}</span>
       </template>
     </el-table-column>
 
-    <el-table-column label="手术类型" width="180">
+    <el-table-column label="手术类型">
       <template #default="scope">
         <span>{{scope.row.projectType}}</span>
       </template>
     </el-table-column>
 
-    <el-table-column label="治疗范围" width="180">
+    <el-table-column label="治疗范围" >
       <template #default="scope">
         <span>{{scope.row.projectPosition}}</span>
       </template>
     </el-table-column>
 
-    <el-table-column label="嘱托" width="220" class="patientText">
+    <el-table-column label="嘱托" class="patientText">
       <template #default="scope">
         <el-input type="textarea" size="mini" v-model="scope.row.ssObject.susDoctorText" rows="1" maxlength="400" ></el-input>
       </template>
@@ -77,8 +77,8 @@
           })
           columns.forEach((column, index) => {//获取合计的位置
             if (index === 0) {
-              sums[index] = '合计';
-              sums[index+1]=sum.toFixed(2)+"元";
+              sums[index] = '合计：'+sum.toFixed(2)+"   元";
+              // sums[index+1]=
               return;
             }
           });

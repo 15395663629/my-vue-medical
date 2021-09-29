@@ -120,14 +120,14 @@ import { ElMessage } from 'element-plus'
 				input1:"",//查询搜索框
         input2:"",//查询搜索框
         leftTable: [{  /* 表格部分1 */
-            sDate: '2021-09-22 16:10',
+            sDate: '2021-09-29 16:10',
             sOverKsName:'内科',
             sDoctor:'徐宏鱼',
             sScience:'普通号',
             sType:'主任医师',
             sPrice:'19',
 				},{  /* 表格部分1 */
-            sDate: '2021-09-22 16:11',
+            sDate: '2021-09-29 16:11',
             sOverKsName:'内科',
             sDoctor:'雷啊狗',
             sScience:'专家号',
@@ -257,7 +257,6 @@ import { ElMessage } from 'element-plus'
 			},
        //身份证日期获取
        getInfo(idCard) {
-         console.log("11111111111")
          let sex = null;
          let birth = null;
          let age = null;

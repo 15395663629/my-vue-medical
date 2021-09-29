@@ -8,94 +8,48 @@
     </el-col>
   </el-row>
   <el-col><!-- ================================================== 左下 第二个table ==================================================-->
-    <el-table  size="mini"  :data="leftTable" highlight-current-row style="width: 100%" height="530">
-
-      <el-table-column fixed  label="序号"  width="50">
+    <el-table  size="mini"  :data="leftTable" style="width: 100%" height="530">
+      <el-table-column fixed  label="序号" align="center" prop="medicalRecordObject.mrNumber" width="70"></el-table-column>
+      <el-table-column fixed label="就诊信息" align="center" width="200" >
         <template #default="scope">
-          {{ scope.row.mrNumber}}
-        </template>
-      </el-table-column>
-      <el-table-column
-          fixed
-          label="姓名"
-          width="100" align="center"  >
-        <template #default="scope">
-          <el-popover effect="light" trigger="hover" placement="top"  width="210px">
+          <el-popover effect="light" trigger="hover" placement="top" width="210px" >
             <template #default>
-              <p>姓名：{{ scope.row.recipeObject.recipeSickName}}</p>
-              <p>身份证： {{ scope.row.mrIdCard }}</p>
-              <p>就诊卡： {{ scope.row.mrMcCard}}</p>
-              <p>挂号时间： {{ scope.row.mrSection}}</p>
+              <p>就诊卡号： {{ scope.row.medicalRecordObject.mrMcCard }}</p>
+              <p>姓名：{{ scope.row.medicalRecordObject.sickObject.sickName }}</p>
+              <p>年龄： {{ scope.row.medicalRecordObject.sickObject.sickAge }}</p>
+              <p>性别： {{ scope.row.medicalRecordObject.sickObject.sickSex }}</p>
+              <p>身份证： {{ scope.row.medicalRecordObject.sickObject.sickIdCard }}</p>
             </template>
             <template #reference>
               <div class="name-wrapper">
-                <el-tag size="medium">{{ scope.row.recipeObject.recipeSickName}}</el-tag>
+                <el-tag size="medium">{{ scope.row.medicalRecordObject.sickObject.sickName }}</el-tag>
               </div>
             </template>
           </el-popover>
         </template>
       </el-table-column>
 
-      <el-table-column fixed label="处方" width="150" align="center" >
-        <template #default="scope" >
-          <el-popover effect="light" trigger="hover" placement="top" width="300px">
+      <el-table-column  fixed label="医疗诊断"  align="center" width="130" >
+        <template #default="scope">
+          <el-popover effect="light" trigger="hover" placement="top" width="210px" >
             <template #default>
-              <p>就诊卡： {{ scope.row.mrMcCard}}</p>
-              <p>姓名：{{ scope.row.sDoctor }}</p>
-              <p>所属科室： {{ scope.row.sOverKsName }}</p>
-              <p>学术： {{ scope.row.sType}}</p>
+              <p>主诉： {{ scope.row.historyObject.chComplaint }}</p>
+              <p>检验结果： {{ scope.row.chOe}}</p>
+              <p>手术结果： {{ scope.row.chOps }}</p>
+              <p>病因：{{ scope.row.chCause }}</p>
+              <p>建议： {{ scope.row.chDoctorText }}</p>
             </template>
             <template #reference>
-              <div class="name-wrapper">
-                <el-tag size="medium">处方药</el-tag>
+              <div class="name-wrapper fontType" >
+                <el-tag size="medium">{{ scope.row.historyObject.chComplaint  }}</el-tag>
               </div>
             </template>
           </el-popover>
         </template>
-<!--        <el-popover placement="right" :width="400" trigger="click" >-->
-<!--          <template #reference>-->
-<!--            <el-button type="primary" plain size="mini">处方列表</el-button>-->
-<!--          </template>-->
-<!--          <el-table :data="leftTable"  size="mini" >-->
-<!--            <el-table-column width="100" property="date" label="药名">-->
-<!--              <template #default="scope">-->
-<!--                {{ scope.row.mrMcCard}}-->
-<!--              </template>-->
-<!--            </el-table-column>-->
-<!--            <el-table-column width="100" property="date" label="数量">-->
-<!--              <template #default="scope">-->
-<!--                {{ scope.row.mrMcCard}}-->
-<!--              </template>-->
-<!--            </el-table-column>-->
-<!--            <el-table-column width="100" property="date" label="医嘱">-->
-<!--              <template #default="scope">-->
-<!--                {{ scope.row.mrMcCard}}-->
-<!--              </template>-->
-<!--            </el-table-column>-->
-<!--          </el-table>-->
-<!--        </el-popover>-->
       </el-table-column>
 
-      <el-table-column
-          fixed
-          label="病理诊断"
-          width="100" align="center" >
-        <template #default="scope">
-          <el-popover effect="light" trigger="hover" placement="top"  width="300px">
-            <template #default>
-              <p>结束时间：{{ scope.row.mrOverTime }}</p>
-              <p>诊断结果： {{ scope.row.mrDiagnoseRecord }}</p>
-              <p>处理建议： </p>
-            </template>
-            <template #reference>
-              <div class="name-wrapper">
-                <el-tag size="medium">{{ scope.row.mrDiagnoseRecord }}病理结果</el-tag>
-              </div>
-            </template>
-          </el-popover>
-        </template>
-      </el-table-column>
     </el-table>
+
   </el-col>
 	
 </template>
@@ -139,5 +93,11 @@
 tr.current-row > td,
 .el-table__body tr:hover > td {
   background:#42B8FF;
+}
+.fontType{
+  width: 80%;   /*一定要设置宽度，或者元素内含的百分比*/
+  overflow:hidden; /*溢出的部分隐藏*/
+  white-space: nowrap; /*文本不换行*/
+  text-overflow:ellipsis;/*ellipsis:文本溢出显示省略号（...）；clip：不显示省略标记（...），而是简单的裁切*/
 }
 </style>
