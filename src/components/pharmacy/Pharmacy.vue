@@ -13,7 +13,7 @@
     </el-col>
       <!-- 药品新增弹窗 -->
 			<el-dialog @close="fromdata" title="药品信息" v-model="dialogFormVisible">
-			  <el-form :model="form">
+			  <el-form :model="form" ref="form">
           <el-row>
             <el-col :span="10">
               <el-form-item label-width="100px" label="是否为处方药">
@@ -21,32 +21,35 @@
                 <el-radio v-model="form.drugPrescription" :label="2">非处方药</el-radio>
               </el-form-item>
             </el-col>
-            <el-col :span="1" :offset="2">
-              <el-form-item label-width="72px" label="保质期">
+            <el-col :span="10" :offset="1">
+              <el-form-item label-width="80px" label="保质期">
                 <el-input v-model="form.drugPastDate" style="width: 215px"/>
               </el-form-item>
             </el-col>
           </el-row>
           <el-row>
-            <el-col :span="5">
+            <el-col :span="10">
               <el-form-item label-width="80px" label="药品名称">
                 <el-input v-model="form.drugName" style="width: 215px;"></el-input>
               </el-form-item>
             </el-col>
-            <el-col :span="5" :offset="7">
-              <el-form-item label-width="100px" label="药品条形码">
-                <el-input v-model="form.drugBarCode" style="width: 215px;"></el-input>
+            <el-col :span="10" :offset="1">
+              <el-form-item label-width="80px"
+                            prop="drugBarCode"
+                            label="条形码"
+                            :rules="[{ type: 'number',  message: '输入数字'}]">
+                <el-input v-model.number="form.drugBarCode"  autocomplete="off" style="width: 215px;" ></el-input>
               </el-form-item>
             </el-col>
           </el-row>
           <el-row>
-            <el-col :span="5">
-              <el-form-item label-width="80px" label="药品价格">
+            <el-col :span="10">
+              <el-form-item label-width="80px" label="药品进价">
                 <el-input v-model="form.drugPrice" @change="handleChange" :min="1" :max="1000" style="width: 215px" label="药品价格"></el-input>
               </el-form-item>
             </el-col>
-            <el-col :span="10" :offset="7">
-              <el-form-item label-width="85px" label="药品规格">
+            <el-col :span="10" :offset="1">
+              <el-form-item label-width="80px" label="药品规格">
                 <el-select  v-model="form.ykSpecId" placeholder="请选规格">
                   <el-option v-for="spec in specfrom"
                              :label="spec.specSpecification"
@@ -67,8 +70,8 @@
                 </el-select>
               </el-form-item>
             </el-col>
-            <el-col :span="10" :offset="2">
-              <el-form-item label-width="85px" label="药品类别">
+            <el-col :span="10" :offset="1">
+              <el-form-item label-width="80px" label="药品类别">
                 <el-select  v-model="form.yfDrcaId" placeholder="请选类别">
                   <el-option v-for="drca in drcafrom"
                              :label="drca.yfDrcaName"
@@ -79,37 +82,37 @@
             </el-col>
           </el-row>
           <el-row>
-            <el-col :span="5">
+            <el-col :span="10">
               <el-form-item label-width="80px" label="药品用法">
                 <el-input v-model="form.drugUsage" style="width: 215px;"></el-input>
               </el-form-item>
             </el-col>
-            <el-col :span="5" :offset="7">
-              <el-form-item label-width="100px" label="药品说明书">
+            <el-col :span="12" :offset="1">
+              <el-form-item label-width="80px" label="说明书">
                 <el-input v-model="form.drugSpecification" type="textarea" style="width: 215px;"></el-input>
               </el-form-item>
             </el-col>
           </el-row>
           <el-row>
-            <el-col :span="5">
+            <el-col :span="10">
               <el-form-item label-width="80px" label="药品单位">
                 <el-input v-model="form.drugUnit" style="width: 215px;"></el-input>
               </el-form-item>
             </el-col>
-            <el-col :span="10" :offset="7">
-              <el-form-item label-width="85px" label="药品功效">
+            <el-col :span="10" :offset="1">
+              <el-form-item label-width="80px" label="药品功效">
                 <el-input v-model="form.drugRemark" style="width: 215px;"></el-input>
               </el-form-item>
             </el-col>
           </el-row>
           <el-row>
-            <el-col :span="5">
+            <el-col :span="10">
               <el-form-item label-width="80px" label="每粒单价">
                 <el-input v-model="form.drugParticle" style="width: 215px;"/>
               </el-form-item>
             </el-col>
-            <el-col :span="10" :offset="7">
-              <el-form-item label-width="85px" label="每瓶数量">
+            <el-col :span="10" :offset="1">
+              <el-form-item label-width="80px" label="每瓶数量">
                 <el-input v-model="form.drugQuantity" style="width: 215px;"/>
               </el-form-item>
             </el-col>
@@ -166,7 +169,7 @@
 			      prop="drugName">
 			    </el-table-column>
 			    <el-table-column
-			      label="药品售价"
+			      label="药品进价"
 			      prop="drugPrice">
 			    </el-table-column>
 				<el-table-column

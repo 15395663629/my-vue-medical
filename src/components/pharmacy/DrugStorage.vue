@@ -3,7 +3,7 @@
   <el-table
       :data="tableStorage.slice((currentPage-1)*pagesize,currentPage*pagesize)"
       stripe
-      style="width: 100%">
+      style="width: 100%" height="500">
     <el-table-column type="selection" width="55"/>
     <el-table-column
         prop="ykDrvenName"
@@ -11,8 +11,13 @@
         width="180">
     </el-table-column>
     <el-table-column
+        prop="ykSellingprice"
+        label="药品售价"
+        width="180">
+    </el-table-column>
+    <el-table-column
         prop="ykDrvenCount"
-        label="药品数量"
+        label="药品库存"
         width="180">
     </el-table-column>
     <el-table-column
@@ -35,7 +40,7 @@
         prop="address"
         label="操作">
       <template #default="scope">
-        <el-button type="primary" plain size="mini" @click="">调拨</el-button>
+        <el-button type="primary" plain size="mini" @click="">调价</el-button>
       </template>
     </el-table-column>
   </el-table>

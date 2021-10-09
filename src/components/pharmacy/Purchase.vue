@@ -6,33 +6,43 @@
 		</el-col>
 		<el-col :span="6">
 			<el-date-picker v-model="value1" type="date" placeholder="选择采购日期"></el-date-picker>
-			<el-button type="primary" icon="el-icon-search">搜索</el-button>
+			<el-button type="primary" size="small" icon="el-icon-search">搜索</el-button>
 		</el-col>
 		<el-col :span="2" :offset="12">
-			<el-button type="primary" @click="openCgjh">新增采购计划</el-button>
+			<el-button type="primary" size="small" @click="openCgjh">新增采购计划</el-button>
     </el-col>
       <!-- ----------------------------------------------------新增计划弹窗---------------------------------------------------- -->
 			<el-dialog @close="fromdata" title="采购计划" v-model="dialogFormVisible">
-        <el-button type="primary" @click="open = true">添加药品</el-button>
 				<el-form model="caigou">
-          <el-form-item label="采购计划名称">
-            <el-input style="width: 215px;" v-model="caigou.ykPurchaseName"></el-input>
-          </el-form-item>
-					<el-form-item label="采购编号">
-					  <el-input style="width: 215px;" disabled v-model="caigou.ykPurchaseId"></el-input>
-					</el-form-item>
-					<el-form-item label="采购日期">
-						<el-date-picker v-model="caigou.ykPurchaseTime" type="date" placeholder="选择采购日期"></el-date-picker>
-					</el-form-item>
-					<el-form-item label="经手人">
-						<el-select v-model="caigou.sId" placeholder="选择经手人">
-						  <el-option v-for="stall in stallform"
-                        :label="stall.sname"
-                         :value="stall.sid"></el-option>
-						</el-select>
-					</el-form-item>
+          <el-row>
+            <el-col :span="12">
+              <el-form-item label="采购计划名称">
+                <el-input style="width: 215px;" v-model="caigou.ykPurchaseName"></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="10" offset="2">
+              <el-form-item label="采购编号">
+                <el-input style="width: 215px;" disabled v-model="caigou.ykPurchaseId"></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="采购日期">
+                <el-date-picker v-model="caigou.ykPurchaseTime" type="date" placeholder="选择采购日期"></el-date-picker>
+              </el-form-item>
+            </el-col>
+            <el-col :span="10" offset="4">
+              <el-form-item label="经手人">
+                <el-select v-model="caigou.sId" placeholder="选择经手人">
+                  <el-option v-for="stall in stallform"
+                            :label="stall.sname"
+                             :value="stall.sid"></el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-button type="primary" size="mini" @click="open = true">添加药品</el-button>
 				</el-form>
-			    <el-table :data="gridData" height="200">
+			    <el-table :data="gridData" height="240" >
               <el-table-column property="drugName" label="药品名" ></el-table-column>
               <el-table-column label="数量" width="150">
                 <template #default="scope">
@@ -45,7 +55,6 @@
               <template #default="scope">
               {{scope.row.ykChaseCount *scope.row.drugPrice}}
               </template>
-
             </el-table-column>
             </el-table>
 			  <template #footer>
@@ -57,11 +66,16 @@
 			</el-dialog>
 			<!-- 药品选择弹窗 -->
 			<el-dialog title="药品选择" v-model="open">
-				<el-table :data="drug" @selection-change="selectionLineChangeHandle2">
-				  <el-table-column type="selection" width="55"></el-table-column>
-				  <el-table-column property="drugName" label="药品名" ></el-table-column>
-				  <el-table-column property="ykSupplier.supplierName" label="生产厂商"></el-table-column>
-				  <el-table-column property="drugPrice" label="单价"></el-table-column>
+				<el-table :data="drug.filter(data => !search || data.drugName.toLowerCase().includes(search.toLowerCase()))" height="400px" @selection-change="selectionLineChangeHandle2">
+				  <el-table-column type="selection" width="55"/>
+				  <el-table-column property="drugName" label="药品名"/>
+				  <el-table-column property="ykSupplier.supplierName" label="生产厂商"/>
+				  <el-table-column property="drugPrice" label="单价"/>
+          <el-table-column align="center">
+            <template #header>
+              <el-input v-model="search" size="mini" placeholder="输入药品名称搜索"/>
+            </template>
+          </el-table-column>
 				</el-table>
 				<template #footer>
 				  <span class="dialog-footer">
@@ -73,11 +87,9 @@
     <!---------------------------------------------------------药品明细弹窗--------------------------------------->
     <el-dialog title="采购药品明细" v-model="mingxi">
       <el-table :data="ydpdform">
-        <el-table-column property="ykChaseId" label="详单编号" ></el-table-column>
         <el-table-column property="drugId" label="药品编号"></el-table-column>
         <el-table-column property="ykPurchaseId" label="采购编号"></el-table-column>
         <el-table-column prop="yfDruginformation.drugName" label="药品名称"></el-table-column>
-        <el-table-column property="ykSupplier.supplierName" label="生产厂商"></el-table-column>
         <el-table-column label="药品数量">
           <template #default="scope">
             {{scope.row.ykChaseCount}}
@@ -98,7 +110,7 @@
       </template>
     </el-dialog>
 	</el-row>
-  <!-- ------------------------------------------------------------表格--------------------------------------------------- -->
+  <!-- ------------------------------------------------------------表格数据--------------------------------------------------- -->
   <el-row :gutter="20">
 		<el-col>
 			<el-table :data="tableData.slice((currentPage-1)*pagesize,currentPage*pagesize)" style="width: 100%;" height="500">
@@ -150,6 +162,7 @@
           sId:'',
           ykPurchaseSName:'',
           ykPurchaseIs:'',
+
           ykDrugpurchasePlanDetails:[]
         },
         numbers:0,
@@ -169,6 +182,7 @@
         drugInfosC:[],
         currentPage:1, //初始页
         pagesize:8,    //    每页的数据
+        search: '',//表格搜索框（药品选择）
       }
     },
 		methods: {

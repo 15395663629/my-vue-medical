@@ -6,59 +6,14 @@
 		</el-col>
 		<el-col :span="8">
 			<el-date-picker v-model="value1" type="date" placeholder="选择出库日期"></el-date-picker>
-			<el-button type="primary" icon="el-icon-search">搜索</el-button>
+			<el-button type="primary" size="small" icon="el-icon-search">搜索</el-button>
 		</el-col>
 		<el-col :span="1" :offset="10">
-			<el-button type="primary" @click="dialogFormVisible = true">新增出库信息</el-button>
 			<el-dialog title="药品出库" v-model="dialogFormVisible">
-			  <el-form>
-			    <el-form-item label="药品批次" :label-width="formLabelWidth">
-			      <el-input autocomplete="off" style="width: 215px;"></el-input>
-			    </el-form-item>
-				<el-form-item label="药品名" :label-width="formLabelWidth">
-				  <el-input autocomplete="off" style="width: 215px;"></el-input>
-				</el-form-item>
-				<el-form-item label="药品数量" :label-width="formLabelWidth">
-					<el-input-number @change="handleChange" :min="1" :max="1000" label="药品数量"></el-input-number>
-				</el-form-item>
-				<el-form-item label="药品规格" :label-width="formLabelWidth">
-					<el-select v-model="form.region" placeholder="药品规格">
-					  <el-option label="盒" value="shanghai"></el-option>
-					  <el-option label="箱" value="beijing"></el-option>
-					  <el-option label="包" value="beijing"></el-option>
-					</el-select>
-				</el-form-item>
-				<el-form-item label="采购价" :label-width="formLabelWidth">
-				  <el-input autocomplete="off" style="width: 215px;"></el-input>
-				</el-form-item>
-			    <el-form-item label="生产厂家" :label-width="formLabelWidth">
-			      <el-input autocomplete="off" style="width: 215px;"></el-input>
-			    </el-form-item>
-			    <el-form-item label="出库日期" :label-width="formLabelWidth">
-			    	<el-date-picker v-model="value1" type="date" placeholder="选择采购日期"></el-date-picker>
-			    </el-form-item>
-			    <el-form-item label="经手人" :label-width="formLabelWidth">
-			    	<el-select v-model="form.region" placeholder="选择经手人">
-			    	  <el-option label="张三" value="shanghai"></el-option>
-			    	  <el-option label="李四" value="beijing"></el-option>
-			    	  <el-option label="王五" value="beijing"></el-option>
-			    	</el-select>
-			    </el-form-item>
-				<el-form-item label="仓库" :label-width="formLabelWidth">
-					<el-select v-model="form.region" placeholder="选择仓库">
-					  <el-option label="中药仓" value="shanghai"></el-option>
-					  <el-option label="西药仓" value="beijing"></el-option>
-					  <el-option label="冷藏仓" value="beijing"></el-option>
-					</el-select>
-				</el-form-item>
-				<el-form-item label="药品去向" :label-width="formLabelWidth">
-					<el-select v-model="form.region" placeholder="药品去向">
-					  <el-option label="药房" value="shanghai"></el-option>
-					  <el-option label="手术室" value="beijing"></el-option>
-					  <el-option label="销毁" value="beijing"></el-option>
-					</el-select>
-				</el-form-item>
-			  </el-form>
+        <el-table :data="detail">
+          <el-table-column property="ykAllotdetailCount" label="药品数量"></el-table-column>
+          <el-table-column property="ykDrvenDrugName" label="药品名"></el-table-column>
+        </el-table>
 			  <template #footer>
 			    <span class="dialog-footer">
 			      <el-button @click="dialogFormVisible = false">取 消</el-button>
@@ -70,98 +25,87 @@
 	</el-row>
 	<el-row>
 		<el-col>
-			<el-table :data="tableData" border style="width: 100%;">
-				<el-table-column prop="drug" label="批次" width="150">
+			<el-table :data="ykallot.slice((currentPage-1)*pagesize,currentPage*pagesize)" style="width: 100%;" height="500px" @selection-change="">
+        <el-table-column type="selection" width="55"/>
+        <el-table-column prop="ykAllotId" label="调拨编号" >
 					</el-table-column>
-				<el-table-column prop="date" label="日期" width="150">
+				<el-table-column prop="ykAllotCause" label="申请原因">
 					</el-table-column>
-				<el-table-column prop="name" label="药品名" width="150">
+				<el-table-column prop="ykAllotTime" label="调拨日期">
 					</el-table-column>
-				<el-table-column prop="province" label="入库数量" width="150">
+				<el-table-column prop="staff.sname" label="申请人">
 					</el-table-column>
-				<el-table-column prop="dan" label="采购价格" width="150">
-					</el-table-column>
-				<el-table-column prop="city" label="单位" width="150">
-					</el-table-column>	
-				<el-table-column prop="cang" label="出库仓库" width="150">
-					</el-table-column>	
-				<el-table-column prop="address" label="经手人" width="150">
-					</el-table-column>
-				<el-table-column prop="qu" label="去向" width="150">
-					</el-table-column>
-				<el-table-column prop="zip" label="备注" width="150">
-					</el-table-column>
-				<el-table-column fixed="right" label="操作" width="150">
+				<el-table-column fixed="right" label="操作">
 					<template #default="scope">
 						<el-button @click="handleClick(scope.row)" type="primary" plain size="small">查看</el-button>
-						<el-button type="success" plain size="small">编辑</el-button>
+						<el-button type="success" plain size="small">通过审核</el-button>
 					</template>
 				</el-table-column>
 			</el-table>
 		</el-col>
 	</el-row>
 	<!-- 分页 -->
-	<el-pagination
-			style="text-align: center;"
-		  @size-change="handleSizeChange"
-		  @current-change="handleCurrentChange"
-		  :current-page="currentPage4"
-		  :page-sizes="[100, 200, 300, 400]"
-		  :page-size="100"
-		  layout="total, sizes, prev, pager, next, jumper"
-		  :total="400">
-	</el-pagination>
+  <el-pagination
+      style="text-align: center"
+      @size-change="handleSizeChange"
+      @current-change="handleCurrentChange"
+      :current-page="currentPage"
+      :page-sizes="[3, 8, 16, 32]"
+      :page-size="pagesize"
+      layout="total, sizes, prev, pager, next, jumper"
+      :total="ykallot.length">
+  </el-pagination>
 </template>
 
 <script>
 	export default {
-		methods: {
-			handleClick(row) {
-				console.log(row);
-			},
-			handleSizeChange(val) {
-			    console.log(`每页 ${val} 条`);
-			},
-			handleCurrentChange(val) {
-				console.log(`当前页: ${val}`);
-			},
-		},
-
 		data() {
 			return {
-				tableData: [{
-					date: '2016-05-02',
-					name: '六味地黄丸',
-					province: 50,
-					city: '盒',
-					drug:'20160502666',
-					address: '李四',
-					dan:'20元',
-					zip: '',
-					cang:'中药仓',
-					qu:'药房'
-				},
-				{
-					
-				},
-				{
-					
-				},
-				{
-					
-				}],
 				input:'',
 				dialogFormVisible: false,
 				form: {
 					  name: '',
 					  region: '',
-					  
-					},
-				formLabelWidth: '120px',
+        },
 				value1: '',
+        ykallot:[],//调拨主表
+        detail:[],//调拨详表
+        repertory[],//药库数据
+        currentPage:1, //初始页
+        pagesize:8,    //    每页的数据
 			}
-		}
-	}
+		},
+    methods: {
+      handleSizeChange: function (size) {
+        this.pagesize = size;
+        console.log(this.pagesize)  //每页下拉显示数据
+      },
+      handleCurrentChange: function(currentPage){
+        this.currentPage = currentPage;
+        console.log(this.currentPage)  //点击第几页
+      },
+      getData(){
+        //查询调拨申请
+        this.axios.post("all-ykallot").then((v)=>{
+          this.ykallot = v.data;
+        })
+        //查询调拨详表
+        this.axios.post("all-detail").then((v)=>{
+          this.detail = v.data;
+        })
+        this.axios.post("YK-repertory").then((v)=>{
+          this.repertory = v.data
+        })
+      },
+      handleClick(val){
+          this.dialogFormVisible = true;
+          this.detail = val.ykAllotdetail;
+      },
+    },
+    created() {
+		  this.getData();
+    }
+  }
 </script>
 
 <style>
