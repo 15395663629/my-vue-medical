@@ -19,18 +19,18 @@
       </template>
     </el-table-column>
 
-    <el-table-column label="挂号卡号" width="150">
+    <el-table-column label="挂号信息" width="150">
       <template #default="scope">
         <el-popover effect="light" trigger="hover" placement="top" width="300">
           <template #default>
-            <p>姓名: {{ scope.row.cardObject.mzSick.sickName}}</p>
             <p>身份证: {{ scope.row.cardObject.mcIdCard }}</p>
             <p>电话: {{ scope.row.cardObject.mzSick.sickPhone}}</p>
             <p>住址: {{ scope.row.cardObject.mzSick.sickSite}}</p>
+            <p>挂号卡号:{{ scope.row.cardObject.mcCard}}</p>
           </template>
           <template #reference>
             <div class="name-wrapper">
-              <el-tag size="medium">{{ scope.row.cardObject.mcCard}}</el-tag>
+              <el-tag size="medium">{{ scope.row.cardObject.mzSick.sickName}}</el-tag>
             </div>
           </template>
         </el-popover>
@@ -38,7 +38,7 @@
     </el-table-column>
 
     <el-table-column
-        label="姓名"
+        label="挂号医生"
         width="110">
       <template #default="scope">
         <el-popover effect="light" trigger="hover" placement="top">

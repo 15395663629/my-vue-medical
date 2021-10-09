@@ -5,27 +5,36 @@
 		
     <el-table-column label="项目名称" align="center" width="200px">
       <template #default="scope">
-        <span>{{scope.row.checkName}}</span>
+        <span>{{scope.row.pro.checkName}}</span>
       </template>
     </el-table-column>
 
 		<el-table-column label="价格"  align="center" width="100px">
 		  <template #default="scope">
-        <span>{{scope.row.checkPay}}</span>
+        <span>{{scope.row.pro.checkPay}}</span>
 		  </template>
 		</el-table-column>
 
     <el-table-column label="功能" align="center">
-      <template #default="scope" >
-        <div class="fontType">
-          {{scope.row.indexSignificance}}
-        </div>
+      <template #default="scope">
+        <el-popover effect="light" trigger="hover" placement="top" width="410px" >
+          <template #default>
+            <p>检验结果： {{scope.row.pro.manResult}}</p>
+          </template>
+          <template #reference>
+            <div class="name-wrapper ">
+              <el-tag size="medium">{{scope.row.pro.indexSignificance}}</el-tag>
+            </div>
+          </template>
+        </el-popover>
       </template>
     </el-table-column>
 
     <el-table-column align="center" label="操作" width="100">
       <template #default="scope">
-        <el-button type="danger" icon="el-icon-delete" size="mini" @click="handleDelete(scope.$index)" circle></el-button>
+        <div v-if="scope.row.pro.manPayState == 0">
+          <el-button type="danger" icon="el-icon-delete" size="mini" @click="handleDelete(scope.$index)" circle></el-button>
+        </div>
       </template>
     </el-table-column>
 
@@ -66,7 +75,7 @@
             const sums = [];//合计表个数组
             var sum = 0;//总价钱
             this.rightTableData3.forEach((drug,i)=>{//循环判断总价钱
-              sum += drug.checkPay;
+              sum += drug.pro.checkPay;
             })
             columns.forEach((column, index) => {//获取合计的位置
               if (index === 0) {

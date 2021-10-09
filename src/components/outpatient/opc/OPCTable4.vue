@@ -3,26 +3,36 @@
 	<el-table  :data="rightTableData4" :summary-method="getSummaries2" show-summary size="mini" style="width: 100%" height="450" >
     <el-table-column label="项目名称" >
       <template #default="scope">
-        <span>{{scope.row.projectName}}</span>
+        <span>{{scope.row.ssObject.projectName}}</span>
       </template>
     </el-table-column>
 
     <el-table-column label="价格" >
       <template #default="scope">
-        <span>{{scope.row.projectPay}}</span>
+        <span>{{scope.row.ssObject.projectPay}}</span>
       </template>
     </el-table-column>
 
     <el-table-column label="手术类型">
       <template #default="scope">
-        <span>{{scope.row.projectType}}</span>
+        <span>{{scope.row.ssObject.projectType}}</span>
       </template>
     </el-table-column>
 
     <el-table-column label="治疗范围" >
       <template #default="scope">
-        <span>{{scope.row.projectPosition}}</span>
+        <el-popover effect="light" trigger="hover" placement="top" width="250px">
+          <template #default>
+            <p>手术结果： {{scope.row.ssObject.susDoctorText}}</p>
+          </template>
+          <template #reference>
+            <div class="name-wrapper ">
+              <el-tag size="medium">{{scope.row.ssObject.projectPosition}}</el-tag>
+            </div>
+          </template>
+        </el-popover>
       </template>
+
     </el-table-column>
 
     <el-table-column label="嘱托" class="patientText">
@@ -32,7 +42,9 @@
     </el-table-column>
     <el-table-column align="center" label="操作" width="50">
       <template #default="scope">
-        <el-button type="danger" icon="el-icon-delete" size="mini" @click="handleDelete(scope.$index)" circle></el-button>
+        <div v-if="scope.row.ssObject.susPayState == 0">
+          <el-button type="danger" icon="el-icon-delete" size="mini" @click="handleDelete(scope.$index)" circle></el-button>
+        </div>
       </template>
     </el-table-column>
 
@@ -73,7 +85,7 @@
           const sums = [];//合计表个数组
           var sum = 0;//总价钱
           this.rightTableData4.forEach((drug,i)=>{//循环判断总价钱
-            sum += drug.projectPay;
+            sum += drug.ssObject.projectPay;
           })
           columns.forEach((column, index) => {//获取合计的位置
             if (index === 0) {

@@ -1,10 +1,10 @@
 <template>
   <el-row>
     <el-col  :span="14">
-      <el-input @change="textareas" placeholder="请输入病人姓名或者身份证" v-model="text" size="mini" type="text"/>
+      <el-input @change="textareas" placeholder="请输入病人姓名或者身份证" v-model="text" size="mini" clearable type="text"/>
     </el-col>
     <el-col :span="1" >
-      <el-button  size="mini" @click="selectLeftTable()" icon="el-icon-search" type="primary" ></el-button>
+      <el-button  size="mini" @click="selectLeftTable" icon="el-icon-search" type="primary" ></el-button>
     </el-col>
   </el-row>
   <el-col><!-- ================================================== 左下 第二个table ==================================================-->

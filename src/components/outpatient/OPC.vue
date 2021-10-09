@@ -2,7 +2,7 @@
 	<el-container style="height: 100%;">
 		<el-header height="30px"  style="line-height: 30px; background-color: #B3C0D1;color: #333;">
 			<!-- <newDateOPC style="margin: 0px; padding: 0px;"></newDateOPC> -->
-		{{leftRecord}}
+		{{headerInput}}
     </el-header>
 		<el-container style="height: 100%;">
 			<el-aside width="400px" style="background-color: #D3DCE6;color: #333;"> <!-- 右边 -->
@@ -23,10 +23,10 @@
 
 				<el-row>
 					<el-col><!-- ================================================== 左上 第一个table ==================================================-->
-            <el-tabs v-model="indexRecord" stretch  @tab-click="selectRecord"	 >
+            <el-tabs v-model="indexRecord" stretch  @tab-click="selectRecord">
               <el-tab-pane  label="呼叫列表" :key="0" name ="0"> <!--@row-click="addTopHeader"-->
                 <el-table :data="leftTopTable" size="mini"
-                          :row-class-name="tableRowClassName" style="width: 100%;" height="560" v-loading="loading"  element-loading-background="rgba(0, 0, 0, 0.1)"
+                          style="width: 100%;" height="560" v-loading="loading"  element-loading-background="rgba(0, 0, 0, 0.1)"
                           element-loading-text="testDuqu" >
                   <el-table-column  prop="bnCount" label="序号"  width="50">
                   </el-table-column>
@@ -47,16 +47,13 @@
               </el-tab-pane>
 <!--              table2           ===============-->
               <el-tab-pane label="就诊列表" :key="1" name="1">
-                <left-table2 :text="leftText" :leftTable="leftRecord"></left-table2>
+                <left-table2   @func="getLeft" @funcs="selectRecord" :rightPassBack="rightPassBack" :text="leftText" :leftTable="leftRecord"></left-table2>
               </el-tab-pane>
 <!--              table3           ===============-->
               <el-tab-pane label="就诊记录"  :key="2" name="2" >
                 <left-table3 @func="getLeft" @funcs="selectRecord" :text="leftText" :leftTable="leftRecord"></left-table3>
               </el-tab-pane>
-
             </el-tabs>
-
-
 
 					</el-col>
 				</el-row>
@@ -167,7 +164,7 @@
               <opcTable2 @func="getTest2" :textValues="recipeObject.zpNotes"  :rightTableData2="rightTableData2"></opcTable2>
             </el-tab-pane>
             <el-tab-pane  :key="2" label="病理检验">
-              <opcTable3 @func="getTest3" :textValues="laboratoryObject.labText" :rightTableData3="rightTableData3"></opcTable3>
+              <opcTable3 @func="getTest3" :textValues="tjCodeManObject.manProposal" :rightTableData3="rightTableData3"></opcTable3>
             </el-tab-pane>
             <el-tab-pane  :key="3"  label="手术项目">
               <opcTable4 @func="getTest4" :textValues="surgeryStampObject.susText"  :rightTableData4="rightTableData4"></opcTable4>
@@ -448,6 +445,11 @@
   import LeftTable3 from "./opc/LeftTable3.vue";
   export default{
     components: {LeftTable3, LeftTable2},
+    provide(){
+      return {
+        funcBlack:this.rightPassBack,
+      };
+    },
     data(){
 			return{
         zhutiKey:"0",
@@ -463,10 +465,10 @@
         },
         //就诊记录表
         medicalRecordObject:{
+          mrNumber:'',
           mrCount:'',
           mrDoctorName:'',
           mrDiagnoseRecord:'',
-          mrSection:'',
           mrKsName:'',
           mrIdCard:'',
           mrState:'',
@@ -478,8 +480,20 @@
           bnNumber:'',
           mcNumber:'',
         },
+        // 病历表
+        historyObject:{
+          chNumber:0,
+          chComplaint:null,
+          chHistory:null,
+          chFamilyHistory:null,
+          chCause:null,
+          chDoctorText:null,
+          chOe:null,
+          chOps:null,
+        },
         //处方表
         recipeObject:{
+          recipeNumber:0,
           recipeSickName:'',
           recipeDoctorName:'',
           recipeDoctorText:'',
@@ -492,18 +506,9 @@
           xpList:[],
           zpList:[],
         },
-        // 病历表
-        historyObject:{
-          chComplaint:null,
-          chHistory:null,
-          chFamilyHistory:null,
-          chOe:null,
-          chOps:null,
-          chCause:null,
-          chDoctorText:null,
-        },
         //检验单表
         tjCodeManObject:{
+          manId:0,
           manName:'',
           manSid:'',
           manGender:'',
@@ -511,10 +516,12 @@
           manPhone:'',
           manPhy:'',
           manBirthtime:'',
+          manProposal:'',
         },
         tjManResultList:[],
         //手术
         surgeryStampObject:{
+          susNumber:0,
           susSum:0,
           susText:'',
         },
@@ -534,7 +541,6 @@
         leftText:'',//呼叫列表搜索内容
         // 头部model属性
         headerInput:{
-				  bnNumber: '',
           bnCount:'',
           mcCard:'',
           bnIdCard:'',
@@ -543,11 +549,13 @@
           sickSex:'',
           sickAge:'',
           sickPhone:'',
-          sickNumber:0,
           rtClass:'',
           mrCount:'',
           optionsValue:'',//病人类型 老人还是。。。
           rtNumber:0,
+          mcNumber:0,
+          sickNumber:0,
+          bnNumber:0,
         },
         rulesHeader: {//非空校验
           optionsValue: [{ required: true, message: " ", trigger: 'blur' },],
@@ -572,11 +580,6 @@
         loading:false, // 呼叫的登入加载
         testDuqu:'',//正在呼叫
         //体检======================
-        laboratoryObject:{
-          labText:"",
-          sickNumber:0,
-          sId:0,
-        },
         isShowTj:false,//开关选项
         tjList:[],//体检项目集合
         textTj:"",//搜索条件
@@ -607,18 +610,150 @@
         zysqShow:false,/*弹窗*/
         ksList:[],/*科室信息*/
         ksDzs:'',
-
+        vals:null,
 
 			}
 		},
 		methods: {
+      //右边点击事件
+      rightPassBack(val){
+        this.$confirm("是否读取病\t”"+val.medicalRecordObject.opcObject.bnSickName+"”\t人信息？").then(_ =>{
+          this.leftChuanZhi(val);
+          console.log(this.headerInput);
+        }).catch(_ => {});
+      },
+      //就诊列表双击选中，回传值
+      leftChuanZhi(val){
+        this.resultVo();
+        this.headerInput={
+          bnNumber: val.medicalRecordObject.opcObject.bnNumber,
+          bnCount: val.medicalRecordObject.opcObject.bnCount,
+          mcCard:val.medicalRecordObject.mrMcCard,
+          bnIdCard:val.medicalRecordObject.opcObject.bnIdCard,
+          bnSickName:val.medicalRecordObject.opcObject.bnSickName,
+          bnKsName:val.medicalRecordObject.opcObject.bnKsName,
+          sickSex:val.medicalRecordObject.sickObject.sickSex,
+          sickAge:val.medicalRecordObject.sickObject.sickAge,
+          sickPhone:val.medicalRecordObject.sickObject.sickPhone,
+          sickNumber:val.medicalRecordObject.sickObject.sickNumber,
+          rtClass:val.medicalRecordObject.opcObject.rtClass,
+          mrCount:val.medicalRecordObject.mrCount,
+          optionsValue:val.medicalRecordObject.mrSickType,//病人类型 老人还是。。。
+          rtNumber:val.medicalRecordObject.opcObject.rtNumber,
+          mcNumber: val.medicalRecordObject.mcNumber
+        }
+        //就诊记录表
+        // this.medicalRecordObject={
+        //       mrCount:val.medicalRecordObject.mrCount,
+        //       mrDoctorName:val.medicalRecordObject.mrDoctorName,
+        //       mrDiagnoseRecord:val.medicalRecordObject.mrDiagnoseRecord,
+        //       mrKsName:val.medicalRecordObject.mrKsName,
+        //       mrIdCard:val.medicalRecordObject.mrIdCard,
+        //       mrState:val.medicalRecordObject.mrState,
+        //       mrSickType:val.medicalRecordObject.mrSickType,
+        //       mrTotalMoney:val.medicalRecordObject.mrTotalMoney,
+        //       mrMcCard:val.medicalRecordObject.mrMcCard,
+        //       sId:val.medicalRecordObject.sId,
+        //       sickNumber:val.medicalRecordObject.sickNumber,
+        //       bnNumber:val.medicalRecordObject.bnNumber,
+        //       mcNumber:val.medicalRecordObject.mcNumber,
+        // },
+        this.medicalRecordObject=val.medicalRecordObject;
+        this.historyObject = val.historyObject;/*病历集合*/
+        this.recipeObject = val.recipeObject;/*处方集合*/
+        this.tjCodeManObject = val.tjCodeManObject;/*体检对象*/
+        this.tjManResultList=val.tjManResultList;/*体检集合*/
+        this.surgeryStampObject=val.surgeryStampObject/*手术对象*/
+        this.centerSurgeryList=val.centerSurgeryList;/*手术集合*/
+        /*在返回去添加到原先选中的集合中*/
+        //处方回流
+        if(this.recipeObject.zpList.length>0){
+          this.recipeObject.zpList.forEach((drug,i)=>{
+            drug.zpObject={
+              zpName:drug.zpName,
+              zpSpecification:drug.zpSpecification,
+              zpCount:drug.zpCount,
+              zpUsage:drug.zpUsage,
+              zpPrice:drug.zpPrice,
+              zpEntrust:drug.zpEntrust,
+              drugId:drug.drugId,
+              zpNumber:drug.zpNumber,
+              recipeNumber:drug.recipeNumber,
+              zpStatePrice:drug.zpStatePrice,
+            },
+            this.rightTableData2.push(drug);
+            console.log(this.rightTableData2)
+          })
+        }
+        if(this.recipeObject.xpList.length>0){
+          this.recipeObject.xpList.forEach((drug,i)=>{
+            drug.xpObject={//格外在添加个对象进去
+              rdNumber:drug.rdNumber,
+              rdName:drug.rdName,
+              rdDrugSpecification:drug.rdDrugSpecification,
+              rdSpecSpecification:drug.rdSpecSpecification,
+              rdCount:drug.rdCount,
+              rdPrice:drug.rdPrice,
+              rdSkin:drug.rdSkin,
+              rdEntrust:drug.rdEntrust,
+              rdSkinResult:drug.rdSkinResult,
+              drugId:drug.drugId,
+              rdNumber:drug.rdNumber,
+              rdStatePrice:drug.rdStatePrice,
+              recipeNumber:drug.recipeNumber,
+            }
+            this.rightTableData1.push(drug);
+            console.log(this.rightTableData1)
+          })
+        }
+
+        //对体检的回流
+        if(this.tjManResultList.length>0 && this.tjManResultList[0].manResultId !=0){
+          let tjText = ''//体检结果拼接
+          this.tjManResultList.forEach((drug,i)=>{
+            drug.pro={
+              checkId:drug.pro.checkId,
+              checkName:drug.pro.checkName,
+              checkPay:drug.pro.checkPay,
+              indexSignificance:drug.pro.indexSignificance,
+              manResult:drug.manResult,
+              manPayState:drug.manPayState,
+              manResultId:drug.manResultId,
+            }
+            tjText+=drug.manResult+'\n';
+            this.rightTableData3.push(drug);
+          })
+          console.log(tjText)
+          this.historyObject.chOe=tjText;
+          console.log(this.rightTableData3)
+        }
+        //对手术的回流
+        if(this.centerSurgeryList.length>0){
+          let tjSs = ''//体检结果拼接
+          this.centerSurgeryList.forEach((drug,i)=>{
+            drug.ssObject={
+              projectName:drug.ssObject.projectName,
+              projectPay:drug.ssObject.projectPay,
+              projectType:drug.ssObject.projectType,
+              projectPosition:drug.ssObject.projectPosition,
+              projectId:drug.projectId,
+              susDoctorText:drug.susDoctorText,
+              susMessage:drug.susMessage,
+              susPayState:drug.susPayState,
+              susNumber:drug.susNumber,
+            }
+            tjSs+=drug.susDoctorText+'\n';
+            this.historyObject.chOps=tjSs;
+            this.rightTableData4.push(drug);
+          });
+        }
+        console.log(this.rightTableData4)
+      },
 		  // 加入后台部分-------------------------------------------------------------------
       //查询就诊记录表，已经完成就诊的
       selectRecord(){
-        console.log(this.leftText)
         this.axios.post("selectRA",{index:this.indexRecord,texts:this.leftText}).then((v)=>{
           this.leftRecord = v.data;
-          console.log(this.leftRecord)
         }).catch();
       },
       //子组件传值过来。对处方的意见建议，等值接收到vo去
@@ -629,7 +764,7 @@
         this.recipeObject.zpNotes = data
       },
       getTest3(data){
-        this.laboratoryObject.labText= data
+        this.tjCodeManObject.manProposal= data
       },
       getTest4(data){
         this.surgeryStampObject.susText = data
@@ -765,8 +900,8 @@
                   message: '跳号成功!'
                 });
                 this.loading=false;
-                this.countLeftTopTable()
-                this.resultLeftTopTable();
+                this.countLeftTopTable(); //查询单个科室今天挂号的总数
+                this.resultLeftTopTable();//重置中药和西药和头部的对象和集合
               }).catch(() => {
                 this.$message({
                   showClose: true,
@@ -787,7 +922,7 @@
       //接诊
       jieZheng(){
         if(this.loading==true){
-			
+
           this.axios.post('upRtNumber',{rtNumber:this.leftTopTable[0].rtNumber}).then((v)=>{
           }).catch(()=>{ })
             return setTimeout(()=>{
@@ -803,6 +938,7 @@
               this.headerInput.bnIdCard = this.leftTopTable[0].bnIdCard
               this.headerInput.bnKsName = this.leftTopTable[0].bnKsName;
               this.headerInput.bnNumber = this.leftTopTable[0].bnNumber;
+              this.headerInput.mcNumber = this.leftTopTable[0].rtRegObject.cardObject.mcNumber;
 
               var number = this.formatDate(this.leftTopTable[0].bnTime,'yyyyMMddhhmm').toString()
                   +this.token.ksId.toString()+this.token.tid.toString()+this.headerInput.bnCount.toString()
@@ -982,50 +1118,46 @@ z
 
         }
       },
-
-
-
-
-
-
-      tableRowClassName({row, rowIndex}) { // 暂时没用到XXXXXXXXXXXXXXXXXXXXXX
-        if (this.headerInput.bnCount == row.bnCount) {
-          return 'success';
-        }
-      },
       //添加vo类
       addRecipeObject(){
         //就诊记录表(保存就进)***************************************************************
-        this.medicalRecordObject.mrCount=this.headerInput.mrCount;
-        this.medicalRecordObject.mrDoctorName=this.token.sname;
-        this.medicalRecordObject.mrDiagnoseRecord=null;//结果后面在获取
-        this.medicalRecordObject.mrKsName=this.headerInput.bnKsName;
-        this.medicalRecordObject.mrIdCard=this.headerInput.bnIdCard;
-        this.medicalRecordObject.mrState=1;//结束就诊就把状态改成1进入就诊记录表0是正在进行中
-        this.medicalRecordObject.sId=this.token.sid;
-        this.medicalRecordObject.mrSickType = this.headerInput.optionsValue;
-        var sum1 = 0;//西药总价钱
-        this.rightTableData1.forEach((drug,i)=>{//循环判断总价钱
-          sum1 += (drug.drugPrice*drug.xpObject.rdCount);
-        })
-        var sum2 = 0;//中药总价钱
-        this.rightTableData2.forEach((drug,i)=>{//循环判断总价钱
-          sum2 += (drug.drugPrice*drug.zpObject.zpCount);
-        })
-        this.medicalRecordObject.mrTotalMoney = sum1+sum2;//这里还得加上其他检验的钱
-        this.medicalRecordObject.sickNumber=this.leftTopTable[0].rtRegObject.sickNumber;
-        this.medicalRecordObject.bnNumber=this.leftTopTable[0].bnNumber;
-        this.medicalRecordObject.mrMcCard=this.leftTopTable[0].rtRegObject.cardObject.mcCard
-        this.medicalRecordObject.mcNumber=this.leftTopTable[0].rtRegObject.cardObject.mcNumber
-        //新增到就诊记录表vo
-        this.recordVo.medicalRecordObject=this.medicalRecordObject;
-
+          this.medicalRecordObject.mrCount=this.headerInput.mrCount;
+          this.medicalRecordObject.mrDoctorName=this.token.sname;
+          this.medicalRecordObject.mrDiagnoseRecord=this.historyObject.chDoctorText;//结果后面在获取
+          this.medicalRecordObject.mrKsName=this.headerInput.bnKsName;
+          this.medicalRecordObject.mrIdCard=this.headerInput.bnIdCard;
+          this.medicalRecordObject.mrState=1;//结束就诊就把状态改成1进入就诊记录表0是正在进行中
+          this.medicalRecordObject.sId=this.token.sid;
+          this.medicalRecordObject.mrSickType = this.headerInput.optionsValue;
+          var sum1 = 0;//西药总价钱
+          this.rightTableData1.forEach((drug,i)=>{//循环判断总价钱
+            sum1 += (drug.xpObject.rdPrice*drug.xpObject.rdCount);
+          })
+          var sum2 = 0;//中药总价钱
+          this.rightTableData2.forEach((drug,i)=>{//循环判断总价钱
+            sum2 += (drug.zpObject.zpCount*drug.zpObject.zpPrice);
+          })
+          var sum3 = 0;//体检总价钱
+          this.rightTableData3.forEach((drug,i)=>{//循环判断总价钱
+            sum3 += drug.pro.checkPay;
+          })
+          var sum4 = 0;//手术总价钱
+          this.rightTableData4.forEach((drug,i)=>{//循环判断总价钱
+            sum4 += drug.ssObject.projectPay;
+          })
+          this.medicalRecordObject.mrTotalMoney = sum1+sum2+sum3+sum4;//这里还得加上其他检验的钱
+          this.medicalRecordObject.sickNumber=this.headerInput.sickNumber;
+          this.medicalRecordObject.bnNumber=this.headerInput.bnNumber;
+          this.medicalRecordObject.mrMcCard=this.headerInput.mcCard;
+          this.medicalRecordObject.mcNumber=this.headerInput.mcNumber;
+          //新增到就诊记录表vo
+          this.recordVo.medicalRecordObject=this.medicalRecordObject;
         //处方表添加)***************************************************************
         if(this.rightTableData1.length>0 || this.rightTableData2.length>0){
           this.recipeObject.recipeSickName=this.headerInput.bnSickName;
           this.recipeObject.recipeDoctorName=this.token.sname;
           this.recipeObject.recipeDoctorText=null;
-          this.recipeObject.sickNumber=this.leftTopTable[0].rtRegObject.sickNumber;
+          this.recipeObject.sickNumber=this.headerInput.sickNumber;
           this.recipeObject.sId=this.token.sid;
           this.recipeObject.recipeDrugState=0;
           this.recipeObject.recipePrice = sum1+sum2;
@@ -1059,7 +1191,7 @@ z
           this.tjCodeManObject.manBirthtime=this.getInfo(this.headerInput.bnIdCard).birth;
           var sumTj = 0;//体检总价钱
           this.rightTableData3.forEach((drug,i)=>{//循环判断总价钱
-            sumTj += drug.checkPay;
+            sumTj += drug.pro.checkPay;
           });
           this.tjCodeManObject.manPhy=sumTj;
           this.recordVo.tjCodeManObject=this.tjCodeManObject;//新增到处方表vo
@@ -1076,7 +1208,7 @@ z
         if(this.rightTableData4.length>0){
           var sumSs = 0;//手术总价钱
           this.rightTableData4.forEach((drug,i)=>{//循环判断总价钱
-            sumSs += drug.projectPay;
+            sumSs += drug.ssObject.projectPay;
           });
           this.surgeryStampObject.susSum=sumSs;
           this.recordVo.surgeryStampObject=this.surgeryStampObject;
@@ -1096,7 +1228,6 @@ z
       resultVo(){
         // 头部信息栏
         this.headerInput={
-          bnNumber: '',
           bnCount:'',
           mcCard:'',
           bnIdCard:'',
@@ -1105,11 +1236,13 @@ z
           sickSex:'',
           sickAge:'',
           sickPhone:'',
-          sickNumber:0,
           rtClass:'',
           mrCount:'',
           optionsValue:'',//病人类型 老人还是。。。
           rtNumber:0,
+          mcNumber:0,
+          sickNumber:0,
+          bnNumber:0,
         };
         // 就诊记录VO
         this.recordVo={
@@ -1123,10 +1256,10 @@ z
         };
         //就诊记录表对象
         this.medicalRecordObject={
+          mrNumber:0,
           mrCount:'',
           mrDoctorName:'',
           mrDiagnoseRecord:'',
-          mrSection:'',
           mrKsName:'',
           mrIdCard:'',
           mrState:'',
@@ -1140,6 +1273,7 @@ z
         };
         //处方表对象
         this.recipeObject={
+          recipeNumber: 0,
           recipeSickName:'',
           recipeDoctorName:'',
           recipeDoctorText:'',
@@ -1154,6 +1288,7 @@ z
         };
         //病历表对象
         this.historyObject={
+          chNumber: 0,
           chComplaint:null,
           chHistory:null,
           chFamilyHistory:null,
@@ -1164,6 +1299,7 @@ z
         };
         // 检验对象
         this.tjCodeManObject={
+          manId: 0,
           manName:'',
           manSid:'',
           manGender:'',
@@ -1174,6 +1310,7 @@ z
         };
         //手术
         this.surgeryStampObject={
+          susNumber: 0,
           susSum:0,
           susText:'',
         },
@@ -1197,112 +1334,117 @@ z
           });
         }
         let is = false;/*终止添加，的判断属性*/
+
         for (let drug of this.selectDrugArr){
-          if(index==0){ /*对处方药品的添加去重和提示*/
-            this.rightTableData1.forEach((list,i)=>{
-              if(drug.drugName==list.drugName){
-                is = true;
-                this.$message({
-                  showClose: true,
-                  type: 'warning',
-                  message: '药品已存在！'
-                });
-                return;
-              }
-            });
-            this.rightTableData2.forEach((list,i)=>{
-              if(drug.drugName==list.drugName){
-                is = true;
-                this.$message({
-                  showClose: true,
-                  type: 'warning',
-                  message: '药品已存在！'
-                });
-                return ;
-              }
-            });
-          }else if(index == 1){/*对检验的添加去重和提示*/
-            this.rightTableData3.forEach((list,i)=>{
-              if(drug.checkId==list.checkId){
-                is = true;
-                this.$message({
-                  showClose: true,
-                  type: 'warning',
-                  message: '项目已存在列表中！'
-                });
-                return;
-              }
-            });
-          }else if(index == 2){/*对手术的添加去重和提示*/
-            this.rightTableData4.forEach((list,i)=>{
-              if(drug.projectId==list.projectId){
-                is = true;
-                this.$message({
-                  showClose: true,
-                  type: 'warning',
-                  message: '项目已存在列表中！'
-                });
-                return;
-              }
-            });
-          }
-          //当条件满足终止循环
-          if(is){
-            return false;
-          }
-
-          if(index==0){/*对处方药品的添加*/
-            if(drug.yfDrcaName=="中药"){
-              drug.zpObject={
-                zpName:drug.drugName,//中药名字
-                drugId:drug.drugId,//药品id
-                zpSpecification:drug.specSpecification,//规格
-                zpCount:1,//数量
-                zpUsage:drug.drugSpecification,//用法
-                zpPrice:drug.drugPrice,//单价
-                zpEntrust:null,//嘱托
-                recipeNumber:null,//处方编号
-              },
-              this.zhutiKey="1";
-              this.rightTableData2.push(drug);
-              console.log(this.rightTableData2)
-            }else{
-              drug.xpObject={//格外在添加个对象进去
-                rdName:drug.drugName,//名字
-                rdCount:1,//数量
-                rdWay:drug.drugSpecification,//用法
-                rdPrice:drug.drugPrice,//单价
-                rdTyppe:drug.yfDrcaName,//类型
-                rdSkin:false,//是否皮试
-
-                rdGrouping:null,//输液分组
-                rdEntrust:null,//嘱托
-                drugId:drug.drugId,//药品编号
-                recipeNumber:null,//处方编号
-                rdDosage:null,//用量
-                rdFrequency:null,//频次
-                rdSkinResult:null,//皮试结果
-
-              }
-              this.zhutiKey="0";
-              this.rightTableData1.push(drug);
-              console.log(this.rightTableData1)
+            if(index==0){ /*对处方药品的添加去重和提示*/
+              this.rightTableData1.forEach((list,i)=>{
+                if(drug.drugName==list.drugName){
+                  is = true;
+                  this.$message({
+                    showClose: true,
+                    type: 'warning',
+                    message: '药品已存在！'
+                  });
+                  return;
+                }
+              });
+              this.rightTableData2.forEach((list,i)=>{
+                if(drug.drugName==list.drugName){
+                  is = true;
+                  this.$message({
+                    showClose: true,
+                    type: 'warning',
+                    message: '药品已存在！'
+                  });
+                  return ;
+                }
+              });
+            }else if(index == 1){/*对检验的添加去重和提示*/
+              this.rightTableData3.forEach((list,i)=>{
+                if(drug.checkId==list.checkId){
+                  is = true;
+                  this.$message({
+                    showClose: true,
+                    type: 'warning',
+                    message: '项目已存在列表中！'
+                  });
+                  return;
+                }
+              });
+            }else if(index == 2){/*对手术的添加去重和提示*/
+              this.rightTableData4.forEach((list,i)=>{
+                if(drug.projectId==list.projectId){
+                  is = true;
+                  this.$message({
+                    showClose: true,
+                    type: 'warning',
+                    message: '项目已存在列表中！'
+                  });
+                  return;
+                }
+              });
             }
-          }else if(index == 1){/*对检验的添加*/
-            drug.tjObject={
-              checkId:drug.checkId,
-              labDoctorText:'',
+            //当条件满足终止循环
+            if(is){
+              return false;
             }
-            this.zhutiKey="2";
-            this.rightTableData3.push(drug);
-          }else if(index == 2){/*对手术的添加*/
-            drug.ssObject={
-              projectId:drug.projectId,
-              susDoctorText:'',
+
+            if(index==0){/*对处方药品的添加*/
+              console.log(this.selectDrugArr);
+              if(drug.yfDrcaName=="中药"){
+                drug.zpObject={
+                  zpName:drug.drugName,
+                  zpSpecification:drug.specSpecification,
+                  zpCount:1,
+                  zpUsage:drug.drugRemark,
+                  zpPrice:drug.drugPrice,
+                  zpEntrust:'',
+                  drugId:drug.drugId,
+                },
+                this.zhutiKey="1";
+                this.rightTableData2.push(drug);
+                console.log(this.rightTableData2)
+              }else{
+                drug.xpObject={//格外在添加个对象进去
+                  rdName:drug.drugName,
+                  rdDrugSpecification:drug.drugSpecification,
+                  rdSpecSpecification:drug.specSpecification,
+                  rdCount:1,
+                  rdPrice:drug.drugPrice,
+                  rdSkin:0,
+                  rdEntrust:'',
+                  rdSkinResult:'',
+                  drugId:drug.drugId,
+                }
+                this.zhutiKey="0";
+                this.rightTableData1.push(drug);
+                console.log(this.rightTableData1)
+              }
+
+            }else if(index == 1){/*对检验的添加*/
+              drug.pro={
+                checkId:drug.checkId,
+                checkName:drug.checkName,
+                checkPay:drug.checkPay,
+                indexSignificance:drug.indexSignificance,
+                manResult:'',
+              }
+              this.zhutiKey="2";
+              this.rightTableData3.push(drug);
+            }else if(index == 2){/*对手术的添加*/
+              drug.ssObject={
+                projectName:drug.projectName,
+                projectPay:drug.projectPay,
+                projectType:drug.projectType,
+                projectPosition:drug.projectPosition,
+                projectId:drug.projectId,
+                susDoctorText:'',
+                susMessage:'',
+              }
+              this.zhutiKey="3";
+              this.rightTableData4.push(drug);
             }
-            this.zhutiKey="3";
-            this.rightTableData4.push(drug);
-          }
+
         }
         console.log(this.zhutiKey)
         this.closeAddDrugFunction(index);/*关闭药品弹框时候调用（根据index值来关闭相对应的集合属性）*/
@@ -1368,11 +1510,6 @@ z
         else
           sex = '男';
 
-        // this.tjCodeManObject.manBirthtime=birth;
-        //
-        // if(this.tjCodeManObject.manSid==''){
-        //   this.tjCodeManObject.manBirthtime='';
-        // }
         return  {age , sex, birth}
       },
 		},
