@@ -94,7 +94,7 @@
           this.detail = v.data;
         })
         this.axios.post("YK-repertory").then((v)=>{
-          this.repertory = v.data
+          this.repertory = v.data; 
         })
       },
       handleClick(val){

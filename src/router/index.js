@@ -209,7 +209,7 @@ const routes = [
 				name:'YaoFang',
 				path:'/YaoFang',
 				component:()=>import("/src/components/pharmacy/Yfstockpile.vue"),
-				meta:{title:'药品信息管理', noCache: true },
+				meta:{title:'药房', noCache: true },
 			},
 			{
 				name:'YaoKu',

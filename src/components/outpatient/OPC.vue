@@ -2,7 +2,7 @@
 	<el-container style="height: 100%;">
 		<el-header height="30px"  style="line-height: 30px; background-color: #B3C0D1;color: #333;">
 			<!-- <newDateOPC style="margin: 0px; padding: 0px;"></newDateOPC> -->
-		{{rightTableData1}}
+		{{zyInhospitalApply}}
     </el-header>
 		<el-container style="height: 100%;">
 			<el-aside width="400px" style="background-color: #D3DCE6;color: #333;"> <!-- 右边 -->
@@ -239,9 +239,7 @@
               <el-col  :span="4">
                 <el-form-item label="药品用法" label-width="80px">
                   <el-select @change="drugSearchFunction" size="small"  v-model="drugSearch.searchDrugUsage">
-                    <el-option
-                        label="全部用法"
-                        value="">
+                    <el-option label="全部用法" value="">
                     </el-option>
                     <el-option v-for="uts in searchDrugUsageArr"
                                :label="uts"
@@ -250,15 +248,11 @@
                   </el-select>
                 </el-form-item>
               </el-col>
-
               <el-col  :offset="1" :span="2">
                 <el-form-item >
                   <el-button size="mini" @click="yesDrugAddDoctorEnjoin(0)" type="primary" icon="el-icon-check">一键添加</el-button>
                 </el-form-item>
-
               </el-col>
-
-
             </el-row>
           </el-form>
           <el-table height="500px" :data="drugArr" ref="drugTable" @selection-change="drugSelectChange" style="width: 100%">
@@ -390,34 +384,24 @@
 
 				</el-dialog>
 				
-				<!-- 病理查看=================================================================================================================================================== -->
+				<!-- 病历查看=================================================================================================================================================== -->
 				<el-dialog title="过往病理"  @close="closeAddDrugFunction(3)" v-model="bingli" width="50%"  destroy-on-close center>
-					 <el-table row-key="date"  :data="tableData" style="width: 100%" height="380">
-						<el-table-column fixed  label="日期"  width="180">
+					 <el-table  size="mini"  :data="sickBlArr" ref="drugTable3"  style="width: 100%" height="380">
+						<el-table-column fixed  label="日期" align="center" >
 						  <template #default="scope">
-							<i class="el-icon-time"></i>
-							<span style="margin-left: 10px">{{ scope.row.date }}</span>
+							  <i class="el-icon-time"></i>
+							  <span>{{ scope.row.chTime }}</span>
 						  </template>
 						</el-table-column>
-						<el-table-column  label="病情原因"  width="120"></el-table-column>
-						<el-table-column  label="病情内容"  align="center" width="290"></el-table-column>
-						<el-table-column label="主治医师" width="120">
-						  <template #default="scope">
-							<el-popover effect="light" trigger="hover" placement="top">
-							  <template #reference>
-								<div class="name-wrapper">
-								  <el-tag size="medium">{{ scope.row.name }}</el-tag>
-								</div>
-							  </template>
-							</el-popover>
-						  </template>
-						</el-table-column>
+						<el-table-column fixed label="病情原因" prop="chCause" align="center"></el-table-column>
+						<el-table-column fixed label="处理意见" prop="chDoctorText"  align="center" ></el-table-column>
+						<el-table-column fixed label="主治医师" prop="chDoctor" align="center" ></el-table-column>
 					 </el-table>
 				 
 				</el-dialog>
 
         <!-- 住院申请============================================================================= -->
-        <el-dialog title="住院申请" @close="closeAddDrugFunction(4)" ref="zyForm" v-model="zysqShow" width="50%"  destroy-on-close center>
+        <el-dialog title="住院申请" @close="closeAddDrugFunction(4)" v-model="zysqShow" width="50%"  destroy-on-close center>
           <el-row>
             <el-form ref="form" :model="zyInhospitalApply" label-width="80px" >
               <el-col :span="24">
@@ -439,15 +423,15 @@
               </el-col>
               <el-col :span="24">
                 <el-form-item label="申请科室：" label-width="100px">
-                  <el-select @change="allDescSpro"  size="small" placeholder="选择" v-model="zyInhospitalApply.ksName">
-                    <el-option v-for="yf in ksList"
-                               :label="yf.ksName"
-                               :value="yf.ksName">
+                  <el-select @change="ksDzChange" value-key="ksId"  size="small" placeholder="选择" v-model="zyInhospitalApply.ksObj" >
+                    <el-option v-for="yf in ksList" :key="yf.ksId" :label="yf.ksName" :value="yf" >
                     </el-option>
-                  </el-select>
-                  <el-button size="mini" style="margin-left: 315px" @click="addZy" type="primary">申请住院</el-button>
+                 </el-select>
+                  <span style="color:red; margin-left: 20px"> {{ksDzs}}</span>
                 </el-form-item>
-
+              </el-col>
+              <el-col :span="24">
+                <el-button size="mini" style="margin-left: 315px" @click="addZy" type="primary">申请住院</el-button>
               </el-col>
             </el-form>
           </el-row>
@@ -523,16 +507,6 @@
           sickNumber:'',
           bnNumber:'',
           mcNumber:'',
-        },
-        // 病历表
-        historyObject:{
-				  chDoctor:'',
-          chComplaint:'',
-          chHistory:'',
-          chFamilyHistory:'',
-          chOe:'',
-          chCause:'',
-          chDoctorText:'',
         },
         //处方表
         recipeObject:{
@@ -628,7 +602,19 @@
         ssOption:'',//选择对象等级
         rightTableData4:[],/*手术处方表*/
         //病例====================
-        bingli:false,//病理开关
+        bingli:false,//病历开关
+        sickBlArr:[],
+        // 病历表
+        historyObject:{
+          chDoctor:'',
+          chComplaint:'',
+          chHistory:'',
+          chFamilyHistory:'',
+          chOe:'',
+          chOps:'',
+          chCause:'',
+          chDoctorText:'',
+        },
         //转住院======================
         /*住院集合表*/
         zyInhospitalApply:{
@@ -639,10 +625,11 @@
           ksId:'',//科室id
           inProposer:'',//医生名字
           sId:'',//医生外键
+          ksObj:{}
         },
         zysqShow:false,/*弹窗*/
         ksList:[],/*科室信息*/
-
+        ksDzs:'',
 
 
 			}
@@ -853,13 +840,12 @@
         this.axios.post('ssType').then((v) => {
           this.ssClass = v.data;
         }).catch();
-
         //搜索检验项目
         this.ccooTjpro();
         //搜索手术项目
         this.allDescSpro();
         //转住院科室查询
-        this.axios.post('selectKs').then((v) => {
+        this.axios({url:'selectKs',params:{index:1}}).then((v) => {
           this.ksList = v.data;
         }).catch();
       },
@@ -896,7 +882,7 @@
           return 'tyzz';
         }
       },
-      //添加住院
+      //添加住院================住院住院住院住院住院住院住院
       addZy(){
         this.axios.post('addInHospita',this.zyInhospitalApply).then((v)=>{
           if(v.data=='ok'){
@@ -910,6 +896,15 @@
           }
         }).catch();
       },
+      //选项卡对象属性确定后change改变事件赋值
+      ksDzChange(){
+        if(this.zyInhospitalApply.ksObj != null){
+          this.zyInhospitalApply.ksId=this.zyInhospitalApply.ksObj.ksId//科室id
+          this.zyInhospitalApply.ksName=this.zyInhospitalApply.ksObj.ksName;
+          this.ksDzs =this.zyInhospitalApply.ksObj.ksDz
+        }
+
+      },
       //关闭药品弹框时候调用（以及和关闭掉其他检验项目时的操作）
       closeAddDrugFunction(index){
         if(index==0){//药品
@@ -922,6 +917,7 @@
           this.$refs.drugTable2.clearSelection();
           this.isShowSs = false;
         }else if(index==3){//病例
+          this.$refs.drugTable3.clearSelection();
           this.bingli=false;
         }else if(index==4){ //转住院
           this.zyInhospitalApply={}
@@ -949,10 +945,13 @@
           }else if(index==2){
             this.isShowSs = true;//手术
           }else if(index==3){//病例
+            this.axios({url:'selectBl',params:{index:this.headerInput.sickNumber}}).then((v)=>{
+              this.sickBlArr = v.data;
+              console.log(this.sickBlArr)
+            }).catch();
             this.bingli=true;
           }else if(index==4){//转住院
             this.zyInhospitalApply.sickNumber=this.headerInput.sickNumber;
-            this.zyInhospitalApply.ksId=this.token.ksId;//科室id
             this.zyInhospitalApply.inProposer=this.token.sname;//医生名字
             this.zyInhospitalApply.sId=this.token.sid;//医生外键
             this.zysqShow=true;
@@ -1081,6 +1080,7 @@
           chHistory:'',
           chFamilyHistory:'',
           chOe:'',
+          chOps: '',
           chCause:'',
           chDoctorText:'',
         };
