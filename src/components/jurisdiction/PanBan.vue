@@ -218,14 +218,14 @@ export default {
         if(v.data==="ok"){
           console.log("ok")
           //日期
-          // var grant = JSON.stringify({rq:this.sch.rq,bcId:this.sch.bcId,funs:funs})
-          // this.axios.post("saveGrant",qs.stringify({grant:grant})).then((res)=>{
-          //   this.dialogVisible=false
-          //   // this.getData()
-          //   this.dome(this.bcId)
-          //   this.quit(this.ksId)
-          //   this.thisWeek()
-          // }).catch()
+          var grant = JSON.stringify({rq:this.sch.rq,bcId:this.sch.bcId,funs:funs})
+          this.axios.post("saveGrant",qs.stringify({grant:grant})).then((res)=>{
+            this.dialogVisible=false
+            // this.getData()
+            this.dome(this.bcId)
+            this.quit(this.ksId)
+            this.thisWeek()
+          }).catch()
         }else{
           console.log("false")
           this.$message.error("该员工已存在班次不能新增")
