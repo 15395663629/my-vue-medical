@@ -33,7 +33,7 @@
         </el-col>
 			</el-row>
 			<el-row>
-					<el-col :span="7">
+					<el-col :span="8">
 									<el-form-item label="性别:" prop="name">
 									    <el-radio v-model="man.manGender" label="男">男</el-radio>
 									    <el-radio v-model="man.manGender" label="女">女</el-radio>
@@ -285,7 +285,7 @@
           <template #default="scope">
           <el-button size="mini" @click="xztjEdit(0,scope.row)" type="primary" >修改</el-button>
 				  <el-button size="mini" type="primary" @click="qyryEdit(scope.row)" v-show="getNowFormatDate==scope.row.manTime && scope.row.mcBalance!=null">启用</el-button>
-            <el-button size="mini" type="primary" @click="aMc" v-show="scope.row.mcBalance==null">办卡</el-button>
+          <el-button size="mini" type="primary" @click="aMc" v-show="scope.row.mcBalance==null">办卡</el-button>
 				  <el-button size="mini"   type="danger">取消</el-button>
           </template>
 				</el-table-column>

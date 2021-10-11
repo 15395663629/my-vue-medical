@@ -191,6 +191,7 @@
               birthday:'',
               birthplace:''
             },
+
             InhospitalApplyArr:[],//住院申请数组
             isShowXZBR:false,//是否显示住院申请弹框
 

@@ -33,45 +33,93 @@
 	</el-dialog>
 	
 	<!--=============================================费用明细===================================-->
-	<el-dialog title="费用明细" v-model="isPayRecordShow">
+	<el-dialog title="费用明细" v-model="isPayRecordShow" >
+    <el-tabs v-model="costTabs" @tab-click="costTabsClick">
+      <el-tab-pane label="全部费用" name="全部费用"/>
+      <el-tab-pane label="医嘱药品费用" name="医嘱药品费用" />
+      <el-tab-pane label="床位费用" name="床位费用" />
+      <el-tab-pane label="化验项目费用" name="化验项目费用" />
+      <el-tab-pane label="其它费用" name="其它费用" />
+      <el-tab-pane  label="病人缴费" name="病人缴费" >
+
+        <el-table size="mini"
+            :data="payArr.slice((payCurrent-1)*paySize,payCurrent*paySize)"
+            border
+                  :summary-method="patientPaySum" show-summary
+            height="340px"
+            style="width: 100%">
+          <el-table-column
+              prop="pyId"
+              label="缴费编号"
+              width="180">
+          </el-table-column>
+          <el-table-column prop="pyPrice"
+                           label="缴费金额">
+          </el-table-column>
+          <el-table-column
+              prop="pyDate"
+              label="缴费时间">
+          </el-table-column>
+          <el-table-column prop="staff.sname"
+                           label="操作护士">
+          </el-table-column>
+        </el-table>
+        <!--分页插件-->
+<!--        <el-pagination-->
+<!--            style="text-align: right;"-->
+<!--            @size-change="paySizeChange"-->
+<!--            @current-change="payCurrentChange"-->
+<!--            :current-page="payCurrent"-->
+<!--            :page-sizes="[2,4,6,8,10]"-->
+<!--            :page-size="paySize"-->
+<!--            layout="total, sizes, prev, pager, next, jumper"-->
+<!--            :total="payArr.length">-->
+<!--        </el-pagination>-->
+
+      </el-tab-pane>
+
+
+    </el-tabs>
+    <el-table height="340px" v-if="isShowCostTable"
+              :summary-method="patientPaySum" show-summary
+              ref="multipleTable"
+              :data="patientCostArr"
+              size="mini"
+              tooltip-effect="dark"
+              style="width: 100%"
+              @selection-change="handleSelectionChange">
+      <el-table-column
+          label="费用编号"
+          prop="pcdId"
+      >
+      </el-table-column>
+      <el-table-column
+          prop="pcdCause"
+          label="费用名称">
+      </el-table-column>
+      <el-table-column
+          prop="pcdPrice"
+          label="费用价格">
+      </el-table-column>
+      <el-table-column
+          prop="pcdDate"
+          label="扣除时间">
+      </el-table-column>
+
+    </el-table>
+    <!--分页插件-->
+    <el-pagination
+        style="text-align: center;"
+        @size-change="totalCut"
+        @current-change="pageCut"
+        :current-page="1"
+        :page-sizes="[2,4,6,8,10]"
+        :page-size="size"
+        layout="total, sizes, prev, pager, next, jumper"
+        :total="total">
+    </el-pagination>
 		
-		<el-table
-		    ref="multipleTable"
-		    :data="empArr"
-		    tooltip-effect="dark"
-		    style="width: 100%"
-		    @selection-change="handleSelectionChange">
-		    <el-table-column
-		      label="费用编号"
-			  prop="empId"
-		      >
-		    </el-table-column>
-		    <el-table-column
-		      prop="empName"
-		      label="费用名称">
-		    </el-table-column>
-		    <el-table-column
-		      prop="empDate"
-		      label="费用价格">
-		    </el-table-column>
-			<el-table-column
-			  prop="empSalary"
-			  label="扣除时间">
-			</el-table-column>
-			
-		  </el-table>
-		  <!--分页插件-->
-		   <el-pagination
-		  		style="text-align: center;"
-		        @size-change="totalCut"
-		        @current-change="pageCut"
-		        :current-page="1"
-		        :page-sizes="[2,4,6,8,10]"
-		        :page-size="size"
-		        layout="total, sizes, prev, pager, next, jumper"
-		        :total="total">
-		      </el-pagination>
-		
+
 	</el-dialog>
 	
 	<!--===============================================================================病人信息表格-->
@@ -108,7 +156,7 @@
 				  <el-table-column label="操作" width="200px">
 				  	<template  #default='scope'>
 						<el-button size="mini" type="primary" @click.stop="openPayBt(scope.row)" >缴费</el-button>
-				  		 <el-button size="mini" type="primary" @click.stop="isPayRecordShow = true" >查看费用明细</el-button>
+				  		 <el-button size="mini" type="primary" @click.stop="lookCostClick(scope.row)" >查看费用明细</el-button>
 				  	</template>
 				  </el-table-column>
 			    </el-table-column>
@@ -132,38 +180,6 @@
 
   <el-dialog title="病人缴费详细" v-model="isShowPayDetail">
 
-    <el-table
-        :data="payArr.slice((payCurrent-1)*paySize,payCurrent*paySize)"
-        border
-        height="340px"
-        style="width: 100%">
-        <el-table-column
-            prop="pyId"
-            label="缴费编号"
-            width="180">
-        </el-table-column>
-        <el-table-column prop="pyPrice"
-            label="缴费金额">
-        </el-table-column>
-        <el-table-column
-            prop="pyDate"
-            label="缴费时间">
-        </el-table-column>
-        <el-table-column prop="staff.sname"
-            label="操作护士">
-      </el-table-column>
-    </el-table>
-    <!--分页插件-->
-    <el-pagination
-        style="text-align: right;"
-        @size-change="paySizeChange"
-        @current-change="payCurrentChange"
-        :current-page="payCurrent"
-        :page-sizes="[2,4,6,8,10]"
-        :page-size="paySize"
-        layout="total, sizes, prev, pager, next, jumper"
-        :total="payArr.length">
-    </el-pagination>
 
   </el-dialog>
 
@@ -195,6 +211,11 @@
           payCurrent:1,//缴费详细当前页
           paySize:6,//缴费详细页大小
 
+          //======================费用显示数据
+          patientCostArr:[],//医嘱费用详情
+          costTabs:'全部费用',
+          isShowCostTable:true,//是否显示费用表格
+
 
 
           //=====================================病人缴费详情数据
@@ -219,8 +240,6 @@
         }).catch((date)=>{
 
         })
-
-
       },
 
       //=============================新增缴费方法
@@ -238,11 +257,32 @@
         });
       },
 
+      patientPaySum(param){
+        const { columns} = param;//获取到的整个表格的总栏位数
+        const sums = [];//合计表个数组
+        var sum = 0;//总价钱
+        if(this.isShowCostTable){
+          this.patientCostArr.forEach((pay,i)=>{//循环判断总价钱
+            sum += pay.pcdPrice;
+          })
+        }else{
+          this.payArr.forEach((pay,i)=>{//循环判断总价钱
+            sum += pay.pyPrice;
+          })
+        }
+
+        columns.forEach((column, index) => {//获取合计的位置
+          if(index === 3){
+            sums[index] = "合计:"+sum.toFixed(2);
+            return;
+          }
+        });
+        return sums;
+      },
+
       //==============================病人缴费详情方法
       openPayDetails(row){
-        console.log(row)
-        this.isShowPayDetail = true;
-        this.payArr = row.listPay;
+
       },
 
       //打开缴费弹框方法
@@ -266,6 +306,42 @@
 			valueBRObj(row){
 				this.jfText = '缴费记录（'+row.ptName+'）'
 			},
+      //=======================显示费用方法
+      costTabsClick(){
+        if(this.costTabs == '全部费用'){
+          this.isShowCostTable = true;
+          this.axios({url:"select-by-ptNo",params:{ptNo:this.payObj.ptNo}}).then((v)=>{//新增缴费记录
+            this.patientCostArr = v.data;
+          });
+        }else if(this.costTabs == '医嘱药品费用'){
+          this.isShowCostTable = true;
+          this.axios({url:"select-by-ptNo",params:{ptNo:this.payObj.ptNo,text:'医嘱费用'}}).then((v)=>{//新增缴费记录
+            this.patientCostArr = v.data;
+          });
+        }else if(this.costTabs == '床位费用'){
+          this.isShowCostTable = true;
+          this.axios({url:"select-by-ptNo",params:{ptNo:this.payObj.ptNo,text:'床位费用'}}).then((v)=>{//新增缴费记录
+            this.patientCostArr = v.data;
+          });
+        }else if(this.costTabs == '化验项目费用'){
+          this.isShowCostTable = true;
+
+        }else if(this.costTabs == '病人缴费'){
+          this.isShowCostTable = false;
+        }else if(this.costTabs == '其它费用'){
+          this.isShowCostTable = true;
+          this.axios({url:"select-by-ptNo",params:{ptNo:this.payObj.ptNo,text:'其它费用'}}).then((v)=>{//新增缴费记录
+            this.patientCostArr = v.data;
+          });
+        }
+      },
+      lookCostClick(obj){
+        console.log(obj.listPay)
+        this.isPayRecordShow = true;
+        this.payObj = obj;
+        this.payArr = obj.listPay;
+        this.costTabsClick();
+      },
 
 
       // 住院申请size变了调用
@@ -275,6 +351,10 @@
       //住院申请Current变了调用
       payCurrentChange: function(currentPage) {
         this.payCurrent = currentPage;
+      },
+      //显示只保留两位小数
+      towNumber(val) {
+        return val.toFixed(2)
       }
 
 
@@ -295,6 +375,7 @@
 		cursor: pointer;
 		background-color: #D2FFF0!important
 	}
+
 	/deep/.el-table__body tr.current-row>td{
 	  background-color: #D2FFF0!important
 	  /* color: #f19944; */  /* 设置文字颜色，可以选择不设置 */
