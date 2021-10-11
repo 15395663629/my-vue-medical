@@ -212,15 +212,27 @@ export default {
       var funs=this.$refs.tree.getCheckedKeys();//员工id
       //班次编号
       console.log(this.schedulingTypeOptions[0].fid)
-      //日期
-      var grant = JSON.stringify({rq:this.sch.rq,bcId:this.sch.bcId,funs:funs})
-      this.axios.post("saveGrant",qs.stringify({grant:grant})).then((res)=>{
-        this.dialogVisible=false
-        // this.getData()
-        this.dome(this.bcId)
-        this.quit(this.ksId)
-        this.thisWeek()
+      console.log(funs)
+      var grants = JSON.stringify({bcId:this.sch.bcId,funs:funs,rq:this.sch.rq})
+      this.axios.post("addSch",qs.stringify({grants:grants})).then((v)=>{
+        if(v.data==="ok"){
+          console.log("ok")
+          //日期
+          // var grant = JSON.stringify({rq:this.sch.rq,bcId:this.sch.bcId,funs:funs})
+          // this.axios.post("saveGrant",qs.stringify({grant:grant})).then((res)=>{
+          //   this.dialogVisible=false
+          //   // this.getData()
+          //   this.dome(this.bcId)
+          //   this.quit(this.ksId)
+          //   this.thisWeek()
+          // }).catch()
+        }else{
+          console.log("false")
+          this.$message.error("该员工已存在班次不能新增")
+          this.dialogVisible=false
+        }
       }).catch()
+
     },
     end(){
       this.axios.get('end-week').then((v)=>{
