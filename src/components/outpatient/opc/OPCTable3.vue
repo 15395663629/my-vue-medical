@@ -33,12 +33,10 @@
     <el-table-column align="center" label="操作" width="100">
       <template #default="scope">
         <div v-if="scope.row.pro.manPayState == 0">
-          <el-button type="danger" icon="el-icon-delete" size="mini" @click="handleDelete(scope.$index)" circle></el-button>
+          <el-button type="danger" icon="el-icon-delete" size="mini" @click="handleDelete(scope.$index,scope.row.manId)" circle></el-button>
         </div>
       </template>
     </el-table-column>
-
-
 	  </el-table>
   <h4>检验项目留言：</h4>
   <el-input type="textarea" placeholder="请输入病理原因"  @change="textareas" v-model="textValues" maxlength="400" :rows="3"
@@ -66,8 +64,16 @@
         },
         methods: {
           //删除
-          handleDelete(index) {
-            this.rightTableData3.splice(index, 1);
+          handleDelete(index,i) {
+            if(i==undefined){
+              this.rightTableData3.splice(index,1);
+            }else{
+              this.axios.post('deleteRe',{index:3,number:i}).then((v)=>{
+                if(v.data=="ok"){
+                  this.rightTableData3.splice(index,1);
+                }
+              }).catch(()=>{})
+            }
           },
           //计算总和
           getSummaries2(param) {

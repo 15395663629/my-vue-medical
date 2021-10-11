@@ -40,7 +40,7 @@
     <el-table-column fixed align="center" label="操作" width="100">
       <template #default="scope">
         <div v-if="scope.row.zpObject.zpStatePrice == 0">
-          <el-button type="danger" icon="el-icon-delete" size="mini" @click="handleDelete(scope.$index)" circle></el-button>
+          <el-button type="danger" icon="el-icon-delete" size="mini" @click="handleDelete(scope.$index,scope.row.zpNumber)" circle></el-button>
         </div>
       </template>
     </el-table-column>
@@ -70,8 +70,16 @@
         },
         methods: {
           //删除
-          handleDelete(index) {
-            this.rightTableData2.splice(index, 1);
+          handleDelete(index,i) {
+            if(i==undefined){
+              this.rightTableData2.splice(index,1);
+            }else{
+              this.axios.post('deleteRe',{index:2,number:i}).then((v)=>{
+                if(v.data=="ok"){
+                  this.rightTableData2.splice(index,1);
+                }
+              }).catch(()=>{})
+            }
           },
           //计算总和
           getSummaries2(param) {

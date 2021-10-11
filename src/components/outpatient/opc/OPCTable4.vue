@@ -43,7 +43,7 @@
     <el-table-column align="center" label="操作" width="50">
       <template #default="scope">
         <div v-if="scope.row.ssObject.susPayState == 0">
-          <el-button type="danger" icon="el-icon-delete" size="mini" @click="handleDelete(scope.$index)" circle></el-button>
+          <el-button type="danger" icon="el-icon-delete" size="mini" @click="handleDelete(scope.$index,scope.row.susNumber)" circle></el-button>
         </div>
       </template>
     </el-table-column>
@@ -76,8 +76,16 @@
       },
       methods: {
         //删除
-        handleDelete(index) {
-          this.rightTableData4.splice(index, 1);
+        handleDelete(index,i) {
+          if(i==undefined){
+            this.rightTableData4.splice(index,1);
+          }else{
+            this.axios.post('deleteRe',{index:4,number:i}).then((v)=>{
+              if(v.data=="ok"){
+                this.rightTableData4.splice(index,1);
+              }
+            }).catch(()=>{})
+          }
         },
         //计算总和
         getSummaries2(param) {
