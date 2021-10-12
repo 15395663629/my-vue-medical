@@ -120,7 +120,7 @@
 
         <el-col :span="9">
           <el-form-item label="科室" label-width="80px">
-            <el-select v-model="patientBaseObj.ksId" @change="ksChangeStaff" placeholder="请选择">
+            <el-select v-model="patientBaseObj.ksId" @change="ksSelectFun" placeholder="请选择">
               <el-option v-for="ks in ksArr"
                   :label="ks.ksName"
                   :value="ks.ksId">
@@ -144,8 +144,8 @@
           <el-form-item label="治疗医生" label-width="80px">
             <el-select v-model="patientBaseObj.sId" placeholder="请选择">
               <el-option v-for="st in staffArr"
-                         :label="st.sname"
-                         :value="st.sid">
+                         :label="st.staff.sname"
+                         :value="st.staff.sid">
               </el-option>
             </el-select>
           </el-form-item>
@@ -473,7 +473,19 @@
         this.axios.post("zy-ks-list").then((v)=>{
           console.log(v.data);
           this.ksArr = v.data;
+          // this.ksSelectFun();//查询排班信息
         }).catch((data)=>{
+        });
+      },
+
+      //科室修改是调用查询该科室的排班信息
+      ksSelectFun(){
+        //根据科室编号查询排班人员
+        this.axios({url:"home-sch-byksId",params:{ksId:this.patientBaseObj.ksId}}).then((v)=>{
+          console.log(v.data);
+          this.staffArr = v.data;
+        }).catch((data)=>{
+
         });
       },
 
@@ -533,19 +545,19 @@
             this.patientBaseObj.ptAge= obj.sick.sickAge;//年龄
             this.patientBaseObj.inId = obj.inId;//住院申请编号
 
-        this.ksChangeStaff(obj.ksId);//调用查询员工
+        this.ksSelectFun();//调用查询员工
         this.isShowXZBR = false;
       },
-      //更改科室后调用
-      ksChangeStaff(ksId){
-        this.patientBaseObj.sId = '';
-        this.axios({url:"select-staff-all",params:{ksId:ksId}}).then((v)=>{//查询所有病房
-          console.log(v.data)
-          this.staffArr = v.data;
-        }).catch((data)=>{
-
-        });
-      },
+      // //更改科室后调用
+      // ksChangeStaff(ksId){
+      //   this.patientBaseObj.sId = '';
+      //   this.axios({url:"select-staff-all",params:{ksId:ksId}}).then((v)=>{//查询所有病房
+      //     console.log(v.data)
+      //     this.staffArr = v.data;
+      //   }).catch((data)=>{
+      //
+      //   });
+      // },
       //清空住院登记方法
       PatientClear(){
         this.isShowZY = false;

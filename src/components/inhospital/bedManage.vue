@@ -593,8 +593,9 @@
 		methods:{
 			//==========================================================================初始化病房信息，住院登记信息及科室方法
 		  wardArrInit(){
+		    console.log(this.staff)
         //查询所有病房
-			  this.axios({url:"zyWard",params:{search:this.wardSearchText}}).then((v)=>{
+			  this.axios.post("zyWard",{search:this.wardSearchText,staff:this.staff}).then((v)=>{
 			    console.log(v.data);
             this.wardArr = v.data;
         }).catch((data)=>{
@@ -926,7 +927,7 @@
           this.wardObj.sId = '';
         }
 
-        this.axios({url:"select-staff-all",params:{ksId:this.wardObj.ksId}}).then((v)=>{//查询所有病房
+        this.axios({url:"select-staff-all",params:{ksId:this.wardObj.ksId}}).then((v)=>{//查询所有该科室的员工
           console.log(v.data)
           this.staffArr = v.data;
         }).catch((data)=>{
@@ -977,8 +978,8 @@
       // }
 		},
     created() {
-		  this.wardArrInit();
       this.staff = this.$store.state.token.list;//将登录存入的值在取出来
+      this.wardArrInit();
     }
   }
 

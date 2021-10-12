@@ -94,7 +94,7 @@
       >
       </el-table-column>
       <el-table-column
-          prop="pcdCause"
+          prop="name"
           label="费用名称">
       </el-table-column>
       <el-table-column
@@ -328,7 +328,9 @@
           });
         }else if(this.costTabs == '化验项目费用'){
           this.isShowCostTable = true;
-
+          this.axios({url:"select-by-ptNo",params:{ptNo:this.payObj.ptNo,text:'化验费用'}}).then((v)=>{//新增缴费记录
+            this.patientCostArr = v.data;
+          });
         }else if(this.costTabs == '病人缴费'){
           this.isShowCostTable = false;
         }else if(this.costTabs == '其它费用'){
