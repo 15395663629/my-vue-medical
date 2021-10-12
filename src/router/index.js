@@ -1,7 +1,7 @@
 import {createRouter,createWebHistory} from "vue-router"
-
 //定义组件，定义路由
 const routes = [
+
 	//一级路由
 	//登录一级路由
 	{

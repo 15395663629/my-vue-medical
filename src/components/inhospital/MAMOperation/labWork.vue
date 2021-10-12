@@ -1,5 +1,5 @@
 <template>
-  <el-button size="mini" type="primary" @click="openCheckoutTk">添加</el-button>
+  <el-button size="mini" type="primary" @click="openCheckoutTk">添加化验</el-button>
 
   <!-- 病理检验=================================================================================================================================================== -->
   <el-row>
@@ -27,7 +27,7 @@
 
         <el-table-column width="70px" label="操作" >
           <template #default="obj">
-            <el-button type="danger" size="mini" >取消</el-button>
+            <el-button type="danger" @click="deleteCheckoutFun(obj.$index)" size="mini" >删除</el-button>
           </template>
         </el-table-column>
 
@@ -103,6 +103,12 @@
 
 <script>
 export default {
+  props:{
+    patientObj:{//父组件传过来的病人对象
+      type:Object,
+      request:true
+    }
+  },
   data(){
     return{
       //=====================显示检验结果
@@ -114,6 +120,8 @@ export default {
       checkoutMiddleList:[],//添加病人化验项目中间集合
       checkoutList:[],//病人已添加的化验项目集合
 
+      //============================员工数据
+      staff:{}
 
     }
   },
@@ -121,7 +129,6 @@ export default {
 //搜索检验项目=================检验检验检验检验检验检验检验
     ccooTjpro(){
       this.axios({url:'allDescTjpro',params:{seach:this.seach} }).then((v) => {
-
         // this.tjList = v.data;
         let arr = v.data;
         arr.forEach(a=>{
@@ -142,7 +149,7 @@ export default {
         message: '添加成功！'
       });
       this.isShowTj = false;
-
+      this.checkoutMiddleList = [];
     },
     //添加化验项目中间方法
     PatientAddMiddleCheckout(checkoutArr){
@@ -168,17 +175,56 @@ export default {
     },
     //清空所有已开检验
     emptyPatientCheckout(){
+      this.checkoutMiddleList = [];
       this.checkoutList = [];//清空
       this.$message({
         type: 'success',
         message: '清除成功！'
       });
     },
+    //删除已添加项目
+    deleteCheckoutFun(obj){
+      this.checkoutList.splice(obj,1);
+      this.$message({
+        type: 'success',
+        message:'删除成功！'
+      })
+    },
     //新增病人化验项目
-    addPatientCheckout(){
+    async addPatientCheckout(){
+      if(this.checkoutList.length <= 0){
+        this.$message({
+          type: 'error',
+          message:'未添加任何项目！'
+        })
+        return;
+      }
+
+      let iss = false;
+      // alert(this.patientBaseObj.ptPrice)
+      if(this.patientObj.ptPrice < 0){
+        iss = await this.$confirm("病人【"+this.patientObj.ptName+"】 已欠费【"+this.patientObj.ptPrice+"】是否继续添加化验项目", '提示信息', {
+          distinguishCancelAndClose: true,
+          confirmButtonText: "取消添加",
+          cancelButtonText: "确定添加"
+        }).then(() => {
+          return true;
+        }).catch(action => {
+          return false;
+        });
+      }
+      if(iss){
+        this.$message({
+          type: 'warning',
+          message:'已取消开立'
+        })
+        return;
+      }
+
       let ck = {};
-      ck.ptNo = 122;
+      ck.ptNo = this.patientObj.ptNo;
       ck.tjCodeProjectList = this.checkoutList;
+      ck.sId = this.staff.sid;
       this.axios.post('add-patient-checkout',ck).then((v=>{
         this.$message({
           type: 'success',
@@ -196,6 +242,7 @@ export default {
   },
   created() {
     this.ccooTjpro();
+    this.staff = this.$store.state.token.list;//将登录存入的值在取出来
   }
 }
 </script>
