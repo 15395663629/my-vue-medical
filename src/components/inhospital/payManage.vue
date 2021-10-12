@@ -98,13 +98,15 @@
           label="费用名称">
       </el-table-column>
       <el-table-column
-          prop="pcdPrice"
-          label="费用价格">
-      </el-table-column>
-      <el-table-column
           prop="pcdDate"
           label="扣除时间">
       </el-table-column>
+
+      <el-table-column
+          prop="pcdPrice"
+          label="费用价格">
+      </el-table-column>
+
 
     </el-table>
     <!--分页插件-->
@@ -312,6 +314,7 @@
           this.isShowCostTable = true;
           this.axios({url:"select-by-ptNo",params:{ptNo:this.payObj.ptNo}}).then((v)=>{//新增缴费记录
             this.patientCostArr = v.data;
+            console.log(v.data)
           });
         }else if(this.costTabs == '医嘱药品费用'){
           this.isShowCostTable = true;
