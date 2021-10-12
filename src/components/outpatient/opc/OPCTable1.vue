@@ -8,12 +8,12 @@
     </el-table-column>
     <el-table-column fixed  label="服用剂量"  align="center"  width="133">
       <template #default="scope">
-        <span>{{scope.row.xpObject.rdDrugSpecification }}</span>
+        <span>{{scope.row.xpObject.rdFyjl }}</span>
       </template>
     </el-table-column>
     <el-table-column fixed  label="单位" align="center"  width="60">
       <template #default="scope">
-        <span>{{scope.row.xpObject.rdSpecSpecification}}</span>
+        <span>{{scope.row.xpObject.rdDw}}</span>
       </template>
     </el-table-column>
     <el-table-column fixed  label="单价" align="center"  width="100">

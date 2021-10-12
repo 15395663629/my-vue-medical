@@ -704,8 +704,8 @@
             drug.xpObject={//格外在添加个对象进去
               rdNumber:drug.rdNumber,
               rdName:drug.rdName,
-              rdDrugSpecification:drug.rdDrugSpecification,
-              rdSpecSpecification:drug.rdSpecSpecification,
+              rdFyjl:drug.rdDrugSpecification,
+              rdDw:drug.rdSpecSpecification,
               rdCount:drug.rdCount,
               rdPrice:drug.rdPrice,
               rdSkin:drug.rdSkin,
@@ -845,7 +845,8 @@
               this.$confirm('是否保存就诊？').then(_ => {
                 //判断医生是否做了病历检验
                   this.addRecipeObject(1);
-                  this.axios.post('addRecord',this.recordVo).then((v)=>{
+                  console.log(this.rightTableData1)
+                this.axios.post('addRecord',this.recordVo).then((v)=>{
                     if(v.data=='ok'){
                       this.$message({
                         showClose: true,
@@ -1352,7 +1353,7 @@ z
         for (let drug of this.selectDrugArr){
             if(index==0){ /*对处方药品的添加去重和提示*/
               this.rightTableData1.forEach((list,i)=>{
-                if(drug.drugName==list.drugName){
+                if(drug.drugName==list.xpObject.rdName){
                   is = true;
                   this.$message({
                     showClose: true,
@@ -1363,7 +1364,7 @@ z
                 }
               });
               this.rightTableData2.forEach((list,i)=>{
-                if(drug.drugName==list.drugName){
+                if(drug.drugName==list.zpObject.zpName){
                   is = true;
                   this.$message({
                     showClose: true,
@@ -1375,7 +1376,7 @@ z
               });
             }else if(index == 1){/*对检验的添加去重和提示*/
               this.rightTableData3.forEach((list,i)=>{
-                if(drug.checkId==list.checkId){
+                if(drug.checkId==list.pro.checkId){
                   is = true;
                   this.$message({
                     showClose: true,
@@ -1387,7 +1388,7 @@ z
               });
             }else if(index == 2){/*对手术的添加去重和提示*/
               this.rightTableData4.forEach((list,i)=>{
-                if(drug.projectId==list.projectId){
+                if(drug.projectId==list.ssObject.projectId){
                   is = true;
                   this.$message({
                     showClose: true,
@@ -1422,8 +1423,8 @@ z
               }else{
                 drug.xpObject={//格外在添加个对象进去
                   rdName:drug.drugName,
-                  rdDrugSpecification:drug.drugSpecification,
-                  rdSpecSpecification:drug.specSpecification,
+                  rdFyjl:drug.drugSpecification,
+                  rdDw:drug.specSpecification,
                   rdCount:1,
                   rdPrice:drug.drugPrice,
                   rdSkin:0,
@@ -1434,7 +1435,6 @@ z
                 }
                 this.zhutiKey="0";
                 this.rightTableData1.push(drug);
-                console.log(this.rightTableData1)
               }
 
             }else if(index == 1){/*对检验的添加*/
