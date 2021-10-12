@@ -583,7 +583,7 @@
       //手术弹框确认按钮
       ssdoorApply(){
         this.axios.post("http://localhost:8089/aOrUApply",{proj:this.ssApply}).then((res)=>{
-          this.getData();
+          this.patientBaseInit();
         }).catch()
         this.isSSShow=false;
       },
