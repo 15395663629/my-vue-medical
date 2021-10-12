@@ -89,7 +89,6 @@ import  qs from 'qs'
         page:1
 			}
 		},
-
 		methods: {
       getData(){
         //查询表格
@@ -107,29 +106,7 @@ import  qs from 'qs'
 				this.multipleSelection = val;
 				// alert(123)
 			},
-			open() {
-				this.$confirm('此操作将永久删除该记录, 是否继续?', '提示', {
-					confirmButtonText: '确定',
-					cancelButtonText: '取消',
-					type: 'warning'
-				}).then(() => {
-					this.$message({
-						type: 'success',
-						message: '删除成功!'
-					});
-				}).catch(() => {
-					this.$message({
-						type: 'info',
-						message: '已取消删除'
-					});
-				});
-			},
-			handleSizeChange(val) {
-				console.log(`每页 ${val} 条`);
-			},
-			handleCurrentChange(val) {
-				console.log(`当前页: ${val}`);
-			},
+
       //获取部门id
       dome(event){
         this.deId=event
@@ -161,15 +138,16 @@ import  qs from 'qs'
         }else if(this.ksName===''){
           return this.$message.error("科室名称不能为空");
         }
-        for (let i=0;i<this.kslist.length;i++){
-          if(this.kslist[i].ksName===this.value){
-            return this.$message.error("重复");
-          }else{
+
             if(this.ks.ksId===0){
+              for (let i=0;i<this.kslist.length;i++){
+                return this.$message.error("重复");
+              }
               this.axios.post("http://localhost:8089/add-ks",this.ks).then((v)=>{
                 if(v.data===1){
                   this.qc()
                   this.getData()
+                  this.$message.success("新增成功")
                 }else{
                   console.log(v.data)
                 }
@@ -186,8 +164,6 @@ import  qs from 'qs'
             }
             this.dialogVisible1=false
             return
-          }
-        }
 
       },
       //编辑
