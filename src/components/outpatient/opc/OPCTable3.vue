@@ -33,7 +33,7 @@
     <el-table-column align="center" label="操作" width="100">
       <template #default="scope">
         <div v-if="scope.row.pro.manPayState == 0">
-          <el-button type="danger" icon="el-icon-delete" size="mini" @click="handleDelete(scope.$index,scope.row.manId)" circle></el-button>
+          <el-button type="danger" icon="el-icon-delete" size="mini" @click="handleDelete(scope.$index,scope.row.manResultId)" circle></el-button>
         </div>
       </template>
     </el-table-column>
@@ -71,6 +71,7 @@
               this.axios.post('deleteRe',{index:3,number:i}).then((v)=>{
                 if(v.data=="ok"){
                   this.rightTableData3.splice(index,1);
+                  this.$parent.selectRecord();
                 }
               }).catch(()=>{})
             }

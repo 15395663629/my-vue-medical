@@ -102,7 +102,7 @@
           const sums = [];//合计表个数组
           var sum = 0;//总价钱
           this.rightTableData1.forEach((drug,i)=>{//循环判断总价钱
-            sum += (drug.drugPrice*drug.xpObject.rdCount);
+            sum += (drug.xpObject.rdPrice*drug.xpObject.rdCount);
           })
           columns.forEach((column, index) => {//获取合计的位置
             if (index === 0) {
