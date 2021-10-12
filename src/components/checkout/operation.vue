@@ -18,6 +18,70 @@
       </el-col>
     </el-form>
 	</el-row>
+
+
+<!--办理诊疗卡弹框------------------------------------------------------------------------------------------------------------------>
+  <el-dialog title="提示"  :close-on-click-modal="false" :before-close="resetFormSick"  :close-on-press-escape="false"  v-model="isShow3" width="45%" center  ><!-- 病人新增 -->
+    <el-row><!-- :rules="rules" -->
+      <el-form  size="small" ref="mzSickArr" :model="mzSickArr" :rules="rules" label-width="100px" class="demo-ruleForm">
+        <el-col>
+          <el-form-item prop="sickName" label="姓名" >
+            <el-input v-model="mzSickArr.sickName"  disabled></el-input>
+          </el-form-item>
+        </el-col>
+        <el-col>
+          <el-form-item prop="sickPhone" label="电话" >
+            <el-input v-model="mzSickArr.sickPhone"  disabled></el-input>
+          </el-form-item>
+        </el-col>
+        <el-col>
+          <el-form-item prop="sickIdCard" label="身份证" >
+            <el-input @input="getInfo(mzSickArr.sickIdCard)" v-model="mzSickArr.sickIdCard"  disabled></el-input>
+          </el-form-item>
+        </el-col>
+        <el-col>
+          <el-form-item prop="sickAge"  label="年龄" >
+            <el-input  v-model="mzSickArr.sickAge"   disabled></el-input>
+          </el-form-item>
+        </el-col>
+        <el-col >
+          <el-form-item prop="sickSex" label="性别" >
+            <el-select v-model="mzSickArr.sickSex" placeholder="请选择"  style="width: 188px">
+              <el-option
+                  v-for="item in optionsSex"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.label">
+              </el-option>
+            </el-select>
+          </el-form-item>
+        </el-col>
+        <el-col>
+          <el-form-item  label="家庭地址" >
+            <el-input v-model="mzSickArr.sickSite" ></el-input>
+          </el-form-item>
+        </el-col>
+        <el-col>
+          <el-form-item  prop="mcNumberCard" label="诊疗卡卡号:"  >
+            <el-input class="te" v-model="mzSickArr.mcNumberCard"  disabled></el-input>
+          </el-form-item>
+        </el-col>
+        <el-col>
+          <el-form-item  label-width="10px">
+            <el-button type="primary" @click="submitMedicalCard('mzSickArr')" icon="el-icon-paperclip" size="small">生成诊疗卡</el-button>
+          </el-form-item>
+        </el-col>
+        <el-col>
+          <el-form-item label-width="455px">
+            <el-button type="primary" @click="submitMzSick('mzSickArr')">提交</el-button>
+            <el-button @click="resetFormSick">取消</el-button>
+          </el-form-item>
+        </el-col>
+      </el-form>
+    </el-row>
+  </el-dialog>
+
+
 	<el-dialog :title=tiltm v-model="xztj" width="50%" center style="overflow: auto"  ><!-- 弹框      -=-=-=-=-=-=-==-=-=-=-=--=-=-=-=-=-=-新增体检人员弹框======================================= -->
 		<el-form v-model="man"  status-icon :rules="rules" ref="inserman" label-width="100px" class="demo-ruleForm">
 			<el-row>
@@ -219,7 +283,7 @@
       <el-form-item>
         <el-col :span="13">
           <span>请输入密码:</span>
-          <el-input v-model="rlmm"  style="margin-top: 5px;width: 300px"></el-input>
+          <el-input type="password" v-model="rlmm"  style="margin-top: 5px;width: 300px"></el-input>
         </el-col>
         <el-col :span="1" :offset="6">
             <el-button style="margin-top: 5px" type="primary" @click="qyryForm()">确定</el-button>
@@ -285,7 +349,7 @@
           <template #default="scope">
           <el-button size="mini" @click="xztjEdit(0,scope.row)" type="primary" >修改</el-button>
 				  <el-button size="mini" type="primary" @click="qyryEdit(scope.row)" v-show="getNowFormatDate==scope.row.manTime && scope.row.mcBalance!=null">启用</el-button>
-          <el-button size="mini" type="primary" @click="aMc" v-show="scope.row.mcBalance==null">办卡</el-button>
+          <el-button size="mini" type="primary" @click="aMc(scope.row)" v-show="scope.row.mcBalance==null">办卡</el-button>
 				  <el-button size="mini"   type="danger">取消</el-button>
           </template>
 				</el-table-column>
@@ -315,6 +379,7 @@
 
 <script>
 import qs from "qs";
+import {ElMessage} from "element-plus";
 
 export default {
     data() {
@@ -324,7 +389,8 @@ export default {
         tiltm:'',//弹框标题
         tjsj:[],
         ksan:false,
-        tc: 0,//项目选中
+        tc: 0,//项目选中\
+        Res:[],
         //套餐
         tjmeal: '',
         // 卡片
@@ -332,9 +398,10 @@ export default {
         //检查项目
         tjpro: [],
         currentPage: 1, //初始页
-        pagesize: 5, //    每页的数据
+        pagesize:10, //    每页的数据
         //控制查询出来的人都是预约的
         manState: 0,
+        token:[],//当前用户
         // 搜索字段、
         serman: '',
         aloneg:[],//体检人员所含项目
@@ -342,6 +409,16 @@ export default {
         // 体检人员集合
         tjman: [],
         value: '',
+        mzSickArr:{//病人新增的对象
+          sickNumber:0,
+          sickIdCard:"",
+          sickName:"",
+          sickPhone:"",
+          sickAge:'',
+          sickSex:"",
+          sickSite:"",
+          mcNumberCard:'',//诊疗卡字段
+        },
         // 体检人员对象
         man: {
           manId: 0,
@@ -354,8 +431,11 @@ export default {
           manPhone: '',
           manPhy: '',
           manState: '',
-          jcXm: '',
+          manProposal:'',
+          manMzZyId:'',
+          manMzZyIs:'',
         },
+        isShow3:false,//诊疗卡弹框
         qyry:false,//启用弹框
         xztj: false,//新增修改弹框
         input: '',
@@ -363,9 +443,31 @@ export default {
       }
     },
     methods: {
-      // 跳转页面
-      aMc(){
-        this.$router.push('/UserRegistration');
+      submitMzSick(formName) { // 确定病人新增
+        this.$refs[formName].validate((valid) => {
+          console.log(valid)
+          if (valid) {
+
+            this.axios.post("addMzSick", this.mzSickArr).then((res) => {
+              console.log(res.data)
+              if (res.data == 'ok') {
+                this.resetFormSick()
+              }
+            }).catch(() => {
+            })
+          }
+        });
+        this.isShow3=false
+        this.getData()
+      },
+      // 办理诊疗卡
+      aMc(row){
+        this.mzSickArr.sickName=row.manName
+        this.mzSickArr.sickPhone=row.manPhone
+        this.mzSickArr.sickIdCard=row.manSid
+        this.mzSickArr.sickAge=row.manAge
+        this.mzSickArr.sickSex=row.manGender
+        this.isShow3=true
       },
       // 更改表格颜色
       tableRowClassName({row, rowIndex}) {
@@ -474,6 +576,18 @@ export default {
           }
         }
       },
+      submitMedicalCard(formName) { // 生成诊疗卡卡号
+        this.axios.post("inserMedicalCard").then((res) => {
+          console.log(res.data)
+          this.mzSickArr.mcNumberCard=res.data
+          ElMessage.success({
+            message: '恭喜你，生成成功~',
+            type: 'success'
+          });
+          console.log("1111")
+        }).catch(() => {})
+
+      },
       // 查询体检人员所含项目
       aloneMp(row,is){
         this.axios.get("http://localhost:8089/aloneMp", {params: {manId: row.manId}
@@ -513,7 +627,7 @@ export default {
       getData() {
         var bb=this.getNowFormatDate1(-7,this.getNowFormatDate)
         var aa=[];
-        this.axios.get("http://localhost:8089/allMan", {params: {manState: this.manState, sermen: this.serman}
+        this.axios.get("http://localhost:8089/allMan", {params: {sermen: this.serman}
         }).then((res) => {
           //如果当前客户体检时间已过期自动将时间调为未来第七天
           res.data.forEach(v=>{
@@ -543,6 +657,7 @@ export default {
       },
       //启用确认按钮
       qyryForm(){
+
         this.manstate(this.ryrow)
       },
       //打开新增修改弹框
@@ -617,6 +732,14 @@ export default {
               if(aa>=row.manPhy){
                 //调用扣钱方法
                 this.updmoney(aa-row.manPhy,row.manSid)
+                this.token =this.$store.state.token//获取当前用户
+                this.aloneg.forEach(v=>{
+                  this.Res.push({'checkId':v.checkId,manResult:v.tjCodeIndex,manId:row.manId,sId:this.token.list.sid})
+                })
+                //批量新增结果
+                this.axios.post("http://localhost:8089/resAdd",{listArr:this.Res}).then((res)=>{
+                  this.getData();
+                }).catch()
                 //修改状态方法
                 this.manu(row)
                 this.$message({
@@ -744,6 +867,5 @@ export default {
 .el-table .danger-row {
   color: #ff0000;
 }
-
 </style>
 

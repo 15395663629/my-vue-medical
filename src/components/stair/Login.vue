@@ -85,6 +85,7 @@ import qs from 'qs'
       onSubmit(formName){
         this.$refs[formName].validate(valid =>{
           if(valid){
+            console.log("******")
             this.axios.post('http://localhost:8089/jwt',qs.stringify(this.form)).then((v)=>{
               console.log(v.data,"---")
               if(v.data.success===true){

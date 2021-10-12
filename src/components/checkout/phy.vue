@@ -74,81 +74,6 @@
         </el-col>
       </el-row>
     </el-tab-pane>
-    <el-tab-pane label="结果填写" name="second">
-
-      <!--=============================================体检人员表格===================================-->
-      <el-row>
-        <el-col>
-          <el-table :data="tjman.slice((currentPage-1)*pagesize,currentPage*pagesize)" height="450"  tooltip-effect="dark" style="width: 100%;">
-            <el-table-column
-                label="编号"
-                prop="manId"
-            >
-            </el-table-column>
-            <el-table-column
-                prop="manName"
-                label="姓名">
-              <template #default="scope">
-                <el-popover effect="light" trigger="hover"  placement="top">
-                  <template #default>
-                    <p>姓名: {{ scope.row.manName }}</p>
-                    <p>年龄: {{ scope.row.manAge }}</p>
-                    <p>出生日期: {{ scope.row.manBirthtime }}</p>
-                  </template>
-                  <template #reference>
-                    <div class="name-wrapper">
-                      <el-tag size="medium">{{ scope.row.manName }}</el-tag>
-                    </div>
-                  </template>
-                </el-popover>
-              </template>
-            </el-table-column>
-            <el-table-column
-                width="60"
-                prop="manGender"
-                label="性别">
-            </el-table-column>
-            <el-table-column
-                prop="manPhone"
-                label="手机号">
-            </el-table-column>
-            <el-table-column
-                width="200"
-                prop="manSid"
-                label="身份证">
-            </el-table-column>
-            <el-table-column
-                prop="manPhy"
-                label="价格">
-            </el-table-column>
-            <el-table-column
-                prop="manTime"
-
-                label="体检时间">
-            </el-table-column>
-            <el-table-column
-                width="220px"
-                label="操作">
-              <template #default="scope">
-                <el-button size="mini" @click="txjgAdd(scope.row)" type="primary" plain>填写</el-button>
-                <el-button size="mini"   type="danger">取消</el-button>
-              </template>
-            </el-table-column>
-
-          </el-table>
-          <!--分页插件-->
-          <el-pagination
-              @size-change="handleSizeChange"
-              @current-change="handleCurrentChange"
-              :current-page="1"
-              :page-sizes="[2,4,6,8,10]"
-              :page-size="pagesize"
-              layout="total, sizes, prev, pager, next, jumper"
-              :total="tjman.length">
-          </el-pagination>
-        </el-col>
-      </el-row>
-    </el-tab-pane>
   </el-tabs>
 	<el-dialog title="检查详情" v-model="tjjl" width="50%" center  ><!-- 弹窗     -=-=-=-=-=-=-==-=-=-=-=--=-=-=-=-=-=-检查结果 -->
 		<el-form label-width="100px">
@@ -268,7 +193,7 @@
           //体检人员集合已填写结果
           tjman1: [],
 	        //卡片modle
-          activeName:'second',
+          activeName:'first',
           sfmy:"",
           tjry:[{
             ssId: '11',
@@ -321,9 +246,8 @@
           this.tjman = res.data;
         }).catch()
         //已填写结果
-        this.axios.get("http://localhost:8089/allMan", {
+        this.axios.get("http://localhost:8089/allMan2", {
           params: {
-            manState: this.manState+1,
             sermen: this.sermen1
           }
         }).then((res) => {

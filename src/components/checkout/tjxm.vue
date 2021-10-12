@@ -69,8 +69,8 @@
 			<el-row > <!-- ============================================新增修改套餐所含项目表格============================================ -->
 				<el-table height="300"
                   ref="inserdata"
-                  :data="tjpro"
-                  :row-key="(tjpro) => tjpro.checkId"
+                  :data="tjpro1"
+                  :row-key="(tjpro1) => tjpro.checkId"
                   style="width: 100%;"
                   @selection-change="handleSelectionChange">
 					<el-table-column
@@ -238,13 +238,28 @@
               </el-form-item>
             </el-col>
 			</el-row>
+
 			<el-row>
-          <el-col :span="9">
+        <el-col :span="7" >
+          <el-form-item label="项目类型:" prop="name">
+          <el-select  @change="getData" style="width: 120px" v-model="jcdx.checkTpye" placeholder="请选择">
+            <el-option
+                v-for="item in chenk"
+                :key="item.value"
+                :label="item.value"
+                :value="item.text">
+            </el-option>
+          </el-select>
+          </el-form-item>
+        </el-col>
+
+          <el-col :span="7">
           <el-form-item label="指标:" prop="name">
             <el-input  size="mini" v-model="jcdx.indexName" type="textarea" :rows="3"></el-input>
           </el-form-item>
           </el-col>
-					<el-col :span="9" :offset="2">
+
+					<el-col :span="7">
 						<el-form-item label="指标意义:" prop="name">
 						<el-input size="mini" v-model="jcdx.indexSignificance"
                       type="textarea"
@@ -323,19 +338,35 @@
         @size-change="handleSizeChange1"
         @current-change="handleCurrentChange1"
         :current-page="1"
-        :page-sizes="[2,4,6,8,10]"
+        :page-sizes="[4,6,8,10]"
         :page-size="psize1"
         layout="total, sizes, prev, pager, next, jumper"
         :total="tjmeal.length">
     </el-pagination>
 	</el-row>
-	
 
-		<el-row>
-			<el-col  style="padding-bottom: 5px" :span="3" :offset="19">
-					<el-button type="primary" @click=jcxmEdit(1)>新增项目</el-button>
-			</el-col>
-		</el-row>
+  <el-row style="padding-top: 10px">
+    <el-form label-width="100px" >
+      <el-col :span="9">
+        <el-form-item label="类型：" label-width="65px">
+          <el-select  @change="getData" style="width: 120px" v-model="checkTpye" placeholder="请选择">
+            <el-option
+                v-for="item in chenk"
+                :key="item.value"
+                :label="item.value"
+                :value="item.text">
+            </el-option>
+          </el-select>
+        </el-form-item>
+      </el-col>
+      <el-col :span="5"  :offset="12">
+        <el-form-item label="" label-width="449px">
+          <el-button type="primary" @click=jcxmEdit(1)>新增项目</el-button>
+        </el-form-item>
+      </el-col>
+    </el-form>
+
+  </el-row>
 
 	<!-- ============================================下表格============================================ -->
 	<el-row > 
@@ -408,7 +439,7 @@
 						       @size-change="handleSizeChange"
 						       @current-change="handleCurrentChange"
 						       :current-page="1"
-						       :page-sizes="[2,4,6,8,10]"
+						       :page-sizes="[4,6,8,10]"
 						       :page-size="psize"
 						       layout="total, sizes, prev, pager, next, jumper"
 						       :total="tjpro.length">
@@ -425,6 +456,7 @@
 	      return {
           department:[],//科室集合
           search: '',//套餐搜索框
+          checkTpye:'',//判断为化验还是检验项目
           tctitl:'',//套餐弹框标题
 	        tjprol:[],//体检套餐所含项目集合
           tjprox:[],//体检套餐详情集合
@@ -432,10 +464,11 @@
 	        tilt:'',//检查项目弹框标题
           seach: '',//搜索
           currentPage: 1, //初始页
-          psize:2, //每页的数据
+          psize:4, //每页的数据
           currentPage1: 1, //初始页
-          psize1:2, //套餐每页的数据
+          psize1:4, //套餐每页的数据
           tjpro:[],//检查项目集合
+          tjpro1:[],//检查项目集合
           tjow:[],
           xmzb:[],//套餐类型集合
           jcdx:{//检查项目对象
@@ -449,6 +482,7 @@
             indexName:'',
             // 指标意义
             indexSignificance:'',
+            checkTpye:'',
             ksId:''
             },
           jcdww:{//检查项目对象
@@ -464,6 +498,14 @@
             indexSignificance:'',
             ksId:''
           },
+          chenk:[{
+            text:0,
+            value:'检验项目'
+          },{
+            text:1,
+            value:'化验项目'
+          }
+          ],
           //体检套餐对象
           tcdx:{
             codeId:'',
@@ -528,8 +570,11 @@
           this.axios.get("http://localhost:8089/ks-list").then((res)=>{
             this.department = res.data;
           }).catch()
-          this.axios.get("http://localhost:8089/allDescTjpro",{params:{seach:this.seach}}).then((res)=>{
+          this.axios.get("http://localhost:8089/allDescTjpro",{params:{seach:this.seach,checkTpye:this.checkTpye}}).then((res)=>{
             this.tjpro = res.data;
+          }).catch()
+          this.axios.get("http://localhost:8089/allDescTjpro",{params:{seach:"",checkTpye:0}}).then((res)=>{
+            this.tjpro1 = res.data;
           }).catch()
         },
       // 体检套餐基础参数================
@@ -554,6 +599,7 @@
             this.jcdx.indexId=row.indexId;
             this.jcdx.indexName=row.indexName
             this.jcdx.indexSignificance=row.indexSignificance
+            this.jcdx.checkTpye=parseInt(row.checkTpye)
             this.jcdx.ksId=parseInt(row.deptks.ksId)
           }else {
             this.inspectClear()
