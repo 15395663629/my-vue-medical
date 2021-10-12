@@ -16,7 +16,7 @@
         label="药品售价">
     </el-table-column>
     <el-table-column
-        prop="YF_drven_batch"
+        prop="yfDrvenBatch"
         label="药品批次">
     </el-table-column>
     <el-table-column
@@ -123,7 +123,7 @@ export default {
   data(){
     return{
       drugName:'',
-      yfstockplie:[],
+      yfstockplie:[],//药房数据
       ykAllot:{
         ykAllotId:'',
         ykAllotCause:'',
