@@ -823,7 +823,7 @@
          //修改手术申请
          this.axios.post("http://localhost:8089/aOrUApply",{proj:this.ssApply}).then((res)=>{
          }).catch()
-
+//修改手术室
          this.axios.post('http://localhost:8089/upd-roomzt', qs.stringify({operationZt:1,operationId:this.ssApply.operationId}))
              .then((v)=>{
                if(v.data == 'ok'){
