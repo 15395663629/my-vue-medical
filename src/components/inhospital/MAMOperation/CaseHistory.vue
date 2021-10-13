@@ -111,6 +111,15 @@ export default {
       this.caseHistory.chSid = this.staff.sid;//开病例医生
       this.caseHistory.chIs = 2;//住院病例
       this.caseHistory.chZyMzId = this.patientObj.ptNo;//病人住院号
+      this.caseHistory.sickNumber = this.patientObj.ptSickNumber;//病人信息编号
+      if(this.patientObj.ptNo == undefined){
+        this.$message({
+          type: 'error',
+          message: '请选择病人'
+        });
+        return;
+      }
+      alert(this.patientObj.ptSickNumber)
 
       this.$refs["caseHistoryRef"].validate((date)=>{
         if(date){

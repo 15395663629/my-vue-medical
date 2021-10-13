@@ -102,6 +102,7 @@ export default{
         endDate:'',//结束日期
         searchLike:'',//模糊搜索
         doctorType:0,//医嘱类型
+        sIdArr:[],
         ptNo:''
       }
 
