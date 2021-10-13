@@ -96,7 +96,7 @@
 		  </el-tag>
 		</template>
 	</el-table-column>
-    <el-table-column fixed="right" label="操作"  align="center">
+    <el-table-column fixeds label="操作"  align="center">
       <template #default="scope">
         <el-button @click="openDrawer(scope.row)" size="mini" type="primary" plain>查看</el-button>
       </template>

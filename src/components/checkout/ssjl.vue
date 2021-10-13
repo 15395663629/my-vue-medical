@@ -138,7 +138,7 @@
 	<el-row > <!--======= ============================================================表格 ====================-->
 		<el-table
 		    ref="multipleTable"
-		    :data="Ssdetailt"
+		    :data="Ssdetailt.slice((currentPage-1)*pagesize,currentPage*pagesize)"
 		    tooltip-effect="dark"
 			  height="450"
 		    style="width: 100%"
@@ -168,10 +168,34 @@
           </el-popover>
         </template>
 			</el-table-column>
-		    <el-table-column
-		      prop="ssdx.projectName"
-		      label="手术名称">
-		    </el-table-column>
+      <el-table-column label="拟施手术" prop="simulationOperation">
+        <template #default="scope">
+          <el-popover effect="light" trigger="hover"  placement="top">
+            <template #default>
+              <p>拟施手术: {{ scope.row.simulationOperation }}</p>
+            </template>
+            <template #reference>
+              <div class="name-wrapper">
+                <el-tag size="medium">{{ scope.row.simulationOperation }}</el-tag>
+              </div>
+            </template>
+          </el-popover>
+        </template>
+      </el-table-column>
+      <el-table-column label="实施手术" prop="simulationOperation">
+        <template #default="scope">
+          <el-popover effect="light" trigger="hover"  placement="top">
+            <template #default>
+              <p>实施手术: {{ scope.row.ssdx.projectName }}</p>
+            </template>
+            <template #reference>
+              <div class="name-wrapper">
+                <el-tag size="medium">{{ scope.row.ssdx.projectName }}</el-tag>
+              </div>
+            </template>
+          </el-popover>
+        </template>
+      </el-table-column>
 		    <el-table-column
 		      prop="ssdx.projectType"
 		      label="手术类型">
@@ -180,15 +204,19 @@
 			  prop="ssdx.projectPosition"
 			  label="手术位置">
 			</el-table-column>
+      <el-table-column
+          prop="operationAnaesthesia"
+          label="麻醉方法">
+      </el-table-column>
 			<el-table-column
 			  prop="operationHandle"
 			  label="术后处理">
 			</el-table-column>
-			<el-table-column
+			<el-table-column width="100px"
 			  prop="operationDate"
 			  label="手术时间">
 			</el-table-column>
-			<el-table-column
+			<el-table-column width="135px"
 			  prop="operationTime"
 			  label="手术时长">
       </el-table-column>
@@ -196,7 +224,7 @@
             prop="ssdx.projectPay"
             label="手术金额">
 			</el-table-column>
-			<el-table-column label="操作" width="400px">
+			<el-table-column label="操作" width="300px">
 			      <template #default="scope">
 					<el-button
 					  size="mini"
@@ -208,16 +236,16 @@
 			      </template>
 			    </el-table-column>
 		</el-table>
-		<el-pagination
-						 					style="text-align: center;"
-						       @size-change="totalCut"
-						       @current-change="pageCut"
-						       :current-page="1"
-						       :page-sizes="[2,4,6,8,10]"
-						       :page-size="size"
-						       layout="total, sizes, prev, pager, next, jumper"
-						       :total="total">
-						     </el-pagination>
+    <!--分页插件-->
+    <el-pagination
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"
+        :current-page="1"
+        :page-sizes="[2,4,6,8,10]"
+        :page-size="pagesize"
+        layout="total, sizes, prev, pager, next, jumper"
+        :total="Ssdetailt.length">
+    </el-pagination>
 	</el-row>
 	
 </template>
@@ -226,8 +254,10 @@
 	export default {
 	    data () {
 	      return {
-// 手术记录集合
-			Ssdetailt:[],
+          currentPage: 1, //初始页
+          pagesize:10, //    每页的数据
+          // 手术记录集合
+			    Ssdetailt:[],
           seach:'',//搜索框
 			value: '',
 			isShow:false,
@@ -247,6 +277,15 @@
         this.axios.get("http://localhost:8089/ssdDetail",{params: {seach:this.seach}}).then((res) => {
           this.Ssdetailt = res.data;
         }).catch()
+      },
+      // 初始页currentPage、初始每页数据数pagesize和数据data
+      handleSizeChange: function (size) {
+        this.pagesize = size;
+        console.log(this.pagesize) //每页下拉显示数据
+      },
+      handleCurrentChange: function (currentPage) {
+        this.currentPage = currentPage;
+        console.log(this.currentPage) //点击第几页
       },
 			handleEdit(index, row) {
 				this.isShow = true;

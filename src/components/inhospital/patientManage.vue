@@ -575,7 +575,7 @@
       ssopenApply(row){
         this.ssApply.ptName=row.ptName
         this.ssApply.ptDiagnoseName=row.ptDiagnoseName
-        this.token = this.$store.state.token//获取当前用户
+        this.token =this.$store.state.token//获取当前用户
         this.ssApply.sId=this.token.list.sid
         this.ssApply.ptNo=row.ptNo
         this.isSSShow=true;
@@ -583,7 +583,7 @@
       //手术弹框确认按钮
       ssdoorApply(){
         this.axios.post("http://localhost:8089/aOrUApply",{proj:this.ssApply}).then((res)=>{
-          this.getData();
+          this.patientBaseInit();
         }).catch()
         this.isSSShow=false;
       },

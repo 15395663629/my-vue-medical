@@ -106,7 +106,7 @@
 	
 	<el-row>
 		<el-col :span="1">
-			<el-button size="mini" @click="isShowXZBR = true" type="primary">新增</el-button>
+			<el-button size="mini" @click="openFormSick" type="primary">新增</el-button>
 		</el-col>
 	</el-row>
 
@@ -120,6 +120,7 @@
 				    :data="InhospitalApplyArr"
 				    tooltip-effect="dark"
 				    style="width: 100%"
+            height="550"
 				    @selection-change="handleSelectionChange">
 				    <el-table-column
 				      prop="sick.sickName"
@@ -174,10 +175,93 @@
 				      </el-pagination>
 		</el-col>
 	</el-row>
+
+
+
+
+
+
+  <el-dialog title="新增住院申请"  :close-on-click-modal="false" :before-close="resetFormSick"  :close-on-press-escape="false"  v-model="isShow3" width="45%" center  ><!-- 病人新增 -->
+    <el-row><!-- :rules="rules" -->
+      <el-form  size="small" ref="mzSickArr" :model="mzSickArr" :rules="rules" label-width="100px" class="demo-ruleForm">
+        <el-col>
+          <el-form-item  prop="mcNumberCard" label="诊疗卡卡号:" >
+            <el-input class="te" v-model="mzSickArr.mcNumberCard"  disabled></el-input>
+          </el-form-item>
+        </el-col>
+        <el-col>
+          <el-form-item prop="sickName" label="姓名" >
+            <el-input v-model="mzSickArr.sickName"></el-input>
+          </el-form-item>
+        </el-col>
+        <el-col>
+          <el-form-item prop="sickPhone" label="电话" >
+            <el-input v-model="mzSickArr.sickPhone"></el-input>
+          </el-form-item>
+        </el-col>
+        <el-col>
+          <el-form-item prop="sickIdCard" label="身份证" >
+            <el-input @input="getInfo(mzSickArr.sickIdCard)" v-model="mzSickArr.sickIdCard"></el-input>
+          </el-form-item>
+        </el-col>
+        <el-col >
+          <el-form-item prop="sickAge"  label="年龄" >
+            <el-input  v-model="mzSickArr.sickAge" disabled></el-input>
+          </el-form-item>
+        </el-col>
+        <el-col>
+          <el-form-item prop="sickSex" label="性别" >
+            <el-select v-model="mzSickArr.sickSex" placeholder="请选择"  style="width: 188px" disabled>
+              <el-option
+                  v-for="item in optionsSex"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.label">
+              </el-option>
+            </el-select>
+          </el-form-item>
+        </el-col>
+        <el-col>
+          <el-form-item  label="家庭地址" >
+            <el-input v-model="mzSickArr.sickSite"></el-input>
+          </el-form-item>
+        </el-col>
+        <el-col>
+          <el-form-item prop="ksId" label="住院科室">
+            <el-select v-model="mzSickArr.ksId" placeholder="请选择" @change="ksSelectFun"  style="width: 188px" >
+              <el-option v-for="ks in ksArr"
+                         :label="ks.ksName"
+                         :value="ks.ksId">
+              </el-option>
+            </el-select>
+          </el-form-item>
+        </el-col>
+
+<!--        <el-col>-->
+<!--          <el-form-item prop="sId" label="主治医生" >-->
+<!--            <el-select v-model="mzSickArr.sId" placeholder="请选择"  style="width: 188px" >-->
+<!--              <el-option v-for="sf in staffArr"-->
+<!--                         :label="sf.staff.sname"-->
+<!--                         :value="sf.staff.sid">-->
+<!--              </el-option>-->
+<!--            </el-select>-->
+<!--          </el-form-item>-->
+<!--        </el-col>-->
+        <el-col>
+          <el-form-item label-width="455px">
+            <el-button type="primary" @click="addHospital('mzSickArr')">确定</el-button>
+            <el-button @click="resetFormSick">取消</el-button>
+          </el-form-item>
+        </el-col>
+      </el-form>
+    </el-row>
+  </el-dialog>
 </template>
 
 <script>
-	export default {
+	import {ElMessage} from "element-plus";
+
+  export default {
 	    data(){
 	        return {
             //====================================住院申请数据
@@ -189,12 +273,46 @@
               sex:'',
               age:'',
               birthday:'',
-              birthplace:''
+              birthplace:'',
+              ksId:'',//住院科室
+              sId:''//主治医生
+            },
+            isShow3:false,//弹窗 - 病人新增
+
+            rules: {//非空校验
+              sickIdCard: [{ required: true, message: "身份证不能为空", trigger: 'blur' },
+                { min: 6, max: 18, message: "身份证格式大于或小于18位", trigger: 'blur' }],
+              sickPhone: [{ required: true, message: "电话不能为空", trigger: 'blur' },],
+              sickName:[{required: true, message: "输入栏不能为空", trigger: 'blur'}],
+              // sickSex:[{required: true, message: "输入栏不能为空", trigger: 'blur'},],
+              // sickAge: [{required: true, message: "输入栏不能为空", trigger: 'blur'},],
+              // mcNumberCard:[{required: true, message: "请生成诊疗卡", trigger: 'blur'}],
+              ksId:[{required:true,message:"请选择住院科室！",trigger:'blur'}],
+              // sId:[{required:true,message:"请选择治疗医生！",trigger:'blur'}],
             },
 
             InhospitalApplyArr:[],//住院申请数组
             isShowXZBR:false,//是否显示住院申请弹框
 
+            //新增住院申请数据
+            mzSickArr:{//病人新增的对象
+              sickNumber:0,
+              sickIdCard:"",
+              sickName:"",
+              sickPhone:"",
+              sickAge:'',
+              sickSex:"",
+              sickSite:"",
+              mcNumberCard:'',//诊疗卡字段
+              ksId:"",//住院科室
+              sId:"",//主治医师
+              operatorId:'',//操作员编号
+            },
+
+            //科室集合
+            ksArr:[],
+            //员工集合
+            staffArr:[],
           //==========================当前登录的员工信息
             staff:{}
 
@@ -208,11 +326,49 @@
           }).catch((data)=>{
 
           });
+
+          //查询所有科室
+          this.axios.post("zy-ks-list").then((v)=>{
+            console.log(v.data);
+            this.ksArr = v.data;
+          }).catch((data)=>{
+
+          });
+          this.mzSickArr.ksId = this.staff.ksId;
+
+          this.ksSelectFun();
         },
+        //新增住院申请
+        addHospital(formName){
+          this.mzSickArr.operatorId = this.staff.sid;
+          this.$refs[formName].validate((valid) => {
+            if (valid) {
+
+              this.axios.post("add-inHospital-mzSick", this.mzSickArr).then((res) => {
+                console.log(res.data)
+                if (res.data == 'ok') {
+                  this.resetFormSick()
+                  console.log("ssssss")
+                }
+              }).catch(() => {
+              })
+            }
+          });
+        },
+        //科室修改是调用查询该科室的排班信息
+        ksSelectFun(){
+          //根据科室编号查询排班人员
+          this.axios({url:"home-sch-byksId",params:{ksId:this.mzSickArr.ksId}}).then((v)=>{
+            console.log(v.data);
+            this.staffArr = v.data;
+          }).catch((data)=>{
+
+          });
+        },
+
 
         //取消病人住院申请
         callHospital(row){
-          console.log(row);
 
           this.$confirm("确定要取消住院申请", '确认信息', {
             distinguishCancelAndClose: true,
@@ -234,13 +390,64 @@
 
           }).catch(()=>{
           })
-        }
+        },
+        //打开新增住院申请弹框
+        openFormSick(){
+          this.isShow3 = true;
+          this.axios.post("inserMedicalCard").then((res) => {//获取诊疗号码
+            alert(res.data)
+            this.mzSickArr.mcNumberCard=res.data
+          }).catch(() => {})
+        },
+
+        resetFormSick() { //X关闭按钮
+          this.isShow3 = false;
+          this.mzSickArr.sickSite="";
+          this.$refs['mzSickArr'].resetFields();
+        },
+        //身份证日期获取
+        getInfo(idCard) {
+          let sex = null;
+          let birth = null;
+          let age = null;
+
+          let myDate = new Date();
+          let month = myDate.getMonth() + 1;
+          let day = myDate.getDate();
+
+          if(idCard.length===18){
+            age = myDate.getFullYear() - idCard.substring(6, 10) - 1;
+            sex = idCard.substring(16,17);
+            birth = idCard.substring(6,10)+"-"+idCard.substring(10,12)+"-"+idCard.substring(12,14);
+            if (idCard.substring(10, 12) < month || idCard.substring(10, 12) === month && idCard.substring(12, 14) <= day) age++;
+
+          }
+          if(idCard.length===15){
+            age = myDate.getFullYear() - idCard.substring(6, 8) - 1901;
+            sex = idCard.substring(13,14);
+            birth = "19"+idCard.substring(6,8)+"-"+idCard.substring(8,10)+"-"+idCard.substring(10,12);
+            if (idCard.substring(8, 10) < month || idCard.substring(8, 10) === month && idCard.substring(10, 12) <= day) age++;
+          }
+
+          if(sex%2 === 0)
+            sex = '女';  // 性别代码 1代表男，0代表女，暂时不涉及其他类型性别
+          else
+            sex = '男';
+
+          this.mzSickArr.sickSex=sex;
+          this.mzSickArr.sickAge=age;
+
+          if(this.mzSickArr.sickIdCard==''){
+            this.mzSickArr.sickSex='';
+            this.mzSickArr.sickAge='';
+          }
+          return  {age , sex, birth}
+        },
 
 	    },
     created() {
-	      this.hospitalInit();//初始化信息
-	      this.staff = this.$store.state.token[0];
-	      console.log(this.staff)
+      this.staff = this.$store.state.token.list;//将登录存入的值在取出来
+        this.hospitalInit();//初始化信息
     }
 
   }

@@ -42,7 +42,7 @@
             </el-row>
             <!--=======================================================病人表格-->
             <el-table
-                height="473px"
+                height="443px"
                 @cell-click="patientChecked"
                 :data="patientBaseArr.slice((patientCurrentPage-1)*patientPageSize,patientCurrentPage*patientPageSize)"
                 :row-class-name="tablePatientBaseRowClassName"
@@ -143,10 +143,10 @@
 
 
         <el-main  style="background-color: #E9EEF3;color: #333;padding:5px;" ><!-- 主体页面========================================================================-->
-<!--          <el-tabs @tab-click="patientSwitchFunction" v-model="maxCard" type="border-card" >-->
+          <el-tabs @tab-click="patientSwitchFunction" v-model="maxCard" type="border-card" >
 
 <!--            &lt;!&ndash;==========================================================================需要执行的医嘱&ndash;&gt;-->
-<!--            <el-tab-pane name="需执行医嘱" :key="'需执行医嘱'" label="需执行医嘱">-->
+            <el-tab-pane name="执行医嘱" :key="'执行医嘱'" label="执行医嘱">
               <el-form>
                 <el-row style="height: 45px; line-height: 45px">
 
@@ -169,6 +169,7 @@
                     </el-form-item>
 
 
+                    <!--========================================================费用信息弹框========================-->
                     <el-dialog title="费用信息" v-model="isShowAddPayText" @close="closePatientPay">
 
                       <el-form>
@@ -180,12 +181,32 @@
                           </el-col>
                         </el-row>
 
-                        <el-row>
-                          <el-col  :span="12">
-                            <el-form-item label="费用内容：" label-width="100px">
-                              <el-input type="textarea" v-model="patientPayObj.poText" placeholder="扣费内容"></el-input>
-                            </el-form-item>
-                          </el-col>
+<!--                        <el-row>-->
+<!--                          <el-col  :span="12">-->
+<!--                            <el-form-item label="费用内容：" label-width="100px">-->
+<!--                              <el-input type="textarea" v-model="patientPayObj.poText" placeholder="扣费内容"></el-input>-->
+<!--                            </el-form-item>-->
+<!--                          </el-col>-->
+
+                          <el-row>
+
+                            <el-col  :span="12">
+                              <el-form-item label="费用内容：" label-width="100px">
+                                <el-select
+                                    v-model="patientPayObj.poText"
+                                    filterable
+                                    @blur="selectPayBlurFun"
+                                    placeholder="请选择或者输入">
+                                  <el-option
+                                      v-for="item in selectCostName"
+                                      :key="item.derId"
+                                      :label="item.derIs"
+                                      :value="item.derIs">
+                                  </el-option>
+                                </el-select>
+                               </el-form-item>
+                            </el-col>
+
 
                           <el-col :offset="1" :span="8">
                             <el-form-item label="费用：" label-width="70px">
@@ -215,7 +236,7 @@
                   </el-col>
 
 
-                  <el-col :offset="3" :span="2">
+                  <el-col :offset="1" :span="2">
                     <el-form-item>
                       <el-button :disabled="!patientBaseObj.ptName != ''" type="success" size="mini">全部打印</el-button>
 
@@ -228,10 +249,11 @@
                     </el-form-item>
                   </el-col>
 
-                  <el-col :offset="6" :span="4">
+                  <el-col :offset="4" :span="5">
                     <el-form-item>
-                      <el-tag type="info">可执行</el-tag>&nbsp;
-                      <el-tag type="danger">已执行</el-tag>
+                      <el-tag type="info" effect="dark" >可执行</el-tag>&nbsp;
+                      <el-tag effect="dark">已执行</el-tag>&nbsp;
+                      <el-tag type="danger" effect="dark">临时医嘱</el-tag>&nbsp;
                     </el-form-item>
                   </el-col>
 
@@ -242,8 +264,8 @@
                 <el-col>
                   <el-table
                       @selection-change="doctorEnjoinSelectChange"
-                      :data="doctorEnjoinDetailsArr.slice((doctorEnjoinDetailsCurrentPage-1)*doctorEnjoinDetailsPageSize,doctorEnjoinDetailsCurrentPage*doctorEnjoinDetailsPageSize)" :row-class-name="tableDoctorEnjoinDetailsRowClassName"  height="430px" size="small" >
-                                        <el-table-column  type="selection" width="50px"></el-table-column>
+                      :data="doctorEnjoinDetailsArr.slice((doctorEnjoinDetailsCurrentPage-1)*doctorEnjoinDetailsPageSize,doctorEnjoinDetailsCurrentPage*doctorEnjoinDetailsPageSize)" :row-class-name="tableDoctorEnjoinExecute"  height="415px" size="small" >
+                                        <el-table-column :selectable='patientDoctorExecuteSelection'  type="selection" width="50px"></el-table-column>
 
                     <el-table-column width="140px" label="下嘱日期" prop="desEnteringDate"></el-table-column>
                     <el-table-column label="下嘱医生" width="100px" prop="deDoctorName"></el-table-column>
@@ -281,13 +303,15 @@
                   </el-pagination>
                 </el-col>
               </el-row>
-<!--            </el-tab-pane>-->
+            </el-tab-pane>
+
+            <el-tab-pane name="执行记录" :key="'执行记录'" label="执行记录">
+                <DoctorExecuteRecord ref="DoctorExecuteRecord" :patient-obj="patientBaseObj"></DoctorExecuteRecord>
+            </el-tab-pane>
+
+          </el-tabs>
 
 
-
-
-
-<!--          </el-tabs>-->
         </el-main>
 
       </el-container>
@@ -296,8 +320,11 @@
 </template>
 
 <script>
+import DoctorExecuteRecord from "./MedicalAdvice/DoctorExecuteRecord.vue";
 
 export default{
+  components:{DoctorExecuteRecord},
+
   data(){
     return{
       //========================================================================员工数据
@@ -313,7 +340,7 @@ export default{
 
 
       //=========================医嘱卡片数据
-      maxCard:'需执行医嘱',//卡片当前位置
+      maxCard:'执行医嘱',//卡片当前位置
 
 
       //====================================================================科室药品库存调拨记录数据
@@ -330,6 +357,7 @@ export default{
         poPrice:'',
         poPtNo:''
       },
+      selectCostName:[],//费用名称查询数组
 
 
       //=====================================================================执行医嘱数据
@@ -483,6 +511,11 @@ export default{
     //   }
     // },
 
+    //费用内容选择器失去焦点时调用
+    selectPayBlurFun(e){
+      console.log(e.target.value)
+      this.patientPayObj.poText = e.target.value;
+    },
 
     //=======================================================================表格双击事件
     dbclickDrugPharmacy(obj){
@@ -528,6 +561,7 @@ export default{
       this.patientBaseObj.bdName = obj.bed.bdName;
       this.patientBaseObj.ptInDay = parseFloat((new Date().getTime() - Date.parse(obj.ptInDate))  / (1*24*60*60*1000)).toFixed(0) + '天';//算出入院天数
       this.patientChange();
+      this.patientSwitchFunction();
     },
     //刷新病人医嘱
     patientChange(){
@@ -540,6 +574,10 @@ export default{
     //打开新开费用弹框
     openPayText(){
       this.isShowAddPayText = true;//显示病人费用信息弹框
+      this.axios({url:'select-costName'}).then((v)=>{
+        this.selectCostName = v.data;
+        console.log(v.data)
+      }).catch();
       this.patientPayObj.poPtNo = this.patientBaseObj.ptNo;//病人编号
       this.patientPayObj.poSid = this.staff.sid;//员工编号
     },
@@ -547,7 +585,11 @@ export default{
     addPatientPay(){
       console.log(this.patientPayObj)
       this.axios.post("addPatientPay",this.patientPayObj).then((v)=>{
-        console.log(v);
+        this.$message({
+          type: 'success',
+          message: '添加成功！！'
+        });
+        this.isShowAddPayText = false;
       }).catch();
     },
     //关闭新增病人费用弹框
@@ -564,29 +606,19 @@ export default{
 
     //========================================================================切换操作时调用方法
     patientSwitchFunction(){
-        if(this.maxCard == '科室药品库存'){
+      if(this.maxCard == '执行医嘱'){
 
-        //初始化科室药品库存数据
-        this.axios({
-          url:'select-drug-pharmacyByKsId',
-          params:{ksId:this.staff.ksId}
-        }).then((v)=>{
-          this.drugPharmacyArr = v.data;
-        });
 
-      }else if(this.maxCard == '药品调拨'){
-
-          //初始化科室药品库存数据
-          this.axios({
-            url:'select-by-ksId',
-            params:{ksId:this.staff.ksId}
-          }).then((v)=>{
-            console.log(v.data);
-            this.deptDrugAllotAll = v.data;
-          });
-
+      }else if(this.maxCard == '执行记录'){
+        this.$refs.DoctorExecuteRecord.initExecuteRecord();
+      }
+    },
+    //是否禁用医嘱复选框
+    patientDoctorExecuteSelection(row){
+      if(this.formatDate(row.desPresentDate, 'yyyy-MM-dd') == this.formatDate(new Date(), 'yyyy-MM-dd') || row.desIs == 2){
+        return false;
       }else{
-
+        return true;
       }
     },
 
@@ -627,6 +659,14 @@ export default{
     tablePatientBaseRowClassName({row, rowIndex}) {
       if (this.patientBaseObj.ptNo == row.ptNo) {
         return 'success';
+      }
+    },
+    //判断医嘱是否已经执行
+    tableDoctorEnjoinExecute({row, rowIndex}){
+      if(this.formatDate(row.desPresentDate, 'yyyy-MM-dd') == this.formatDate(new Date(), 'yyyy-MM-dd')){
+        return 'doctorErro';
+      }else if(row.deLongorshort == 2){
+        return  'doctorErros'
       }
     },
     //判断科室药品是否低于库存警戒线
@@ -703,6 +743,14 @@ export default{
 /deep/ .el-table .success {
   background: #42B8FF;
   color: white;
+}
+
+/deep/ .el-table .doctorErro {
+  color: blue;
+}
+
+/deep/ .el-table .doctorErros {
+  color: red;
 }
 
 /deep/ .el-table .tyyz {

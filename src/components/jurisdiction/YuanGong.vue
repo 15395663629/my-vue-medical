@@ -1,12 +1,8 @@
 <template>
-	<div>
-		员工管理
-	</div>
-	
+
 	<div class="xxx">
 		<el-button type="primary" @click="dialogVisible1 = true">新增员工</el-button>
 		<!-- <el-button type="primary">编辑员工</el-button> -->
-		<el-button type="primary" @click="cs">重置密码</el-button>
 		<span class="name">
 			姓名：<el-input style="width: 120px;" v-model="name" value=""></el-input>
 			<el-button type="primary" icon="el-icon-orange" style="margin-left: 20px;">查询</el-button>
@@ -17,31 +13,39 @@
 		 class="dome">
 		<el-table-column type="selection">
 		</el-table-column>
-    <el-table-column prop="sid" label="员工编号">
+    <el-table-column prop="sid" label="员工编号" width="150px">
     </el-table-column>
-		<el-table-column prop="sname" label="姓名" >
-		</el-table-column>
-		<el-table-column prop="ssore" label="身份证" >
-		</el-table-column>
-    <el-table-column prop="sphone" label="联系电话" >
-    </el-table-column>
-    <el-table-column prop="sdate" label="入职日期" >
-    </el-table-column>
-    <el-table-column prop="user.uname" label="用户名" >
+    <el-table-column label="信息"  width="200px">
+      <template #default="scope">
+        <el-popover effect="light" trigger="hover" placement="top" width="250px">
+          <template #default>
+            <p>身份证:      {{ scope.row.ssore}}</p><br />
+            <p>联系电话:    {{ scope.row.sphone }}</p><br />
+            <p>入职日期:    {{ scope.row.sdate }}</p><br />
+            <p>用户名:     {{ scope.row.user.uname }}</p><br />
+            <p>职称:       {{ scope.row.t.tname }}</p>
+          </template>
+          <template #reference>
+            <div class="name-wrapper">
+              <el-tag size="medium">{{ scope.row.sname }}</el-tag>
+            </div>
+          </template>
+        </el-popover>
+      </template>
     </el-table-column>
     <el-table-column prop="ks.ksName" label="所属科室" >
     </el-table-column>
-    <el-table-column prop="t.tname" label="职称" >
-    </el-table-column>
+
 	<el-table-column prop="szt" label="状态" >
 		<template v-slot="scope">
 			<p v-if="scope.row.szt==0">在职</p>
 			<p v-if="scope.row.szt==1">离职</p>
 		</template>
 	</el-table-column >
-		<el-table-column label="操作" width="250px">
+		<el-table-column label="操作" >
 			<template v-slot:default="r">
 				<el-button type="primary" size="mini" @click="getRoleFuns(r.row)">授权</el-button>
+        <el-button type="primary" size="mini"  @click="chongzhi(r.row)">重置密码</el-button>
 				<el-button type="primary" @click="bianji(r.row)" size="mini">编辑</el-button>
 				<el-button type="primary" size="mini"  @click="open(r.row)">离职</el-button>
 				
@@ -53,7 +57,7 @@
   <el-pagination
       style="text-align: center;margin-top: 10px"
       @size-change="HandleSizeChange"
-      @current-change=" "
+      @current-change="HandleCurrentChange"
       :current-page="page"
       :page-sizes="[2,4,6,8,10]"
       :page-size="size"
@@ -61,39 +65,75 @@
       :total="funs.length">
   </el-pagination>
 	<el-dialog title="员工信息" v-model="dialogVisible1" width="40%" >
-			员工姓名：<el-input type="text" style="width: 30%;" v-model="sname"></el-input>
-      用户名：<el-input type="text" style="width: 30%" v-model="uname"></el-input><br>
+    <el-form :model="from" ref="form" :rules="rules">
+      <el-form-item >
+        <el-col :span="11">
+          <el-form-item label="员工姓名:" prop="sName">
+            <el-input v-model="from.sName" ></el-input>
+          </el-form-item>
+        </el-col>
+        <el-col :span="12">
+          <el-form-item label="用户名:" prop="uName">
+            <el-input v-model="from.uName"></el-input>
+          </el-form-item>
+        </el-col>
+      </el-form-item>
+      <el-form-item>
+        <el-col :span="11">
+          <el-form-item label="密 码:" prop="uPswd">
+            <el-input type="password" v-model="from.uPswd"></el-input>
+          </el-form-item>
+        </el-col>
+        <el-col :span="11">
+          <el-form-item label="职 称:" >
+            <el-select v-model="from.tId" placeholder="请选择"  @change="selTiId($event)">
+              <el-option v-for="item1 in title" :key="item1.tid" :label="item1.tname" :value="item1.tid">
+              </el-option>
+            </el-select>
+          </el-form-item>
+        </el-col>
+      </el-form-item>
+      <el-form-item>
+        <el-col :span="11">
+          <el-form-item label="部 门:" >
+            <el-select v-model="from.deptid" placeholder="请选择"
+                       @change="ksDeId($event)">
+              <el-option v-for="item in dplist" :key="item.deId" :label="item.deName" :value="item.deId">
+              </el-option>
+            </el-select>
+          </el-form-item>
+        </el-col>
+        <el-col :span="12">
+          <el-form-item label="科 室:" >
+            <el-select v-model="from.ksId"
+                       @change="seksId($event)">
+              <el-option v-for="item in deptks" :key="item.ksId" :label="item.ksName" :value="item.ksId">
+              </el-option>
+            </el-select>
+          </el-form-item>
+        </el-col>
+      </el-form-item>
+      <el-form-item>
+        <el-col :span="11">
+       <el-form-item label="身份证：" prop="sSore">
+         <el-input v-model="from.sSore"></el-input>
+       </el-form-item>
+        </el-col>
+      </el-form-item>
+      <el-form-item>
+        <el-col :span="11">
+          <el-form-item label="联系电话：" prop="sPhone">
+            <el-input v-model="from.sPhone"></el-input>
+          </el-form-item>
+        </el-col>
+      </el-form-item>
 
-      密&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;码：<el-input type="password" style="width: 30%;margin-top:20px;" v-model="upass"></el-input>
-    职&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;称：<el-select v-model="tile" placeholder="请选择" style="width: 25%;margin-top:20px;" @change="selTiId($event)">
-    <el-option v-for="item1 in title" :key="item1.tid" :label="item1.tname" :value="item1.tid">
-    </el-option>
-  </el-select><br>
+    </el-form>
 
-			部&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;门：<el-select v-model="dept" placeholder="请选择"
-				style="width: 25%;margin-top:20px;" @change="ksDeId($event)">
-				<el-option v-for="item in dplist" :key="item.deId" :label="item.deName" :value="item.deId">
-				</el-option>
-			</el-select>
-    <span style="margin-left: 20px"></span>
-    科&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;室：<el-select v-model="yuangong" placeholder="请选择"
-                                                            style="width: 25%;margin-top:20px;" @change="seksId($event)">
-    <el-option v-for="item in deptks" :key="item.ksId" :label="item.ksName" :value="item.ksId">
-    </el-option>
-  </el-select><br>
-<!--      角&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;色：<el-select v-model="jusei" placeholder="请选择" style="width: 25%;margin-top:20px;" @change="selRoId($event)">-->
-<!--      <el-option v-for="item1 in roles" :key="item1.rid" :label="item1.rname" :value="item1.rid">-->
-<!--      </el-option>-->
-<!--    </el-select><br />-->
-
-
-			身份证&nbsp;&nbsp;&nbsp;：<el-input type="text" style="width: 40%;margin-top:20px;" v-model="ssore"></el-input><br />
-			联系电话：<el-input type="text" style="width: 40%; margin-top: 20px;" v-model="phone"></el-input>
 		<template #footer>
-
 			<span class="dialog-footer">
 				<el-button @click="dialogVisible1 = false">取 消</el-button>
-				<el-button type="primary" @click="determine()">确 定</el-button>
+				<el-button type="primary" @click="onSubmit('form')">确 定</el-button>
 			</span>
 		</template>
 	</el-dialog>
@@ -117,6 +157,47 @@ import qs from 'qs'
 	export default {
 		data() {
 			return {
+        from:{
+          sid:0,
+          sName:'',
+          sSore:'',
+          sPhone: '',
+          ksId:'',
+          tId:'',
+          uName:'',
+          uPswd:'',
+          deptid:''
+        },
+        error:{
+          user:''
+        },
+        rules:{
+          sName:[
+            { required: true, message: '请输入员工姓名', trigger: 'blur' },
+          ],
+          uName:[
+            { required: true, message: '请输入用户名', trigger: 'blur' },
+          ],
+          uPswd:[
+            { required: true, message: '请输入密码', trigger: 'blur' },
+            { min: 6, max: 10, message: '长度在 6 到 10 个字符', trigger: 'blur' }
+          ],
+          sSore:[
+            { required: true, message: '请输入证件号', trigger: 'blur' },
+            {
+              pattern: /(^\d{8}(0\d|10|11|12)([0-2]\d|30|31)\d{3}$)|(^\d{6}(18|19|20)\d{2}(0\d|10|11|12)([0-2]\d|30|31)\d{3}(\d|X|x)$)/,
+              message: '请输入正确的证件号'
+            },
+            { min: 15, max: 18, message: '长度在 6 到 10 个字符', trigger: 'blur' }
+          ],
+          sPhone:[
+            { required: true, message: '请输入手机号', trigger: 'blur' },
+            {
+              pattern: /^1(3|4|5|6|7|8)\d{9}$/,
+              message: '请输入正确的手机号'
+            },
+          ]
+        },
 			  funs:[],
         size:4,
         page:1,
@@ -199,7 +280,7 @@ import qs from 'qs'
         this.axios.get("selectall-staff").then((res)=>{
           this.funs = res.data
           this.cs=this.funs.sid
-          console.log(this.cs)
+          console.log(this.funs)
         }).catch()
         //查询部门
         this.axios.get("http://localhost:8089/bm-list").then((v)=>{
@@ -245,78 +326,6 @@ import qs from 'qs'
           }).catch();
 
       },
-      determine(){
-        this.staff.sname=this.sname
-        this.staff.ssore=this.ssore
-        this.staff.sphone=this.phone
-        this.staff.sdate=new Date()
-        this.staff.ksId=this.ksId
-        this.staff.tid=this.tId
-        this.user.uname=this.uname
-        this.user.upswd=this.upass
-        console.log(this.staff)
-
-       if(this.staff.sid===0){
-         // this.axios.post('add-staff',qs.stringify(data)).then().catch()
-         this.axios({
-           url:"add-staff",
-           params:{staff:this.staff,user:this.user}
-         }).then((v)=>{
-           this.getData()
-           this.qingchu()
-           this.dialogVisible1= false
-         }).catch();
-       }else{
-         //编辑
-         console.log(123123132)
-         this.axios({
-           url:"upa-staff",
-           params:{staff:this.staff,user:this.user,rId:this.rId}
-         }).then((v)=>{
-           this.getData()
-           this.qingchu()
-           this.dialogVisible1= false
-         }).catch();
-       }
-      },
-      qingchu(){
-        this.sname=''
-       this.ssore=''
-        this.phone=''
-
-      this.yuangong=''
-        this.jusei=''
-        this.tile=''
-        this.dept=''
-       this.uname=''
-        this.upass=''
-      },
-      bianji(row){
-       // console.log(row)
-        this.staff.sid=row.sid
-        this.dialogVisible1=true
-        //回显数据
-        this.sname=row.sname
-        this.ssore=row.ssore
-        this.phone=row.sphone
-        this.yuangong=row.ks.ksName
-        this.tile=row.t.tname
-        this.dept=row.dept.deName
-        this.user.uid=row.user.uid
-        this.uname=row.user.uname
-        this.upass=row.user.upswd
-        //打包对象
-        this.staff.sname=this.sname
-        this.staff.ssore=this.ssore
-        this.staff.sphone=this.phone
-        this.staff.sdate=new Date()
-        this.staff.ksId=this.ksId
-        this.staff.tid=row.t.tid
-        this.user.uname=this.uname
-        this.user.upswd=this.upass
-        console.log(this.staff)
-        console.log(this.user)
-      },
       getRoleFuns(row){
         this.rId=row.user.uid
         this.axios.get("staff-funs",{params:{rId:this.rId}}).then((res)=>{
@@ -336,8 +345,85 @@ import qs from 'qs'
           this.roleId = '';
           this.getData();
         }).catch()
-      }
+      },
+      onSubmit(formName){
+        this.$refs[formName].validate(valid =>{
+          if (valid) {
+            console.log(this.from.sId)
+            if(this.from.sid == 0){
+              for (let i = 0 ; i<this.funs.length ; i++){
+                if(this.user.uname==this.funs[i].user.uname){
+                  return this.$message.error("用户已存在")
+                }
+              }
+              for (let i=0;i<this.funs.length;i++){
+                if(this.from.sSore==this.funs[i].ssore){
+                  return this.$message.error("身份证重复")
+                }
+              }
+              this.axios.post("add-staff",qs.stringify(this.from)).then((v)=>{
+                this.getData()
+                this.qingchu()
+                this.dialogVisible1= false
+              }).catch()
+            }else{
+              //编辑
+              console.log(this.from)
+              this.axios.post("upa-staff",qs.stringify(this.from)).then((v)=>{
+                this.getData()
+                this.qingchu()
+                this.dialogVisible1= false
+              }).catch()
+            }
 
+          } else {
+            console.log('error submit!!');
+            return false;
+          }
+        });
+      },
+      resetForm(formName) {
+        this.$refs[formName].resetFields();
+      },
+      bianji(row){
+        this.dialogVisible1 = true
+        this.from.sId=row.sid
+        this.from.sName = row.sname
+        this.from.uName = row.user.uname
+        this.from.uPswd = row.user.upswd
+        this.from.tId = row.t.tid
+        this.from.deptid = row.dept.deId
+        this.from.ksId = row.ks.ksId
+        this.ksDeId(row.ks.ksId);
+        this.from.sSore=row.ssore
+        this.from.sPhone=row.sphone
+      },
+      chongzhi(row){
+        this.axios({
+          url:"reset",
+          params:{uid:row.user.uid,ssore:row.ssore}
+        }).then((v)=>{
+        if(v.data===0){
+          this.$message.success("重置成功")
+          this.getData()
+        }else{
+          this.$message.error("系统异常")
+        }
+        }).catch();
+      },
+      qingchu(){
+        this.from={
+          sid:0,
+          sName:'',
+              sSore:'',
+              sPhone: '',
+              ksId:'',
+              tId:'',
+              uName:'',
+              uPswd:'',
+              deptid:''
+        }
+      }
 			
 		},
     created() {

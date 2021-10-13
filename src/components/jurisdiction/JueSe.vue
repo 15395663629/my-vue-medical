@@ -157,6 +157,14 @@ import  qs from 'qs'
 		  this.rolelist.rname=this.rolename
 		  this.rolelist.roId=this.rosid
       console.log(this.rolelist)
+      if(this.rolename=="" || this.rolename===undefined){
+       return  this.$message.error("不能为空")
+      }
+      for (let i=0; i<this.role.length; i++){
+        if(this.rolename==this.role[i].rname){
+          return this.$message.error("已存在")
+        }
+      }
 		  this.axios.post("add-role",this.rolelist).then((v)=>{
 		    console.log(v.data)
 			 if(v.data==1){

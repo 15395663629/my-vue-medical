@@ -36,7 +36,7 @@
             </el-row>
             <!--=======================================================病人表格-->
             <el-table
-                height="473px"
+                height="453px"
                 @cell-click="patientChecked"
                 :data="patientBaseArr.slice((patientCurrentPage-1)*patientPageSize,patientCurrentPage*patientPageSize)"
                 :row-class-name="tablePatientBaseRowClassName"
@@ -249,11 +249,8 @@
                     <span v-if="obj.row.iss != 1">外用药</span>
                   </template>
                 </el-table-column>
-                <el-table-column label="价格">
-                  <template #default="obj">
-                    {{obj.row.drugPrescription == 1 ? obj.row.drugParticle : obj.row.drugPrice}}
-                  </template>
-                </el-table-column>
+                <el-table-column label="处方价格" prop="drugParticle"/>
+                <el-table-column label="价格" prop="drugPrice"/>
                 <el-table-column prop="drugUsage" label="药品用法"></el-table-column>
               </el-table>
             </el-col>
@@ -291,7 +288,7 @@
 
 
                 <el-col :offset="1" style="line-height: 30px" :span="5">
-                    <el-radio-group v-model="doctorEnjoinObj.deLongorshort"  @change="selectLookDoctorEnjoinTable">
+                    <el-radio-group v-model="doctorEnjoinObj.deLongorshort"  @change="selectAddDoctorEnjoinTable">
                       <el-radio :label="2">临时医嘱</el-radio>
                       <el-radio :label="1">长期医嘱</el-radio>
                     </el-radio-group>
@@ -300,6 +297,12 @@
                 <el-col :offset="1" :span="1">
                   <el-button type="info" @click="emptyDoctorEnjoin" size="mini">重置</el-button>
                 </el-col>
+
+                <el-col :offset="1" :span="1">
+                  <el-button type="info" @click="addCaseHistory" size="mini">添加病例</el-button>
+                  <CaseHistory :patient-obj="patientBaseObj" ref="caseRef" ></CaseHistory>
+                </el-col>
+
                 <el-col :offset="1" :span="2">
                   <el-button type="primary" v-if="doctorEnjoinObj.deId == ''" :disabled="doctorEnjoinObj.dedList == 0" @click="insertDoctorEnjoin()" size="mini">保存医嘱</el-button>
                 </el-col>
@@ -464,10 +467,11 @@
 <!--                  </el-form-item>-->
 <!--                </el-col>-->
 
-                <el-col :offset="6" :span="4">
+                <el-col :offset="6" :span="5">
                   <el-form-item>
-                    <el-tag type="info">可执行</el-tag>&nbsp;
-                    <el-tag type="danger">已停用</el-tag>
+                    <el-tag type="info" effect="dark">可执行</el-tag>&nbsp;
+                    <el-tag type="danger" effect="dark">已停用</el-tag>&nbsp;
+                    <el-tag effect="dark">临时医嘱</el-tag>&nbsp;
                   </el-form-item>
                 </el-col>
 
@@ -479,7 +483,7 @@
               <el-row v-if="isMainOrMinor == 2">
                 <el-col>
                   <el-table :data="doctorEnjoinArr.slice((doctorEnjoinCurrentPage-1)*doctorEnjoinPageSize,doctorEnjoinCurrentPage*doctorEnjoinPageSize)"
-                            :row-class-name="tableDoctorEnjoinRowClassName" height="430px" size="small" >
+                            :row-class-name="tableDoctorEnjoinDetailsRowClassName" height="420px" size="small" >
                     <el-table-column label="下嘱日期" prop="deDate"></el-table-column>
                     <el-table-column label="下嘱医生" width="100px" prop="deDoctorName"></el-table-column>
                     <el-table-column width="100px" label="医嘱类型">
@@ -515,7 +519,7 @@
               <!--查看所有详表医嘱-->
               <el-row v-if="isMainOrMinor == 1 || isMainOrMinor == 3 ">
                 <el-col>
-                  <el-table :data="doctorEnjoinDetailsArr.slice((doctorEnjoinDetailsCurrentPage-1)*doctorEnjoinDetailsPageSize,doctorEnjoinDetailsCurrentPage*doctorEnjoinDetailsPageSize)" :row-class-name="tableDoctorEnjoinDetailsRowClassName"  height="430px" size="small" >
+                  <el-table :data="doctorEnjoinDetailsArr.slice((doctorEnjoinDetailsCurrentPage-1)*doctorEnjoinDetailsPageSize,doctorEnjoinDetailsCurrentPage*doctorEnjoinDetailsPageSize)" :row-class-name="tableDoctorEnjoinDetailsRowClassName"  height="420px" size="small" >
 <!--                    <el-table-column v-if="patientBaseObj.ptNo == null" type="selection" width="50px"></el-table-column>-->
                     <el-table-column width="140px" label="下嘱日期" prop="desEnteringDate"></el-table-column>
                     <el-table-column label="下嘱医生" width="100px" prop="deDoctorName"></el-table-column>
@@ -609,11 +613,15 @@
 
             </el-tab-pane>
 
-            <el-tab-pane name="检验项目" :key="'化验项目'" label="化验项目">
-                <h1>as</h1>
+            <el-tab-pane name="查看病历" :key="'查看病历'" label="查看病历">
+              <lokkCaseHistory :patient-obj="patientBaseObj"></lokkCaseHistory>
             </el-tab-pane>
-            <el-tab-pane name="检验结果" :key="'化验结果'" label="化验结果">
-               <h1>3</h1>
+
+            <el-tab-pane name="化验项目" :key="'化验项目'" label="化验项目">
+              <labWork :patient-obj="patientBaseObj"></labWork>
+            </el-tab-pane>
+            <el-tab-pane name="化验结果" :key="'化验结果'" label="化验结果">
+              <lab-work-result ref="resultFun" :patient-obj="patientBaseObj"></lab-work-result>
             </el-tab-pane>
           </el-tabs>
         </el-main>
@@ -624,8 +632,13 @@
 </template>
 
 <script>
+import labWork from "./MAMOperation/labWork.vue";//化验项目页面
+import labWorkResult from "./MAMOperation/labWorkResult.vue";//查看化验结果页面
+import CaseHistory from "./MAMOperation/CaseHistory.vue";//添加病例页面
+import lokkCaseHistory from "./MAMOperation/lookCaseHistory.vue";//查看病历页面
 
 export default{
+  components:{labWork,labWorkResult,CaseHistory,lokkCaseHistory},
   data(){
     return{
       //========================================================================员工数据
@@ -649,6 +662,7 @@ export default{
         drugNameSearch:'',//药品模糊查询
         searchSpecId:'',//药品单位
         searchYfDrcaName:'',//类别搜索（中药、西药）
+        searchIs:''//查询是否处方药
       },
       searchDrugUsageArr:[],//药品用法集合
       searchSpecifcationsArr:[],//药品规格集合
@@ -788,6 +802,27 @@ export default{
       }).catch();
     },
 
+    //=======================================新开医嘱切换长期医嘱短期医嘱
+    selectAddDoctorEnjoinTable(){
+      if(this.doctorEnjoinObj.deLongorshort == 1){
+        if(this.doctorEnjoinObj.dedList.length > 0){
+          this.$confirm("切换长期医嘱需要将药品数据情况  是否清空", '提示信息', {
+            distinguishCancelAndClose: true,
+            confirmButtonText: "清空",
+            cancelButtonText: "取消"
+          }).then(() => {
+            this.doctorEnjoinObj.dedList = [];
+          }).catch(action => {
+            this.doctorEnjoinObj.deLongorshort = 2;
+            this.$message({
+              type: 'warning',
+              message:'取消切换'
+            })
+          });
+        }
+      }
+    },
+
 
     //=======================================================================查看医嘱方法
     //切换查看医嘱表格
@@ -821,6 +856,14 @@ export default{
     //打开停嘱弹框方法
     openStopDoctorEnjoin(obj){
       console.log(obj);
+      if(this.staff.sid != obj.row.sid){
+        this.$message({
+          type: 'warning',
+          message: '不能操作其它医生的医嘱'
+        });
+        return;
+      }
+
         this.stopDoctorEnjoinVue = obj.row;
         if(this.isMainOrMinor == 1 || this.isMainOrMinor == 3){
           this.stopDoctorEnjoin.derId = obj.row.desId;//将医嘱详情编号赋值
@@ -855,6 +898,11 @@ export default{
     },
     //新增停嘱数据（修改）（弹框确定按钮）
     addStopDoctorEnjoinDetails(){
+      // if(this.staff.sid != ){
+
+      // }
+      // console.log()
+
       this.stopDoctorEnjoin.ptNo = this.patientBaseObj.ptNo;
       this.stopDoctorEnjoin.sdeDoctorName = this.staff.sname;
       this.stopDoctorEnjoin.sId = this.staff.sid;
@@ -953,7 +1001,7 @@ export default{
         }
     },
     //确定新增医嘱
-    insertDoctorEnjoin() {
+    async insertDoctorEnjoin() {
       if (this.patientBaseObj.ptNo == '') {
         this.$notify.error({
           title: '错误',
@@ -974,8 +1022,28 @@ export default{
         return;
       }
 
+      let iss = false;
+      // alert(this.patientBaseObj.ptPrice)
+       if(this.patientBaseObj.ptPrice < 0){
+          iss = await this.$confirm("病人【"+this.patientBaseObj.ptName+"】 已欠费【"+this.patientBaseObj.ptPrice+"】是否继续开立医嘱", '提示信息', {
+          distinguishCancelAndClose: true,
+          confirmButtonText: "取消开立",
+          cancelButtonText: "确定开立"
+        }).then(() => {
+         return true;
+        }).catch(action => {
+          return false;
+        });
+      }
+      if(iss){
+        this.$message({
+          type: 'warning',
+          message:'已取消开立'
+        })
+        return;
+      }
+
       this.doctorEnjoinObj.ptNo = this.patientBaseObj.ptNo;
-    console.log(this.doctorEnjoinObj)
       this.axios.post('add-doctorEnjoin',this.doctorEnjoinObj).then((v)=>{
         if(v.data){
           this.emptyDoctorEnjoin();
@@ -1088,9 +1156,15 @@ export default{
         return;
       }
       this.isShowAddDrug = true;//显示
+      this.drugSearchFunction();
     },
     //搜索药品方法
     drugSearchFunction() {
+      if(this.doctorEnjoinObj.deLongorshort == 1){
+        this.drugSearch.searchIs = 1;
+      }else{
+        this.drugSearch.searchIs = null;
+      }
       this.axios.post('select-drug-drugName', this.drugSearch).then((v) => {
         console.log(v.data)
         this.drugArr = v.data;
@@ -1100,6 +1174,13 @@ export default{
     closeAddDrugFunction() {
       this.$refs.drugTable.clearSelection();
       this.isShowAddDrug = false;
+      this.drugSearch = {//药品搜索对象
+            searchDrugUsage:'',//药品用法
+            drugNameSearch:'',//药品模糊查询
+            searchSpecId:'',//药品单位
+            searchYfDrcaName:'',//类别搜索（中药、西药）
+            searchIs:''//查询是否处方药
+      }
     },
 
 
@@ -1163,6 +1244,8 @@ export default{
       this.patientBaseObj.bdName = obj.bed.bdName;
       this.patientBaseObj.ksName = obj.ksName;
       this.patientBaseObj.sName = obj.staff.sname;
+      this.patientBaseObj.ptPrice = obj.ptPrice;
+      this.patientBaseObj.ptPayMoney = obj.ptPayMoney;
       this.patientBaseObj.ptIphone = obj.ptIphone;
       this.patientBaseObj.ptInDay = parseFloat((new Date().getTime() - Date.parse(obj.ptInDate))  / (1*24*60*60*1000)).toFixed(0) + '天';//算出入院天数
 
@@ -1197,6 +1280,7 @@ export default{
         }
       }else if(this.maxCard == '化验项目'){
       }else if(this.maxCard == '化验结果'){
+        this.$refs.resultFun.initResultMan();
       }
     },
 
@@ -1241,17 +1325,26 @@ export default{
         if(this.formatDate(row.desEndDate, 'yyyy-MM-dd') <= this.formatDate(new Date(), 'yyyy-MM-dd')){
           return 'tyyz';
         }
+      }else if(row.deLongorshort == 2){
+        return 'tyyzs';
       }
     },
     //判断医嘱是否停用 如果停用的表格就标红
-    tableDoctorEnjoinRowClassName({row, rowIndex}) {
-      if (row.deEndDate != '' && row.deEndDate != null) {
-        if(this.formatDate(row.deEndDate, 'yyyy-MM-dd') <= this.formatDate(new Date(), 'yyyy-MM-dd')){
-          return 'tyyz';
-        }
-      }
-    },
+    // tableDoctorEnjoinRowClassName({row, rowIndex}) {
+    //   if (row.deEndDate != '' && row.deEndDate != null) {
+    //     if(this.formatDate(row.deEndDate, 'yyyy-MM-dd') <= this.formatDate(new Date(), 'yyyy-MM-dd')){
+    //       return 'tyyz';
+    //     }
+    //   }else if(row.deLongorshort == 2){
+    //       return 'tyyzs';
+    //   }
+    // },
 
+
+    //添加病例方法
+    addCaseHistory(){
+      this.$refs.caseRef.caseShow();
+    },
 
     //===========================================================分页方法
     //====病人分页方法
@@ -1321,6 +1414,11 @@ export default{
 /deep/ .el-table .tyyz {
   /*background: #FF9C9C;*/
   color: #FF4545;
+}
+
+/deep/ .el-table .tyyzs {
+  /*background: #FF9C9C;*/
+  color: blue;
 }
 
 /deep/ .el-divider--horizontal{

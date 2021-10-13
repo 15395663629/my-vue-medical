@@ -3,27 +3,27 @@
             :data="rightTableData1" style=" width: 100%;" height="470px" size="mini" >
     <el-table-column fixed    label="药品名称"  align="center" width="120">
       <template #default="scope">
-        <span>{{scope.row.drugName}}</span>
+        <span>{{scope.row.xpObject.rdName}}</span>
       </template>
     </el-table-column>
     <el-table-column fixed  label="服用剂量"  align="center"  width="133">
       <template #default="scope">
-        <span>{{scope.row.drugSpecification }}</span>
+        <span>{{scope.row.xpObject.rdFyjl }}</span>
       </template>
     </el-table-column>
     <el-table-column fixed  label="单位" align="center"  width="60">
       <template #default="scope">
-        <span>{{scope.row.specSpecification}}</span>
+        <span>{{scope.row.xpObject.rdDw}}</span>
       </template>
     </el-table-column>
     <el-table-column fixed  label="单价" align="center"  width="100">
       <template #default="scope">
-        <span>{{scope.row.drugPrice}}</span>
+        <span>{{scope.row.xpObject.rdPrice}}</span>
       </template>
     </el-table-column>
     <el-table-column  fixed label="总金额"  width="110" align="center">
       <template #default="scope" class="sums">
-        <span>{{scope.row.xpObject.rdCount*scope.row.drugPrice}}</span>
+        <span>{{scope.row.xpObject.rdCount*scope.row.xpObject.rdPrice}}</span>
       </template>
     </el-table-column>
     <el-table-column fixed  label="计数"  width="150" align="center">
@@ -36,9 +36,9 @@
         <el-checkbox v-model="scope.row.xpObject.rdSkin"></el-checkbox>
       </template>
     </el-table-column>
-    <el-table-column fixed  label="输液分组"  width="120">
+    <el-table-column fixed  label="皮试结果"  width="120">
       <template #default="scope">
-        <el-input type="textarea" size="mini" v-model="scope.row.xpObject.rdGrouping" rows="1" maxlength="400"></el-input>
+        <el-input type="textarea" size="mini" v-model="scope.row.xpObject.rdSkinResult" rows="1" disabled maxlength="400"></el-input>
       </template>
     </el-table-column>
     <el-table-column fixed label="嘱托" width="200" class="patientText">
@@ -47,9 +47,11 @@
       </template>
     </el-table-column>
     <el-table-column fixed align="center" label="操作" width="50">
-		  <template #default="scope">
-        <el-button type="danger" icon="el-icon-delete" size="mini" @click="handleDelete(scope.$index)" circle></el-button>
-		  </template>
+        <template #default="scope">
+          <div v-if="scope.row.xpObject.rdStatePrice == 0">
+            <el-button type="danger" icon="el-icon-delete" size="mini" @click="handleDelete(scope.$index,scope.row.rdNumber)" circle></el-button>
+          </div>
+        </template>
 		</el-table-column>
 
   </el-table>
@@ -84,8 +86,16 @@
             }
         },
       methods:{
-        handleDelete(index){
-          this.rightTableData1.splice(index,1);
+        handleDelete(index,i){
+          if(i==undefined){
+            this.rightTableData1.splice(index,1);
+          }else{
+            this.axios.post('deleteRe',{index:1,number:i}).then((v)=>{
+              if(v.data=="ok"){
+                this.rightTableData1.splice(index,1);
+              }
+            }).catch(()=>{})
+          }
         },
         getSummaries1(param) {
           const { columns} = param;//获取到的整个表格的总栏位数
@@ -96,8 +106,8 @@
           })
           columns.forEach((column, index) => {//获取合计的位置
             if (index === 0) {
-              sums[index] = "合计";
-			  sums[index+1] = sum.toFixed(2)+"元";
+              sums[index] = "合计：";
+			  sums[index+1] = sum.toFixed(2)+"  元";
               return;
             }
           });

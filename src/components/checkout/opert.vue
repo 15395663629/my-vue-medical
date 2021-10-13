@@ -212,6 +212,63 @@
 
 
 
+
+
+    <!-- 选择员工弹框-->
+    <el-dialog title="选择员工" v-model="dialogVisible" width="30%" >
+      <el-form>
+      <el-row>
+        <el-col :span="20">
+          <el-form-item label="主刀医生:" label-width="120px">
+            <el-select v-model="ssApply.operationDoctor" placeholder="请选择">
+              <el-option
+                  v-for="item in sta1"
+                  :key="item.value"
+                  :label="item.sname"
+                  :value="item.sid">
+              </el-option>
+            </el-select>
+          </el-form-item>
+        </el-col>
+      </el-row>
+        <el-row>
+          <el-col :span="20">
+            <el-form-item label="麻醉师:" label-width="120px">
+              <el-select v-model="ssApply.operationAnathe" placeholder="请选择">
+                <el-option
+                    v-for="item in sta2"
+                    :key="item.value"
+                    :label="item.sname"
+                    :value="item.sid">
+                </el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="20">
+            <el-form-item label="助手:" label-width="120px">
+              <el-select v-model="ssApply.operationHelper" placeholder="请选择">
+                <el-option
+                    v-for="item in sta3"
+                    :key="item.value"
+                    :label="item.sname"
+                    :value="item.sid">
+                </el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+        </el-row>
+      </el-form>
+      <template #footer>
+			<span class="dialog-footer">
+				<el-button @click="dialogVisible = false">取 消</el-button>
+				<el-button type="primary" @click="saveGrant()">确 定</el-button>
+			</span>
+      </template>
+    </el-dialog>
+
+
 		<!-- ====================================================开始手术弹框 ====================================================================-->
 		<el-dialog title="手术安排" v-model="apss">
 			<el-form ref="ruleForm" label-width="100px" class="">
@@ -280,7 +337,7 @@
           手术信息
         </el-row>
         <el-row>
-          <el-col :span="10">
+          <el-col :span="8">
             <el-form-item label="手术名称:" label-width="80px">
               <el-input size="mini" v-model="ssApply1.ssname"></el-input>
             </el-form-item>
@@ -290,6 +347,13 @@
               <el-button size="mini" @click="ksEdit" type="primary">重新选择手术</el-button>
             </el-form-item>
           </el-col>
+          <el-col  :span="4">
+            <el-form-item label="" label-width="100px">
+              <el-button size="mini" @click="dialogVisible=true" v-show="ssApply.operationHelper==''||ssApply.operationAnathe==''||ssApply.operationDoctor==''" type="primary">选择医生</el-button>
+              <el-button size="mini" @click="dialogVisible=true" v-show="ssApply.operationHelper!=''&&ssApply.operationAnathe!=''&&ssApply.operationDoctor!=''" type="primary">已选择</el-button>
+            </el-form-item>
+          </el-col>
+
         </el-row>
         <el-row>
           <el-col :span="9">
@@ -396,7 +460,7 @@
               <el-table-column
                   label="操作">
                 <template #default="scope">
-                  <el-button type="primary" plain size="mini" @click="this.ssApply1.mzyp=scope.row.drugName,this.ssDetail.drugId">选择</el-button>
+                  <el-button type="primary" plain size="mini" @click="this.ssApply1.mzyp=scope.row.drugName,this.ssApply.hocusId=scope.row.drugId">选择</el-button>
                 </template>
               </el-table-column>
             </el-table>
@@ -411,10 +475,57 @@
 			  </el-col>
 		  </el-row>
 		</el-dialog>
+
+
+
+
+    <!--=====================================================================结束手术弹框======================-->
+
+    <el-dialog title="请输入。。。。。。" width="40%" v-model="jsss">
+      <el-form  label-width="100px">
+      <el-row >
+        <el-col  :span="8">
+          <el-form-item label="住院号:" label-width="80px">
+            <el-input v-model="ssjl.ptNo"></el-input>
+          </el-form-item>
+        </el-col>
+        <el-col :span="12">
+          <el-form-item label="术后处理:" label-width="80px">
+            <el-input  v-model="ssjl.operationHandle"></el-input>
+          </el-form-item>
+        </el-col>
+
+      </el-row>
+        <el-row>
+          <el-col  :span="7">
+            <el-form-item label="手术时长:" label-width="80px">
+              <el-time-picker
+                  v-model="sssc"
+                  is-range
+                  range-separator="To"
+                  start-placeholder="Start time"
+                  end-placeholder="End time"
+              >
+              </el-time-picker>
+            </el-form-item>
+          </el-col>
+        </el-row>
+      <el-row>
+        <el-col :span="3" :offset="11">
+          <el-button type="primary" @click="qrjsForm()">确认</el-button>
+        </el-col>
+      </el-row>
+      </el-form>
+    </el-dialog>
+
+
+
+
+
 <!-- ====================================================表格                ==========================================-->
 		<el-table
 		    ref="multipleTable"
-		    :data="sApply"
+		    :data="sApply.slice((currentPage-1)*pagesize,currentPage*pagesize)"
 		    tooltip-effect="dark"
 			height="450"
 		    style="width: 100%"
@@ -464,21 +575,21 @@
 			      <template #default="scope">
 			        <el-button size="mini" type="primary" @click="apssEdit(scope.row)"  v-show="scope.row.applyZt==0">开始</el-button>
               <el-button style="margin-left: 0px" size="mini" type="success" :loading="true" v-show="scope.row.applyZt==1">手术中</el-button>
-              <el-button size="mini" type="warning" @click="apss=true" v-show="scope.row.applyZt==1">结束</el-button>
+              <el-button size="mini" type="warning" @click="jsssForm(scope.row)" v-show="scope.row.applyZt==1">结束</el-button>
 			        <el-button v-show="scope.row.applyZt!=1" size="mini" type="danger" @click="handleDelete(scope.$index, scope.row)" >取消申请</el-button>
 			      </template>
 			</el-table-column>
 		</el-table>
-		<el-pagination
-						 					style="text-align: center;"
-						       @size-change="totalCut"
-						       @current-change="pageCut"
-						       :current-page="1"
-						       :page-sizes="[2,4,6,8,10]"
-						       :page-size="size"
-						       layout="total, sizes, prev, pager, next, jumper"
-						       :total="total">
-						     </el-pagination>
+    <!--分页插件-->
+    <el-pagination
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"
+        :current-page="1"
+        :page-sizes="[2,4,6,8,10]"
+        :page-size="pagesize"
+        layout="total, sizes, prev, pager, next, jumper"
+        :total="sApply.length">
+    </el-pagination>
 	</el-row>
 	
 </template>
@@ -489,10 +600,22 @@
   export default {
 		data() {
 			return {
+			  sta1:[],//员工主刀1
+        sta2:[],//麻醉师2
+        sta3:[],//护士3
+        dialogVisible:false,
+        funs:[],//员工
+        currentPage: 1, //初始页
+        pagesize:10, //    每页的数据
         mzproject:[],//单个项目所选麻醉
         tableData: [],//麻醉药品
 			  input:'',//手术搜索
         cxxzss:false,//重新选择手术弹框
+        props: {
+          id:'sid',
+          label: 'sname',
+          children: 'dept.deName'
+        },
         ssApply:{//手术申请对象
           applyId:'',
           ptNo:'',
@@ -502,6 +625,10 @@
           projectId:'',
           changeId:'',
           operationId:'',
+          hocusId:'',
+          operationDoctor:'',
+          operationAnathe:'',
+          operationHelper:'',
           applyZt:'',
         },
         ssApply1:{//手术安排对象
@@ -513,16 +640,6 @@
           zddc:'',
           mzyp:'',
           ssrname:''
-        },
-        ssDetail:{//手术记录对象
-          operationNum:'',
-          OperationTime:'',
-          operationDate:'',
-          projectId:'',
-          operationHandle:'',
-          operationHocus:'',
-          operationDoctorName:'',
-          ptNo:''
         },
         // 安排手术卡片
         activeName: 'first',
@@ -541,6 +658,7 @@
 				textarea:"",
         sApply:[],//手术申请集合
 				apss: false,
+        jsss:false,//结束手术弹框
 				centerDialogVisible: false,
 				currentPage3: 5,
         ssml:[{
@@ -560,6 +678,7 @@
           value:'Ⅴ类手术间'
         }
         ],
+        sssc:'',//时间model
         ssrq:{//手术室dx
           operationId:'',
           operationName:'',
@@ -568,6 +687,20 @@
           operationType:'',
           ksId:'',
           sid:''
+        },
+        ssjl:{//手术记录dx
+          operationNum:'',
+          operationTime:'',
+          operationDate:'',
+          projectId:'',
+          operationHandle:'',
+          operationHocus:'',
+          operationDoctor:'',
+          operationAnathe:'',
+          operationHelper:'',
+          ptNo:'',
+          simulationOperation:'',
+          hocusId:''
         },
         ssr:{//手术室dx
           operationId:'',
@@ -583,6 +716,13 @@
 		 methods: {
 		  //手术室基础参数
        getData() {
+         // 查询员工
+         this.axios.get("selectall-staff").then((res)=>{
+           this.funs = res.data
+         }).catch()
+         // this.axios.get('add-sch').then((v)=>{
+         //   this.funs=v.data
+         // }).catch()
          //查询麻醉药
          this.axios.post("http://localhost:8089/yp-ss").then((res)=>{
            console.log(res)
@@ -609,9 +749,30 @@
            this.department = res.data;
          }).catch()
          //员工
-         this.axios.get("http://localhost:8089/staff-ks",{params: {id:4}}).then((res)=>{
+           this.axios.get("http://localhost:8089/staff-ks",{params: {id:4}}).then((res)=>{
            this.staf = res.data;
          }).catch()
+         //主刀
+         this.axios.get("http://localhost:8089/staff-t",{params: {id:3}}).then((res)=>{
+           this.sta1 = res.data;
+         }).catch()
+         // 麻醉师
+         this.axios.get("http://localhost:8089/staff-t",{params: {id:1}}).then((res)=>{
+           this.sta2 = res.data;
+         }).catch()
+         //护士
+         this.axios.get("http://localhost:8089/staff-t",{params: {id:9}}).then((res)=>{
+           this.sta3 = res.data;
+         }).catch()
+       },
+       // 初始页currentPage、初始每页数据数pagesize和数据data
+       handleSizeChange: function (size) {
+         this.pagesize = size;
+         console.log(this.pagesize) //每页下拉显示数据
+       },
+       handleCurrentChange: function (currentPage) {
+         this.currentPage = currentPage;
+         console.log(this.currentPage) //点击第几页
        },
        //抽屉关闭
 			  handleClose(done) {
@@ -645,7 +806,6 @@
            this.ssApply.simulationTime=row.simulationTime
            this.ssApply.ptNo=row.ptdx.ptNo
            this.ssApply.sId=row.ys.sid
-           alert(row.ys.sid)
 
 
 
@@ -658,19 +818,103 @@
        },
        //手术安排弹框确认按钮
        apssForm(formName) {
-         this.ssDetail.operationDate=this.getNowFormatDate()
-
          this.ssApply.applyZt=1
          this.apss = false
          //修改手术申请
          this.axios.post("http://localhost:8089/aOrUApply",{proj:this.ssApply}).then((res)=>{
+         }).catch()
+//修改手术室
+         this.axios.post('http://localhost:8089/upd-roomzt', qs.stringify({operationZt:1,operationId:this.ssApply.operationId}))
+             .then((v)=>{
+               if(v.data == 'ok'){
+                 this.getData()
+               }else{
+                 alert(v.data);
+               }
+             }).catch(function(){
+         })
+         this.$refs[formName].resetFields();
+       },
+       // 选择员工确认
+       saveGrant(){
+         this.dialogVisible=false
+       },
+       //结束弹框确认
+       jsssForm(row) {
+         this.ssjl.ptNo=row.ptNo
+         this.ssjl.operationDate=this.getNowFormatDate()
+         this.ssjl.projectId=row.projectId
+         this.ssjl.operationHocus=row.changeId
+         this.ssjl.hocusId=row.hocusId
+         this.ssjl.simulationOperation=row.simulationOperation
+
+         this.ssApply.applyId=row.applyId
+         this.ssApply.projectId=row.projectId
+         this.ssApply.simulationOperation=row.simulationOperation
+         this.ssApply.simulationTime=row.simulationTime
+         this.ssApply.ptNo=row.ptdx.ptNo
+         this.ssApply.sId=row.ys.sid
+         this.ssApply.changeId=row.changeId
+         this.ssApply.operationId=row.operationId
+         this.ssApply.hocusId=row.hocusId
+         this.ssApply.operationDoctor=row.operationDoctor
+         this.ssApply.operationAnathe=row.operationAnathe
+         this.ssApply.operationHelper=row.operationHelper
+
+         this.jsss = true
+       },
+       //时间格式化
+       formatDate (thistime, fmt) {
+         let $this = new Date(thistime)
+         let o = {
+           'M+': $this.getMonth() + 1,
+           'd+': $this.getDate(),
+           'h+': $this.getHours(),
+           'm+': $this.getMinutes(),
+           's+': $this.getSeconds(),
+           'q+': Math.floor(($this.getMonth() + 3) / 3),
+           'S': $this.getMilliseconds()
+         }
+         if (/(y+)/.test(fmt)) {
+           fmt = fmt.replace(RegExp.$1, ($this.getFullYear() + '').substr(4 - RegExp.$1.length))
+         }
+         for (var k in o) {
+           if (new RegExp('(' + k + ')').test(fmt)) {
+             fmt = fmt.replace(RegExp.$1, (RegExp.$1.length === 1) ? (o[k]) : (('00' + o[k]).substr(('' + o[k]).length)))
+           }
+         }
+         return fmt;
+       },
+       //确认结束按钮
+       qrjsForm(){
+         //格式化时间
+         var sj=this.formatDate(this.sssc[0],'hh:mm:ss').toString()+"-"+this.formatDate(this.sssc[1],'hh:mm:ss').toString()
+         this.ssjl.operationTime=sj
+
+         this.ssApply.applyZt=3
+         //修改手术申请状态
+         this.axios.post("http://localhost:8089/aOrUApply",{proj:this.ssApply}).then((res)=>{
            this.getData();
          }).catch()
-         this.$refs[formName].resetFields();
+          //修改手术室状态
+         this.axios.post('http://localhost:8089/upd-roomzt', qs.stringify({operationZt:0,operationId:this.ssApply.operationId}))
+             .then((v)=>{
+               if(v.data == 'ok'){
+                 this.getData()
+               }else{
+                 alert(v.data);
+               }
+             }).catch(function(){
+         })
+         //修改手术记录
+         this.axios.post("http://localhost:8089/aOrUDatils",{proj:this.ssjl}).then((res)=>{
+           this.getData();
+         }).catch()
+         console.log(this.ssjl)
+         this.jsss=false
        },
        //重新选择手术弹框
        ksEdit(){
-
          this.cxxzss=true;
        },
        //打开新增修改手术室
@@ -693,7 +937,6 @@
 
          this.sss = true
        },
-
        //获取当前时间
        getNowFormatDate() {
          var date = new Date();

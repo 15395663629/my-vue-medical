@@ -94,17 +94,19 @@
       >
       </el-table-column>
       <el-table-column
-          prop="pcdCause"
+          prop="name"
           label="费用名称">
-      </el-table-column>
-      <el-table-column
-          prop="pcdPrice"
-          label="费用价格">
       </el-table-column>
       <el-table-column
           prop="pcdDate"
           label="扣除时间">
       </el-table-column>
+
+      <el-table-column
+          prop="pcdPrice"
+          label="费用价格">
+      </el-table-column>
+
 
     </el-table>
     <!--分页插件-->
@@ -312,6 +314,7 @@
           this.isShowCostTable = true;
           this.axios({url:"select-by-ptNo",params:{ptNo:this.payObj.ptNo}}).then((v)=>{//新增缴费记录
             this.patientCostArr = v.data;
+            console.log(v.data)
           });
         }else if(this.costTabs == '医嘱药品费用'){
           this.isShowCostTable = true;
@@ -325,7 +328,9 @@
           });
         }else if(this.costTabs == '化验项目费用'){
           this.isShowCostTable = true;
-
+          this.axios({url:"select-by-ptNo",params:{ptNo:this.payObj.ptNo,text:'化验费用'}}).then((v)=>{//新增缴费记录
+            this.patientCostArr = v.data;
+          });
         }else if(this.costTabs == '病人缴费'){
           this.isShowCostTable = false;
         }else if(this.costTabs == '其它费用'){
