@@ -29,12 +29,22 @@
     </el-table-column>
     <el-table-column fixed  label="计数"  width="200" align="center">
       <template #default="scope">
+        <div v-if="scope.row.zpObject.zpStatePrice == 0">
         <el-input-number size="mini" v-model="scope.row.zpObject.zpCount"  :min="1" :max="100"></el-input-number>
+        </div>
+        <div v-else>
+          <el-input-number size="mini" v-model="scope.row.zpObject.zpCount"  :min="1" :max="100" disabled></el-input-number>
+        </div>
       </template>
     </el-table-column>
     <el-table-column fixed label="嘱托" width="220" class="patientText">
       <template #default="scope">
-        <el-input type="textarea" size="mini" v-model="scope.row.zpObject.zpEntrust" rows="1" maxlength="400" ></el-input>
+        <div v-if="scope.row.zpObject.zpStatePrice == 0">
+          <el-input type="textarea" size="mini" v-model="scope.row.zpObject.zpEntrust" rows="1" maxlength="400" ></el-input>
+        </div>
+        <div v-else>
+          <el-input type="textarea" size="mini" v-model="scope.row.zpObject.zpEntrust" rows="1" maxlength="400" disabled></el-input>
+        </div>
       </template>
     </el-table-column>
     <el-table-column fixed align="center" label="操作" width="100">

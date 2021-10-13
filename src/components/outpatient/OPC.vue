@@ -2,7 +2,7 @@
 	<el-container style="height: 100%;">
 		<el-header height="30px"  style="line-height: 30px; background-color: #B3C0D1;color: #333;">
 			<!-- <newDateOPC style="margin: 0px; padding: 0px;"></newDateOPC> -->
-		{{rightTableData1}}
+		{{leftRecord}}
     </el-header>
 		<el-container style="height: 100%;">
 			<el-aside width="400px" style="background-color: #D3DCE6;color: #333;"> <!-- 右边 -->
@@ -644,6 +644,7 @@
         //就诊记录表
         this.medicalRecordObject=val.medicalRecordObject;
         this.historyObject = val.historyObject;/*病历集合*/
+        console.log(this.historyObject)
         this.recipeObject = val.recipeObject;/*处方集合*/
         if(val.tjCodeManObject!=null){//判断空值对象
           this.tjCodeManObject = val.tjCodeManObject;/*体检对象*/
@@ -692,9 +693,7 @@
               rdDw:drug.rdSpecSpecification,
               rdCount:drug.rdCount,
               rdPrice:drug.rdPrice,
-              rdSkin:drug.rdSkin,
               rdEntrust:drug.rdEntrust,
-              rdSkinResult:drug.rdSkinResult,
               drugId:drug.drugId,
               rdNumber:drug.rdNumber,
               rdStatePrice:drug.rdStatePrice,
@@ -1144,27 +1143,20 @@ z
             if(this.rightTableData1.length>0 || this.rightTableData2.length>0){
               // 添加西药处方集合
               if(this.rightTableData1.length>0){
-                if(this.recipeObject.xpList.length>0 && this.recipeObject.xpList[0].rdNumber==0){
+                if(this.recipeObject.xpList.length>0 || this.recipeObject.xpList[0].rdNumber==0){
                   this.recipeObject.xpList=[]
-                  this.recipeObject.zpList=[]
                 }
                 //清空好添加
                 this.rightTableData1.forEach((drug,i)=>{
                   //判断是否皮试
-                  if(drug.xpObject.rdSkin==false){
-                    drug.xpObject.rdSkin=0;
-                  }else{
-                    drug.xpObject.rdSkin=1;
-                  }
                   this.recipeObject.xpList.push(drug.xpObject);
                 })
                 console.log(this.recipeObject.xpList)
               }
               //中药处方
               if(this.rightTableData2.length>0){
-                if(this.recipeObject.zpList.length>0 && this.recipeObject.xpList[0].zpNumber==0){
+                if(this.recipeObject.zpList.length>0 || this.recipeObject.xpList[0].zpNumber==0){
                   this.recipeObject.zpList=[]
-                  this.recipeObject.xpList=[]
                 }
                 //清空好添加
                 this.rightTableData2.forEach((drug,i)=>{
@@ -1181,7 +1173,7 @@ z
             this.recordVo.tjCodeManObject=this.tjCodeManObject;//新增到处方表vo
             if(this.rightTableData3.length>0){
               //如果集合不为空就归零集合
-              if(this.tjManResultList.length>0 && this.tjManResultList[0].manResultId==0){
+              if(this.tjManResultList.length>0 || this.tjManResultList[0].manResultId==0){
                 this.tjManResultList=[];
               }
               //添加检验集合表
@@ -1196,7 +1188,7 @@ z
             this.surgeryStampObject.susSum=sum4;
             this.recordVo.surgeryStampObject=this.surgeryStampObject;
             if(this.rightTableData4.length>0){
-              if(this.centerSurgeryList.length>0 && this.centerSurgeryList[0].susId ==0){
+              if(this.centerSurgeryList.length>0 || this.centerSurgeryList[0].susId ==0){
                 this.centerSurgeryList=[]
               }
               //添加手术集合表
@@ -1205,6 +1197,7 @@ z
               })
               console.log(this.centerSurgeryList)
               this.recordVo.centerSurgeryList=this.centerSurgeryList;
+              console.log(this.recordVo.centerSurgeryList)
             }
             console.log((this.surgeryStampObject))
             console.log(this.historyObject)
@@ -1242,26 +1235,18 @@ z
             //新增到就诊记录表vo
             this.recordVo.medicalRecordObject=this.medicalRecordObject;
             //处方表添加)***************************************************************
+            this.recipeObject.recipeSickName=this.headerInput.bnSickName;
+            this.recipeObject.recipeDoctorName=this.token.sname;
+            this.recipeObject.recipeDoctorText=null;
+            this.recipeObject.sickNumber=this.headerInput.sickNumber;
+            this.recipeObject.sId=this.token.sid;
+            this.recipeObject.recipeDrugState=0;
+            this.recipeObject.recipePrice = sum1+sum2;
             if(this.rightTableData1.length>0 || this.rightTableData2.length>0){
-              this.recipeObject.recipeSickName=this.headerInput.bnSickName;
-              this.recipeObject.recipeDoctorName=this.token.sname;
-              this.recipeObject.recipeDoctorText=null;
-              this.recipeObject.sickNumber=this.headerInput.sickNumber;
-              this.recipeObject.sId=this.token.sid;
-              this.recipeObject.recipeDrugState=0;
-              this.recipeObject.recipePrice = sum1+sum2;
               // 添加西药处方集合
               if(this.rightTableData1.length>0){
                 this.rightTableData1.forEach((drug,i)=>{
-                  //判断是否皮试
-                  if(drug.xpObject.rdSkin==false){
-                    drug.xpObject.rdSkin=0;
-                  }else{
-                    drug.xpObject.rdSkin=1;
-                  }
-                  console.log(drug.xpObject)
                   this.recipeObject.xpList.push(drug.xpObject);
-                  console.log(this.recipeObject.xpList)
                 })
               }
               //中药处方
@@ -1270,22 +1255,20 @@ z
                   this.recipeObject.zpList.push(drug.zpObject)
                 })
               }
-              this.recordVo.recipeObject=this.recipeObject;//新增到处方表vo
             }
+            this.recordVo.recipeObject=this.recipeObject;//新增到处方表vo
+            console.log(this.recipeObject.xpList)
+            console.log(this.recipeObject.zpList)
             //检验添加)***************************************************************
+            this.tjCodeManObject.manAge=this.headerInput.sickAge;
+            this.tjCodeManObject.manName=this.headerInput.bnSickName;
+            this.tjCodeManObject.manPhone=this.headerInput.sickPhone;
+            this.tjCodeManObject.manGender=this.headerInput.sickSex;
+            this.tjCodeManObject.manSid=this.headerInput.bnIdCard;
+            this.tjCodeManObject.manBirthtime=this.getInfo(this.headerInput.bnIdCard).birth;
+            this.tjCodeManObject.manPhy=sum3;
+            this.recordVo.tjCodeManObject=this.tjCodeManObject;//新增到处方表vo
             if(this.rightTableData3.length>0){
-              this.tjCodeManObject.manAge=this.headerInput.sickAge;
-              this.tjCodeManObject.manName=this.headerInput.bnSickName;
-              this.tjCodeManObject.manPhone=this.headerInput.sickPhone;
-              this.tjCodeManObject.manGender=this.headerInput.sickSex;
-              this.tjCodeManObject.manSid=this.headerInput.bnIdCard;
-              this.tjCodeManObject.manBirthtime=this.getInfo(this.headerInput.bnIdCard).birth;
-              var sumTj = 0;//体检总价钱
-              this.rightTableData3.forEach((drug,i)=>{//循环判断总价钱
-                sumTj += drug.pro.checkPay;
-              });
-              this.tjCodeManObject.manPhy=sumTj;
-              this.recordVo.tjCodeManObject=this.tjCodeManObject;//新增到处方表vo
               //添加检验集合表
               this.rightTableData3.forEach((drug,i)=>{
                 drug.tjList={
@@ -1296,13 +1279,9 @@ z
               this.recordVo.tjManResultList = this.tjManResultList;//新增到处方表vo
             }
             //手术添加)***************************************************************
+            this.surgeryStampObject.susSum=sum4;
+            this.recordVo.surgeryStampObject=this.surgeryStampObject;
             if(this.rightTableData4.length>0){
-              var sumSs = 0;//手术总价钱
-              this.rightTableData4.forEach((drug,i)=>{//循环判断总价钱
-                sumSs += drug.ssObject.projectPay;
-              });
-              this.surgeryStampObject.susSum=sumSs;
-              this.recordVo.surgeryStampObject=this.surgeryStampObject;
               //添加手术集合表
               this.rightTableData4.forEach((drug,i)=>{
                 drug.ssList={
@@ -1431,49 +1410,79 @@ z
         for (let drug of this.selectDrugArr){
             if(index==0){ /*对处方药品的添加去重和提示*/
               this.rightTableData1.forEach((list,i)=>{
-                if(drug.drugName==list.xpObject.rdName){
+                if(drug.drugName==list.xpObject.rdName && list.xpObject.rdStatePrice==0){
                   is = true;
                   this.$message({
                     showClose: true,
                     type: 'warning',
-                    message: '药品已存在！'
+                    message: "药品“\t"+list.xpObject.rdName+"\t“已存在！"
                   });
                   return;
+                }else if(drug.drugName==list.xpObject.rdName && list.xpObject.rdStatePrice!=0){
+                  this.$notify({
+                    title: '注意',
+                    message: "药品“\t"+list.xpObject.rdName+"\t“已存在！ 并且已经完成缴费~",
+                    type: 'warning',
+                    position: 'top-left',
+                  })
                 }
+
               });
               this.rightTableData2.forEach((list,i)=>{
-                if(drug.drugName==list.zpObject.zpName){
+                if(drug.drugName==list.zpObject.zpName && list.zpObject.zpStatePrice==0){
                   is = true;
                   this.$message({
                     showClose: true,
                     type: 'warning',
-                    message: '药品已存在！'
+                    message: "药品“\t"+list.zpObject.zpName+"\t“已存在！"
                   });
                   return ;
+                }else if(drug.drugName==list.zpObject.zpName && list.zpObject.zpStatePrice!=0){
+                  this.$notify({
+                    title: '注意',
+                    message: "药品“\t"+list.zpObject.zpName+"\t“已存在！ 并且已经完成缴费~",
+                    type: 'warning',
+                    position: 'top-left',
+                  })
                 }
+
               });
             }else if(index == 1){/*对检验的添加去重和提示*/
               this.rightTableData3.forEach((list,i)=>{
-                if(drug.checkId==list.pro.checkId){
+                if(drug.checkId==list.pro.checkId && list.pro.manPayState == 0){
                   is = true;
                   this.$message({
                     showClose: true,
                     type: 'warning',
-                    message: '项目已存在列表中！'
+                    message: "项目“\t"+list.pro.checkName+"\t”已存在列表中！"
                   });
                   return;
+                }else if(drug.checkId==list.pro.checkId && list.pro.manPayState !=0){
+                  this.$notify({
+                    title: '注意',
+                    message: "检验项目“\t"+list.pro.checkName+"\t”已存在列表中！ 并且已经完成缴费~",
+                    type: 'warning',
+                    position: 'top-left',
+                  })
                 }
               });
             }else if(index == 2){/*对手术的添加去重和提示*/
               this.rightTableData4.forEach((list,i)=>{
-                if(drug.projectId==list.ssObject.projectId){
+                if(drug.projectId==list.ssObject.projectId && list.ssObject.susPayState == 0){
                   is = true;
                   this.$message({
                     showClose: true,
                     type: 'warning',
-                    message: '项目已存在列表中！'
+                    message: "手术项目“\t"+list.ssObject.projectName+"\t”已存在列表中！ 并且已经完成缴费~",
                   });
                   return;
+                }else if(drug.projectId==list.ssObject.projectId && list.ssObject.susPayState !=0 ){
+                  this.$notify({
+                    title: '注意',
+                    message: "手术项目“\t"+list.ssObject.projectName+"\t”已存在列表中！ 并且已经完成缴费~",
+                    type: 'warning',
+                    position: 'top-left',
+                  })
                 }
               });
             }
@@ -1503,9 +1512,7 @@ z
                   rdDw:drug.specSpecification,
                   rdCount:1,
                   rdPrice:drug.drugPrice,
-                  rdSkin:0,
                   rdEntrust:'',
-                  rdSkinResult:'',
                   rdStatePrice:0,
                   drugId:drug.drugId,
                 }

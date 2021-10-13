@@ -1,12 +1,12 @@
 <template>
 	<el-table  :summary-method="getSummaries1" show-summary
             :data="rightTableData1" style=" width: 100%;" height="470px" size="mini" >
-    <el-table-column fixed    label="药品名称"  align="center" width="120">
+    <el-table-column fixed    label="药品名称"  align="center" width="200">
       <template #default="scope">
         <span>{{scope.row.xpObject.rdName}}</span>
       </template>
     </el-table-column>
-    <el-table-column fixed  label="服用剂量"  align="center"  width="133">
+    <el-table-column fixed  label="服用剂量"  align="center"  width="150">
       <template #default="scope">
         <span>{{scope.row.xpObject.rdFyjl }}</span>
       </template>
@@ -16,37 +16,39 @@
         <span>{{scope.row.xpObject.rdDw}}</span>
       </template>
     </el-table-column>
-    <el-table-column fixed  label="单价" align="center"  width="100">
+    <el-table-column fixed  label="单价" align="center"  width="120">
       <template #default="scope">
         <span>{{scope.row.xpObject.rdPrice}}</span>
       </template>
     </el-table-column>
-    <el-table-column  fixed label="总金额"  width="110" align="center">
+    <el-table-column  fixed label="总金额"  width="120" align="center">
       <template #default="scope" class="sums">
         <span>{{scope.row.xpObject.rdCount*scope.row.xpObject.rdPrice}}</span>
       </template>
     </el-table-column>
+
     <el-table-column fixed  label="计数"  width="150" align="center">
       <template #default="scope">
+        <div v-if="scope.row.xpObject.rdStatePrice == 0">
         <el-input-number size="mini" style="width: 100px" v-model="scope.row.xpObject.rdCount"  :min="1" :max="100"></el-input-number>
-      </template>
-    </el-table-column>
-    <el-table-column fixed  label="是否皮试"  width="80" align="center">
-      <template #default="scope">
-        <el-checkbox v-model="scope.row.xpObject.rdSkin"></el-checkbox>
-      </template>
-    </el-table-column>
-    <el-table-column fixed  label="皮试结果"  width="120">
-      <template #default="scope">
-        <el-input type="textarea" size="mini" v-model="scope.row.xpObject.rdSkinResult" rows="1" disabled maxlength="400"></el-input>
+        </div>
+        <div v-else>
+          <el-input-number size="mini" style="width: 100px" v-model="scope.row.xpObject.rdCount"  :min="1" :max="100" disabled></el-input-number>
+        </div>
       </template>
     </el-table-column>
     <el-table-column fixed label="嘱托" width="200" class="patientText">
       <template #default="scope">
+        <div v-if="scope.row.xpObject.rdStatePrice == 0">
         <el-input type="textarea" size="mini" v-model="scope.row.xpObject.rdEntrust" rows="1" maxlength="400" ></el-input>
+        </div>
+        <div v-else>
+          <el-input type="textarea" size="mini" v-model="scope.row.xpObject.rdEntrust" rows="1" maxlength="400" disabled></el-input>
+        </div>
       </template>
     </el-table-column>
-    <el-table-column fixed align="center" label="操作" width="50">
+
+    <el-table-column fixed align="center" label="操作" width="110">
         <template #default="scope">
           <div v-if="scope.row.xpObject.rdStatePrice == 0">
             <el-button type="danger" icon="el-icon-delete" size="mini" @click="handleDelete(scope.$index,scope.row.rdNumber)" circle></el-button>
