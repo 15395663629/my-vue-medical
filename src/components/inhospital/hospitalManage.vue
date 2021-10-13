@@ -441,7 +441,8 @@
           ptPayMoney:'',
           listContacts:[],//病人联系人数组
           inId:'',
-          ptPrice:''
+          ptPrice:'',
+          ptSickNumber:''
         },
         patientBaseArr:[],//住院登记数组
         patientCurrent:1,//住院登记分页当前页
@@ -534,6 +535,7 @@
 
       //选择住院申请
       hospitalXZ(obj){
+            this.patientBaseObj.ptSickNumber = obj.sick.sickNumber;//病人信息编号
             this.patientBaseObj.ptName = obj.sick.sickName;//病人名称
             this.patientBaseObj.ptSex = obj.sick.sickSex;//性别
             this.patientBaseObj.ptBirthDate = obj.sick.sickTime;//出生日期

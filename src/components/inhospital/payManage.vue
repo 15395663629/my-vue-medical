@@ -1,31 +1,58 @@
 <template>
 	<!--=============================================新增病人缴费单弹框===================================-->
-	<el-dialog title="新增缴费" @close="closePayBt" v-model="isPayShow">
+	<el-dialog title="病人缴费" @close="closePayBt" width="45%" v-model="isPayShow">
 		<el-form>
+      <el-row>
+        <el-col :offset="1" :span="9">
+          <el-form-item label="病人姓名" label-width="80px">
+            <el-input size="medium" class="te" disabled v-model="payObj.ptName"></el-input>
+          </el-form-item>
+        </el-col>
+
+        <el-col :offset="1" :span="9">
+          <el-form-item label="当前余额" label-width="80px">
+            <el-input size="medium" class="te" v-model="payObj.ptPrice" disabled></el-input>
+          </el-form-item>
+        </el-col>
+      </el-row>
+
+
 			<el-row>
-				<el-col :offset="2" :span="9">
+        <el-col :offset="1" :span="9">
+          <el-form-item label="操作人" label-width="80px">
+            <el-input size="medium" class="te" v-model="staff.sname" disabled></el-input>
+          </el-form-item>
+        </el-col>
+
+				<el-col :offset="1" :span="9">
 					<el-form-item label="缴费金额" label-width="80px">
-						<el-input v-model="payObj.pyPrice"></el-input>
-					</el-form-item>
-				</el-col>
-				
-				<el-col :offset="2" :span="9">
-					<el-form-item label="操作人" label-width="80px">
-						<el-input v-model="staff.sname" disabled></el-input>
+						<el-input size="medium"  onkeyup="value=value.replace(/[^\d]/g,'')"  v-model="payObj.pyPrice"></el-input>
 					</el-form-item>
 				</el-col>
 			</el-row>
+
+      <el-row>
+        <el-col :offset="1">
+          <el-form-item label-width="80px" label="请选择:" prop="payment">
+            <el-radio-group v-model="payObj.pyWay" size="small">
+              <el-radio label="现金">现金</el-radio>
+              <el-radio label="微信">微信</el-radio>
+              <el-radio label="支付宝">支付宝</el-radio>
+            </el-radio-group>
+          </el-form-item>
+        </el-col>
+      </el-row>
 		</el-form>
 		
 		<template #footer>
 				<el-row>
 					<el-col :span="18"></el-col>
 					<el-col :span="2">
-						<el-button @click="addPayFunction('empFrom')" type="primary">确定</el-button>
+						<el-button size="mini" @click="addPayFunction('empFrom')" type="primary">确定</el-button>
 					</el-col>
 					<el-col :span="1"></el-col>
 					<el-col :span="2">
-						<el-button @click="isShowZY = false" type="danger">取消</el-button>
+						<el-button @click="closePayBt" size="mini" type="danger">取消</el-button>
 					</el-col>
 					<el-col :span="1"></el-col>
 				</el-row>
@@ -33,94 +60,141 @@
 	</el-dialog>
 	
 	<!--=============================================费用明细===================================-->
-	<el-dialog title="费用明细" v-model="isPayRecordShow" >
-    <el-tabs v-model="costTabs" @tab-click="costTabsClick">
-      <el-tab-pane label="全部费用" name="全部费用"/>
-      <el-tab-pane label="医嘱药品费用" name="医嘱药品费用" />
-      <el-tab-pane label="床位费用" name="床位费用" />
-      <el-tab-pane label="化验项目费用" name="化验项目费用" />
-      <el-tab-pane label="其它费用" name="其它费用" />
-      <el-tab-pane  label="病人缴费" name="病人缴费" >
+	<el-dialog width="55%"  title="费用明细" v-model="isPayRecordShow" >
 
-        <el-table size="mini"
-            :data="payArr.slice((payCurrent-1)*paySize,payCurrent*paySize)"
-            border
+    <el-row style="margin-bottom:10px">
+
+      <el-col  :span="1">
+        <el-button @click="emptyPayWhere" type="primary" size="mini">清空条件</el-button>
+      </el-col>
+
+      <el-col :offset="2" :span="7">
+        <span style="font-size: 12px;">操作员:</span>&nbsp;
+        <el-select @change="costTabsClick" style="width: 160px" v-model="doctorEnjoinWhere.sIdArr" multiple collapse-tags size="mini">
+          <el-option v-for="st in staffArr"
+                     :label="st.sname"
+                     :value="st.sid"/>
+        </el-select>
+      </el-col>
+
+      <el-col  :span="12">
+        &nbsp;<span style="font-size: 12px;">日期区间：</span>&nbsp;
+
+        <el-date-picker style="width: 140px" @change="costTabsClick" v-model="doctorEnjoinWhere.startDate"
+                        type="date"
+                        size="mini"
+                        value-format="YYYY-MM-DD"
+                        placeholder="日期">
+        </el-date-picker>
+        &nbsp;<span style="font-size: 12px;">至</span>&nbsp;
+        <el-date-picker style="width: 140px" @change="costTabsClick" v-model="doctorEnjoinWhere.endDate"
+                        type="date"
+                        size="mini"
+                        value-format="YYYY-MM-DD"
+                        placeholder="日期">
+        </el-date-picker>
+      </el-col>
+
+      <el-col  :span="1">
+        <el-button @click="emptyExecuteScreen" type="success" size="mini">打印</el-button>
+      </el-col>
+
+    </el-row>
+
+    <el-row>
+
+      <el-col>
+
+        <el-tabs v-model="costTabs" @tab-click="costTabsClick">
+          <el-tab-pane label="全部费用" name="全部费用"/>
+          <el-tab-pane label="医嘱药品费用" name="医嘱药品费用" />
+          <el-tab-pane label="床位费用" name="床位费用" />
+          <el-tab-pane label="化验项目费用" name="化验项目费用" />
+          <el-tab-pane label="其它费用" name="其它费用" />
+          <el-tab-pane  label="病人缴费" name="病人缴费" >
+
+            <el-table size="mini"
+                      :data="payArr"
+                      :summary-method="patientPaySum" show-summary
+                      height="340px"
+                      style="width: 100%">
+              <el-table-column
+                  prop="pyId"
+                  label="缴费编号"
+                  width="180">
+              </el-table-column>
+              <el-table-column prop="pyPrice"
+                               label="缴费金额">
+              </el-table-column>
+              <el-table-column
+                  prop="pyDate"
+                  label="缴费时间">
+              </el-table-column>
+              <el-table-column
+                  prop="pyWay"
+                  label="缴费方式">
+              </el-table-column>
+              <el-table-column prop="staff.sname"
+                               label="操作护士">
+              </el-table-column>
+            </el-table>
+            <!--分页插件-->
+            <!--        <el-pagination-->
+            <!--            style="text-align: right;"-->
+            <!--            @size-change="paySizeChange"-->
+            <!--            @current-change="payCurrentChange"-->
+            <!--            :current-page="payCurrent"-->
+            <!--            :page-sizes="[2,4,6,8,10]"-->
+            <!--            :page-size="paySize"-->
+            <!--            layout="total, sizes, prev, pager, next, jumper"-->
+            <!--            :total="payArr.length">-->
+            <!--        </el-pagination>-->
+
+          </el-tab-pane>
+
+
+        </el-tabs>
+        <el-table height="340px" v-if="isShowCostTable"
                   :summary-method="patientPaySum" show-summary
-            height="340px"
-            style="width: 100%">
+                  ref="multipleTable"
+                  :data="patientCostArr"
+                  size="mini"
+                  tooltip-effect="dark"
+                  style="width: 100%">
           <el-table-column
-              prop="pyId"
-              label="缴费编号"
-              width="180">
-          </el-table-column>
-          <el-table-column prop="pyPrice"
-                           label="缴费金额">
+              label="费用编号"
+              prop="pcdId"
+          >
           </el-table-column>
           <el-table-column
-              prop="pyDate"
-              label="缴费时间">
+              prop="name"
+              label="费用名称">
           </el-table-column>
-          <el-table-column prop="staff.sname"
-                           label="操作护士">
+
+          <el-table-column
+              prop="sname"
+              label="操作员工">
           </el-table-column>
+
+          <el-table-column
+              prop="pcdDate"
+              label="扣除时间">
+          </el-table-column>
+
+          <el-table-column
+              label="费用价格">
+            <template #default="obj">
+              {{obj.row.pcdPrice.toFixed(2)}}
+            </template>
+          </el-table-column>
+
+
         </el-table>
-        <!--分页插件-->
-<!--        <el-pagination-->
-<!--            style="text-align: right;"-->
-<!--            @size-change="paySizeChange"-->
-<!--            @current-change="payCurrentChange"-->
-<!--            :current-page="payCurrent"-->
-<!--            :page-sizes="[2,4,6,8,10]"-->
-<!--            :page-size="paySize"-->
-<!--            layout="total, sizes, prev, pager, next, jumper"-->
-<!--            :total="payArr.length">-->
-<!--        </el-pagination>-->
-
-      </el-tab-pane>
 
 
-    </el-tabs>
-    <el-table height="340px" v-if="isShowCostTable"
-              :summary-method="patientPaySum" show-summary
-              ref="multipleTable"
-              :data="patientCostArr"
-              size="mini"
-              tooltip-effect="dark"
-              style="width: 100%"
-              @selection-change="handleSelectionChange">
-      <el-table-column
-          label="费用编号"
-          prop="pcdId"
-      >
-      </el-table-column>
-      <el-table-column
-          prop="name"
-          label="费用名称">
-      </el-table-column>
-      <el-table-column
-          prop="pcdDate"
-          label="扣除时间">
-      </el-table-column>
+      </el-col>
+    </el-row>
 
-      <el-table-column
-          prop="pcdPrice"
-          label="费用价格">
-      </el-table-column>
-
-
-    </el-table>
-    <!--分页插件-->
-    <el-pagination
-        style="text-align: center;"
-        @size-change="totalCut"
-        @current-change="pageCut"
-        :current-page="1"
-        :page-sizes="[2,4,6,8,10]"
-        :page-size="size"
-        layout="total, sizes, prev, pager, next, jumper"
-        :total="total">
-    </el-pagination>
-		
 
 	</el-dialog>
 	
@@ -150,7 +224,7 @@
 				  <el-table-column prop="ksName"
 				    label="科室">
 				  </el-table-column>
-            <el-table-column prop="ptPayMoney" label="总费用"></el-table-column>
+            <el-table-column prop="ptPayMoney" label="已交金额"></el-table-column>
 
             <el-table-column prop="ptPrice" label="余额"></el-table-column>
 
@@ -163,27 +237,12 @@
 				  </el-table-column>
 			    </el-table-column>
 			  </el-table>
-      <!--分页插件-->
-      <el-pagination
-          style="text-align: center;"
-          @size-change="patientHandleSizeChange"
-          @current-change="patientHandleCurrentChange"
-          :current-page="patientCurrent"
-          :page-sizes="[2,4,6,8,10]"
-          :page-size="patientSize"
-          layout="total, sizes, prev, pager, next, jumper"
-          :total="patientBaseArr">
-      </el-pagination>
 		</el-col>
 	</el-row>
 	
 
   <!--=====================================病人缴费详细弹框=============================================-->
 
-  <el-dialog title="病人缴费详细" v-model="isShowPayDetail">
-
-
-  </el-dialog>
 
 </template>
 
@@ -199,6 +258,16 @@
           patientPayCurrent:1,//病人信息当前页
           patientPaySize:8,//病人信息页大小
 
+          //======================查询条件数据
+          doctorEnjoinWhere:{
+            startDate:'',//开始日期
+            endDate:'',//结束日期
+            searchLike:'',//模糊搜索
+            doctorType:0,//医嘱类型
+            sIdArr:[],//员工编号
+            ptNo:''
+          },
+
 
           //=================缴费详细
           payObj:{//缴费实体类
@@ -207,7 +276,9 @@
             pyDate:'',
             ptNo:'',
             ptName:'',
-            sId:''
+            sId:'',
+            ptPrice:'',//病人余额
+            pyWay:''//缴费方式
           },
           payArr:[],//缴费数组
           payCurrent:1,//缴费详细当前页
@@ -227,6 +298,8 @@
 
           //===========================当前登录人信息
           staff:{},//员工对象
+          staffArr:[],//员工对象
+
 
 			    isPayShow:false,//显示新增缴费单
 			    isPayRecordShow:false,//显示病人费用明细表
@@ -242,6 +315,27 @@
         }).catch((date)=>{
 
         })
+      },
+
+      //根据住院编号查询所有操作员
+      patientSelectStaff(ptNo){
+        this.axios({url:"selectBy-ptno-staff",params:{ptNo:ptNo}}).then((v)=>{
+          console.log(v.data)
+          this.staffArr = v.data;//员工数组
+        });
+      },
+
+      //清空费用查询条件
+      emptyPayWhere(){
+        this.doctorEnjoinWhere = {
+          startDate:'',//开始日期
+              endDate:'',//结束日期
+              searchLike:'',//模糊搜索
+              doctorType:0,//医嘱类型
+              sId:'',//员工编号
+              ptNo:''
+        },
+            this.costTabsClick();//重新查询
       },
 
       //=============================新增缴费方法
@@ -274,7 +368,7 @@
         }
 
         columns.forEach((column, index) => {//获取合计的位置
-          if(index === 3){
+          if(index === 4){
             sums[index] = "合计:"+sum.toFixed(2);
             return;
           }
@@ -292,17 +386,20 @@
         this.isPayShow = true;
         this.payObj.ptNo = row.ptNo;
         this.payObj.ptName = row.ptName;
+        this.payObj.ptPrice = row.ptPrice;
       },
       //关闭缴费弹框
       closePayBt(){
         this.isPayShow =false;
         this.payObj = {//缴费实体类
-              pyId:'',
-              pyPrice:'',
-              pyDate:'',
-              ptNo:'',
-              ptName: '',
-              sId:''
+          pyId:'',
+          pyPrice:'',
+          pyDate:'',
+          ptNo:'',
+          ptName:'',
+          sId:'',
+          ptPrice:'',//病人余额
+          pyWay:''//缴费方式
         };
       },
 			valueBRObj(row){
@@ -312,39 +409,27 @@
       costTabsClick(){
         if(this.costTabs == '全部费用'){
           this.isShowCostTable = true;
-          this.axios({url:"select-by-ptNo",params:{ptNo:this.payObj.ptNo}}).then((v)=>{//新增缴费记录
+          this.axios.post("select-by-ptNo",{ptNo:this.payObj.ptNo,payWhere:this.doctorEnjoinWhere}).then((v)=>{//查询病人缴费记录
             this.patientCostArr = v.data;
             console.log(v.data)
           });
-        }else if(this.costTabs == '医嘱药品费用'){
+        }else if(this.costTabs != '全部费用' && this.costTabs != '病人缴费'){
           this.isShowCostTable = true;
-          this.axios({url:"select-by-ptNo",params:{ptNo:this.payObj.ptNo,text:'医嘱费用'}}).then((v)=>{//新增缴费记录
+          this.axios.post("select-by-ptNo",{ptNo:this.payObj.ptNo,text:this.costTabs,payWhere:this.doctorEnjoinWhere}).then((v)=>{//查询病人缴费记录
             this.patientCostArr = v.data;
           });
-        }else if(this.costTabs == '床位费用'){
-          this.isShowCostTable = true;
-          this.axios({url:"select-by-ptNo",params:{ptNo:this.payObj.ptNo,text:'床位费用'}}).then((v)=>{//新增缴费记录
-            this.patientCostArr = v.data;
-          });
-        }else if(this.costTabs == '化验项目费用'){
-          this.isShowCostTable = true;
-          this.axios({url:"select-by-ptNo",params:{ptNo:this.payObj.ptNo,text:'化验费用'}}).then((v)=>{//新增缴费记录
-            this.patientCostArr = v.data;
-          });
-        }else if(this.costTabs == '病人缴费'){
+        }else{
           this.isShowCostTable = false;
-        }else if(this.costTabs == '其它费用'){
-          this.isShowCostTable = true;
-          this.axios({url:"select-by-ptNo",params:{ptNo:this.payObj.ptNo,text:'其它费用'}}).then((v)=>{//新增缴费记录
-            this.patientCostArr = v.data;
+          this.axios.post( "select-pay-byPtId", {ptNo: this.payObj.ptNo,payWhere:this.doctorEnjoinWhere}).then((v) => {//查询病人缴费记录
+            this.payArr = v.data;
           });
         }
       },
       lookCostClick(obj){
         console.log(obj.listPay)
         this.isPayRecordShow = true;
-        this.payObj = obj;
-        this.payArr = obj.listPay;
+        this.payObj.ptNo = obj.ptNo;
+        this.patientSelectStaff(obj.ptNo);
         this.costTabsClick();
       },
 
@@ -359,30 +444,29 @@
       },
       //显示只保留两位小数
       towNumber(val) {
-        return val.toFixed(2)
+        return val.toFixed(2);
       }
 
 
 		},
     created() {
+      this.staff = this.$store.state.token.list;//将登录存入的值在取出来
 	      this.patientAndPayInit();
-        this.staff = this.$store.state.token.list;//将登录存入的值在取出来
         console.log(this.$store.state.token.list)
     }
   }
 </script>
 
-<style >
+<style scoped>
 	.works{
 		padding: 15px;
 	}
-	/deep/.el-table__row:hover>td{
-		cursor: pointer;
-		background-color: #D2FFF0!important
-	}
 
-	/deep/.el-table__body tr.current-row>td{
-	  background-color: #D2FFF0!important
-	  /* color: #f19944; */  /* 设置文字颜色，可以选择不设置 */
-	}
+  .te /deep/ .el-input__inner {
+    color: red;
+    font-size: 18px;
+    cursor: pointer;
+  }
+
+
 </style>
