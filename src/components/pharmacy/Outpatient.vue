@@ -26,26 +26,22 @@
     </el-table-column>
     <el-table-column label="操作">
       <template #default="scope">
-        <el-button type="primary" plain size="small" @click="mzfy">查看药品</el-button>
+        <el-button type="primary" plain size="small" @click="mzfy(scope.row)">查看药品</el-button>
         <el-button type="success" plain size="small">发药</el-button>
       </template>
     </el-table-column>
   </el-table>
   <!--        发药详情里面的药品-->
-  <el-dialog title="药品详情" v-model="mzzy">
-    <el-table :data="MzRecipe">
-      <el-table-column property="" label="备注"/>
-      <el-table-column property="" label="发药编号"/>
-      <el-table-column property="" label="药品名称"/>
-      <el-table-column property="" label="药品数量"/>
-      <el-table-column property="" label="药品编号"/>
+  <el-dialog title="发药详情" v-model="mzzy">
+    <el-table :data="zy">
+      <el-table-column property="zpNumber" label="中药处方中单"/>
+      <el-table-column property="zpName" label="药品名"/>
+      <el-table-column property="zpCount" label="药品数量"/>
     </el-table>
-    <el-table>
-      <el-table-column property="" label="备注"/>
-      <el-table-column property="" label="发药编号"/>
-      <el-table-column property="" label="药品名称"/>
-      <el-table-column property="" label="药品数量"/>
-      <el-table-column property="" label="药品编号"/>
+    <el-table :data="xy">
+      <el-table-column property="rdNumber" label="西药处方单号"/>
+      <el-table-column property="rdName" label="药品名"/>
+      <el-table-column property="rdCount" label="药品数量"/>
     </el-table>
   </el-dialog>
   <!-- 分页 -->
@@ -68,6 +64,8 @@ export default {
       currentPage: 1, //初始页
       pagesize: 8,    //    每页的数据
       MzRecipe: [],//处方单
+      zy:[],
+      xy:[],
       mzzy:false,
 
     }
@@ -82,12 +80,24 @@ export default {
       console.log(this.currentPage)  //点击第几页
     },
     getData() {
+      //查询门诊处方单号
       this.axios.post("allMzRecipe").then((v) => {
         this.MzRecipe = v.data
       })
+      //查询门诊发药西药
+      this.axios.post("allmzxy").then((v)=>{
+        this.xy = v.data
+      })
+      //查询门诊发药中药
+      this.axios.post("allmzzy").then((v)=>{
+        this.zy = v.data
+      })
     },
-    mzfy(){
+    //发的药品详情弹窗
+    mzfy(row){
       this.mzzy = true;
+      this.zy = row.zpList;
+      this.xy = row.xpList;
     }
   },
   created() {
