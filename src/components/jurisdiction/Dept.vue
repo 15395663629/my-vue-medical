@@ -1,10 +1,22 @@
 <template>
 	<div class="wz">
-		<el-button type="primary" @click="dialogVisible1 = true">新增部门</el-button>
-		<span style="margin-left: 20px;">
+    <el-upload
+        action=""
+        :auto-upload="false"
+        accept=".xlsx, .xls"
+        :show-file-list="false"
+        :on-change="handle"
+    >
+      <el-button type="primary" @click="dialogVisible1 = true">新增部门</el-button>
+      <span style="margin-left: 20px;">
 			<el-input style="width: 120px;" v-model="name"></el-input>
 			<el-button type="primary"  icon="el-icon-orange" style="margin-left: 20px;" @click="select(this.name)">查询部门</el-button>
 		</span>
+      <el-button type="success" style="margin-left: 20px">导入</el-button>
+
+    </el-upload>
+
+
 		<!-- <el-button type="primary">重置密码</el-button> -->
 	</div>
   <!-- 表格 -->
@@ -57,7 +69,32 @@
 
 <script>
  import qs from  'qs'
-	export default {
+ import xlsx from 'xlsx'
+ export function upload(file){
+   return new Promise(resolve=>{
+     let reader = new FileReader()
+     reader.readAsBinaryString(file);
+     reader.onload = ev=>{
+       resolve(ev.target.result)
+     }
+   })
+ }
+ export let character = {
+   deId: {
+     text: "部门编号",
+     type: String
+   },
+   deName: {
+     text: "部门名称",
+     type: String
+   },
+   deDate: {
+     text: "创建时间",
+     type: String
+   },
+
+ }
+ export default {
 	    data() {
 	      return {
 	        dept:[],
@@ -71,19 +108,55 @@
 			  dialogVisible1:false,
           //分页
           size:4,
-          page:1
-
+          page:1,
+          selectData:[]
 
 			 
 	      }
 	    },
 	
 	    methods: {
+        // 文件状态改变时的钩子，添加文件、上传成功和上传失败时都会被调用
+        async handle(ev) {
+          // 数据采集
+          let file = ev.raw
+          if (!file) return
+          let reader = await upload(file)
+          const worker = xlsx.read(reader, { type: 'binary' })
+
+          // 这个是将数据进行一步拼接
+          //  worker.Sheets[worker.SheetNames[0]]
+          // 将返回的数据转换为json对象的数据
+          reader = xlsx.utils.sheet_to_json(worker.Sheets[worker.SheetNames[0]])
+          console.log(reader)
+
+          // 将读取出来的数据转换为可以发送给服务器的数据
+          let arr = []
+          reader.forEach(item => {
+            let obj = {}
+            for (let key in character) {
+              if (!character.hasOwnProperty(key)) break
+              let v = character[key]
+              let text = v.text
+              let type = v.type
+              v = item[text] || ''
+              type === 'string' ? (v = String(v)) : null
+              type === 'number' ? (v = Number(v)) : null
+              obj[key] = v
+            }
+            arr.push(obj)
+          })
+          for (let i =0 ; i<arr.length; i++){
+            this.dept.push(arr[i])
+          }
+
+          // console.log(this.selectData);
+        },
 	      //加载页面数据
         getData(){
           this.axios.get("http://localhost:8089/bm-list").then((v)=>{
             this.dept=v.data
-            // console.log(this.dept)
+            console.log(this.dept)
           }).catch()
         },
         //初始每页数据数size和数据data

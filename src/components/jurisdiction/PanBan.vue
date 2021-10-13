@@ -168,6 +168,7 @@ export default {
     }
   },
   created() {
+
   this.getData()
   },
   methods: {
@@ -197,7 +198,7 @@ export default {
       this.ksId=event
       this.axios({
         url:"week",
-        params:{ksId:this.ksId}
+        params:{ksId:this.ksId,bcId:this.bcId}
       }).then((v)=>{
         this.pbtableData=v.data
       }).catch();
