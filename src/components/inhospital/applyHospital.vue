@@ -346,9 +346,14 @@
 
               this.axios.post("add-inHospital-mzSick", this.mzSickArr).then((res) => {
                 console.log(res.data)
-                if (res.data == 'ok') {
-                  this.resetFormSick()
+                if (res.data) {
+                  this.resetFormSick();
                   console.log("ssssss")
+                  this.hospitalInit();
+                  this.$message({
+                    type: 'success',
+                    message: '申请成功'
+                  });
                 }
               }).catch(() => {
               })
@@ -395,7 +400,6 @@
         openFormSick(){
           this.isShow3 = true;
           this.axios.post("inserMedicalCard").then((res) => {//获取诊疗号码
-            alert(res.data)
             this.mzSickArr.mcNumberCard=res.data
           }).catch(() => {})
         },

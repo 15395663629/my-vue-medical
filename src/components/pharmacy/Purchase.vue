@@ -132,7 +132,7 @@
 				<el-table-column label="操作">
 					<template #default="scope">
 						<el-button type="primary" plain size="small" @click="opemMingxi(scope.row)">查看明细</el-button>
-            <el-button type="danger" plain size="small">删除计划</el-button>
+            <el-button type="danger" plain size="small">执行计划</el-button>
 					</template>
 				</el-table-column>
 			</el-table>

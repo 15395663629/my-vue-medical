@@ -29,7 +29,7 @@
         label="药品批次">
     </el-table-column>
     <el-table-column
-        prop="ykDrvenMftDate"
+        prop="ykDrvenMftdate"
         label="生产日期">
     </el-table-column>
     <el-table-column

@@ -299,7 +299,7 @@
                 </el-col>
 
                 <el-col :offset="1" :span="1">
-                  <el-button type="info" @click="addCaseHistory" size="mini">添加病例</el-button>
+                  <el-button type="success" @click="addCaseHistory"  size="mini">添加病例</el-button>
                   <CaseHistory :patient-obj="patientBaseObj" ref="caseRef" ></CaseHistory>
                 </el-col>
 
@@ -614,7 +614,7 @@
             </el-tab-pane>
 
             <el-tab-pane name="查看病历" :key="'查看病历'" label="查看病历">
-              <lokkCaseHistory :patient-obj="patientBaseObj"></lokkCaseHistory>
+              <lokkCaseHistory ref="lokkCaseHistoryRef" :patient-obj="patientBaseObj"></lokkCaseHistory>
             </el-tab-pane>
 
             <el-tab-pane name="化验项目" :key="'化验项目'" label="化验项目">
@@ -781,9 +781,9 @@ export default{
     operationInit() {
       this.axios({
         url: 'select-patient-sId',
-        params: {sId: this.staff.sid, ksId: '', text: this.patientQueryText,is:1}
+        params: {sId:this.staff.sid, ksksId: '', text: this.patientQueryText,is:1}
       }).then((v) => {
-
+        console.log(v.data)
         this.patientBaseArr = v.data;
 
       }).catch();
@@ -1248,6 +1248,7 @@ export default{
       this.patientBaseObj.ptPayMoney = obj.ptPayMoney;
       this.patientBaseObj.ptIphone = obj.ptIphone;
       this.patientBaseObj.ptInDay = parseFloat((new Date().getTime() - Date.parse(obj.ptInDate))  / (1*24*60*60*1000)).toFixed(0) + '天';//算出入院天数
+      this.patientBaseObj.ptSickNumber = obj.ptSickNumber;
 
       this.doctorEnjoinObj.ptNo = obj.ptNo;
       this.doctorEnjoinObj.deDoctorName = this.staff.sname;//员工姓名
@@ -1279,6 +1280,10 @@ export default{
           }
         }
       }else if(this.maxCard == '化验项目'){
+
+      }else if(this.maxCard == '查看病历'){
+        this.$refs.lokkCaseHistoryRef.changeCase();
+
       }else if(this.maxCard == '化验结果'){
         this.$refs.resultFun.initResultMan();
       }

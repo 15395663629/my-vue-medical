@@ -37,17 +37,21 @@
 
     <el-table-column label="嘱托" class="patientText">
       <template #default="scope">
-        <el-input type="textarea" size="mini" v-model="scope.row.ssObject.susDoctorText" rows="1" maxlength="400" ></el-input>
+          <div v-if="scope.row.ssObject.susPayState == 0">
+            <el-input type="textarea" size="mini" v-model="scope.row.ssObject.susMessage" rows="1" maxlength="400" ></el-input>
+          </div>
+          <div v-else>
+            <el-input type="textarea" size="mini" v-model="scope.row.ssObject.susMessage" rows="1" maxlength="400" disabled></el-input>
+          </div>
       </template>
     </el-table-column>
     <el-table-column align="center" label="操作" width="50">
       <template #default="scope">
         <div v-if="scope.row.ssObject.susPayState == 0">
-          <el-button type="danger" icon="el-icon-delete" size="mini" @click="handleDelete(scope.$index,scope.row.susNumber)" circle></el-button>
+          <el-button type="danger" icon="el-icon-delete" size="mini" @click="handleDelete(scope.$index,scope.row.susId)" circle></el-button>
         </div>
       </template>
     </el-table-column>
-
 
   </el-table>
   <h4>检验项目留言：</h4>
