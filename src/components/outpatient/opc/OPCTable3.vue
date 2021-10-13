@@ -1,7 +1,7 @@
 
 <template>
 	<el-table :data="rightTableData3" :summary-method="getSummaries2" show-summary
-            style="width: 100%" size="mini" height="450" 	>
+            style="width: 100%" size="mini" height="470" 	>
 		
     <el-table-column label="项目名称" align="center" width="200px">
       <template #default="scope">

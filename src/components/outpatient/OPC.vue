@@ -604,6 +604,7 @@
           ksId:'',//科室id
           inProposer:'',//医生名字
           sId:'',//医生外键
+          mrNumber:0,
           ksObj:{}
         },
         rtNumberZy:0,
@@ -1035,7 +1036,8 @@
       },
       //添加住院================住院住院住院住院住院住院住院
       addZy(){
-        this.axios.post('addInHospita',{inhospitalApply:this.zyInhospitalApply,rtNumber:this.rtNumberZy}).then((v)=>{
+        alert(this.medicalRecordObject.mrNumber)
+        this.axios.post('addInHospita',{inhospitalApply:this.zyInhospitalApply,rtNumber:this.rtNumberZy,mrNumber:this.medicalRecordObject.mrNumber}).then((v)=>{
           if(v.data=='ok'){
             this.$message({
               showClose: true,
@@ -1072,7 +1074,17 @@ z
           this.$refs.drugTable3.clearSelection();
           this.bingli=false;
         }else if(index==4){ //转住院
-          this.zyInhospitalApply={}
+          this.zyInhospitalApply={
+            inDiagnosis:'',
+            inSuggest:'',
+            sickNumber:'',
+            ksName:'',
+            ksId:'',//科室id
+            inProposer:'',//医生名字
+            sId:'',//医生外键
+            ksObj:{}
+          }
+          this.ksDzs="";
           this.zysqShow = false;
         }
       },
@@ -1107,6 +1119,7 @@ z
             this.zyInhospitalApply.sickNumber=this.headerInput.sickNumber;
             this.zyInhospitalApply.inProposer=this.token.sname;//医生名字
             this.zyInhospitalApply.sId=this.token.sid;//医生外键
+            this.zyInhospitalApply.mrNumber=this.medicalRecordObject.sickNumber;
             this.zysqShow=true;
             console.log(this.rtNumberZy)
           }

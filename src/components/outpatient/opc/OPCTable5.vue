@@ -2,7 +2,7 @@
 <template>
   <el-form :model="rightTableData5"  status-icon style="margin-top: 30px"  ref="rightTableData5" label-width="80px" class="demo-ruleForm" >
     <el-row>
-      <el-col :span="23">
+      <el-col :span="23" style="margin-top: -5px">
         <el-form-item label="主诉：" label-width="100px"  >
           <el-input  v-model="rightTableData5.chComplaint"  rows="3" type="textarea" size="mini"  maxlength="400"
                      show-word-limit>

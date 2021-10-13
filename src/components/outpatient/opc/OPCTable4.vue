@@ -1,6 +1,6 @@
 
 <template>
-	<el-table  :data="rightTableData4" :summary-method="getSummaries2" show-summary size="mini" style="width: 100%" height="450" >
+	<el-table  :data="rightTableData4" :summary-method="getSummaries2" show-summary size="mini" style="width: 100%" height="470" >
     <el-table-column label="项目名称" >
       <template #default="scope">
         <span>{{scope.row.ssObject.projectName}}</span>
