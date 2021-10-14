@@ -406,7 +406,7 @@ export default{
       //初始化病人数据
       this.axios({
         url: 'select-patient-sId',
-        params: {sId: this.staff.sid, ksId: '', text: this.patientQueryText,is:2}
+        params: {sId: this.staff.sid, ksId:this.staff.ksId, text:this.patientQueryText,is:2}
       }).then((v) => {
         this.patientBaseArr = v.data;
       }).catch();
@@ -528,7 +528,7 @@ export default{
       if (this.tabPaneIs == 0) {
         this.axios({
           url: 'select-patient-sId',
-          params: {sId: this.staff.sid, ksId: '', text: this.patientQueryText,is:2}
+          params: {sId: this.staff.sid, ksId:this.staff.ksId, text: this.patientQueryText,is:2}
         }).then((v) => {
           this.patientBaseArr = v.data;
         }).catch((data) => {

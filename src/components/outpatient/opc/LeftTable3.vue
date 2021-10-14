@@ -34,10 +34,10 @@
           <el-popover effect="light" trigger="hover" placement="top" width="210px" >
             <template #default>
               <p>主诉： {{ scope.row.historyObject.chComplaint }}</p>
-              <p>检验结果： {{ scope.row.chOe}}</p>
-              <p>手术结果： {{ scope.row.chOps }}</p>
-              <p>病因：{{ scope.row.chCause }}</p>
-              <p>建议： {{ scope.row.chDoctorText }}</p>
+              <p>检验结果： {{ scope.row.historyObject.chOe}}</p>
+              <p>手术结果： {{ scope.row.historyObject.chOps }}</p>
+              <p>病因：{{ scope.row.historyObject.chCause }}</p>
+              <p>建议： {{ scope.row.historyObject.chDoctorText }}</p>
             </template>
             <template #reference>
               <div class="name-wrapper fontType" >
