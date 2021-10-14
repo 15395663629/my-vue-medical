@@ -1,5 +1,12 @@
 <template>
+
 	<div class="wz">
+      <el-button type="primary" @click="dialogVisible1 = true">新增部门</el-button>
+      <span style="margin-left: 20px;">
+			<el-input style="width: 120px;" v-model="name"></el-input>
+			<el-button type="primary"  icon="el-icon-orange" style="margin-left: 20px;" @click="select(this.name)">查询部门</el-button>
+		</span>
+  <div style="margin-top: -40px;margin-left: 400px">
     <el-upload
         action=""
         :auto-upload="false"
@@ -7,14 +14,9 @@
         :show-file-list="false"
         :on-change="handle"
     >
-      <el-button type="primary" @click="dialogVisible1 = true">新增部门</el-button>
-      <span style="margin-left: 20px;">
-			<el-input style="width: 120px;" v-model="name"></el-input>
-			<el-button type="primary"  icon="el-icon-orange" style="margin-left: 20px;" @click="select(this.name)">查询部门</el-button>
-		</span>
       <el-button type="success" style="margin-left: 20px">导入</el-button>
-
     </el-upload>
+  </div>
 
 
 		<!-- <el-button type="primary">重置密码</el-button> -->
