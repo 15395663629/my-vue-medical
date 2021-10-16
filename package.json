@@ -8,6 +8,7 @@
   "dependencies": {
     "@element-plus/icons": "0.0.11",
     "axios": "^0.21.1",
+    "echarts": "^4.8.0",
     "element-plus": "^1.0.2-beta.71",
     "file-saver": "^2.0.5",
     "moment": "^2.29.1",
@@ -15,6 +16,7 @@
     "vue": "^3.0.5",
     "vue-axios": "^3.2.4",
     "vue-router": "^4.0.10",
+    "vue3-print-nb": "^0.1.4",
     "vuex": "^4.0.2",
     "xlsx": "^0.17.2"
   },
