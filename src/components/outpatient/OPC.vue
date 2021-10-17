@@ -714,6 +714,7 @@
               indexSignificance:drug.pro.indexSignificance,
               manResult:drug.manResult,
               manPayState:drug.manPayState,
+              manProposal:drug.manPayState,
               manResultId:drug.manResultId,
               manId:drug.manId,
             }
@@ -1010,7 +1011,7 @@
       },
       //搜索检验项目=================检验检验检验检验检验检验检验
       ccooTjpro(){
-        this.axios.get('allDescTjpro',{params:{seach:this.textTj} }).then((v) => {
+        this.axios.get('allDescTjpros',{params:{seach:this.textTj} }).then((v) => {
           this.tjList = v.data;
         }).catch();
       },

@@ -20,6 +20,7 @@
         <el-popover effect="light" trigger="hover" placement="top" width="410px" >
           <template #default>
             <p>检验结果： {{scope.row.pro.manResult}}</p>
+            <p>医生建议： {{scope.row.pro.manProposal}}</p>
           </template>
           <template #reference>
             <div class="name-wrapper ">

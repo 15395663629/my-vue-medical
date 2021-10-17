@@ -1,51 +1,13 @@
 <template>
-	<el-row :gutter="10" > <!-- 选择挂号================== -->
-		<el-form  status-icon  ref="ruleForm" label-width="100px" class="demo-ruleForm">
-			<el-col >
-				<el-select v-model="sOverKsName" style="width: 140px;" placeholder="请选择科室">
-					<el-option
-					  v-for="item in options1"
-					  :key="item.ksId"
-					  :label="item.ksName"
-					  :value="item.ksId">
-					</el-option>
-				</el-select>
-<!--				<el-select v-model="value2" style="width: 155px;" disabled placeholder="请选择看诊内容">-->
-<!--					<el-option-->
-<!--					  v-for="item in options"-->
-<!--					  :key="item.value"-->
-<!--					  :label="item.label"-->
-<!--					  :value="item.value">-->
-<!--					</el-option>-->
-<!--				</el-select>-->
-			</el-col>
-			<el-col >
-				<el-input style="width:250px" class="my-el-input" v-model="input1" placeholder="请输入你要查询的病理或医生信息" ></el-input>
-				<el-button type="primary" icon="el-icon-search">查询</el-button>
-			</el-col>
-			<el-col>
-				<el-button  type="primary" @click="isShow3 = true" icon="el-icon-circle-plus-outline" class="my-radio-group" >添加病人信息</el-button>
-			</el-col>
-			<el-col >
-				<el-input style="width:220px" class="my-el-input" v-model="input2" placeholder="请输入你要查询的挂号信息" ></el-input>
-				<el-button type="primary" icon="el-icon-search" @click="likeReg(input2,null)">查询</el-button>
-			</el-col>
-		</el-form>
-	</el-row>
 	<el-row :gutter="10"> <!-- 左边第一个表格 -->
 		<el-col :span="12">
-      <regDialog1 :allRightTable="allRightTable" :newDate="date1" :list="leftTable" :getNowTime="getNowTime"></regDialog1>
+      <regDialog1  :allRightTable="allRightTable"  :getNowTime="getNowTime" :isShow="isShow"></regDialog1>
 		</el-col>
-
-
 		<el-col :span="12"> <!-- 右边表格 -->
       <regDialog2 :list="rightTable" :likeReg="likeReg"></regDialog2>
 		</el-col>
 	</el-row>
 
-
-
-<!--  <regDialog3 :list="" :isShow="isShow3"></regDialog3>-->
   <el-dialog title="提示"  :close-on-click-modal="false" :before-close="resetFormSick"  :close-on-press-escape="false"  v-model="isShow3" width="45%" center  ><!-- 病人新增 -->
     <el-row><!-- :rules="rules" -->
       <el-form  size="small" ref="mzSickArr" :model="mzSickArr" :rules="rules" label-width="100px" class="demo-ruleForm">
@@ -115,25 +77,8 @@ import { ElMessage } from 'element-plus'
 		data() {
 			return {
         // 挂号***************************************************************************************************************************
-        date1: this.getNowTime(),/* 日期选择器 */
 				isShow3:false,//弹窗 - 病人新增
-				input1:"",//查询搜索框
-        input2:"",//查询搜索框
-        leftTable: [{  /* 表格部分1 */
-            sDate: '2021-10-12 16:10',
-            sOverKsName:'内科',
-            sDoctor:'徐宏鱼',
-            sScience:'普通号',
-            sType:'主任医师',
-            sPrice:'19',
-				},{  /* 表格部分1 */
-            sDate: '2021-10-12 16:11',
-            sOverKsName:'内科',
-            sDoctor:'雷啊狗',
-            sScience:'专家号',
-            sType:'教授',
-            sPrice:'29',
-          },],
+
         sOverKsName:'',//选择科室value
         //病人新增***************************************************************************************************************************
         mzSickArr:{//病人新增的对象
@@ -163,22 +108,21 @@ import { ElMessage } from 'element-plus'
           mcNumberCard:[{required: true, message: "请生成诊疗卡", trigger: 'blur'}],
 
         },
-        options1:[],//科室选择
+        // options1:[],//科室选择
         //挂号记录查询***************************************************************************************************************************
         rightTable:[],
 			}
 		},
 		 methods: {
        //挂号记录查询***************************************************************************************************************************
+       // 挂号记录表查询
        allRightTable(){
-         this.axios({
-           url:'selectReg'
-         }).then((v)=>{
-           console.log(v.data)
+         this.axios({ url:'selectReg' }).then((v)=>{
            this.rightTable=v.data;
          }).catch();
        },
-       likeReg(test,index){//搜索框查询
+       //带条件搜索框查询
+       likeReg(test,index){
          this.axios({
            url:'selectReg',
            params:{reg:test,index:index}
@@ -188,23 +132,22 @@ import { ElMessage } from 'element-plus'
            if(test!=null && ''!=test){
              if(v.data.length <= 0){
                ElMessage.warning({
-                 message: '没有找到相应的挂失记录~',
+                 message: '没有找到相应的挂号记录~',
                  type: 'warning'
                });
              }
            }
          }).catch(function(){ })
-
        },
        // 挂号***************************************************************************************************************************
-       allAepartmentKs(){//科室列表
-         this.axios({
-           url:'allAepartmentKs'
-         }).then((v)=>{
-           console.log(v.data)
-           this.options1=v.data;
-         }).catch();
-       },
+       // allAepartmentKs(){//科室列表
+       //   this.axios({
+       //     url:'allAepartmentKs'
+       //   }).then((v)=>{
+       //     console.log(v.data)
+       //     this.options1=v.data;
+       //   }).catch();
+       // },
        //病人新增************************************************************************************************************************
        submitMzSick(formName) { // 确定病人新增
          this.$refs[formName].validate((valid) => {
@@ -221,6 +164,10 @@ import { ElMessage } from 'element-plus'
              })
            }
          });
+       },
+       //打开新增病人
+       isShow(){
+         this.isShow3=true;
        },
        resetFormSick(){ //X关闭按钮
          this.isShow3=false;
@@ -245,13 +192,15 @@ import { ElMessage } from 'element-plus'
 				var year = now.getFullYear(); //得到年份
 				var month = now.getMonth(); //得到月份
 				var date = now.getDate(); //得到日期
-				var hour =" 00:00:00"; //默认时分秒 如果传给后台的格式为年月日时分秒，就需要加这个，如若不需要，此行可忽略
+				// var hour =" 00:00:00"; //默认时分秒 如果传给后台的格式为年月日时分秒，就需要加这个，如若不需要，此行可忽略
+        // var hour = now.getHours();
+        // var mf = now.getMinutes()<10 ? '0'+ now.getMinutes() : now.getMinutes();
+        // var t_s = now.getTime();//转化为时间戳毫秒数
+        // now.setTime(t_s + 1000 * 60 * 60 * 24)
 				month = month + 1;
 				month = month.toString().padStart(2, "0");
 				date = date.toString().padStart(2, "0");
-				var defaultDate = `${year}-${month}-${date}${hour}`;
-				console.log(defaultDate)
-
+				var defaultDate = `${year}-${month}-${date}`;
 				return defaultDate;
 				// this.$set(this.info, "stockDate", defaultDate);
 			},
@@ -296,7 +245,6 @@ import { ElMessage } from 'element-plus'
 		},
     created() {
 		  this.allRightTable()//挂号记录表查询
-      this.allAepartmentKs();//科室查询
       this.token = this.$store.state.token//获取用户当前系统操作人员
     },
 

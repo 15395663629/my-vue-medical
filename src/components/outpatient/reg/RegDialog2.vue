@@ -1,4 +1,10 @@
 <template>
+  <el-row>
+    <el-col>
+      <el-input style="width:220px" class="my-el-input" v-model="input2" placeholder="请输入你要查询的挂号信息" ></el-input>
+      <el-button type="primary" icon="el-icon-search" @click="likeReg(input2,null)">查询</el-button>
+    </el-col>
+  </el-row>
   <el-radio-group v-model="radio2" class=" my-radio-group"  size="mini" style="margin-top: 20px;">
     <el-radio-button label="查看全部" @change="likeReg(null,null)"></el-radio-button>
     <el-radio-button label="当天挂号"  @change="likeReg(null,1)"></el-radio-button>
@@ -124,6 +130,7 @@ import { ElMessage } from 'element-plus'
         radio2:"查看全部",
         wardCurrentPage2:1,
         wardPageSize2:4,
+        input2:"",//查询搜索框
       }
     },
     methods:{

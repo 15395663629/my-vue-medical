@@ -1,69 +1,64 @@
 <template>
+  {{leftTables}}
+  <el-row>
+    <el-col :span="18">
+      <el-input style="width:250px" class="my-el-input" v-model="input1" placeholder="请输入你要查询的病理或医生信息" ></el-input>
+      <el-button type="primary" icon="el-icon-search">查询</el-button>
+    </el-col>
+    <el-col :span="6">
+      <el-button  type="primary" @click="isShow()" icon="el-icon-circle-plus-outline" style="margin-left: 10px" >添加病人信息</el-button>
+    </el-col>
+  </el-row>
+
   <div class="block" style="margin-top: 8px;">
-    <el-date-picker
-        v-model="newDate"
-        type="date"
-        placeholder="选择日期"
-        format="YYYY 年 MM 月 DD 日" @change="dateTimes">
+    <el-date-picker v-model="guaHaoVO.dateVue"  type="date" placeholder="选择日期"
+        format="YYYY年MM月DD日" @change="dateTimes()">
     </el-date-picker>
-    <el-select v-model="opValue" placeholder="问诊选择" style="width: 188px;">
+    <el-select v-model="guaHaoVO.ksId" style="width: 230px;" placeholder="请选择科室">
       <el-option
-          v-for="item in optionsRge1"
-          :key="item.value"
-          :label="item.label"
-          :value="item.value">
+          v-for="item in options1"
+          :key="item.ksId"
+          :label="item.ksName"
+          :value="item.ksId">
       </el-option>
     </el-select>
   </div>
-  <el-table
-      size="mini"
-      height="490"
-      :data="list.slice((wardCurrentPage-1)*wardPageSize,wardCurrentPage*wardPageSize)"
-      style="width: 100%" >
-    <el-table-column
-        label="日期"
-        width="180">
-      <template #default="scope">
-        <i class="el-icon-time"></i>
-        <span style="margin-left: 10px">{{ scope.row.sDate }}</span>
-      </template>
-    </el-table-column>
-    <el-table-column
-        label="姓名"
-        width="150" >
+<!--  表格显示-->
+  <el-table size="mini" height="490" style="width: 100%"
+            :data="leftTables.slice((wardCurrentPage-1)*wardPageSize,wardCurrentPage*wardPageSize)"  >
+    <el-table-column label="开始时间" width="90" prop="frequency.fstartTime" ></el-table-column>
+    <el-table-column label="结束时间" width="90" prop="frequency.fendTime" ></el-table-column>
+
+    <el-table-column  label="姓名" width="90"  align="center">
       <template #default="scope">
         <el-popover effect="light" trigger="hover" placement="top" >
           <template #default>
-            <p>姓名：{{ scope.row.sDoctor }}</p>
-            <p>所属科室： {{ scope.row.sOverKsName }}</p>
-            <p>学术： {{ scope.row.sType}}</p>
+            <p>姓名：{{ scope.row.staff.sname }}</p>
+            <p>所属科室： {{ scope.row.departmentKs.ksName }}</p>
           </template>
           <template #reference>
             <div class="name-wrapper">
-              <el-tag size="medium">{{ scope.row.sDoctor }}</el-tag>
+              <el-tag size="medium">{{ scope.row.staff.sname }}</el-tag>
             </div>
           </template>
         </el-popover>
       </template>
     </el-table-column>
-
-    <el-table-column
-        label="类型"
-        width="100" align="center">
+    <el-table-column  label="就诊地址" prop="departmentKs.ksDz" width="110" align="center">
+    </el-table-column>
+    <el-table-column  label="类型" width="80" align="center">
       <template #default="scope">
-        <span style="margin-left: 10px">{{ scope.row.sScience }}</span>
+        <span style="margin-left: 10px">{{ scope.row.title.tname }}</span>
       </template>
     </el-table-column>
 
-    <el-table-column
-        label="挂号费"
-        width="100">
+    <el-table-column label="费用"  width="70" align="center">
       <template #default="scope">
-        <span style="margin-left: 10px">{{scope.row.sPrice}}</span>
+        <span style="margin-left: 10px">{{scope.row.register.rmoeny}}</span>
       </template>
     </el-table-column>
 
-    <el-table-column label="操作">
+    <el-table-column label="操作"  align="center">
       <template #default="scope">
         <div v-if="booleanDate==1">
           <el-button size="mini" type="success" @click="isDialog1(scope.row)" >当天挂号</el-button>
@@ -84,7 +79,7 @@
                   :page-sizes="[2,4,6,8]"
                   :page-size="wardPageSize"
                   layout="total, sizes, prev, pager, next, jumper"
-                  :total="list.length">
+                  :total="leftTables.length">
   </el-pagination>
 
 
@@ -92,14 +87,8 @@
     <el-row><!-- :rules="rules" -->
       <el-form :rules="rules"  status-icon :model="regArr" ref="regArr" label-width="100px" size="small" class="demo-ruleForm">
         <el-col>
-          <el-form-item label="挂号日期：">
-            <el-date-picker
-                  style="width: 350px; font-size: 15px;"
-                v-model="regArr.rtOnsetTime"
-                type="date"
-                disabled
-                format="YYYY 年 MM 月 DD 日">
-            </el-date-picker>
+          <el-form-item label="挂号日期："  >
+            <el-input v-model="regArr.rtOnsetTime" style="width: 300px" disabled></el-input>
           </el-form-item>
         </el-col>
         <el-col >
@@ -191,7 +180,7 @@
           <el-form-item label="就诊：" prop="rtClass">
             <el-select class="te"   v-model="regArr.rtClass" placeholder="请选择" style="width: 188px;">
               <el-option
-                  v-for="item in optionsRge3"
+                  v-for="item in optionsRge2"
                   :key="item.value"
                   :label="item.label"
                   :value="item.value">
@@ -248,14 +237,11 @@
 
 <script>
 import { ElMessage } from 'element-plus'
+import moment from 'moment'
   export default {
     props:{
-      list:{
-        type:Array,
-        required:true,
-      },
-      newDate:{
-        type: String,
+      isShow:{
+        type:Function,
         required:true,
       },
       getNowTime:{
@@ -271,38 +257,20 @@ import { ElMessage } from 'element-plus'
       var validata = (rule, value, callback) => { //table2 校验
         if (value === '') {
           callback(new Error('请输入卡号'));
-        }else if(value != this.regArr.cardObject.mcCard){
+        }else if(value != this.regArr.cardObject.mcCard && value != this.regArr.cardObject.mcIdCard){
           callback(new Error('卡号不存在'));
         }else{
           callback();
         }
       };
       return{
+        leftTables:[],
         wardCurrentPage:1,//分页属性
         wardPageSize:4,
         token:[],//操作人员
         isShow1:false,//弹窗 - 挂号
         isShow2:false,//弹窗 - 预约挂号
-        optionsRge1:[{//选项列表1
-            value: '1',
-            label: '普通门诊'
-          },{
-            value: '2',
-            label: '专家门诊'
-          },
-          ],
-        opValue:'',
         optionsRge2: [{
-          value: '初诊',
-          label: '初诊'
-        }, {
-          value: '复诊',
-          label: '复诊'
-        },{
-            value: '急诊',
-            label: '急诊'
-        }],
-        optionsRge3: [{
           value: '初诊',
           label: '初诊'
         }, {
@@ -313,7 +281,6 @@ import { ElMessage } from 'element-plus'
         regArr:{
           sickName:'',//这两个不在实体类里
           mcCard:'',
-
           rtOnsetTime:'',
           rtClass:'',
           rtOverKsName:'',
@@ -334,12 +301,48 @@ import { ElMessage } from 'element-plus'
           ],
         },
         booleanDate:0,//时间戳判断点
+        options1:[],//科室选择
+        sOverKsName:1,//选择科室value
+        input1:'',//查询搜索框
+        guaHaoVO:{
+          dateVue:0,
+          dateJav:0,
+          ksId:1,
+          text:'',
+          index:0,
+        },
+        newDates:Date,
       }
     },
     methods:{
+      //科室列表
+      allAepartmentKs(){
+        this.axios({ url:'allAepartmentKs' }).then((v)=>{
+          this.options1=v.data;
+        }).catch();
+      },
+      //查询排班
+      selectScheduling(){
+        if(this.guaHaoVO.dateVue == this.getNowTime(new Date())){
+          this.guaHaoVO.index=0;
+        }else{
+          this.guaHaoVO.index=1;
+        }
+        this.axios.post('week-sch',this.guaHaoVO).then((v) => {
+          this.leftTables=v.data;
+          if(v.data.length<=0){
+            this.$message({
+              showClose: true,
+              type: 'warning',
+              message: "该日期暂时没有医生值班！"
+            });
+          }
+        }).catch(() => {})
+      },
       isDialog1(row){//挂号=======================================================================================
         this.isShow1 = true;
-        this.regArr.rtOnsetTime =row.sDate;
+        this.regArr.rtOnsetTime =row.rq+" "+row.frequency.fstartTime+"~"+row.frequency.fendTime;
+        console.log(this.regArr.rtOnsetTime)
         this.regArr.rtOverKsName=row.sOverKsName;
         this.regArr.rtDoctor=row.sDoctor
         this.regArr.rtDoctorGenre=row.sType
@@ -410,14 +413,15 @@ import { ElMessage } from 'element-plus'
         return (new Date(time)).getTime() / 1000
       },
       dateTimes(){//根据时间显示按钮
-        var dates = this.getTimestamp(this.getNowTime());
-        if(dates < this.getTimestamp(this.newDate)){
-          this.booleanDate=2;
-        }else if(dates === this.getTimestamp(this.newDate)){
+        this.selectScheduling()
+        var dates = this.getNowTimes(this.guaHaoVO.dateVue);
+        var newDate = this.getNowTime();
+        if(this.getTimestamp(dates) > this.getTimestamp(newDate)){
           this.booleanDate=1;
-        }else{
-          alert("您选择的时间不符合当前时间~")
+        }else if(this.getTimestamp(dates) == this.getTimestamp(newDate)){
           this.booleanDate=0;
+        }else{
+          alert("您选择日期里没有医生值班~")
         }
       },
       byIdCard(test){//实时刷新查询
@@ -441,9 +445,35 @@ import { ElMessage } from 'element-plus'
         this.wardCurrentPage = currentPage;
         console.log(this.currentPage) //点击第几页allDescSick
       },
+      //格式化时间样式
+      getNowTimes(nowDate) {
+        var now = nowDate;
+        var year = now.getFullYear(); //得到年份
+        var month = now.getMonth(); //得到月份
+        var date = now.getDate(); //得到日期
+        // var hour =" 00:00:00"; //默认时分秒 如果传给后台的格式为年月日时分秒，就需要加这个，如若不需要，此行可忽略
+        // var hour = now.getHours();
+        // var mf = now.getMinutes()<10 ? '0'+ now.getMinutes() : now.getMinutes();
+        // var t_s = now.getTime();//转化为时间戳毫秒数
+        // now.setTime(t_s + 1000 * 60 * 60 * 24)
+        month = month + 1;
+        month = month.toString().padStart(2, "0");
+        date = date.toString().padStart(2, "0");
+        var defaultDate = `${year}-${month}-${date}`;
+        return defaultDate;
+        // this.$set(this.info, "stockDate", defaultDate);
+      },
+      // //格式化时间样式
+      // getNowTimes2(nowDate) {
+      //   var nextDate = new Date(nowDate.getTime() + 24*60*60*1000)
+      //   return nextDate;
+      // },
     },
     created() {
-      this.dateTimes()
+      this.guaHaoVO.dateVue =this.getNowTime(new Date());
+      this.guaHaoVO.dateJav = this.getNowTime(new Date());
+      this.allAepartmentKs();//科室查询
+      this.selectScheduling();//查询排班
       this.token= this.$store.state.token == null ? null : this.$store.state.token.list;//将登录存入的值在取出来
     },
   }
