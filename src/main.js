@@ -8,7 +8,8 @@ import qs from 'qs'
 
 //引入路由--------------------------------
 import router from './router/index.js'
-
+//打印
+import Print from 'vue3-print-nb'
 //引入store--------------------------
 import store from './store/index.js'
 //面包屑组件
@@ -47,6 +48,7 @@ createApp(App)
 .use(VueAxios,axios)
 .use(ElementUI,{locale})
 .use(store)
+.use(Print)
 .component('newDateOPC',newDateOPC)
 .component('opcTable1',opcTable1)
 .component("opcTable2",opcTable2)

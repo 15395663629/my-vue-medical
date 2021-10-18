@@ -568,6 +568,7 @@
           return;
         }
         this.ssApply.simulationOperation=row.projectName;
+        this.ssApply.projectId=row.projectId;
         this.$refs.ssdata.toggleRowSelection(row, true);
 
       },
