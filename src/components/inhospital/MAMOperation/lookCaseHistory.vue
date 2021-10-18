@@ -11,7 +11,7 @@
     <el-col :offset="2" :span="5">
       <el-radio-group style="margin-top: 8px;" size="mini" v-model="CaseHistoryWhere.doctorType"  @change="changeCase">
         <el-radio :label="2">住院病历</el-radio>
-        <el-radio :label="1">门诊病例</el-radio>
+        <el-radio :label="1">门诊病历</el-radio>
       </el-radio-group>
     </el-col>
 
@@ -91,7 +91,6 @@ export default {
   },
   methods:{
     initCaseHistory(){
-
     },
     changeCase(){
       if(this.patientObj.ptNo == undefined){

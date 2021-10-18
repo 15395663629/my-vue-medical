@@ -71,7 +71,7 @@
 	
 	<!--=============================================新增住院申请信息弹框===================================-->
 	<el-dialog title="住院登记" @close="PatientClear" v-model="isShowZY">
-		<el-form v-model="patientBaseObj">
+		<el-form ref="patientBaseObj" :rules="patientBaseObjRules" :model="patientBaseObj">
 			<el-row>
 				<el-col :span="8">
 					<el-form-item label="姓名" label-width="80px">
@@ -92,7 +92,7 @@
 			<el-row>
 				<el-col :span="9">
 					<el-form-item label="性别" label-width="80px">
-					 <el-radio-group v-model="patientBaseObj.ptSex">
+					 <el-radio-group disabled v-model="patientBaseObj.ptSex">
 					    <el-radio  label="男">男</el-radio>
 					    <el-radio label="女">女</el-radio>
 					  </el-radio-group>
@@ -102,8 +102,8 @@
 				</el-col>
 				
 				<el-col  :span="9">
-					<el-form-item label="预交金额" label-width="80px">
-						<el-input v-model="patientBaseObj.ptPayMoney"></el-input>
+					<el-form-item prop="ptPayMoney" label="预交金额" label-width="80px">
+						<el-input  onkeyup="value=value.replace(/[^\d^\.]+/g,'').replace('.','$#$').replace(/\./g,'').replace('$#$','.')" v-model="patientBaseObj.ptPayMoney"></el-input>
 					</el-form-item>
 				</el-col>
 				
@@ -112,14 +112,14 @@
 			<el-row>
 				<el-col :span="8">
 					<el-form-item label="年龄" label-width="80px">
-						<el-input v-model="patientBaseObj.ptAge"></el-input>
+						<el-input disabled v-model="patientBaseObj.ptAge"></el-input>
 					</el-form-item>
 				</el-col>
 				<el-col :span="4">
 				</el-col>
 
         <el-col :span="9">
-          <el-form-item label="科室" label-width="80px">
+          <el-form-item prop="ksId" label="科室" label-width="80px">
             <el-select v-model="patientBaseObj.ksId" @change="ksSelectFun" placeholder="请选择">
               <el-option v-for="ks in ksArr"
                   :label="ks.ksName"
@@ -134,15 +134,15 @@
 			<el-row>
 				<el-col :span="8">
 					<el-form-item label="地址" label-width="80px">
-						<el-input v-model="patientBaseObj.ptHomeAdder"></el-input>
+						<el-input disabled v-model="patientBaseObj.ptHomeAdder"></el-input>
 					</el-form-item>
 				</el-col>
 				<el-col :span="4">
 				</el-col>
 
         <el-col  :span="9">
-          <el-form-item label="治疗医生" label-width="80px">
-            <el-select v-model="patientBaseObj.sId" placeholder="请选择">
+          <el-form-item prop="sId" label="治疗医生" label-width="80px">
+            <el-select v-model="patientBaseObj.sId"  placeholder="请选择">
               <el-option v-for="st in staffArr"
                          :label="st.staff.sname"
                          :value="st.staff.sid">
@@ -158,7 +158,7 @@
 			<el-row>
 				<el-col :span="8">
 					<el-form-item label="电话" label-width="80px">
-						<el-input v-model="patientBaseObj.ptIphone"></el-input>
+						<el-input disabled v-model="patientBaseObj.ptIphone"></el-input>
 					</el-form-item>
 				</el-col>
 				<el-col :span="4">
@@ -166,7 +166,7 @@
 
         <el-col :span="9">
           <el-form-item label="身份证" label-width="80px">
-            <el-input disabled v-model="patientBaseObj.ptCapacityNo"></el-input>
+            <el-input  disabled v-model="patientBaseObj.ptCapacityNo"></el-input>
           </el-form-item>
         </el-col>
 
@@ -208,17 +208,17 @@
   <!--=============================================添加病人联系人弹框===================================-->
   <el-dialog top="160px" width="40%" title="添加联系人" @close="closeAddContacts" v-model="isShowAddCts">
 
-    <el-form v-model="contacts">
+    <el-form ref="contacts" :rules="contactsRules" :model="contacts">
 
       <el-row>
         <el-col  :span="11">
-          <el-form-item label="姓名" label-width="90px">
+          <el-form-item prop="ctsName" label="姓名" label-width="90px">
             <el-input v-model="contacts.ctsName"></el-input>
           </el-form-item>
         </el-col>
 
         <el-col :offset="1" :span="11">
-          <el-form-item label="联系电话" label-width="90px">
+          <el-form-item prop="ctsIphone" label="联系电话" label-width="90px">
             <el-input v-model="contacts.ctsIphone"></el-input>
           </el-form-item>
         </el-col>
@@ -226,7 +226,7 @@
 
       <el-row>
         <el-col  :span="11">
-          <el-form-item label="关系" label-width="90px">
+          <el-form-item label="关系" prop="ctsRelation" label-width="90px">
             <el-input v-model="contacts.ctsRelation"></el-input>
           </el-form-item>
         </el-col>
@@ -250,14 +250,42 @@
   </el-dialog>
 
 
+  <!--=============================================查询条件===================================-->
+  <el-row style="margin-bottom:10px">
+
+    <el-col :span="2">
+      <el-button @click="isShowZY = true" size="mini" type="primary">添加</el-button>
+    </el-col>
+
+
+    <el-col :offset="3" :span="5">
+      <el-input size="mini" v-model="doctorEnjoinWhere.searchLike" placeholder="病人姓名或者住院号"></el-input>
+    </el-col>
+    <el-col  :span="1">
+      <el-button size="mini" @click="patientBaseInit" icon="el-icon-search" type="primary" ></el-button>
+    </el-col>
+
+    <el-col :offset="1" :span="10">
+      &nbsp;<span style="font-size: 12px;">日期区间：</span>&nbsp;
+
+      <el-date-picker style="width: 160px" @change="patientBaseInit" v-model="doctorEnjoinWhere.startDate"
+                      type="date"
+                      size="mini"
+                      value-format="YYYY-MM-DD"
+                      placeholder="日期">
+      </el-date-picker>
+      &nbsp;<span style="font-size: 12px;">至</span>&nbsp;
+      <el-date-picker style="width: 160px" @change="patientBaseInit" v-model="doctorEnjoinWhere.endDate"
+                      type="date"
+                      size="mini"
+                      value-format="YYYY-MM-DD"
+                      placeholder="日期">
+      </el-date-picker>
+    </el-col>
+  </el-row>
 
 
 	<!--=============================================住院登记表格===================================-->
-  <el-row>
-    <el-col>
-      <el-button @click="isShowZY = true" size="mini" type="primary">添加</el-button>
-    </el-col>
-  </el-row>
 	<el-row>
 		<el-col>
 			<el-table
@@ -368,7 +396,36 @@
 <script>
 	export default{
 		data(){
-			return{
+      var checkPhone = (rule, value, callback) => {//电话号码验证
+        const phoneReg = /^1[3|4|5|7|8][0-9]{9}$/
+        if (!value) {
+          return callback(new Error('电话号码不能为空'))
+        }
+        setTimeout(() => {
+          if (!Number.isInteger(+value)) {
+            callback(new Error('请输入数字值'))
+          } else {
+            if (phoneReg.test(value)) {
+              callback()
+            } else {
+              callback(new Error('电话号码格式不正确'))
+            }
+          }
+        }, 100)
+      }
+      return{
+			  //================================================校验
+        patientBaseObjRules: {//非空校验
+          ksId:[{required:true,message:"请选择住院科室！",trigger:'change'}],
+          sId:[{required: true, message: "请选择主治医生", trigger: 'change'}],
+          ptPayMoney: [{ required: true, message: "预交金额不能为空", trigger: 'change' }],
+        },
+        contactsRules:{
+          ctsName:[{required:true,message:"姓名不能为空！",trigger:'change'}],
+          ctsIphone:[{required:true,trigger:'blur',validator:checkPhone}],
+          ctsRelation:[{required:true,message:"关系不能为空！",trigger:'change'}],
+        },
+
 			  //=====================================================住院申请
 				InhospitalApplyArr:[//住院申请数组
 					
@@ -409,6 +466,15 @@
 				isSex:'',
 				fromSearch:'',
 
+        //======================查询条件数据
+        doctorEnjoinWhere:{
+          startDate:'',//开始日期
+          endDate:'',//结束日期
+          searchLike:'',//模糊搜索
+          doctorType:2,//医嘱类型
+          sIdArr:[],//员工编号
+          ptNo:''
+        },
 
         //============================================患者联系人数据
         contacts:{
@@ -460,7 +526,7 @@
 		methods:{
 		  //==========================================初始化住院登记信息以及住院申请信息
       patientBaseInit(){
-        this.axios({url:'patientAll'}).then((v)=>{//查询所有病人登记信息
+        this.axios.post('patientAll',this.doctorEnjoinWhere).then((v)=>{//查询所有病人登记信息
           console.log(v.data)
           this.patientBaseArr = v.data;
         }).catch((date)=>{
@@ -485,6 +551,7 @@
         this.axios({url:"home-sch-byksId",params:{ksId:this.patientBaseObj.ksId}}).then((v)=>{
           console.log(v.data);
           this.staffArr = v.data;
+          this.patientBaseObj.sId = '';
         }).catch((data)=>{
 
         });
@@ -494,14 +561,17 @@
       //================================病人关系联系人方法
       //确定添加联系人方法
       addContacts(){
-        console.log(this.contactsIndex);
-        if(this.contactsIndex != null){
-          this.patientBaseObj.listContacts.splice(this.contactsIndex,1,this.contacts);
-        }else{
-          this.patientBaseObj.listContacts.push(this.contacts);
-        }
-        this.closeAddContacts();
-        console.log(this.patientBaseObj)
+        this.$refs['contacts'].validate((valid) => {
+          if (valid) {
+            if(this.contactsIndex != null){
+              this.patientBaseObj.listContacts.splice(this.contactsIndex,1,this.contacts);
+            }else{
+              this.patientBaseObj.listContacts.push(this.contacts);
+            }
+            this.closeAddContacts();
+            console.log(this.patientBaseObj)
+          }
+        });
       },
       //取消添加联系人方法
       closeAddContacts(){
@@ -513,6 +583,7 @@
               ctsIphone:'',
               ctsRelation:''
         };
+        this.$refs['contacts'].resetFields();
       },
       //删除联系人方法
       deleteContacts(row){
@@ -583,23 +654,34 @@
           ptPrice:''
         };
         this.staffArr = [];
+        this.$refs['patientBaseObj'].resetFields();
       },
 
 
       //========================================住院登记方法
 
       //新增住院方法
-      addPatientFunction(form){
-        console.log(this.patientBaseObj)
-        this.axios.post("addPatient",this.patientBaseObj).then((v)=>{
-        this.PatientClear();
-        this.patientBaseInit();
-          this.$message({
-            type: 'success',
-            message: '登记成功       请尽快分配床位'
-          });
-        }).catch((data)=>{
+      addPatientFunction(){
+        // if(this.patientBaseObj.inId == ''){
+        //   this.$message({
+        //     type:'error',
+        //     message:'未选择住院病人'
+        //   });
+        //   return;
+        // }
+        this.$refs['patientBaseObj'].validate((valid) => {
+          if (valid) {
+            this.axios.post("addPatient",this.patientBaseObj).then((v)=>{
+              this.PatientClear();
+              this.patientBaseInit();
+              this.$message({
+                type: 'success',
+                message: '登记成功       请尽快分配床位'
+              });
+            }).catch((data)=>{
 
+            });
+          }
         });
       },
 

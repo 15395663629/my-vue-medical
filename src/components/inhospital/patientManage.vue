@@ -245,6 +245,56 @@
 	  </template>
 	</el-dialog>
 
+  <!--=============================================查询条件===================================-->
+  <el-row style="margin-bottom:10px;padding-top:15px ">
+
+    <el-col :offset="1" :span="3">
+      <el-input size="mini" v-model="doctorEnjoinWhere.searchLike" placeholder="病人姓名或者住院号"></el-input>
+    </el-col>
+    <el-col  :span="1">
+      <el-button size="mini" @click="patientBaseInit" icon="el-icon-search" type="primary" ></el-button>
+    </el-col>
+
+
+    <el-col  style="margin-left: 10px;" :span="5">
+      <span style="font-size: 12px;">治疗医生：</span>&nbsp;
+      <el-select @change="patientBaseInit"  placeholder="请选择"  style="width: 160px" v-model="doctorEnjoinWhere.sIdArr" multiple collapse-tags size="mini">
+        <el-option v-for="st in staffArrs"
+                   :label="st.sname"
+                   :value="st.sid"/>
+      </el-select>
+    </el-col>
+
+    <el-col :span="4">
+      <span style="font-size: 12px;">科室：</span>&nbsp;
+      <el-select size="mini" v-model="doctorEnjoinWhere.ksIdArr" placeholder="请选择" @change="patientBaseInit"  multiple collapse-tags style="width: 160px" >
+        <el-option v-for="ks in ksArr"
+                   :label="ks.ksName"
+                   :value="ks.ksId">
+        </el-option>
+      </el-select>
+    </el-col>
+
+
+    <el-col style="margin-left: 15px" :span="8">
+      &nbsp;<span style="font-size: 12px;">日期区间：</span>&nbsp;
+
+      <el-date-picker style="width: 160px" @change="patientBaseInit" v-model="doctorEnjoinWhere.startDate"
+                      type="date"
+                      size="mini"
+                      value-format="YYYY-MM-DD"
+                      placeholder="日期">
+      </el-date-picker>
+      &nbsp;<span style="font-size: 12px;">至</span>&nbsp;
+      <el-date-picker style="width: 160px" @change="patientBaseInit" v-model="doctorEnjoinWhere.endDate"
+                      type="date"
+                      size="mini"
+                      value-format="YYYY-MM-DD"
+                      placeholder="日期">
+      </el-date-picker>
+    </el-col>
+  </el-row>
+
 
   <!--=============================================================================病人信息表格-->
   <el-row>
@@ -284,7 +334,7 @@
               </el-badge>
             </template>
           </el-table-column>
-          <el-table-column prop="ptInDate" label="入院日期"></el-table-column>
+          <el-table-column prop="ptInDate" width="140px" label="入院日期"></el-table-column>
           <el-table-column prop="ksName" label="科室"></el-table-column>
           <el-table-column prop="staff.sname" label="主治医生"></el-table-column>
           <el-table-column prop="ptPayMoney" label="预交金"></el-table-column>
@@ -300,14 +350,14 @@
               <el-tag v-if="obj.row.bed.bdName != null" type="success">{{obj.row.bed.bdName}}</el-tag>
             </template>
           </el-table-column>
-          <el-table-column label="操作" width="300px" >
+          <el-table-column label="操作" width="260px" >
             <template #default="obj">
               <el-row v-if="obj.row.ptIs == 1">
                 <el-col :span="5"><el-button @click="openDischargeApply(obj.row)" size="mini" type="success">申请出院</el-button></el-col>
 
-                <el-col :offset="3" :span="5"><el-button @click="openChangeKsFunction(obj.row)" size="mini" type="danger">转科</el-button></el-col>
+                <el-col :offset="4" :span="3"><el-button @click="openChangeKsFunction(obj.row)" size="mini" type="danger">转科</el-button></el-col>
 
-                <el-col :offset="1" :span="5"><el-button size="mini" @click="ssopenApply(obj.row)" type="primary">手术申请</el-button></el-col>
+                <el-col :offset="4" :span="5"><el-button size="mini" @click="ssopenApply(obj.row)" type="primary">手术申请</el-button></el-col>
               </el-row>
 
               <el-row v-if="obj.row.ptIs != 1">
@@ -334,17 +384,17 @@
   <!--=============================================添加病人联系人弹框===================================-->
   <el-dialog top="160px" width="40%" title="添加联系人" @close="closeAddContacts" v-model="isShowAddCts">
 
-    <el-form v-model="contactsObj">
+    <el-form ref="contacts" :model="contactsObj" :rules="contactsRules">
 
       <el-row>
         <el-col  :span="11">
-          <el-form-item label="姓名" label-width="90px">
+          <el-form-item prop="ctsName" label="姓名" label-width="90px">
             <el-input v-model="contactsObj.ctsName"></el-input>
           </el-form-item>
         </el-col>
 
         <el-col :offset="1" :span="11">
-          <el-form-item label="联系电话" label-width="90px">
+          <el-form-item label="联系电话" prop="ctsIphone" label-width="90px">
             <el-input v-model="contactsObj.ctsIphone"></el-input>
           </el-form-item>
         </el-col>
@@ -352,7 +402,7 @@
 
       <el-row>
         <el-col  :span="11">
-          <el-form-item label="关系" label-width="90px">
+          <el-form-item label="关系" prop="ctsRelation" label-width="90px">
             <el-input v-model="contactsObj.ctsRelation"></el-input>
           </el-form-item>
         </el-col>
@@ -449,8 +499,32 @@
 <script>
 	export default{
 		data(){
+      var checkPhone = (rule, value, callback) => {//电话号码验证
+            const phoneReg = /^1[3|4|5|7|8][0-9]{9}$/
+            if (!value) {
+              return callback(new Error('电话号码不能为空'))
+            }
+            setTimeout(() => {
+              if (!Number.isInteger(+value)) {
+                callback(new Error('请输入数字值'))
+              } else {
+                if (phoneReg.test(value)) {
+                  callback()
+                } else {
+                  callback(new Error('电话号码格式不正确'))
+                }
+              }
+            }, 100)
+          }
 			return{
-			  //================================================病人信息数据
+        //================================================校验
+        contactsRules:{
+          ctsName:[{required:true,message:"姓名不能为空！",trigger:'change'}],
+              ctsIphone:[{required:true,trigger:'blur',validator:checkPhone}],
+              ctsRelation:[{required:true,message:"关系不能为空！",trigger:'change'}],
+        },
+
+        //================================================病人信息数据
         patientBaseArr:[
 				],
 				isCYShow:false,//显示出院申请弹框
@@ -493,6 +567,16 @@
         isShowTextCts:false,//显示联系人
 
 
+        //======================查询条件数据
+        doctorEnjoinWhere:{
+          startDate:'',//开始日期
+          endDate:'',//结束日期
+          searchLike:'',//模糊搜索
+          doctorType:'',//医嘱类型
+          sIdArr:[],//员工编号数组
+          ksIdArr:[],//科室编号数组
+          ptNo:''
+        },
 
 
         //==============================================转科数据
@@ -516,6 +600,7 @@
 
         //===========================医生数据
         staffArr:[],//治疗医生数组
+        staffArrs:[],//主治医生数组
         staff:{},//当前登录员工
 
         //======================================================出院申请数据
@@ -532,6 +617,7 @@
           bdName:''//病床名称
         },
 
+
         //======================================取消申请出院数据
         isShowCallDischargeApply:false,//是否显示取消申请出院弹框
         CallDischargeApply:{//取消申请对象
@@ -543,11 +629,14 @@
 		methods:{
 		  //==================================初始化病人住院信息
       patientBaseInit() {
-        this.axios({url: 'patientAll'}).then((v) => {//查询所有病人登记信息
+        this.axios.post('patientAlls',this.doctorEnjoinWhere).then((v) => {//查询所有病人登记信息
           console.log(v.data)
           this.patientBaseArr = v.data;
         }).catch((date) => {
         });
+        this.axios({url:'select-patient-staffAll'}).then((v)=>{
+          this.staffArrs = v.data;
+        }).catch();
         //查询手术
         this.axios.get("http://localhost:8089/allDescSpro",{params:{input:this.input}}).then((res)=>{
           this.sproject = res.data;
@@ -603,7 +692,7 @@
       },
       //添加出院申请
       addDischargeApply(){
-        this.axios.post('addDischarge',this.dischargeApplyObj).then((v)=>{
+        this.axios.post('/dis/addDischarge',this.dischargeApplyObj).then((v)=>{
           if(v.data == "yes"){
             this.$message({
               type: 'success',
@@ -639,7 +728,7 @@
       },
       //确定取消出院申请
       addClaaDischargeApply(){
-        this.axios.post('updata-patient-apply',this.CallDischargeApply).then((v)=>{
+        this.axios.post('/dis/updata-patient-apply',this.CallDischargeApply).then((v)=>{
           this.patientBaseInit();//刷新表格
           this.closeClaaDischargeApply();//关闭取消住院申请弹框
         }).catch();
@@ -754,18 +843,22 @@
       },
       //确定添加或者修改联系人方法
       addContacts(){
-        console.log(this.contactsObj)
-        this.axios.post('insert-update-cts',this.contactsObj).then((v)=>{
-          this.$message({
-            type: 'success',
-            message: '操作成功'
-          });
-          this.closeAddContacts();
-          this.patientBaseInit();//刷新表格
-          this.selectByPtIdContacts(this.contactsObj.ptNo);//根据病人住院号查询联系人
-        }).catch((data)=>{
+        this.$refs['contacts'].validate((valid) => {
+          if (valid) {
+            this.axios.post('insert-update-cts', this.contactsObj).then((v) => {
+              this.$message({
+                type: 'success',
+                message: '操作成功'
+              });
+              this.closeAddContacts();
+              this.patientBaseInit();//刷新表格
+              this.selectByPtIdContacts(this.contactsObj.ptNo);//根据病人住院号查询联系人
+            }).catch((data) => {
 
+            });
+          }
         });
+        console.log(this.contactsObj)
       },
       //取消添加联系人方法
       closeAddContacts(){

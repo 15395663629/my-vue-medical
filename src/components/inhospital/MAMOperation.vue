@@ -1,21 +1,32 @@
 <template>
   <el-container style="height: 100%;">
-    <el-header height="30px"  style="line-height: 30px; background-color: #B3C0D1;color: #333;">
-      <!-- <newDateOPC style="margin: 0px; padding: 0px;"></newDateOPC> -->
-
-    </el-header>
     <el-container style="height: 100%;">
-
       <el-aside width="350px" style="background-color: #E7ECF1;color: #333;"> <!-- 右边 -->
+        <el-row style="height: 30px;background-color: #D3DCE6;line-height: 30px">
+          <el-col style="margin-left: 130px" >
+            医生工作站
+          </el-col>
+        </el-row>
 
-        <el-row style="height: 120px;background-color: #D3DCE6;">
-          <el-col :offset="10" :span="4">
-              徐医生
+        <el-row style="height: 30px;background-color: #D3DCE6;line-height: 30px">
+          <el-col style="color: red" :offset="7" :span="12">
+            {{currentTime}}
+          </el-col>
+        </el-row>
+
+        <el-row style="height: 30px;background-color: #D3DCE6;line-height: 30px">
+          <el-col style="margin-left: 125px">
+            <span style="font-size: 14px">所属科室 ：</span><span style="font-size: 14px">{{staffKsName}}</span>
+          </el-col>
+        </el-row>
+
+        <el-row style="height: 30px;background-color: #D3DCE6;line-height: 30px">
+          <el-col style="margin-left: 115px" >
+            <span style="font-size: 14px">医生名称 ：</span><span style="font-size: 14px">{{staff.sname}}</span>
           </el-col>
         </el-row>
 
         <el-row>
-
           <el-col style="background-color: white;">
             <el-tabs @tab-click="patientSwitchKsOrI" v-model="tabPaneIs"  stretch>
               <el-tab-pane name="1" :key="'1'" label="本科病人" >
@@ -64,10 +75,10 @@
       </el-aside>
 
       <el-container style="height: 100%;"><!-- 右边 -->
-        <el-header height="120px"  style=" background-color: #B3C0D1;color: #333;"><!-- 头部信息按钮部分-->
+        <el-header  height="120px"  style=" background-color: #B3C0D1;color: #333;padding-top: 15px"><!-- 头部信息按钮部分-->
           <el-form  >
           <el-row>
-              <el-col :offset="1" :span="4">
+              <el-col :span="4">
                 <el-form-item label="住院号" label-width="80px" style="margin-bottom: 0px">
                   <el-input size="mini"  v-model="patientBaseObj.ptNo" class="patientText"  disabled></el-input>
                 </el-form-item>
@@ -77,12 +88,12 @@
                   <el-input  size="mini" class="patientText" v-model="patientBaseObj.ptName"   disabled></el-input>
                 </el-form-item>
               </el-col>
-              <el-col :span="3">
+              <el-col :span="4">
                 <el-form-item label="性别"  label-width="50px"  style="margin-bottom: 0px">
                   <el-input  size="mini" class="patientText" v-model="patientBaseObj.ptSex"  disabled></el-input>
                 </el-form-item>
               </el-col>
-              <el-col :span="3">
+              <el-col :span="4">
                 <el-form-item label="年龄" label-width="50px"  style="margin-bottom: 0px">
                   <el-input  size="mini" class="patientText" v-model="patientBaseObj.ptAge" disabled></el-input>
                 </el-form-item>
@@ -101,12 +112,12 @@
 
 
             <el-row style="margin-top: 15px">
-              <el-col :offset="1" :span="5">
+              <el-col  :span="5">
                 <el-form-item label="入院时间" label-width="80px" style="margin-bottom: 0px">
-                  <el-input  size="mini" class="patientText" v-model="patientBaseObj.ptInDate"  disabled></el-input>
+                  <el-input  size="mini" class="patientText"  v-model="patientBaseObj.ptInDate"  disabled></el-input>
                 </el-form-item>
               </el-col>
-              <el-col :span="3">
+              <el-col :span="4">
                 <el-form-item label="住院天数" label-width="80px"  style="margin-bottom: 0px">
                   <el-input  size="mini" class="patientText" v-model="patientBaseObj.ptInDay"  disabled></el-input>
                 </el-form-item>
@@ -121,7 +132,7 @@
                   <el-input class="patientText" size="mini" v-model="patientBaseObj.ksName"  disabled></el-input>
                 </el-form-item>
               </el-col>
-              <el-col :span="3">
+              <el-col :span="4">
                 <el-form-item label="病床" label-width="50px"  style="margin-bottom: 0px">
                   <el-input class="patientText" size="mini" v-model="patientBaseObj.bdName"   disabled></el-input>
                 </el-form-item>
@@ -367,116 +378,58 @@
               </el-form>
 
 
-              <!--===================================================================================添加医嘱嘱托、计量、数量、频率-->
-<!--              <el-dialog v-model="isDoctorEnjoinMessageShow" top="14%" @close="closeDoctorEnjoinMassageFunction" :title="DoctorEnjoinMassageTitle">-->
-
-<!--                <el-form>-->
-<!--                  <el-row style="margin-top: 30px">-->
-<!--                    <el-col  :span="7">-->
-<!--                      <el-form-item label="数量" label-width="50px">-->
-<!--                          <el-input v-model="DoctorEnjoinMassageObj.desCount" />-->
-<!--                      </el-form-item>-->
-<!--                    </el-col>-->
-
-<!--                    <el-col :offset="1" :span="7">-->
-<!--                      <el-form-item label="计量" label-width="50px">-->
-<!--                        <el-input placeholder="计量" v-model="DoctorEnjoinMassageObj.desMeasure" />-->
-<!--                      </el-form-item>-->
-<!--                    </el-col>-->
-
-<!--                    <el-col :offset="1" :span="7">-->
-<!--                      <el-form-item label="频率" label-width="50px">-->
-<!--                        <el-select v-model="DoctorEnjoinMassageObj.desFrequency">-->
-<!--                          <el-option value="1" label="pd"/>-->
-<!--                          <el-option value="2" label="bid" />-->
-<!--                          <el-option value="3" label="tid"/>-->
-<!--                        </el-select>-->
-<!--                      </el-form-item>-->
-<!--                    </el-col>-->
-<!--                  </el-row>-->
-
-<!--                  <el-row>-->
-<!--                    <el-col  :span="23">-->
-<!--                      <el-form-item label="嘱托" label-width="50px">-->
-<!--                        <el-input type="textarea" v-model="DoctorEnjoinMassageObj.desText" placeholder="嘱托内容" />-->
-<!--                      </el-form-item>-->
-<!--                    </el-col>-->
-<!--                  </el-row>-->
-<!--                </el-form>-->
-
-<!--                <template #footer>-->
-<!--                  <el-row>-->
-<!--                    <el-col :span="18"></el-col>-->
-<!--                    <el-col :span="2">-->
-<!--                      <el-button size="small" @click="addDoctorEnjoinMassageFunction" type="primary">确定</el-button>-->
-<!--                    </el-col>-->
-<!--                    <el-col :span="1"></el-col>-->
-<!--                    <el-col :span="2">-->
-<!--                      <el-button size="small" @click="isShowZY = false" type="danger">取消</el-button>-->
-<!--                    </el-col>-->
-<!--                    <el-col :span="1"></el-col>-->
-<!--                  </el-row>-->
-<!--                </template>-->
-<!--              </el-dialog>-->
-
             </el-tab-pane>
 
             <!--==========================================================================查看医嘱-->
             <el-tab-pane name="查看医嘱" :key="'查看医嘱'" label="查看医嘱">
-              <el-form>
-              <el-row style="height: 36px;">
-
-                  <el-col :span="7">
-                    <el-form-item label="展示："  label-width="80px">
-                      <el-radio-group v-model="isMainOrMinor" :disabled="isMainOrMinor == 3"  @change="selectLookDoctorEnjoinTable">
-                        <el-radio :label="2">医嘱单</el-radio>
-                        <el-radio :label="1">医嘱详单</el-radio>
-                      </el-radio-group>
-<!--                      <el-select :disabled="isMainOrMinor == ''" @change="selectLookDoctorEnjoinTable" v-model="isMainOrMinor" size="mini">-->
-<!--                        <el-option :value="1" label="查看所有信息"></el-option>-->
-<!--                        <el-option :value="2" label="查看主表"></el-option>-->
-<!--                      </el-select>-->
-                    </el-form-item>
-                  </el-col>
-
-                  <el-col :offset="2" :span="4">
-                    <el-form-item  v-if="isMainOrMinor == 3">
-                      <el-button size="mini" @click="lookDoctorEnjoinDetailsAll" type="primary">
-                        查看所有医嘱
-                      </el-button>
-                    </el-form-item>
-                  </el-col>
-
-<!--                <el-col :offset="1" :span="2">-->
-<!--                  <el-form-item  v-if="isMainOrMinor == 1">-->
-<!--                    <el-button size="mini" @click="lookDoctorEnjoinDetailsAll" type="primary">-->
-<!--                      批量停嘱-->
-<!--                    </el-button>-->
-<!--                  </el-form-item>-->
-<!--                </el-col>-->
-
-<!--                <el-col :offset="1" :span="1">-->
-<!--                  <el-form-item  v-if="isMainOrMinor == 1">-->
-<!--                    <el-date-picker style="width: 130px" :disabled="doctorEnjoinObj.deId != ''"-->
-<!--                                    @change="doctorEnjoinDate"-->
-<!--                                    size="mini"-->
-<!--                                    v-model="doctorEnjoinObj.deExecuteDate"-->
-<!--                                    type="date"-->
-<!--                                    placeholder="执行日期">-->
-<!--                    </el-date-picker>-->
-<!--                  </el-form-item>-->
-<!--                </el-col>-->
-
-                <el-col :offset="6" :span="5">
-                  <el-form-item>
-                    <el-tag type="info" effect="dark">可执行</el-tag>&nbsp;
-                    <el-tag type="danger" effect="dark">已停用</el-tag>&nbsp;
-                    <el-tag effect="dark">临时医嘱</el-tag>&nbsp;
-                  </el-form-item>
+              <el-row>
+                <el-col style="padding-left: 15px;margin-top: 6px" :span="5">
+                    <el-radio-group v-model="isMainOrMinor" size="mini" :disabled="isMainOrMinor == 3"  @change="selectLookDoctorEnjoinTable">
+                      <el-radio :label="2">医嘱单</el-radio>
+                      <el-radio :label="1">医嘱详单</el-radio>
+                    </el-radio-group>
                 </el-col>
 
+                <el-col :span="4">
+                  <span style="font-size: 12px;">医嘱类型:</span>&nbsp;
+                  <el-select @change="selectLookDoctorEnjoinTable" v-model="doctorEnjoinWhere.doctorType" placeholder="请选择" style="width: 90px" size="mini">
+                    <el-option label="全部医嘱" :value="0"></el-option>
+                    <el-option label="长期医嘱" :value="1"></el-option>
+                    <el-option label="临时医嘱" :value="2"></el-option>
+                  </el-select>
+                </el-col>
+
+
+                <el-col  :span="8">
+                  &nbsp;<span style="font-size: 12px;">执行日期：</span>&nbsp;
+
+                  <el-date-picker style="width: 125px" @change="selectLookDoctorEnjoinTable" v-model="doctorEnjoinWhere.startDate"
+                                  type="date"
+                                  size="mini"
+                                  placeholder="日期">
+                  </el-date-picker>
+                  &nbsp;<span style="font-size: 12px;">至</span>&nbsp;
+                  <el-date-picker style="width: 125px" @change="selectLookDoctorEnjoinTable" v-model="doctorEnjoinWhere.endDate"
+                                  type="date"
+                                  size="mini"
+                                  placeholder="日期">
+                  </el-date-picker>
+                </el-col>
+
+                <el-col  :span="5">
+                    <el-tag size="small" type="info" effect="dark">可执行</el-tag>&nbsp;
+                    <el-tag type="danger" size="small" effect="dark">已停用</el-tag>&nbsp;
+                    <el-tag effect="dark" size="small">临时医嘱</el-tag>&nbsp;
+                </el-col>
+
+                <el-col  v-if="isMainOrMinor == 3" :span="1">
+                    <el-button size="mini" @click="lookDoctorEnjoinDetailsAll" type="primary">
+                      查看所有医嘱
+                    </el-button>
+                </el-col>
               </el-row>
-              </el-form>
+
+
               <el-divider></el-divider>
 
               <!--查看主表医嘱-->
@@ -617,10 +570,10 @@
               <lokkCaseHistory ref="lokkCaseHistoryRef" :patient-obj="patientBaseObj"></lokkCaseHistory>
             </el-tab-pane>
 
-            <el-tab-pane name="化验项目" :key="'化验项目'" label="化验项目">
+            <el-tab-pane name="检验项目" :key="'检验项目'" label="检验项目">
               <labWork :patient-obj="patientBaseObj"></labWork>
             </el-tab-pane>
-            <el-tab-pane name="化验结果" :key="'化验结果'" label="化验结果">
+            <el-tab-pane name="检验结果" :key="'检验结果'" label="检验结果">
               <lab-work-result ref="resultFun" :patient-obj="patientBaseObj"></lab-work-result>
             </el-tab-pane>
           </el-tabs>
@@ -635,7 +588,8 @@
 import labWork from "./MAMOperation/labWork.vue";//化验项目页面
 import labWorkResult from "./MAMOperation/labWorkResult.vue";//查看化验结果页面
 import CaseHistory from "./MAMOperation/CaseHistory.vue";//添加病例页面
-import lokkCaseHistory from "./MAMOperation/lookCaseHistory.vue";//查看病历页面
+import lokkCaseHistory from "./MAMOperation/lookCaseHistory.vue";
+//查看病历页面
 
 export default{
   components:{labWork,labWorkResult,CaseHistory,lokkCaseHistory},
@@ -643,6 +597,18 @@ export default{
     return{
       //========================================================================员工数据
       staff:{},//员工对象
+      staffKsName:'',//科室名称
+
+      //======================查询条件数据
+      doctorEnjoinWhere:{
+        startDate:'',//开始日期
+        endDate:'',//结束日期
+        searchLike:'',//模糊搜索
+        doctorType:0,//医嘱类型
+        sIdArr:[],//员工编号数组
+        ksIdArr:[],//科室编号数组
+        ptNo:''
+      },
 
 
       //========================================================================病人数据
@@ -732,7 +698,7 @@ export default{
         sdeDate:'',//停嘱日期
         ptNo:''//病人住院号
       },
-
+      currentTime:'',//时间
       //========================================================================医嘱信息数据
       isDoctorEnjoinMessageShow:false,//是否显示医嘱信息弹框
       DoctorEnjoinMassageObj:{//医嘱信息对象
@@ -785,8 +751,11 @@ export default{
       }).then((v) => {
         console.log(v.data)
         this.patientBaseArr = v.data;
-
       }).catch();
+      this.axios({url:'select-ks-obj',params:{ksId:this.staff.ksId}}).then((v)=>{
+        this.staffKsName = v.data.ksName;
+      }).catch();
+      this.doctorEnjoinObj.deExecuteDate = new Date();
 
       this.axios.post('select-drug-usage').then((v) => {
         this.searchDrugUsageArr = v.data;
@@ -806,7 +775,7 @@ export default{
     selectAddDoctorEnjoinTable(){
       if(this.doctorEnjoinObj.deLongorshort == 1){
         if(this.doctorEnjoinObj.dedList.length > 0){
-          this.$confirm("切换长期医嘱需要将药品数据情况  是否清空", '提示信息', {
+          this.$confirm("切换长期医嘱需要将药品数据清空   是否清空？", '提示信息', {
             distinguishCancelAndClose: true,
             confirmButtonText: "清空",
             cancelButtonText: "取消"
@@ -823,18 +792,18 @@ export default{
       }
     },
 
-
     //=======================================================================查看医嘱方法
     //切换查看医嘱表格
     selectLookDoctorEnjoinTable(){
       if(this.patientBaseObj.ptNo != undefined){
+        this.doctorEnjoinWhere.ptNo = this.patientBaseObj.ptNo;
         if(this.isMainOrMinor == 2){
-            this.axios({url:'select-doctorEnjoin-ByPtNo',params:{ptNo:this.patientBaseObj.ptNo}}).then((v)=>{
+            this.axios.post('select-doctorEnjoin-ByPtNo',this.doctorEnjoinWhere).then((v)=>{
               console.log(v.data);
               this.doctorEnjoinArr = v.data;
             }).catch((data)=>{})
         }else{
-          this.axios({url:'select-doctorEnjoinDetails-ByPtNo',params:{ptNo:this.patientBaseObj.ptNo}}).then((v)=>{
+          this.axios.post('select-doctorEnjoinDetails-ByPtNo',this.doctorEnjoinWhere).then((v)=>{
             console.log(v.data)
             this.doctorEnjoinDetailsArr = v.data;
           })
@@ -1163,7 +1132,7 @@ export default{
       if(this.doctorEnjoinObj.deLongorshort == 1){
         this.drugSearch.searchIs = 1;
       }else{
-        this.drugSearch.searchIs = null;
+        this.drugSearch.searchIs = '';
       }
       this.axios.post('select-drug-drugName', this.drugSearch).then((v) => {
         console.log(v.data)
@@ -1266,25 +1235,13 @@ export default{
       if(this.maxCard == '开立医嘱'){
 
       }else if(this.maxCard == '查看医嘱'){
-        if(this.patientBaseObj.ptNo != undefined){
-          if(this.isMainOrMinor == 2){
-            this.axios({url:'select-doctorEnjoin-ByPtNo',params:{ptNo:this.patientBaseObj.ptNo}}).then((v)=>{
-              console.log(v.data);
-              this.doctorEnjoinArr = v.data;
-            }).catch((data)=>{})
-          }else{
-            this.axios({url:'select-doctorEnjoinDetails-ByPtNo',params:{ptNo:this.patientBaseObj.ptNo}}).then((v)=>{
-              console.log(v.data)
-              this.doctorEnjoinDetailsArr = v.data;
-            })
-          }
-        }
-      }else if(this.maxCard == '化验项目'){
+        this.selectLookDoctorEnjoinTable();
+      }else if(this.maxCard == '检验项目'){
 
       }else if(this.maxCard == '查看病历'){
         this.$refs.lokkCaseHistoryRef.changeCase();
 
-      }else if(this.maxCard == '化验结果'){
+      }else if(this.maxCard == '检验结果'){
         this.$refs.resultFun.initResultMan();
       }
     },
@@ -1377,11 +1334,31 @@ export default{
       this.doctorEnjoinDetailsCurrentPage = currentPage;
     },
 
+    //时间方法
+    appendZero(obj) {
+      if (obj < 10) {
+        return "0" + obj;
+      } else {
+        return obj;
+      }
+    },
 
   },
   created() {
     this.staff = this.$store.state.token.list;//将登录存入的值在取出来
     this.operationInit();//初始化页面数据
+    //初始化当前时间
+    var vm = this;
+    vm.date_value = setInterval(() => {
+      var y = new Date().getFullYear();
+      var m = vm.appendZero(new Date().getMonth() + 1);
+      var d = vm.appendZero(new Date().getDate());
+      var ho = vm.appendZero(new Date().getHours());
+      var mi = vm.appendZero(new Date().getMinutes());
+      var miao  =vm.appendZero(new Date().getSeconds())
+      //修改数据date
+      vm.currentTime = y + "/" + m + '/' + d + ' ' + ho + ':' + mi+':'+ miao;
+    }, 1000);
   }
 }
 </script>

@@ -104,6 +104,13 @@ export default {
   },
   methods:{
     caseShow(){
+      if(this.patientObj.ptNo == undefined){
+        this.$message({
+          type: 'error',
+          message: '请选择病人'
+        });
+        return;
+      }
       this.isShowCase = true;//打开弹框
     },
 

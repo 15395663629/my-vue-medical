@@ -1,12 +1,47 @@
 <template>
 <!--最上面按钮栏-->
-  <el-row>
-    <el-col :offset="19" :span="5">
-        <el-tag type="info" effect="dark">未检查</el-tag>&nbsp;
-        <el-tag type="danger" effect="dark">已取消</el-tag>&nbsp;
-        <el-tag effect="dark">已检查</el-tag>&nbsp;
-    </el-col>
-  </el-row>
+  <!--==========================================================================查看医嘱-->
+    <el-row>
+
+      <el-col style="margin-left: 15px" :span="4">
+        <el-input size="mini" v-model="doctorEnjoinWhere.searchLike" placeholder="病人姓名或者住院号"></el-input>
+      </el-col>
+      <el-col  :span="1">
+        <el-button size="mini" @click="initResultMan" icon="el-icon-search" type="primary" ></el-button>
+      </el-col>
+
+      <el-col  style="margin-left: 10px;" :span="5">
+        <span style="font-size: 12px;">开立医生：</span>&nbsp;
+        <el-select @change="initResultMan"  placeholder="请选择"  style="width: 160px" v-model="doctorEnjoinWhere.sIdArr" multiple collapse-tags size="mini">
+          <el-option v-for="st in staffArr"
+                     :label="st.sname"
+                     :value="st.sid"/>
+        </el-select>
+      </el-col>
+
+      <el-col  :span="8">
+        &nbsp;<span style="font-size: 12px;">开立时间：</span>&nbsp;
+
+        <el-date-picker style="width: 125px" @change="initResultMan" v-model="doctorEnjoinWhere.startDate"
+                        type="date"
+                        size="mini"
+                        placeholder="日期">
+        </el-date-picker>
+        &nbsp;<span style="font-size: 12px;">至</span>&nbsp;
+        <el-date-picker style="width: 125px" @change="initResultMan" v-model="doctorEnjoinWhere.endDate"
+                        type="date"
+                        size="mini"
+                        placeholder="日期">
+        </el-date-picker>
+      </el-col>
+
+      <el-col :span="5">
+        <el-tag type="info" size="small" effect="dark">未检查</el-tag>&nbsp;
+        <el-tag type="danger" size="small" effect="dark">已取消</el-tag>&nbsp;
+        <el-tag effect="dark" size="small">已检查</el-tag>&nbsp;
+      </el-col>
+
+    </el-row>
 
   <!--化验表格-->
   <el-row>
@@ -38,6 +73,17 @@ export default {
     return{
       //===============化验项目结果数据
       ResultTextArr:[],//化验结果数组
+      //======================查询条件数据
+      doctorEnjoinWhere:{
+        startDate:'',//开始日期
+        endDate:'',//结束日期
+        searchLike:'',//模糊搜索
+        doctorType:0,//医嘱类型
+        sIdArr:[],//员工编号数组
+        ksIdArr:[],//科室编号数组
+        ptNo:''
+      },
+      staffArr:[],//员工数组
 
       //员工对象
       staff:{}
@@ -48,8 +94,13 @@ export default {
       if(this.patientObj.ptNo == null ||  this.patientObj.ptNo == ''){
         return;
       }
-      this.axios({url:"select-manResult-byPtNo",params:{ptNo:this.patientObj.ptNo}}).then((v)=>{
+      this.doctorEnjoinWhere.ptNo = this.patientObj.ptNo;
+      this.axios.post("select-manResult-byPtNo",this.doctorEnjoinWhere).then((v)=>{
         this.ResultTextArr = v.data;
+      }).catch();
+
+      this.axios({url:'select-result-ByManId-Staff',params:{ptNo:this.patientObj.ptNo}}).then((v)=>{
+        this.staffArr = v.data;
       }).catch();
     },
     //取消项目方法

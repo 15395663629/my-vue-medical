@@ -104,15 +104,55 @@
 		
 	</el-dialog>
 	
-	<el-row>
-		<el-col :span="1">
-			<el-button size="mini" @click="openFormSick" type="primary">新增</el-button>
-		</el-col>
-	</el-row>
+
+  <!--=============================================查询条件===================================-->
+  <el-row style="margin-bottom:10px">
+
+    <el-col :span="2">
+      <el-button size="mini" @click="openFormSick" type="primary">新增</el-button>
+    </el-col>
 
 
+    <el-col :offset="2" :span="5">
+      <el-input size="mini" v-model="doctorEnjoinWhere.searchLike" placeholder="病人姓名或者住院号"></el-input>
+    </el-col>
+    <el-col  :span="1">
+      <el-button size="mini" @click="hospitalInit" icon="el-icon-search" type="primary" ></el-button>
+    </el-col>
 
-	<el-row>
+    <el-col :offset="1" :span="3">
+      <span style="font-size: 12px;">科室：</span>&nbsp;
+      <el-select size="mini" v-model="doctorEnjoinWhere.doctorType" placeholder="请选择" @change="hospitalInit"  style="width: 100px" >
+        <el-option label="全部科室" value=""></el-option>
+        <el-option v-for="ks in ksArr"
+                   :label="ks.ksName"
+                   :value="ks.ksId">
+        </el-option>
+      </el-select>
+    </el-col>
+
+
+    <el-col :offset="1" :span="9">
+      &nbsp;<span style="font-size: 12px;">日期区间：</span>&nbsp;
+
+      <el-date-picker style="width: 160px" @change="hospitalInit" v-model="doctorEnjoinWhere.startDate"
+                      type="date"
+                      size="mini"
+                      value-format="YYYY-MM-DD"
+                      placeholder="日期">
+      </el-date-picker>
+      &nbsp;<span style="font-size: 12px;">至</span>&nbsp;
+      <el-date-picker style="width: 160px" @change="hospitalInit" v-model="doctorEnjoinWhere.endDate"
+                      type="date"
+                      size="mini"
+                      value-format="YYYY-MM-DD"
+                      placeholder="日期">
+      </el-date-picker>
+    </el-col>
+  </el-row>
+
+
+  <el-row>
 		<el-col>
 			<!--=============================================住院申请病人表格===================================-->
 				<el-table
@@ -143,16 +183,7 @@
 					  label="住院科室">
 					</el-table-column>
 					
-					<el-table-column width="200px"
-					      align="right">
-					      <template  #header>
-					        <el-input
-					          v-model="fromSearch"
-								prefix-icon="el-icon-search"
-					          size="small"
-					          placeholder="病人名称搜索"/>
-					      </template>
-						  
+					<el-table-column  label="操作">
 						  <!--这里放操作按钮-->
 						  <template  #default='scope'>
 						  	<el-button size="mini" type="danger" icon="el-icon-delete" @click="callHospital(scope.row)">取消申请</el-button>
@@ -263,7 +294,36 @@
 
   export default {
 	    data(){
+        var checkPhone = (rule, value, callback) => {//电话号码验证
+          const phoneReg = /^1[3|4|5|7|8][0-9]{9}$/
+          if (!value) {
+            return callback(new Error('电话号码不能为空'))
+          }
+          setTimeout(() => {
+            if (!Number.isInteger(+value)) {
+              callback(new Error('请输入数字值'))
+            } else {
+              if (phoneReg.test(value)) {
+                callback()
+              } else {
+                callback(new Error('电话号码格式不正确'))
+              }
+            }
+          }, 100)
+        }
 	        return {
+            rules: {//非空校验
+              sickIdCard: [{ required: true, message: "身份证不能为空", trigger: 'blur' },
+                { min: 6, max: 18, message: "身份证格式大于或小于18位", trigger: 'blur' }],
+              sickPhone: [{ required: true, trigger: 'blur',validator:checkPhone }],
+              sickName:[{required: true, message: "输入栏不能为空", trigger: 'blur'}],
+              // sickSex:[{required: true, message: "输入栏不能为空", trigger: 'blur'},],
+              // sickAge: [{required: true, message: "输入栏不能为空", trigger: 'blur'},],
+              // mcNumberCard:[{required: true, message: "请生成诊疗卡", trigger: 'blur'}],
+              ksId:[{required:true,message:"请选择住院科室！",trigger:'blur'}],
+              // sId:[{required:true,message:"请选择治疗医生！",trigger:'blur'}],
+            },
+
             //====================================住院申请数据
             InhospitalApplyObj:{//住院申请对象
               name:'',
@@ -278,19 +338,15 @@
               sId:''//主治医生
             },
             isShow3:false,//弹窗 - 病人新增
-
-            rules: {//非空校验
-              sickIdCard: [{ required: true, message: "身份证不能为空", trigger: 'blur' },
-                { min: 6, max: 18, message: "身份证格式大于或小于18位", trigger: 'blur' }],
-              sickPhone: [{ required: true, message: "电话不能为空", trigger: 'blur' },],
-              sickName:[{required: true, message: "输入栏不能为空", trigger: 'blur'}],
-              // sickSex:[{required: true, message: "输入栏不能为空", trigger: 'blur'},],
-              // sickAge: [{required: true, message: "输入栏不能为空", trigger: 'blur'},],
-              // mcNumberCard:[{required: true, message: "请生成诊疗卡", trigger: 'blur'}],
-              ksId:[{required:true,message:"请选择住院科室！",trigger:'blur'}],
-              // sId:[{required:true,message:"请选择治疗医生！",trigger:'blur'}],
+            //======================查询条件数据
+            doctorEnjoinWhere:{
+              startDate:'',//开始日期
+              endDate:'',//结束日期
+              searchLike:'',//模糊搜索
+              doctorType:'',//医嘱类型
+              sIdArr:[],//员工编号
+              ptNo:''
             },
-
             InhospitalApplyArr:[],//住院申请数组
             isShowXZBR:false,//是否显示住院申请弹框
 
@@ -321,8 +377,9 @@
 	    methods: {
         //=========================初始化住院申请信息
         hospitalInit(){
-          this.axios({url:'selectNoHspApply'}).then((v)=>{
+          this.axios.post('selectNoHspApply',this.doctorEnjoinWhere).then((v)=>{
             this.InhospitalApplyArr = v.data;
+            console.log(v.data)
           }).catch((data)=>{
 
           });
@@ -343,7 +400,6 @@
           this.mzSickArr.operatorId = this.staff.sid;
           this.$refs[formName].validate((valid) => {
             if (valid) {
-
               this.axios.post("add-inHospital-mzSick", this.mzSickArr).then((res) => {
                 console.log(res.data)
                 if (res.data) {
@@ -451,7 +507,7 @@
 	    },
     created() {
       this.staff = this.$store.state.token.list;//将登录存入的值在取出来
-        this.hospitalInit();//初始化信息
+      this.hospitalInit();//初始化信息
     }
 
   }

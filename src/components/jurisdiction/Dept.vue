@@ -64,7 +64,7 @@
 	      </span>
 	    </template>
 	  </el-dialog>
-	
+
 </template>
 
 <script>
@@ -111,10 +111,10 @@
           page:1,
           selectData:[]
 
-			 
+
 	      }
 	    },
-	
+
 	    methods: {
         // 文件状态改变时的钩子，添加文件、上传成功和上传失败时都会被调用
         async handle(ev) {

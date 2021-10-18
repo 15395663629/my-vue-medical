@@ -1,21 +1,30 @@
 <template>
   <el-container style="height: 100%;">
-    <el-header height="30px"  style="line-height: 30px; background-color: #B3C0D1;color: #333;">
-      <!-- <newDateOPC style="margin: 0px; padding: 0px;"></newDateOPC> -->
-
-    </el-header>
     <el-container style="height: 100%;">
 
       <el-aside width="350px" style="background-color: #E7ECF1;color: #333;"> <!-- 右边 -->
 
-        <el-row style="background-color: #D3DCE6;padding-bottom: 10px;">
-          <el-col style="font-size: 18px" :offset="7" :span="14">
-            护士工作站  医嘱执行
+        <el-row style="height: 30px;background-color: #D3DCE6;line-height: 30px">
+          <el-col style="margin-left: 130px" >
+            护士工作站
           </el-col>
         </el-row>
-        <el-row style="background-color: #D3DCE6; padding-bottom: 80px">
-          <el-col style="font-size: 14px" :offset="7" :span="14">
-            当前操作员：{{staff.sname}}
+
+        <el-row style="height: 30px;background-color: #D3DCE6;line-height: 30px">
+          <el-col style="color: red" :offset="7" :span="12">
+            {{currentTime}}
+          </el-col>
+        </el-row>
+
+        <el-row style="height: 30px;background-color: #D3DCE6;line-height: 30px">
+          <el-col style="margin-left: 125px">
+            <span style="font-size: 14px">所属科室 ：</span><span style="font-size: 14px">{{staffKsName}}</span>
+          </el-col>
+        </el-row>
+
+        <el-row style="height: 30px;background-color: #D3DCE6;line-height: 30px">
+          <el-col style="margin-left: 115px" >
+            <span style="font-size: 14px">医生名称 ：</span><span style="font-size: 14px">{{staff.sname}}</span>
           </el-col>
         </el-row>
 
@@ -70,10 +79,10 @@
       </el-aside>
 
       <el-container style="height: 100%;"><!-- 右边 -->
-        <el-header height="120px"  style=" background-color: #B3C0D1;color: #333;"><!-- 头部信息按钮部分-->
+        <el-header height="120px"  style=" background-color: #B3C0D1;color: #333;padding-top: 15px;"><!-- 头部信息按钮部分-->
           <el-form  >
             <el-row>
-              <el-col :offset="1" :span="4">
+              <el-col :span="4">
                 <el-form-item label="住院号" label-width="70px" style="margin-bottom: 0px">
                   <el-input size="mini"  v-model="patientBaseObj.ptNo" class="patientText"  disabled></el-input>
                 </el-form-item>
@@ -83,12 +92,12 @@
                   <el-input  size="mini" class="patientText" v-model="patientBaseObj.ptName"   disabled></el-input>
                 </el-form-item>
               </el-col>
-              <el-col :span="3">
+              <el-col :span="4">
                 <el-form-item label="性别"  label-width="50px"  style="margin-bottom: 0px">
                   <el-input  size="mini" class="patientText" v-model="patientBaseObj.ptSex"  disabled></el-input>
                 </el-form-item>
               </el-col>
-              <el-col :span="3">
+              <el-col :span="4">
                 <el-form-item label="年龄" label-width="50px"  style="margin-bottom: 0px">
                   <el-input  size="mini" class="patientText" v-model="patientBaseObj.ptAge" disabled></el-input>
                 </el-form-item>
@@ -98,21 +107,25 @@
                   <el-input size="mini" class="patientText" v-model="patientBaseObj.ptIphone"  disabled></el-input>
                 </el-form-item>
               </el-col>
-              <el-col  :span="5">
-                <el-form-item label="入院时间" label-width="80px" style="margin-bottom: 0px">
-                  <el-input  size="mini" class="patientText" v-model="patientBaseObj.ptInDate"  disabled></el-input>
+              <el-col :span="4">
+                <el-form-item label="管理护士" label-width="80px"  style="margin-bottom: 0px">
+                  <el-input size="mini" class="patientText" v-model="patientBaseObj.sName" disabled></el-input>
                 </el-form-item>
               </el-col>
             </el-row>
 
-
             <el-row style="margin-top: 15px">
-              <el-col :offset="1" :span="4">
+              <el-col  :span="6">
+                <el-form-item label="入院时间" label-width="80px" style="margin-bottom: 0px">
+                  <el-input  size="mini" class="patientText" v-model="patientBaseObj.ptInDate"  disabled></el-input>
+                </el-form-item>
+              </el-col>
+              <el-col :span="4">
                 <el-form-item label="住院天数" label-width="80px"  style="margin-bottom: 0px">
                   <el-input  size="mini" class="patientText" v-model="patientBaseObj.ptInDay"  disabled></el-input>
                 </el-form-item>
               </el-col>
-              <el-col :span="6">
+              <el-col :span="4">
                 <el-form-item label="入院诊断"  label-width="80px"  style="margin-bottom: 0px">
                   <el-input class="patientText" style="cursor: pointer;"  v-model="patientBaseObj.ptDiagnoseName" size="mini"  disabled></el-input>
                 </el-form-item>
@@ -122,14 +135,9 @@
                   <el-input class="patientText" size="mini" v-model="patientBaseObj.ksName"  disabled></el-input>
                 </el-form-item>
               </el-col>
-              <el-col :span="5">
+              <el-col :span="4">
                 <el-form-item label="病床" label-width="50px"  style="margin-bottom: 0px">
                   <el-input class="patientText" size="mini" v-model="patientBaseObj.bdName"   disabled></el-input>
-                </el-form-item>
-              </el-col>
-              <el-col :span="4">
-                <el-form-item label="管理护士" label-width="80px"  style="margin-bottom: 0px">
-                  <el-input size="mini" class="patientText" v-model="patientBaseObj.sName" disabled></el-input>
                 </el-form-item>
               </el-col>
             </el-row>
@@ -172,7 +180,7 @@
                     <!--========================================================费用信息弹框========================-->
                     <el-dialog title="费用信息" v-model="isShowAddPayText" @close="closePatientPay">
 
-                      <el-form>
+                      <el-form :rules="patientPayObjRules" ref="patientPayObj" :model="patientPayObj">
                         <el-row>
                           <el-col>
                             <el-form-item label="当前操作人：" label-width="100px">
@@ -191,7 +199,7 @@
                           <el-row>
 
                             <el-col  :span="12">
-                              <el-form-item label="费用内容：" label-width="100px">
+                              <el-form-item prop="poText" label="费用内容：" label-width="100px">
                                 <el-select
                                     v-model="patientPayObj.poText"
                                     filterable
@@ -209,8 +217,8 @@
 
 
                           <el-col :offset="1" :span="8">
-                            <el-form-item label="费用：" label-width="70px">
-                              <el-input v-model="patientPayObj.poPrice"  placeholder="费用"></el-input>
+                            <el-form-item prop="poPrice" label="费用：" label-width="70px">
+                              <el-input onkeyup="value=value.replace(/[^\d^\.]+/g,'').replace('.','$#$').replace(/\./g,'').replace('$#$','.')"  v-model="patientPayObj.poPrice"  placeholder="费用"></el-input>
                             </el-form-item>
                           </el-col>
                         </el-row>
@@ -238,16 +246,16 @@
 
                   <el-col :offset="1" :span="2">
                     <el-form-item>
-                      <el-button :disabled="!patientBaseObj.ptName != ''" type="success" size="mini">全部打印</el-button>
+                      <el-button :disabled="!patientBaseObj.ptName != ''" type="success" size="mini">打印</el-button>
 
                     </el-form-item>
                   </el-col>
 
-                  <el-col :offset="1" :span="2">
-                    <el-form-item>
-                      <el-button :disabled="!patientBaseObj.ptName != ''" type="success" size="mini">打印已选择</el-button>
-                    </el-form-item>
-                  </el-col>
+<!--                  <el-col :offset="1" :span="2">-->
+<!--                    <el-form-item>-->
+<!--                      <el-button :disabled="!patientBaseObj.ptName != ''" type="success" size="mini">打印已选择</el-button>-->
+<!--                    </el-form-item>-->
+<!--                  </el-col>-->
 
                   <el-col :offset="4" :span="5">
                     <el-form-item>
@@ -327,6 +335,11 @@ export default{
 
   data(){
     return{
+      //================================================校验
+      patientPayObjRules: {//非空校验
+        poText:[{required:true,message:"费用内容不能为空！",trigger:'change'}],
+        poPrice:[{required:true,message:"费用不能为空！",trigger:'blur'}],
+      },
       //========================================================================员工数据
       staff:{},//员工对象
 
@@ -337,7 +350,7 @@ export default{
       patientQueryText:'',//病人查询值
       patientBaseArr:[],//病人数组
       tabPaneIs:'0',//选中病人查看
-
+      currentTime:'',
 
       //=========================医嘱卡片数据
       maxCard:'执行医嘱',//卡片当前位置
@@ -348,7 +361,7 @@ export default{
 
       },
       deptDrugAllotAll:[],//科室药品库存调拨记录数组
-
+      staffKsName:'',
       //============================================病人费用信息
       isShowAddPayText:false,//是否显示病人费用信息弹框
       patientPayObj:{//病人新开费用对象
@@ -409,6 +422,9 @@ export default{
         params: {sId: this.staff.sid, ksId:this.staff.ksId, text:this.patientQueryText,is:2}
       }).then((v) => {
         this.patientBaseArr = v.data;
+      }).catch();
+      this.axios({url:'select-ks-obj',params:{ksId:this.staff.ksId}}).then((v)=>{
+        this.staffKsName = v.data.ksName;
       }).catch();
 
       //初始化科室药品库存数据
@@ -583,17 +599,22 @@ export default{
     },
     //新增病人费用信息方法
     addPatientPay(){
-      console.log(this.patientPayObj)
-      this.axios.post("addPatientPay",this.patientPayObj).then((v)=>{
-        this.$message({
-          type: 'success',
-          message: '添加成功！！'
-        });
-        this.isShowAddPayText = false;
-      }).catch();
+      this.$refs['patientPayObj'].validate((valid)=>{
+        if(valid){
+          console.log(this.patientPayObj)
+          this.axios.post("addPatientPay",this.patientPayObj).then((v)=>{
+            this.$message({
+              type: 'success',
+              message: '添加成功！！'
+            });
+            this.isShowAddPayText = false;
+          }).catch();
+        }
+      })
     },
     //关闭新增病人费用弹框
     closePatientPay(){
+      this.$refs['patientPayObj'].resetFields();
       this.isShowAddPayText = false;//关闭病人费用信息弹框
       this.patientPayObj = {//病人新开费用对象
         poText:'',
@@ -706,11 +727,32 @@ export default{
     doctorEnjoinDetailsCurrentChange: function(currentPage) {
       this.doctorEnjoinDetailsCurrentPage = currentPage;
     },
+    //时间方法
+    appendZero(obj) {
+      if (obj < 10) {
+        return "0" + obj;
+      } else {
+        return obj;
+      }
+    },
 
   },
   created() {
+    var vm = this;
+    vm.date_value = setInterval(() => {
+      var y = new Date().getFullYear();
+      var m = vm.appendZero(new Date().getMonth() + 1);
+      var d = vm.appendZero(new Date().getDate());
+      var ho = vm.appendZero(new Date().getHours());
+      var mi = vm.appendZero(new Date().getMinutes());
+      var miao  =vm.appendZero(new Date().getSeconds())
+      //修改数据date
+      vm.currentTime = y + "/" + m + '/' + d + ' ' + ho + ':' + mi+':'+ miao;
+    }, 1000);
     this.staff = this.$store.state.token.list;//将登录存入的值在取出来
     this.operationInit();//初始化页面数据
+    //初始化当前时间
+
   }
 }
 </script>
