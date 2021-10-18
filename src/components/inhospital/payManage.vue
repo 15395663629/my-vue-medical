@@ -1,7 +1,8 @@
+
 <template>
 	<!--=============================================新增病人缴费单弹框===================================-->
 	<el-dialog title="病人缴费" @close="closePayBt" width="45%" v-model="isPayShow">
-		<el-form>
+		<el-form ref="payObj" :rules="payObjRules" :model="payObj">
       <el-row>
         <el-col :offset="1" :span="9">
           <el-form-item label="病人姓名" label-width="80px">
@@ -25,15 +26,15 @@
         </el-col>
 
 				<el-col :offset="1" :span="9">
-					<el-form-item label="缴费金额" label-width="80px">
-						<el-input size="medium"  onkeyup="value=value.replace(/[^\d]/g,'')"  v-model="payObj.pyPrice"></el-input>
+					<el-form-item prop="pyPrice" label="缴费金额" label-width="80px">
+						<el-input size="medium"  onkeyup="value=value.replace(/[^\d^\.]+/g,'').replace('.','$#$').replace(/\./g,'').replace('$#$','.')"  v-model="payObj.pyPrice"></el-input>
 					</el-form-item>
 				</el-col>
 			</el-row>
 
       <el-row>
         <el-col :offset="1">
-          <el-form-item label-width="80px" label="请选择:" prop="payment">
+          <el-form-item  label-width="80px" label="请选择:" prop="pyWay">
             <el-radio-group v-model="payObj.pyWay" size="small">
               <el-radio label="现金">现金</el-radio>
               <el-radio label="微信">微信</el-radio>
@@ -48,7 +49,7 @@
 				<el-row>
 					<el-col :span="18"></el-col>
 					<el-col :span="2">
-						<el-button size="mini" @click="addPayFunction('empFrom')" type="primary">确定</el-button>
+						<el-button size="mini" @click="addPayFunction()" type="primary">确定</el-button>
 					</el-col>
 					<el-col :span="1"></el-col>
 					<el-col :span="2">
@@ -111,6 +112,7 @@
           <el-tab-pane label="床位费用" name="床位费用" />
           <el-tab-pane label="化验项目费用" name="化验项目费用" />
           <el-tab-pane label="其它费用" name="其它费用" />
+          <el-tab-pane label="手术费用" name="手术费用" />
           <el-tab-pane  label="病人缴费" name="病人缴费" >
 
             <el-table size="mini"
@@ -197,6 +199,36 @@
 
 
 	</el-dialog>
+
+
+
+
+  <!--=============================================查询条件===================================-->
+  <el-row style="margin-bottom:10px;padding-top: 15px">
+
+
+    <el-col :offset="3" :span="5">
+      <el-input size="mini" v-model="payWhere.searchLike" placeholder="病人姓名或者住院号"></el-input>
+    </el-col>
+    <el-col  :span="1">
+      <el-button size="mini" @click="patientAndPayInit" icon="el-icon-search" type="primary" ></el-button>
+    </el-col>
+
+    <el-col :offset="1"  style="margin-top: 4px" :span="4">
+      <el-radio-group v-model="payWhere.doctorType" style="font-size: 10px"   @change="patientAndPayInit">
+        <el-radio  :label="2">病人余额</el-radio>
+        <el-radio :label="1">已交金额</el-radio>
+      </el-radio-group>
+    </el-col>
+
+    <el-col :span="10">
+      &nbsp;<span style="font-size: 12px;">金额区间：</span>&nbsp;
+
+     <el-input onkeyup="value=value.replace(/[^\d^\.]+/g,'').replace('.','$#$').replace(/\./g,'').replace('$#$','.')" v-model="payWhere.startPrice"  @change="patientAndPayInit" size="mini" style="width: 150px" placeholder="输入金额"></el-input>
+      &nbsp;<span style="font-size: 12px;">至</span>&nbsp;
+      <el-input onkeyup="value=value.replace(/[^\d^\.]+/g,'').replace('.','$#$').replace(/\./g,'').replace('$#$','.')" v-model="payWhere.endPrice"  @change="patientAndPayInit" size="mini" style="width: 150px" placeholder="输入金额"></el-input>
+    </el-col>
+  </el-row>
 	
 	<!--===============================================================================病人信息表格-->
 	<el-row>
@@ -247,9 +279,17 @@
 </template>
 
 <script>
+import {getLodop} from '../../js/LodopFuncs';
+
 	export default {
 	    data() {
 	      return {
+          //================================================校验
+          payObjRules: {//非空校验
+            pyWay:[{required:true,message:"请选择付款方式！",trigger:'blue'}],
+            pyPrice:[{required: true, message: "金额不能为空", trigger: 'blue'}],
+          },
+
 	        //===========================病人信息
           patientPayObj:{//病人缴费实体类
 
@@ -267,7 +307,16 @@
             sIdArr:[],//员工编号
             ptNo:''
           },
-
+          payWhere:{
+            startDate:'',//开始日期
+            endDate:'',//结束日期
+            searchLike:'',//模糊搜索
+            doctorType:2,//医嘱类型
+            sIdArr:[],//员工编号
+            startPrice:'',//开始金额
+            endPrice:'',//结束金额
+            ptNo:''
+          },
 
           //=================缴费详细
           payObj:{//缴费实体类
@@ -309,7 +358,8 @@
 		methods:{
 	      //==============================初始化病人信息以及病人缴费信息
       patientAndPayInit(){
-        this.axios({url:"PatientAndPay"}).then((v)=>{
+        console.log(getLodop);
+        this.axios.post("PatientAndPay",this.payWhere).then((v)=>{
           console.log(v.data);
           this.patientPayArr = v.data;
         }).catch((date)=>{
@@ -339,17 +389,21 @@
       },
 
       //=============================新增缴费方法
-      addPayFunction(form){
+      addPayFunction(){
         this.payObj.sId = this.staff.sid;
-        this.axios.post('addPay',this.payObj).then((v)=>{//新增缴费记录
-          this.$message({
-            type: 'success',
-            message: '成功向 【'+this.payObj.ptName+"】 缴入 【"+this.payObj.pyPrice+"】元"
-          });
-          this.patientAndPayInit();
-          this.closePayBt();
-        }).catch((data)=>{
+        this.$refs['payObj'].validate((valid)=>{
+          if (valid){
+            this.axios.post('addPay',this.payObj).then((v)=>{//新增缴费记录
+              this.$message({
+                type: 'success',
+                message: '成功向 【'+this.payObj.ptName+"】 缴入 【"+this.payObj.pyPrice+"】元"
+              });
+              this.patientAndPayInit();
+              this.closePayBt();
+            }).catch((data)=>{
 
+            });
+          }
         });
       },
 
@@ -446,8 +500,6 @@
       towNumber(val) {
         return val.toFixed(2);
       }
-
-
 		},
     created() {
       this.staff = this.$store.state.token.list;//将登录存入的值在取出来

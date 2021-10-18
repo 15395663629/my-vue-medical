@@ -114,7 +114,7 @@ const routes = [
 				name:'DrugPharmacyAllot',
 				path:'/drugPharmacyAllot',
 				component: () => import('/src/components/inhospital/DrugPharmacyAllot.vue'),
-				meta:{title:'医嘱扣除库粗管理', noCache: true },
+				meta:{title:'住院发药', noCache: true },
 			},
 			{
 				name:'Discharge',
