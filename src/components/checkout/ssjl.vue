@@ -106,34 +106,92 @@
 			  </el-form-item>
 		</el-form>
 	</el-dialog>
-	<el-dialog title="修改手术" v-model="xgss" width="50%" center  ><!-- 弹窗      -=-=-=-=-=-=-==-=-=-=-=--=-=-=-=-=-=-详情 -->
-		<el-form  status-icon :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
-			  <el-row>
-					<el-col :span="6">
-						<el-form-item label="手术名称:" prop="name">
-						<el-input></el-input>
-						</el-form-item>
-					</el-col>
-					<el-col :span="6" :offset="4">
-						<el-form-item label="手术类型:" prop="name">
-						<el-input></el-input>
-						</el-form-item>
-					</el-col>
-			  </el-row>
 
-			  
-			  <el-form-item label="手术项目:" prop="name">
-			  		<el-col>
-						头部MRI增强  指标：头部 分诊 脑科
-					</el-col>
-			  </el-form-item>
-			  <el-form-item>
-				  <el-col :span="1" :offset="8">
-				<el-button @click="ssForm('ruleForm')">确定</el-button>
-				</el-col>
-			  </el-form-item>
-		</el-form>
-	</el-dialog>
+
+
+
+  <el-dialog v-model="dyss" width="50%" center  ><!-- 弹窗      -=-=-=-=-=-=-==-=-=-=-=--=-=-=-=-=-=-手术详情 -->
+    <el-button style="margin-right:200px" type="primary"  v-print='"no"'>打印</el-button>
+    <div id="no">
+      <span style="font-size: 23px;margin-left: 300px">手术记录</span>
+      <hr>
+    <el-form  status-icon :model="Ssadetailt" ref="ruleForm" label-width="100px" class="demo-ruleForm">
+      <el-row>
+        <el-col :span="6">
+          <el-form-item label="患者名字:" prop="name">
+            <span v-for="(t,i) in Ssadetailt.slice(0,1)" >{{t.ptdx.ptName}}</span>
+          </el-form-item>
+        </el-col>
+        <el-col :span="6" :offset="4">
+          <el-form-item label="住院号:" prop="name">
+            <span v-for="(t,i) in Ssadetailt.slice(0,1)" >{{t.ptNo}}</span>
+          </el-form-item>
+        </el-col>
+      </el-row>
+      <el-row>
+        <el-col :span="10">
+          <el-form-item label="拟施手术名称:" prop="name">
+            <span v-for="(t,i) in Ssadetailt.slice(0,1)" >{{t.simulationOperation}}</span>
+          </el-form-item>
+        </el-col>
+        <el-col :span="11" >
+          <el-form-item label="实施手术名称:" prop="name">
+            <span v-for="(t,i) in Ssadetailt.slice(0,1)" >{{t.ssdx.projectName}}</span>
+          </el-form-item>
+        </el-col>
+      </el-row>
+      <el-row>
+        <el-col :span="8">
+          <el-form-item label="麻醉方法:" prop="name">
+            <span v-for="(t,i) in Ssadetailt.slice(0,1)" >{{t.operationAnaesthesia}}</span>
+          </el-form-item>
+        </el-col>
+        <el-col :span="6" :offset="2">
+          <el-form-item label="麻醉者:" prop="name">
+            <span v-for="(t,i) in Ssadetailt.slice(0,1)" >{{t.mz.sname}}</span>
+          </el-form-item>
+        </el-col>
+      </el-row>
+      <el-row>
+        <el-col :span="6">
+          <el-form-item label="术者:" prop="name">
+            <span v-for="(t,i) in Ssadetailt.slice(0,1)" >{{t.zd.sname}}</span>
+          </el-form-item>
+        </el-col>
+        <el-col :span="8" :offset="4">
+          <el-form-item label="助手:" prop="name">
+            <span v-for="(t,i) in Ssadetailt.slice(0,1)" >{{t.zs.sname}}</span>
+          </el-form-item>
+        </el-col>
+      </el-row>
+      <el-row>
+        <el-col :span="12">
+          <el-form-item label="手术日期:" prop="name">
+            <span v-for="(t,i) in Ssadetailt.slice(0,1)" >{{t.operationDate}}</span>
+          </el-form-item>
+        </el-col>
+          <el-col :span="12">
+            <el-form-item label="手术时长:" prop="name">
+              <span v-for="(t,i) in Ssadetailt.slice(0,1)" >{{t.operationTime}}</span>
+            </el-form-item>
+          </el-col>
+
+      </el-row>
+      <hr>
+      <el-row>
+        <el-col :span="22">
+          <el-form-item label="术后处理:" prop="name">
+            <span v-for="(t,i) in Ssadetailt.slice(0,1)" >{{t.operationHandle}}</span>
+          </el-form-item>
+        </el-col>
+      </el-row>
+    </el-form>
+    </div>
+  </el-dialog>
+
+
+
+
 	
 	<el-row > <!--======= ============================================================表格 ====================-->
 		<el-table
@@ -226,12 +284,9 @@
 			</el-table-column>
 			<el-table-column label="操作" width="300px">
 			      <template #default="scope">
-					<el-button
-					  size="mini"
-					  @click="handleEdit(scope.$index, scope.row)">手术详情
-					  </el-button>
 					  <el-button
-					    size="mini">打印
+                @click="dayin(scope.row)"
+					    size="mini"><i class="el-icon-printer"></i>
 					    </el-button>
 			      </template>
 			    </el-table-column>
@@ -258,17 +313,20 @@
           pagesize:10, //    每页的数据
           // 手术记录集合
 			    Ssdetailt:[],
+          // 单手术记录集合
+          Ssadetailt:[],
           seach:'',//搜索框
-			value: '',
-			isShow:false,
-			xgss:false,
-			input: '',
-			sstime: '',
-			ruleForm: {
-			          pass: '',
-			          checkPass: '',
-			          age: ''
-			}      
+          value: '',
+          isShow:false,
+          xgss:false,
+          dyss:false,//打印弹框
+          input: '',
+          sstime: '',
+          ruleForm: {
+                    pass: '',
+                    checkPass: '',
+                    age: ''
+          }
 	      } 
 	    },
 		methods: {
@@ -286,6 +344,14 @@
       handleCurrentChange: function (currentPage) {
         this.currentPage = currentPage;
         console.log(this.currentPage) //点击第几页
+      },
+      //打印按钮
+      dayin(row){
+        this.axios.get("http://localhost:8089/ssdaDetail",{params: {operationNum:row.operationNum}}).then((res) => {
+          this.Ssadetailt = res.data;
+        }).catch()
+        console.log(this.Ssadetailt)
+        this.dyss=true
       },
 			handleEdit(index, row) {
 				this.isShow = true;
@@ -317,7 +383,7 @@
 	  }
 </script>
 
-<style>
+<style scoped>
 	.my-el-time{
 		padding-top: 20px;
 		width: 200px;

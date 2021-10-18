@@ -2,7 +2,7 @@
 	<el-container style="height: 100%;">
 		<el-header height="30px"  style="line-height: 30px; background-color: #B3C0D1;color: #333;">
 			<!-- <newDateOPC style="margin: 0px; padding: 0px;"></newDateOPC> -->
-		{{leftRecord}}
+		{{}}
     </el-header>
 		<el-container style="height: 100%;">
 			<el-aside width="400px" style="background-color: #D3DCE6;color: #333;"> <!-- 右边 -->
@@ -604,6 +604,7 @@
           ksId:'',//科室id
           inProposer:'',//医生名字
           sId:'',//医生外键
+          mrNumber:0,
           ksObj:{}
         },
         rtNumberZy:0,
@@ -713,6 +714,7 @@
               indexSignificance:drug.pro.indexSignificance,
               manResult:drug.manResult,
               manPayState:drug.manPayState,
+              manProposal:drug.manPayState,
               manResultId:drug.manResultId,
               manId:drug.manId,
             }
@@ -937,6 +939,7 @@
               this.headerInput.mcNumber = this.leftTopTable[0].rtRegObject.cardObject.mcNumber;
               var number = this.formatDate(this.leftTopTable[0].bnTime,'yyyyMMddhhmm').toString()
                   +this.token.ksId.toString()+this.token.tid.toString()+this.headerInput.bnCount.toString()
+
               this.headerInput.mrCount = number;
               this.loading=false;
               return 'success';
@@ -951,7 +954,7 @@
       },
       //查询单个科室今天挂号的总数
       countLeftTopTable(){
-        this.axios.post('allMzOpcNumber',{ksName:this.token.ksId,science:this.token.tid}).then((v)=>{
+        this.axios.post('allMzOpcNumber',{ksName:this.token.ksId,science:this.token.sid}).then((v)=>{
           this.leftTopTable=v.data
         }).catch(()=>{ })
         this.selectRecord();
@@ -1009,7 +1012,7 @@
       },
       //搜索检验项目=================检验检验检验检验检验检验检验
       ccooTjpro(){
-        this.axios.get('allDescTjpro',{params:{seach:this.textTj} }).then((v) => {
+        this.axios.get('allDescTjpros',{params:{seach:this.textTj} }).then((v) => {
           this.tjList = v.data;
         }).catch();
       },
@@ -1035,7 +1038,8 @@
       },
       //添加住院================住院住院住院住院住院住院住院
       addZy(){
-        this.axios.post('addInHospita',{inhospitalApply:this.zyInhospitalApply,rtNumber:this.rtNumberZy}).then((v)=>{
+        alert(this.medicalRecordObject.mrNumber)
+        this.axios.post('addInHospita',{inhospitalApply:this.zyInhospitalApply,rtNumber:this.rtNumberZy,mrNumber:this.medicalRecordObject.mrNumber}).then((v)=>{
           if(v.data=='ok'){
             this.$message({
               showClose: true,
@@ -1072,7 +1076,17 @@ z
           this.$refs.drugTable3.clearSelection();
           this.bingli=false;
         }else if(index==4){ //转住院
-          this.zyInhospitalApply={}
+          this.zyInhospitalApply={
+            inDiagnosis:'',
+            inSuggest:'',
+            sickNumber:'',
+            ksName:'',
+            ksId:'',//科室id
+            inProposer:'',//医生名字
+            sId:'',//医生外键
+            ksObj:{}
+          }
+          this.ksDzs="";
           this.zysqShow = false;
         }
       },
@@ -1107,6 +1121,7 @@ z
             this.zyInhospitalApply.sickNumber=this.headerInput.sickNumber;
             this.zyInhospitalApply.inProposer=this.token.sname;//医生名字
             this.zyInhospitalApply.sId=this.token.sid;//医生外键
+            this.zyInhospitalApply.mrNumber=this.medicalRecordObject.sickNumber;
             this.zysqShow=true;
             console.log(this.rtNumberZy)
           }

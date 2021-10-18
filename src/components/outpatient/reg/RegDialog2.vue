@@ -1,13 +1,17 @@
 <template>
+  <el-row>
+    <el-col>
+      <el-input style="width:220px" class="my-el-input" v-model="input2" placeholder="请输入你要查询的挂号信息" clearable ></el-input>
+      <el-button type="primary" icon="el-icon-search" @click="likeReg(input2,null)">查询</el-button>
+    </el-col>
+  </el-row>
   <el-radio-group v-model="radio2" class=" my-radio-group"  size="mini" style="margin-top: 20px;">
     <el-radio-button label="查看全部" @change="likeReg(null,null)"></el-radio-button>
     <el-radio-button label="当天挂号"  @change="likeReg(null,1)"></el-radio-button>
     <el-radio-button label="预约挂号"  @change="likeReg(null,2)"></el-radio-button>
   </el-radio-group>
 <!--  .native.prevent-->
-  <el-table
-      size="mini"
-      height="490"
+  <el-table size="mini" height="490"
       :data="list.slice((wardCurrentPage2-1)*wardPageSize2,wardCurrentPage2*wardPageSize2)"
       style="width: 100%">
     <el-table-column
@@ -19,7 +23,7 @@
       </template>
     </el-table-column>
 
-    <el-table-column label="挂号信息" width="150">
+    <el-table-column label="挂号人员">
       <template #default="scope">
         <el-popover effect="light" trigger="hover" placement="top" width="300">
           <template #default>
@@ -36,16 +40,18 @@
         </el-popover>
       </template>
     </el-table-column>
-
-    <el-table-column
-        label="挂号医生"
-        width="110">
+    <el-table-column label="挂号科室" >
+      <template #default="scope">
+        <span style="margin-left: 10px">{{ scope.row.rtOverKsName}}</span>
+      </template>
+    </el-table-column>
+    <el-table-column label="挂号医生">
       <template #default="scope">
         <el-popover effect="light" trigger="hover" placement="top">
           <template #default>
             <p>医生: {{ scope.row.rtDoctor }}</p>
             <p>职位: {{ scope.row.rtDoctorGenre }}</p>
-            <p>所属科室: {{ scope.row.rtOverKsName }}</p>
+
           </template>
           <template #reference>
             <div class="name-wrapper">
@@ -124,6 +130,7 @@ import { ElMessage } from 'element-plus'
         radio2:"查看全部",
         wardCurrentPage2:1,
         wardPageSize2:4,
+        input2:"",//查询搜索框
       }
     },
     methods:{

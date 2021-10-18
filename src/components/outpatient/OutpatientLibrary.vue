@@ -1,4 +1,5 @@
 <template>
+  {{}}
 	<el-row>
 		<el-col :span="10">
 			<el-input style="width: 240px" v-model="text" placeholder="请输入患者信息方便查询" ></el-input>  
@@ -7,25 +8,28 @@
 	</el-row>
 <el-table size="mini" @row-dblclick="drawer = true" :data="allRecordList.slice((wardCurrentPage-1)*wardPageSize,wardCurrentPage*wardPageSize)"
  border height="525" style="width: 100% ; margin-top: 10px">
-	
-    <el-table-column fixed prop="mrNumber" label="序号"  align="center" width="80px"></el-table-column>
-	
-	<el-table-column fixed prop="mrCount" label="就诊号" align="center" >
-		<template #default="scope">
-		  <el-tag  size="mini" type="warning"  disable-transitions>
-		    {{scope.row.mrCount}}
-		  </el-tag>
-		</template>
-	</el-table-column>
-	
+    <el-table-column fixed label="序号"  align="center" width="80px">
+      <template #default="scope">
+          {{scope.row.medicalRecordObject.mrNumber}}
+      </template>
+    </el-table-column>
+
+    <el-table-column fixed prop="mrCount" label="就诊号" align="center" >
+      <template #default="scope">
+        <el-tag  size="mini" type="warning"  disable-transitions>
+          {{scope.row.medicalRecordObject.mrCount}}
+        </el-tag>
+      </template>
+    </el-table-column>
+
     <el-table-column  fixed label="姓名" align="center">
       <template #default="scope" >
         <el-popover effect="light" width="200px"  trigger="hover" placement="top">
           <template #default >
             <p>姓名: {{ scope.row.recipeObject.recipeSickName }}</p>
-            <p>身份证: {{ scope.row.sickObject.sickIdCard }}</p>
-			<p>就诊卡: {{ scope.row.mrMcCard }}</p>
-            <p>电话: {{ scope.row.sickObject.sickPhone }}</p>
+            <p>身份证: {{ scope.row.medicalRecordObject.mrIdCard }}</p>
+			      <p>就诊卡: {{ scope.row.medicalRecordObject.mrMcCard }}</p>
+            <p>电话: {{ scope.row.medicalRecordObject.sickObject.sickPhone }}</p>
           </template>
           <template #reference>
             <div class="name-wrapper">
@@ -40,26 +44,24 @@
 	  <template #default="scope" >
 	    <el-popover effect="light" width="100px"  trigger="hover" placement="top">
 	      <template #default >
-	        <p>排号: {{ scope.row.opcObject.bnCount }}</p>
-	        <p>挂号科室: {{ scope.row.opcObject.bnKsName }}</p>
-			<p>挂号医生: {{ scope.row.mrDoctorName }}</p>
-	        <p>挂号类型: {{ scope.row.opcObject.bnScience }}</p>
+	        <p>排号: {{ scope.row.medicalRecordObject.opcObject.bnCount }}</p>
+	        <p>挂号科室: {{ scope.row.medicalRecordObject.mrKsName}}</p>
+			    <p>挂号医生: {{ scope.row.medicalRecordObject.mrDoctorName }}</p>
+	        <p>挂号类型: {{ scope.row.medicalRecordObject.opcObject.bnScience }}</p>
 	      </template>
 	      <template #reference>
 	        <div class="name-wrapper">
-	          <el-tag size="medium">{{ scope.row.opcObject.bnKsName }}</el-tag>
+	          <el-tag size="medium">{{scope.row.medicalRecordObject.mrKsName }}</el-tag>
 	        </div>
 	      </template>
 	    </el-popover>
 	  </template>
 	</el-table-column>
-	
-	
-	
+
 	<el-table-column fixed label="就诊时间" align="center" >
 		<template #default="scope">
 		  <el-tag  size="mini" type="success"  disable-transitions>
-		    {{scope.row.mrSection}}
+		    {{scope.row.medicalRecordObject.mrSection}}
 		  </el-tag>
 		</template>
 	</el-table-column>
@@ -67,7 +69,7 @@
 	<el-table-column fixed label="结束时间" align="center" >
 		<template #default="scope">
 		  <el-tag  size="mini"  type="danger" disable-transitions>
-		    {{scope.row.mrOverTime}}
+		    {{scope.row.medicalRecordObject.mrOverTime}}
 		  </el-tag>
 		</template>
 	</el-table-column>
@@ -77,13 +79,12 @@
 			    <el-popover effect="light" width="300px"  trigger="hover" placement="top">
 			      <template #default >
 			        <p>主诉: {{ scope.row.historyObject.chComplaint }}</p>
-			        <p>体检结果: {{ scope.row.historyObject.chOe }}</p>
-					<p>现病史: {{ scope.row.historyObject.chCause }}</p>
+					    <p>现病史: {{ scope.row.historyObject.chCause }}</p>
 			        <p>处理和建议：{{ scope.row.historyObject.chDoctorText }}</p>
 			      </template>
 			      <template #reference>
 			        <div class="name-wrapper">
-			          <el-tag size="medium" class="fontType">{{ scope.row.historyObject.chDoctorText }}</el-tag>
+			          <el-tag size="medium" class="fontType">{{scope.row.historyObject.chDoctorText}}</el-tag>
 			        </div>
 			      </template>
 			    </el-popover>
@@ -92,7 +93,7 @@
 	<el-table-column fixed label="总消费" align="center" >
 		<template #default="scope">
 		  <el-tag  size="mini"  type="danger" disable-transitions>
-		    {{scope.row.mrTotalMoney}}
+		    {{scope.row.medicalRecordObject.mrTotalMoney}}
 		  </el-tag>
 		</template>
 	</el-table-column>
@@ -149,15 +150,33 @@
 		<el-row style="margin-top: 10px;">
 			<el-col :span="12">
 				<h5>检验项目</h5>
-				<el-table size="mini" :data="testListTable" border height="300px" style="width: 100%">
-					<el-table-column prop="date" label="序号" width="180"></el-table-column>
-				</el-table>
+        <el-table  :summary-method="getSummaries3" show-summary  size="mini" :data="testListTable" border height="350px" style="width: 100%">
+          <el-table-column align="center" prop="manResultId" label="序号" width="50px" ></el-table-column>
+          <el-table-column align="center" prop="pro.checkName" label="项目名称" width="120px" ></el-table-column>
+          <el-table-column align="center" label="项目结果"  width="130px">
+            <template #default="scope" >
+              <el-popover effect="light" width="270px"  trigger="hover" placement="top">
+                <template #default >
+                  <p>{{scope.row.manResult}}</p>
+                </template>
+                <template #reference>
+                  <div class="name-wrapper">
+                    <el-tag size="mini"  class="fontType">{{scope.row.manResult}}</el-tag>
+                  </div>
+                </template>
+              </el-popover>
+            </template>
+          </el-table-column>
+          <el-table-column align="center" prop="pro.checkPay" label="单价" width="83px" ></el-table-column>
+        </el-table>
 			</el-col>
 			<el-col :span="12">
 				<h5>手术项目</h5>
-				<el-table size="mini" :data="surgeryListTable" border height="300px" style="width: 100%">
-					<el-table-column prop="date" label="序号" width="180"></el-table-column>
-				</el-table>
+        <el-table  :summary-method="getSummaries4" show-summary  size="mini" :data="surgeryListTable" border height="350px" style="width: 100%">
+          <el-table-column align="center" prop="susId" label="序号" width="50px" ></el-table-column>
+          <el-table-column align="center" prop="ssObject.projectName" label="项目名称" width="250px" ></el-table-column>
+          <el-table-column align="center" prop="ssObject.projectPay" label="单价" width="83px" ></el-table-column>
+        </el-table>
 			</el-col>
 		</el-row>
 	</el-drawer>
@@ -171,7 +190,6 @@
 				innerDrawer: false,//2抽屉
 				wardCurrentPage:1,//分页属性
 				wardPageSize:4,
-				
 				//搜索text
 				text:'',
 				//集合
@@ -184,8 +202,6 @@
 				testListTable:[],
 				//手术项目
 				surgeryListTable:[],
-				
-				
 			};
 		},
 		 methods: {
@@ -219,10 +235,15 @@
         if( row.recipeObject.zpList[0].zpNumber != 0){
           this.zpListTable=row.recipeObject.zpList;
         }
-				// //检验项目
-				// this.testListTable=
-				// //手术项目
-				// this.surgeryListTable=
+				//检验项目
+        if(row.tjManResultList[0].manId !=0){
+          this.testListTable=row.tjManResultList;
+        }
+        //手术项目
+        if(row.centerSurgeryList[0].susId !=0){
+          this.surgeryListTable=row.centerSurgeryList;
+        }
+
 			},
 			//计算总价
 			getSummaries1(param) {
@@ -257,6 +278,38 @@
 			  });
 			  return sums;
 			},
+       getSummaries3(param) {
+         const { columns} = param;//获取到的整个表格的总栏位数
+         const sums = [];//合计表个数组
+         var sum = 0;//总价钱
+         this.testListTable.forEach((drug,i)=>{//循环判断总价钱
+           sum +=drug.pro.checkPay;
+         })
+         columns.forEach((column, index) => {//获取合计的位置
+           if (index === 2) {
+             sums[index] = "合计:";
+             sums[index+1]= sum.toFixed(2);
+             return;
+           }
+         });
+         return sums;
+       },
+       getSummaries4(param) {
+         const { columns} = param;//获取到的整个表格的总栏位数
+         const sums = [];//合计表个数组
+         var sum = 0;//总价钱
+         this.surgeryListTable.forEach((drug,i)=>{//循环判断总价钱
+           sum +=drug.ssObject.projectPay;
+         })
+         columns.forEach((column, index) => {//获取合计的位置
+           if (index === 1) {
+             sums[index] = "合计:";
+             sums[index+1]= sum.toFixed(2);
+             return;
+           }
+         });
+         return sums;
+       },
 		},
 		created(){
 			this.allRecordsSick()

@@ -1,7 +1,7 @@
 
 <template>
 	<el-table :data="rightTableData3" :summary-method="getSummaries2" show-summary
-            style="width: 100%" size="mini" height="450" 	>
+            style="width: 100%" size="mini" height="470" 	>
 		
     <el-table-column label="项目名称" align="center" width="200px">
       <template #default="scope">
@@ -20,6 +20,7 @@
         <el-popover effect="light" trigger="hover" placement="top" width="410px" >
           <template #default>
             <p>检验结果： {{scope.row.pro.manResult}}</p>
+            <p>医生建议： {{scope.row.pro.manProposal}}</p>
           </template>
           <template #reference>
             <div class="name-wrapper ">

@@ -1,6 +1,19 @@
 <template>
-  <el-tabs v-model="activeName" type="card" @tab-click="handleClick">
-    <el-tab-pane label="检查结果" name="first">
+  <el-row>
+    <el-form style="padding-top: 10px">
+      <el-col :span="19">
+      <el-form-item  label="人员信息:" label-width="100px">
+           <el-input class="myin" @input="getData"  v-model="sermen1" placeholder="请输入你要查询的记录" ></el-input>
+      </el-form-item>
+      </el-col>
+      <el-col :span="5" label-width="220px">
+        <el-form-item>
+          <el-button type="primary" icon="el-icon-search">查询</el-button>
+        </el-form-item>
+      </el-col>
+    </el-form>
+
+  </el-row>
       <!--=============================================已出结果检查人员表单表格===================================-->
       <el-row>
         <el-col>
@@ -73,8 +86,6 @@
           </el-pagination>
         </el-col>
       </el-row>
-    </el-tab-pane>
-  </el-tabs>
 	<el-dialog title="检查详情" v-model="tjjl" width="50%" center  ><!-- 弹窗     -=-=-=-=-=-=-==-=-=-=-=--=-=-=-=-=-=-检查结果 -->
 		<el-form label-width="100px">
 			<el-row>
@@ -182,9 +193,9 @@
           manId:'',//新增结果字段
           manProposal:'',//新增结果字段医生建议
           currentPage: 1, //1初始页
-          pagesize: 5, //    1每页的数据
+          pagesize: 10, //    1每页的数据
           currentPage1: 1, //2初始页
-          pagesize1: 5, //    2每页的数据
+          pagesize1: 10, //    2每页的数据
           manState:1,//状态
           sermen:'',//结果搜索未填
           sermen1:'',//结果搜索已填

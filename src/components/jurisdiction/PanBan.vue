@@ -9,7 +9,7 @@
               <el-col :span="12">
                 <el-form-item>
                   <el-select
-                      @change="dome($event)"
+                      @change="dome"
                       v-model="pbType"
                       clearable
                       size="small"
@@ -28,12 +28,12 @@
               </el-col>
               <el-form-item>
                 <el-select
-                    v-model="ksId"
+                    v-model="ksk.ksId"
                     clearable
                     value-key="ksId"
                     size="small"
                     style="width: 240px"
-                    @change="quit($event)"
+                    @change="quit"
                 >
                   <el-option
                       v-for="ks in keShi"
@@ -44,7 +44,7 @@
                 </el-select>
               </el-form-item>
               <el-form-item>
-                <el-button type="primary" round icon="el-icon-refresh" size="mini">打印</el-button>
+                <el-button type="primary" round icon="el-icon-refresh" size="mini" v-print='"printint"'>打印</el-button>
               </el-form-item>
               <el-form-item style="float: right">
                 <el-button type="primary" round icon="el-icon-s-fold" size="small" @click="star()">上一周</el-button>
@@ -58,7 +58,7 @@
       </el-col>
     </el-row>
     <!-- 查询条件结束 -->
-
+<div id="printint">
     <!--    表头开始  -->
     <el-row class="div10">
       <el-col :span="2" class="div11" >
@@ -77,14 +77,15 @@
       </el-col>
       <el-col :span="wid" v-for="bc in schedulingTypeOptions" class="doc">
           <span v-for="ygpb in pb.slist">
-            <template v-if="ygpb.frId==bc.fid">
-              {{ygpb.staff.sname+"&#32"}}
-            </template>
+             <template v-if="ygpb.frId==bc.fid">
+                {{ygpb.staff.sname+"&#32"}}
+             </template>
           </span>
 
-        <el-button type="primary" icon="el-icon-plus"  :disabled="pb.state" circle @click="dakai(pb.rq,bc.fid)"></el-button>
+        <el-button type="primary" icon="el-icon-plus" v-show="!pb.state"  :disabled="pb.state" circle @click="dakai(pb.rq,bc.fid)"></el-button>
       </el-col>
     </el-row>
+</div>
     <!--    主体结束  -->
     <!--==========================弹框开始===========================-->
     <el-dialog v-model="dialogVisible" title='添加员工' >
@@ -116,15 +117,20 @@ export default {
     return {
       status:false,
       ksYgs: [],
+      ks:[],
       //级联选择
       defaultProps: {
         label: 'tname',
         children: 'staff'
       },
-      ksId: '',
+      isShow:false,
+      ksk: {
+        ksId:15,
+        ksName:"门诊部内科 "
+      },
       keShi: [],
       //  班次类型
-      pbType: '',
+      pbType: 1,
       // 遮罩层
       loading: false,
       // 对话框标题
@@ -158,7 +164,8 @@ export default {
       sch:{
         rq:'',
         bcId:''
-      }
+      },
+      dept:[]
     }
   },
   //  计算属性
@@ -168,41 +175,53 @@ export default {
     }
   },
   created() {
-
   this.getData()
+    this.quit()
+    this.dome()
+  },
+  mounted(){
+    this.intercept()
   },
   methods: {
     getData(){
+      this.axios.get("http://localhost:8089/bm-list").then((v)=>{
+        this.dept=v.data
+        console.log(this.dept)
+      }).catch()
       this.axios.get('list-fre').then((v)=>{
         this.deptOptions=v.data
       }).catch()
       this.axios.get("ks-list").then((v)=>{
         this.keShi=v.data
+        this.intercept()
       }).catch()
       this.axios.get('add-sch').then((v)=>{
       this.ksYgs=v.data
       }).catch()
     },
-    dome(event){
-     this.bcId=event
+    dome(){
+      console.log(this.pbType)
       this.axios({
         url:"bc-list",
-        params:{bcId:this.bcId}
+        params:{bcId:this.pbType}
       }).then((v)=>{
         this.schedulingTypeOptions=v.data
         this.length2=v.data.length
         console.log(this.schedulingTypeOptions)
       }).catch();
     },
-    quit(event){
-      this.ksId=event
+    quit(){
       this.axios({
         url:"week",
-        params:{ksId:this.ksId,bcId:this.bcId}
+        params:{ksId:this.ksk.ksId}
       }).then((v)=>{
         this.pbtableData=v.data
+        this.getData()
+        console.log("----")
+    console.log(this.pbtableData)
+
       }).catch();
-      // this.domes()
+
     },
     dakai(rq,bcId){
       this.dialogVisible= true
@@ -216,6 +235,9 @@ export default {
       console.log(funs)
       var grants = JSON.stringify({bcId:this.sch.bcId,funs:funs,rq:this.sch.rq})
       this.axios.post("addSch",qs.stringify({grants:grants})).then((v)=>{
+        this.$nextTick(function() {
+          this.$refs.tree.setCheckedKeys(this.ksYgs)
+        })
         if(v.data==="ok"){
           console.log("ok")
           //日期
@@ -224,7 +246,7 @@ export default {
             this.dialogVisible=false
             // this.getData()
             this.dome(this.bcId)
-            this.quit(this.ksId)
+            this.quit(this.ksk.ksId)
             this.thisWeek()
           }).catch()
         }else{
@@ -236,50 +258,54 @@ export default {
 
     },
     end(){
-      this.axios.get('end-week').then((v)=>{
+      this.axios({
+        url:"end-week",
+        params:{ksId:this.ksk.ksId,bcId:this.pbType}
+      }).then((v)=>{
         this.pbtableData=v.data
+        console.log(this.pbtableData)
         this.getData()
-      }).catch()
+
+      }).catch();
+
     },
     star(){
-      this.axios.get('star-week').then((v)=>{
+      this.axios({
+        url:"star-week",
+        params:{ksId:this.ksk.ksId,bcId:this.pbType}
+      }).then((v)=>{
         this.pbtableData=v.data
+        console.log(this.pbtableData)
         this.getData()
-      }).catch()
+
+      }).catch();
+
     },
     thisWeek(){
-      this.axios.get('this-week').then((v)=>{
+      // console.log(this.ksId)
+      this.axios({
+        url:"this-week",
+        params:{ksId:this.ksk.ksId,bcId:this.pbType}
+      }).then((v)=>{
         this.pbtableData=v.data
+        console.log(this.pbtableData)
         this.getData()
-      }).catch()
+
+      }).catch();
+
     },
-  // domes(){
-  //   if(this.pbtableData.length!=0){
-  //     var _this = this;
-  //     let yy = new Date().getFullYear();
-  //     let mm = new Date().getMonth()+1;
-  //     let dd = new Date().getDate();
-  //     _this.gettime = yy+'/'+mm+'/'+dd
-  //     console.log(_this.gettime)
-  //     let o= _this.gettime.split('/')
-  //     //当前时间的时间戳
-  //     let nowTime=new Date(o)
-  //     let timec=nowTime * 1
-  //     for (let i = 0; i < this.pbtableData.length; i++) {
-  //       let cs=this.pbtableData[i].rq
-  //       let arr=cs.split('/')
-  //       // console.log(arr)
-  //       //后端查询的时间戳
-  //       let timeout=new Date(arr)
-  //       let times=timeout * 1
-  //       if(timec - times<0){
-  //         this.status=false
-  //       }else{
-  //         this.status=true
-  //       }
-  //     }
-  //   }
-  // }
+    intercept(){
+      console.log(this.keShi)
+      console.log(this.dept)
+      console.log(1111)
+      for ( let i=0; i<this.keShi.length; i++){
+        for ( let j=0;j<this.dept.length; j++){
+          if(this.keShi[i].deId === this.dept[j].deId){
+              this.keShi[i].ksName=this.dept[j].deName.slice(0,this.dept[j].deName.length)+this.keShi[i].ksName
+          }
+        }
+      }
+    }
   }
 }
 
@@ -288,29 +314,31 @@ export default {
 <style>
 .div10{
   text-align: center;
-  height: 30px;
-  background-color: #99a9bf;
+  height: 50px;
+  background-color: white;
 }
 /*日期样式*/
 .div10>.div11{
-  background-color: #909399;
+  background-color: white;
+  margin-top: 15px;
 }
 /*  班次样式 */
 .div10>.div12{
   /*border: 1px solid red;*/
-  background-color: #99a9bf;
+  background-color:white;
+  margin-top: 15px;
 }
 .div20{
   text-align: center;
-  background-color: #99a9bf;
+  background-color:white;
 }
 .div20>.div21{
-  background-color: #909399;
+  background-color: white;
 }
 .border{
   border: 1px solid black;
 }
 .doc{
-  background-color: #99a9bf;
+  background-color: white;
 }
 </style>
