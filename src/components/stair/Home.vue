@@ -7,20 +7,30 @@
 						🍅🍅🐟医院管理系统
 					</router-link>
 				</el-col>
-				<el-col :span="4">
+				<el-col :span="3">
 					<el-form style="line-height: 40px; margin-left: 100px;">
 						<el-form-item label="">
-							<el-avatar shape="square" style="margin-top: 5px" :size="30" :src="squareUrl"></el-avatar>
-							<el-dropdown style="margin-left: 10px; padding-bottom: 20px; font-size: 15px;">
-								<span class="el-dropdown-link">
-									{{token.uname}}<i class="el-icon-arrow-down el-icon--right"></i>
-								</span>
-								<template #dropdown>
-									<el-dropdown-menu>
-										<el-dropdown-item>切换用户</el-dropdown-item>
-									</el-dropdown-menu>
-								</template>
-							</el-dropdown>
+<!--							<el-avatar shape="square" style="margin-top: 5px" :size="30" :src="squareUrl"></el-avatar>-->
+              <el-dropdown>
+                  <span class="el-dropdown-link" style="font-size: 18px;color: #303133">
+                   {{token.list.sname}}<i class="el-icon-arrow-down el-icon--right"></i>
+                       </span>
+                <template #dropdown>
+                  <el-dropdown-menu>
+                    <el-dropdown-item>
+                      <div style="width: 200px;height: 400px">
+                         <div style="width: 240px; height: 40px;margin-left: -20px;background: #D3DCE6;margin-top: -10px">
+                          <div>
+                            <span style="margin-left: 50px; ">{{deptName}} </span>
+                            <span style="margin-left: 60px"> {{ksName}}</span>
+                          </div>
+                         </div>
+                      </div>
+                    </el-dropdown-item>
+
+                  </el-dropdown-menu>
+                </template>
+              </el-dropdown>
 						</el-form-item>
 					</el-form>
 				</el-col>
@@ -60,10 +70,26 @@ export default{
 		return{
 		  token:[],
       menus:[],
+      kslist:[],
+      deptName:'',
+      ksName:'',
 			 squareUrl: "../../../public/static/img/1000.png",
 		}
 	},
 	methods:{
+	  getData(){
+      this.axios.get('http://localhost:8089/ks-list').then((v)=>{
+        this.kslist=v.data
+        for (let i = 0 ; i<this.kslist.length ; i++){
+          if(this.kslist[i].ksId === this.token.list.ksId){
+            this.deptName=this.kslist[i].dept.deName
+            this.ksName=this.kslist[i].ksName
+            return
+          }
+        }
+        console.log(this.kslist)
+      }).catch()
+    },
 		pushUrl(path){
 			this.$router.push(path);
 		},
@@ -72,15 +98,19 @@ export default{
       console.log(this.$store.state.token.uid)
       this.axios.get("home-menus",{params:{userId:userId}}).then((res)=>{
       this.menus = res.data
-
         console.log(this.menus)
   }).catch()
-}
+},
+    signout(){
+      window.sessionStorage.clear()
+      this.$router.push('/')
+    },
 	},
   created() {
 	  //取token值
     this.token = this.$store.state.token
     this.getMenus()
+    this.getData()
   }
 }
 </script>
@@ -96,4 +126,7 @@ export default{
 	  .works{
 		  box-shadow: 0 2px 4px rgba(0, 0, 0, .12), 0 0 6px rgba(0, 0, 0, .04)
 	  }
+    .dome{
+      font-size: 16px;
+    }
 </style>

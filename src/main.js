@@ -8,7 +8,6 @@ import qs from 'qs'
 
 //引入路由--------------------------------
 import router from './router/index.js'
-//打印
 import Print from 'vue3-print-nb'
 //引入store--------------------------
 import store from './store/index.js'
@@ -35,7 +34,7 @@ import upTable1 from "./components/outpatient/card/UpTable1.vue"
 import upTable2 from "./components/outpatient/card/UpTable2.vue"
 import regDialog1 from "./components/outpatient/reg/RegDialog1.vue"// 挂号
 import regDialog2 from "./components/outpatient/reg/RegDialog2.vue"
-
+// import echarts from 'echarts'
 
 
 //统一的跨域前缀--------------------------------
