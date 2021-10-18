@@ -138,7 +138,6 @@
                     :value="item.value">
                 </el-option>
               </el-select>
-<!--						<el-input v-model="ssdx.projectType"></el-input>-->
 						</el-form-item>
 					</el-col>
 			  </el-row>
@@ -273,7 +272,10 @@
 				       :total="sproject.length">
     </el-pagination>
 	</el-row>
-	
+  一级手术是指手术过程简单、技术难度较低、风险程度较小的各种手术。
+  二级手术是指手术过程不复杂、技术难度一般、风险程度中等的各种手术。
+  三级手术是指手术过程较复杂、技术难度较大、风险程度较大的各种手术。
+  四级手术是指手术过程复杂、技术难度大、风险程度大的各种手术。
 </template>
 
 <script>
@@ -282,7 +284,7 @@
 	    data () {
 	      return {
           currentPage: 1, //初始页
-          pagesize: 5, //    每页的数据
+          pagesize: 10, //    每页的数据
 	        // 弹框标题
           option:'',
           //表格数据
@@ -295,7 +297,7 @@
           pageNo:1,
           size:5,
           projectId:'',
-          mazui: [],
+          mazui:[],
           // 手术项目对象？、
           ssdx:{
             //手术主键
@@ -430,7 +432,7 @@
 			},
       // 修改
       ssEdit(row) {
-          this.option='修改手术';
+        this.option='修改手术';
         this.projectId=row.projectId;
         console.log(this.projectId)
         this.axios.get("http://localhost:8089/alone-pro",{params:{projectId:this.projectId}}).then((res)=>{

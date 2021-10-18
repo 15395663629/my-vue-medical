@@ -33,33 +33,31 @@
 	</el-row>
 	
 	<el-dialog :title="tctitl" v-model="tjtc" width="50%" center  ><!-- 弹窗      -=-=-=-=-=-=-==-=-=-=-=--=-=-=-=-=-=-新增套餐======================================= -->
-		<el-form   ref="tjtcForm" v-model="tcdx" label-width="100px" class="demo-ruleForm">
+		<el-form   ref="tcdx" :rules="rulesc" :model="tcdx" label-width="100px" class="demo-ruleForm">
 			<el-row>
             <el-col :span="8">
-									<el-form-item label="套餐名称:" prop="name">
+									<el-form-item label="套餐名称:" prop="codeName">
 									<el-input v-model="tcdx.codeName"></el-input>
 									</el-form-item>
 						</el-col>
-            <el-col :span="6" :offset="4">
-              <el-form-item label="套餐价格:" prop="name">
-                <el-input v-model="tcdx.codePay"></el-input>
+            <el-col :span="8" :offset="4">
+              <el-form-item label="套餐价格:"  prop="codePay">
+                <el-input  v-model="tcdx.codePay" oninput="value=value.replace(/[^\d]/g,'')"></el-input>
               </el-form-item>
             </el-col>
 			</el-row>
 			<el-row>
 					<el-col :span="8">
-							<el-form-item label="体检类型:" prop="name">
-							 <el-select v-model="tcdx.codeType" placeholder='请选择'>
-							    <el-option
-                      v-for="item in xmzb"
-                      :key="item.value"
-                      :label="item.checkIndex"
-                      :value="item.typeId">
-							    </el-option>
+							<el-form-item label="体检类型:" prop="codeType">
+							 <el-select v-model="tcdx.codeTypes" placeholder="请选择" value-key="typeId">
+                 <el-option
+                     v-for="item in xmzb"
+                     :label="item.checkIndex"
+                     :value="item.typeId">
+                 </el-option>
 							  </el-select>
 							</el-form-item>
 						</el-col>
-
 			</el-row>
 			<el-row>
 				<el-col>
@@ -70,7 +68,6 @@
 				<el-table height="300"
                   ref="inserdata"
                   :data="tjpro1"
-                  :row-key="(tjpro1) => tjpro.checkId"
                   style="width: 100%;"
                   @selection-change="handleSelectionChange">
 					<el-table-column
@@ -117,7 +114,7 @@
             <template  #header>
               <el-input
                   @change="getData"
-                  v-model="seach"
+                  v-model="seach1"
                   prefix-icon="el-icon-search"
                   size="small"
                   placeholder="项目搜索"/>
@@ -137,22 +134,22 @@
 	
 	
 	<el-dialog title="套餐详情" v-model="tcxq" width="50%" center  ><!-- 弹窗      -=-=-=-=-=-=-==-=-=-=-=--=-=-=-=-=-=-套餐详情======================================= -->
-		<el-form  :modal="tcdx" label-width="100px" class="demo-ruleForm">
+		<el-form  :modal="tcdx"  label-width="100px" class="demo-ruleForm">
 			<el-row>
 								<el-col :span="6">
-									<el-form-item label="编号:" prop="name">
+									<el-form-item label="编号:" prop="codeId">
                     {{ tcdx.codeId }}
 									</el-form-item>
 								</el-col>
 								<el-col :span="12" :offset="4">
-									<el-form-item label="套餐名称:" prop="name">
+									<el-form-item label="套餐名称:" prop="codeName">
                     {{ tcdx.codeName }}
 									</el-form-item>
 								</el-col>
 			</el-row>
 			<el-row>
 					<el-col :span="6">
-							<el-form-item label="体检类型:" prop="name">
+							<el-form-item label="体检类型:" prop="checkIndex">
                 {{ tcdx.checkIndex }}
 							</el-form-item>
 						</el-col>
@@ -213,20 +210,20 @@
 	</el-dialog>
 	
 	<el-dialog :title="tilt" v-model="jcxm" width="50%" center  ><!-- 弹窗      -=-=-=-=-=-=-==-=-=-=-=--=-=-=-=-=-=-新增医疗项目======================================= -->
-		<el-form  status-icon v-model="jcdx" :ref="jcdww"  label-width="100px" class="demo-ruleForm">
+		<el-form  :model="jcdx" ref="jcdx"  label-width="100px" status-icon :rules="rulesw">
 			<el-row>
 								<el-col :span="7" >
-									<el-form-item label="项目名称:" prop="name">
-									<el-input v-model="jcdx.checkName"></el-input>
+									<el-form-item label="项目名称:" prop="checkName">
+									<el-input v-model="jcdx.checkName" autocomplete="off"></el-input>
 									</el-form-item>
 								</el-col>
               <el-col :span="7">
-                <el-form-item label="价格:" prop="name">
-                  <el-input v-model="jcdx.checkPay"></el-input>
+                <el-form-item label="价格:" prop="checkPay">
+                  <el-input v-model="jcdx.checkPay" oninput="value=value.replace(/[^\d]/g,'')"></el-input>
                 </el-form-item>
               </el-col>
             <el-col :span="7" >
-              <el-form-item label="科室:" prop="name">
+              <el-form-item label="科室:" prop="ksId">
                 <el-select   v-model="jcdx.ksId" placeholder="请选择">
                   <el-option
                       v-for="item in department"
@@ -241,8 +238,8 @@
 
 			<el-row>
         <el-col :span="7" >
-          <el-form-item label="项目类型:" prop="name">
-          <el-select  @change="getData" style="width: 120px" v-model="jcdx.checkTpye" placeholder="请选择">
+          <el-form-item label="项目类型:" prop="checkTpye">
+          <el-select   style="width: 120px" v-model="jcdx.checkTpye" placeholder="请选择">
             <el-option
                 v-for="item in chenk"
                 :key="item.value"
@@ -254,13 +251,13 @@
         </el-col>
 
           <el-col :span="7">
-          <el-form-item label="指标:" prop="name">
+          <el-form-item label="指标:" prop="indexName">
             <el-input  size="mini" v-model="jcdx.indexName" type="textarea" :rows="3"></el-input>
           </el-form-item>
           </el-col>
 
 					<el-col :span="7">
-						<el-form-item label="指标意义:" prop="name">
+						<el-form-item label="指标意义:" prop="indexSignificance">
 						<el-input size="mini" v-model="jcdx.indexSignificance"
                       type="textarea"
                       :rows="3"
@@ -272,8 +269,10 @@
 
 			</el-row>
 			<el-form-item>
-							  <el-col :span="1" :offset="8">
-							<el-button type="primary" @click="jcxmForm()">确定</el-button>
+							<el-col :span="1" :offset="8">
+                <template #default="scope">
+							<el-button type="primary" @click="jcxmForm('jcdx')">确定</el-button>
+                </template>
 							</el-col>
 			</el-form-item>
 		</el-form>
@@ -325,10 +324,6 @@
 				  type="primary"
 		          @click="tjtcEdit(2,scope.row,'inserdata')">修改
 				  </el-button>
-				  <el-button
-				    size="mini"
-					type="danger">删除
-				    </el-button>
 		      </template>
 		    </el-table-column>
 		</el-table>
@@ -361,7 +356,7 @@
       </el-col>
       <el-col :span="5"  :offset="12">
         <el-form-item label="" label-width="449px">
-          <el-button type="primary" @click=jcxmEdit(1)>新增项目</el-button>
+          <el-button type="primary" @click=jcxmEdit(1,)>新增项目</el-button>
         </el-form-item>
       </el-col>
     </el-form>
@@ -463,10 +458,11 @@
           tjmeal:[],//体检套餐集合
 	        tilt:'',//检查项目弹框标题
           seach: '',//搜索
+          seach1: '',//搜索套餐所含项目
           currentPage: 1, //初始页
-          psize:4, //每页的数据
+          psize:10, //每页的数据
           currentPage1: 1, //初始页
-          psize1:4, //套餐每页的数据
+          psize1:10, //套餐每页的数据
           tjpro:[],//检查项目集合
           tjpro1:[],//检查项目集合
           tjow:[],
@@ -485,6 +481,34 @@
             checkTpye:'',
             ksId:''
             },
+          rulesc:{
+            codeName: [
+              { required: true, message: '请输入名称', trigger: 'blur' }
+            ],
+            codePay: [
+              { required: true, message: '请输入价格', trigger: 'blur' }
+            ],
+            codeType: [
+              { required: true, message: '请输入内容', trigger: 'blur' }
+            ]
+          },
+          rulesw:{
+            checkName: [
+              { required: true, message: '请输入名称', trigger: 'blur' }
+            ],
+            checkPay: [
+              { required: true, message: '请输入价格', trigger: 'blur' }
+            ],
+            indexName: [
+              { required: true, message: '请输入内容', trigger: 'blur' }
+            ],
+            checkTpye: [
+              { required: true, message: '请选择类型', trigger: 'change' }
+            ],
+            ksId: [
+              { required: true, message: '请选择科室', trigger: 'change' }
+            ],
+          },
           jcdww:{//检查项目对象
             //检查主键
             checkId:'',
@@ -498,6 +522,7 @@
             indexSignificance:'',
             ksId:''
           },
+
           chenk:[{
             text:0,
             value:'检验项目'
@@ -511,7 +536,7 @@
             codeId:'',
             codeName:'',
             codePay:'',
-            codeType:0,
+            codeTypes:'',
             //检查项目集合
             TjAn:''
           },
@@ -525,12 +550,12 @@
         }
 	    },
 		methods: {
-	      cleaxm(){
-          this.$refs.inserdata.clearSelection();
+	      tjCheck(){
+          this.$refs['inserdata'].clearSelection();
           for (let i = 0; i < this.tjow.length; i++) {
-            for (let j = 0; j < this.tjpro.length; j++) {
+            for (let j = 0; j < this.tjpro1.length; j++) {
               if (this.tjow[i].checkId == this.tjpro[j].checkId) {
-                this.$refs.inserdata.toggleRowSelection(this.tjpro[j],true)
+                this.$refs['inserdata'].toggleRowSelection(this.tjpro1[j],true)
               }
             }
           }
@@ -570,27 +595,28 @@
           this.axios.get("http://localhost:8089/ks-list").then((res)=>{
             this.department = res.data;
           }).catch()
+          //体检类型
+          this.axios.get("http://localhost:8089/allTJtype").then((res)=>{
+                    this.xmzb = res.data;
+          }).catch()
           this.axios.get("http://localhost:8089/allDescTjpro",{params:{seach:this.seach,checkTpye:this.checkTpye}}).then((res)=>{
             this.tjpro = res.data;
-          }).catch()
-          this.axios.get("http://localhost:8089/allDescTjpro",{params:{seach:"",checkTpye:0}}).then((res)=>{
             this.tjpro1 = res.data;
           }).catch()
+          this.axios.get("http://localhost:8089/allDescTjpro",{params:{seach:this.seach1,checkTpye:""}}).then((res)=>{
+
+          }).catch()
         },
+
       // 体检套餐基础参数================
       getMeal(){
         this.axios.get("http://localhost:8089/allMeal",{params:{checkIndex:this.search,codeName:this.search,codeType:this.CodeType}}).then((res)=>{
           this.tjmeal = res.data;
         }).catch()
-//体检类型
-        this.axios.get("http://localhost:8089/allTJtype").then((res)=>{
-          this.xmzb = res.data;
-          console.log(this.xmzb)
-        }).catch()
 
       },
       //新增修改项目弹框
-        jcxmEdit(is, row,formName) {
+        jcxmEdit(is,row,formName) {
           this.tilt = is == 1 ? '新增检查项目' : '修改检查项目';//设置弹框标题
           if(row != undefined){//判断是否有值
             this.jcdx.checkId= row.checkId;
@@ -602,7 +628,7 @@
             this.jcdx.checkTpye=parseInt(row.checkTpye)
             this.jcdx.ksId=parseInt(row.deptks.ksId)
           }else {
-            this.inspectClear()
+            this.inspectClear(formName)
           }
           this.jcxm = true;
         },
@@ -613,21 +639,22 @@
             this.tcdx.codeId=row.codeId;
             this.tcdx.codeName=row.codeName;
             this.tcdx.codePay=row.codePay;
-            this.tcdx.codeType=parseInt(row.codeType);
+            this.tcdx.codeType=parseInt(row.codeTypes);
             this.tcdx.TjAn = row.TjAn;
-            var ww=[];
+            let ckArr=[];
 
 
             this.axios.get("http://localhost:8089/aloneProt",{params:{codeId:row.codeId}}).then((res)=>{
               this.tjow = res.data;
-              res.data.forEach(q=>{
-                ww.push(q.checkId)
+              this.tjow.forEach(q=>{
+                ckArr.push(q.checkId)
               })
+
               // 调用默认勾选原有的项目
-              this.cleaxm()
+              this.tjCheck()
               //强制渲染
               this.$forceUpdate();
-              this.tcdx.TjAn=ww;
+              this.tcdx.TjAn=ckArr;
             }).catch()
           }else{
             this.inspectClear1(fromName);
@@ -639,6 +666,7 @@
       //修改与新增套餐确认按钮===========
       tjtcForm(formName) {
         console.log(this.tcdx.TjAn)
+        this.tcdx.codeType = this.tcdx.codeTypes;//改一下参数的字段名
         if (this.tcdx.TjAn.length == 0) {
           this.$message.warning("没有勾选检查，无法创建")
           return;
@@ -646,7 +674,6 @@
           this.axios.post("http://localhost:8089/addOrUpdataMroj",{mroj:this.tcdx}).then((res)=>{
             this.getMeal();
             this.inspectClear1(formName);
-
           }).catch()
           this.tjtc = false
         }
@@ -662,16 +689,6 @@
           }).catch()
           this.tcxq = true;
         },
-        submitForm(formName) {
-          this.$refs[formName].validate((valid) => {
-            if (valid) {
-            alert('submit!');
-            } else {
-            console.log('error submit!!');
-            return false;
-            }
-          });
-        },
       //删除检查项目
       tprojDelete(row){
         this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
@@ -679,11 +696,21 @@
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          this.sctproj(row)
-          this.$message({
-            type: 'success',
-            message: '删除成功!'
-          });
+          this.axios.get("http://localhost:8089/aloneResss",{params:{checkId:row.checkId}}).then((res)=>{
+            let aa=res.data;
+            if(res.data==null||res.data==""){
+              this.sctproj(row)
+              this.$message({
+                type: 'success',
+                message: '删除成功!'
+              });
+            }else {
+              this.$message({
+                type: 'info',
+                message: '此项目已留有记录,无法删除'
+              });
+            }
+          }).catch()
         }).catch(() => {
           this.$message({
             type: 'info',
@@ -693,7 +720,7 @@
       },
       //删除检查项目
       sctproj(row){
-        this.axios.post('http://localhost:8089/delet-troj', qs.stringify({index:row.indexId}))
+        this.axios.post('http://localhost:8089/delet-troj', qs.stringify({index:row.checkId}))
             .then((v)=>{
               if(v.data == 'ok'){
                 this.getData()
@@ -713,14 +740,22 @@
         this.$refs[formName].resetFields();
       },
       //修改与新增检查项目确认按钮
-        jcxmForm() {
-          console.log(this.jcdx)
-          this.axios.post("http://localhost:8089/addOrUpdataTroj",{troj:this.jcdx}).then((res)=>{
-            this.getData();
-            this.inspectClear();
-          }).catch()
+        jcxmForm(formName) {
+          this.$refs[formName].validate((valid) => {
+            if (valid) {
+              this.axios.post("http://localhost:8089/addOrUpdataTroj",{troj:this.jcdx}).then((res)=>{
+                this.getData();
+                this.inspectClear1(formName);
+              }).catch()
+              this.jcxm = false
+            } else {
+              console.log('error submit!!');
+              return false;
+            }
+          });
 
-          this.jcxm = false
+
+
         },
 
       // 关闭体检详情

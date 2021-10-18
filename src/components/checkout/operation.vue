@@ -83,15 +83,15 @@
 
 
 	<el-dialog :title=tiltm v-model="xztj" width="50%" center style="overflow: auto"  ><!-- 弹框      -=-=-=-=-=-=-==-=-=-=-=--=-=-=-=-=-=-新增体检人员弹框======================================= -->
-		<el-form v-model="man"  status-icon :rules="rules" ref="inserman" label-width="100px" class="demo-ruleForm">
+		<el-form :model="man"  status-icon :rules="rulesm" ref="inserman" label-width="100px" class="demo-ruleForm">
 			<el-row>
 				<el-col :span="8">
-						<el-form-item label="体检人:" prop="name">
+						<el-form-item label="体检人:" prop="manName">
 								<el-input size="mini" v-model="man.manName"></el-input>
 						</el-form-item>
 				</el-col>
         <el-col :span="10">
-          <el-form-item label="身份证:" prop="name">
+          <el-form-item label="身份证:" prop="manSid">
             <el-input size="mini"  @input="getId(man.manSid)" v-model="man.manSid"></el-input>
           </el-form-item>
         </el-col>
@@ -104,20 +104,20 @@
 									</el-form-item>
 					</el-col>
 					<el-col :span="6">
-						<el-form-item label="年龄:" prop="name">
+						<el-form-item label="年龄:" prop="manAge">
 						<el-input size="mini" v-model="man.manAge"></el-input>
 						</el-form-item>
 					</el-col>
           <el-col :span="7">
-            <el-form-item label="出生日期:" prop="name">
+            <el-form-item label="出生日期:" prop="manBirthtime">
               <el-input size="mini" v-model="man.manBirthtime"></el-input>
             </el-form-item>
           </el-col>
 			</el-row>
 			<el-row>
         <el-col :span="8">
-          <el-form-item label="手机号:" prop="name">
-            <el-input size="mini" v-model="man.manPhone"></el-input>
+          <el-form-item label="手机号:" prop="manPhone">
+            <el-input size="mini" v-model="man.manPhone"  oninput="value=value.replace( /^1[0-9]{10}$/,'')"></el-input>
           </el-form-item>
         </el-col>
 				<el-col :span="7">
@@ -146,7 +146,6 @@
                         @select-all="false"
                         height="230">
                 <el-table-column
-
                     type="selection"
                     width="55">
                 </el-table-column>
@@ -369,10 +368,10 @@
 	</el-row>
   <el-row>
     <el-col span="8" style="margin-top: 6px">
-      <div  style="background-color: red;width:14px;height: 14px;float: left;margin-top: 4px"></div>:未办理诊疗卡
+      <span style="color: red">未办理诊疗卡</span>
     </el-col>
-    <el-col span="9" offset="3" style="margin-top: 6px">
-      <div  style="background-color: burlywood;width:14px;height: 14px;float: left;margin-left: 33px;margin-top: 4px"></div>:预约时间即将到期
+    <el-col span="9" offset="8" style="margin-top: 6px">
+      <span style="color: burlywood;margin-left: 20px;padding: 10px">预约时间即将到期</span>
     </el-col>
   </el-row>
 </template>
@@ -419,6 +418,17 @@ export default {
           sickSite:"",
           mcNumberCard:'',//诊疗卡字段
         },
+        rulesm:{
+          manName:[
+            { required: true, message: '请输入名称', trigger: 'blur' }
+          ],
+          manSid:[
+            { required: true, message: '请输入身份证', trigger: 'blur' }
+          ],
+          manPhone:[
+            { required: true, message: '请输入手机号', trigger: 'blur' }
+          ],
+        },
         // 体检人员对象
         man: {
           manId: 0,
@@ -428,7 +438,7 @@ export default {
           manTime: '',
           manBirthtime: '',
           manAge: '',
-          manPhone: '',
+          manPhone:'',
           manPhy: '',
           manState: '',
           manProposal:'',
@@ -558,7 +568,6 @@ export default {
         })
         this.tc=aa;
         this.man.jcXm = ss;
-        console.log(this.man.manPhy)
       },
       //卡片
       handleClick(tab, event) {

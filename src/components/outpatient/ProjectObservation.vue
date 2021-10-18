@@ -182,7 +182,7 @@
 						
 						<el-col style="height: 200px ;width: 420px; margin-top: 10px;" >
 							<el-form-item label="医生建议" style="width: 400px;">
-								<el-input style="width: 325px;" v-model="man1.manProposal"  placeholder="请输入病理原因"
+								<el-input style="width: 325px;" v-model="manres.manProposal"  placeholder="请输入病理原因"
 								rows="12" type="textarea" size="mini" maxlength="1000"
 								           show-word-limit>
 								</el-input>
@@ -228,7 +228,6 @@
           manPhone: '',
           manPhy: '',
           manState: '',
-          manProposal:'',
           manMzZyId:'',
           manMzZyIs:'',
         },
@@ -245,6 +244,7 @@
           manId: '',
           manDate: '',
           manTime: '',
+          manProposal:'',
           sId: ''
         },
         }
@@ -282,7 +282,6 @@
              this.man1.manPhone=row.manPhone,
              this.man1.manPhy=row.manPhy,
              this.man1.manState=row.manState,
-             this.man1.manProposal=row.manProposal,
              this.man1.manMzZyIs=row.manMzZyIs,
              this.man1.manMzZyId=row.manMzZyId
        },
@@ -299,7 +298,6 @@
          // }).then((res) => {
          //   this.manrrs = res.data;
          // }).catch()
-         this.man1.manProposal=row.man.manProposal
 
          this.manres.manResultId=row.manResultId
          this.manres.checkId=row.checkId
@@ -308,6 +306,7 @@
          this.manres.manDate=row.manDate
          this.manres.manTime=row.manTime
          this.manres.sId=row.sId
+         this.manres.manProposal=row.manProposal
        },
        //保存按钮
        jcedit(){
