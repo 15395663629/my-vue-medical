@@ -22,8 +22,8 @@
               </el-form-item>
             </el-col>
             <el-col :span="10" :offset="1">
-              <el-form-item label-width="80px" label="保质期">
-                <el-input v-model="form.drugPastDate" style="width: 215px"/>
+              <el-form-item label-width="80px" label="保质期(月)">
+                <el-input v-model="form.drugPastdate" style="width: 215px"/>
               </el-form-item>
             </el-col>
           </el-row>
@@ -35,10 +35,10 @@
             </el-col>
             <el-col :span="10" :offset="1">
               <el-form-item label-width="80px"
-                            prop="drugBarCode"
+                            prop="drugBarcode"
                             label="条形码"
                             :rules="[{ type: 'number',  message: '输入数字'}]">
-                <el-input v-model.number="form.drugBarCode"  autocomplete="off" style="width: 215px;" ></el-input>
+                <el-input v-model.number="form.drugBarcode"  autocomplete="off" style="width: 215px;" ></el-input>
               </el-form-item>
             </el-col>
           </el-row>
@@ -158,8 +158,8 @@
                   <el-form-item style="color:cornflowerblue" label="药品单位">
                     {{props.row.drugUnit}}
                   </el-form-item>
-                  <el-form-item style="color:cornflowerblue" label="保质期">
-                    {{props.row.drugPastDate}}
+                  <el-form-item style="color:cornflowerblue" label="保质期(月)">
+                    {{props.row.drugPastdate}}
                   </el-form-item>
                 </el-form>
 			      </template>
@@ -178,7 +178,7 @@
 				</el-table-column>
 				<el-table-column
 				  label="条形码"
-				  prop="drugBarCode">
+				  prop="drugBarcode">
 				</el-table-column> 
         <el-table-column
             label="药品功效"
@@ -207,7 +207,7 @@
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
         :current-page="currentPage"
-        :page-sizes="[3, 8, 16, 32]"
+        :page-sizes="[5, 10, 20, 40]"
         :page-size="pagesize"
         layout="total, sizes, prev, pager, next, jumper"
         :total="tableData.length">
@@ -225,7 +225,7 @@
         form: {
           drugId:'',
           drugName:'',
-          drugBarCode:'',
+          drugBarcode:'',
           drugPrice:'',
           drugUsage:'',
           ykSpecId:'',
@@ -238,7 +238,7 @@
           ykSpecId:'',
           drugSpecification:'',
           supplierId:'',
-          drugPastDate:'',
+          drugPastdate:'',
           drugParticle:'',//单粒价格
           drugQuantity:'',//每瓶数量
           drugPrescription:'',//是否为处方药
@@ -296,7 +296,7 @@
       updatePharmacy(row){
             this.form.drugId = row.drugId;
             this.form.drugName = row.drugName
-            this.form.drugBarCode = row.drugBarCode
+            this.form.drugBarcode = row.drugBarcode
             this.form.drugPrice = row.drugPrice
             this.form.drugUsage = row.drugUsage
             this.form.ykSpecId = row.ykSpecId
@@ -306,7 +306,7 @@
             this.form.drugRemark = row.drugRemark
             this.form.drugUnit = row.drugUnit
             this.form.drugSpecification = row.drugSpecification
-            this.form.drugPastDate = row.drugPastDate
+            this.form.drugPastdate = row.drugPastdate
             this.form.drugParticle = row.drugParticle
             this.form.drugQuantity = row.drugQuantity
 
@@ -319,7 +319,7 @@
         this.form = {
           drugId:0,
           drugName:null,
-          drugBarCode:null,
+          drugBarcode:null,
           drugPrice:null,
           drugUsage:null,
           ykSpecId:null,
@@ -329,7 +329,7 @@
           drugRemark:null,
           drugUnit:null,
           drugSpecification:null,
-          drugPastDate:null,
+          drugPastdate:null,
           drugParticle:null,
           drugQuantity:null,
           drugPrescription:null,

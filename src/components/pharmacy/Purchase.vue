@@ -14,15 +14,16 @@
       <!-- ----------------------------------------------------新增计划弹窗---------------------------------------------------- -->
 			<el-dialog @close="fromdata" title="采购计划" v-model="dialogFormVisible">
 				<el-form model="caigou">
+          <el-button type="primary" size="mini" @click="open = true">添加药品</el-button>
           <el-row>
             <el-col :span="12">
-              <el-form-item label="采购计划名称">
-                <el-input style="width: 215px;" v-model="caigou.ykPurchaseName"></el-input>
+              <el-form-item label="采购编号">
+                <el-input style="width: 215px;" disabled v-model="caigou.ykPurchaseId"></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="10" offset="2">
-              <el-form-item label="采购编号">
-                <el-input style="width: 215px;" disabled v-model="caigou.ykPurchaseId"></el-input>
+              <el-form-item label="采购计划名称">
+                <el-input style="width: 215px;" v-model="caigou.ykPurchaseName"></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="12">
@@ -40,7 +41,6 @@
               </el-form-item>
             </el-col>
           </el-row>
-          <el-button type="primary" size="mini" @click="open = true">添加药品</el-button>
 				</el-form>
 			    <el-table :data="gridData" height="240" >
               <el-table-column property="drugName" label="药品名" ></el-table-column>
@@ -90,12 +90,13 @@
         <el-table-column property="drugId" label="药品编号"></el-table-column>
         <el-table-column property="ykPurchaseId" label="采购编号"></el-table-column>
         <el-table-column prop="yfDruginformation.drugName" label="药品名称"></el-table-column>
-        <el-table-column label="药品数量">
+        <el-table-column property="ykSupplier.supplierName" label="供应商"/>
+        <el-table-column label="采购数量">
           <template #default="scope">
             {{scope.row.ykChaseCount}}
           </template>
         </el-table-column>
-        <el-table-column property="drugPrice" label="药品单价"></el-table-column>
+        <el-table-column property="drugPrice" label="药品进价"></el-table-column>
         <el-table-column label="小计">
           <template #default="scope">
             {{scope.row.ykChaseCount*scope.row.drugPrice}}
@@ -104,7 +105,6 @@
       </el-table>
       <template #footer>
 				  <span class="dialog-footer">
-				    <el-button @click="mingxi = false">取 消</el-button>
 				    <el-button type="primary" @click="mingxi = false">确 定</el-button>
 				  </span>
       </template>
@@ -144,7 +144,7 @@
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
       :current-page="currentPage"
-      :page-sizes="[3, 8, 16, 32]"
+      :page-sizes="[5, 10, 20, 40]"
       :page-size="pagesize"
       layout="total, sizes, prev, pager, next, jumper"
       :total="tableData.length">
@@ -182,7 +182,8 @@
         drugInfosC:[],
         currentPage:1, //初始页
         pagesize:8,    //    每页的数据
-        search: '',//表格搜索框（药品选择）
+        pagesizesize:4,  //药品详情每页显示四条数据
+        search: '',//添加药品搜索框（药品选择）
       }
     },
 		methods: {
@@ -196,7 +197,7 @@
       },
       // 生成随机编号     获取当前日期的方法
       getProjectNum () {
-        const projectTime = new Date() // 当前中国标准时间
+        /*const projectTime = new Date() // 当前中国标准时间
         const Year = projectTime.getFullYear() // 获取当前年份 支持IE和火狐浏览器.
         const Month = projectTime.getMonth() + 1 // 获取中国区月份
         const Day = projectTime.getDate() // 获取几号
@@ -211,12 +212,37 @@
         } else {
           CurrentDate += '0' + Day
         }
-        return CurrentDate
+        return CurrentDate*/
+
+        var d = new Date();
+        var caigou = "CG";
+        var year = d.getFullYear();
+        var month = d.getMonth() + 1;
+        var date = d.getDate();
+        var day = d.getDay();
+        var hours = d.getHours();
+        var minutes = d.getMinutes();
+        var seconds = d.getSeconds();
+        var ms = d.getMilliseconds();
+        year = (year + "").substring(2);
+        if (month <= 9)
+          month = "0" + month;
+        if (date <= 9)
+          date = "0" + date;
+        if (hours <= 9)
+          hours = "0" + hours;
+        if (minutes <= 9)
+          minutes = "0" + minutes;
+        if (seconds <= 9)
+          seconds = "0" + seconds;
+        let num = Math.ceil(Math.random()*100);
+        var id = caigou + year + month + date + hours + minutes + seconds + num;
+        return id;
       },
       //绑定随机生成编号
       openCgjh(){
         this.dialogFormVisible =true;
-        this.caigou.ykPurchaseId = this.getProjectNum() + Math.floor(Math.random() * 1000);//根据获取到的id来生成编号前面是年月日后面是随机生成随机四位数
+        this.caigou.ykPurchaseId = this.getProjectNum() //+ Math.floor(Math.random() * 10000);//根据获取到的id来生成编号前面是年月日后面是随机生成随机四位数
         /*  // 调用获取当前日期的方法加四位随机数  赋值表单中的项目编号
      this.form.number = this.getProjectNum() + Math.floor(Math.random() * 10000)  // 如果是6位或者8位随机数，相应的 *1000000或者 *100000000就行了*/
       },
@@ -240,12 +266,6 @@
       },
       handleClick(row) {
 				console.log(row);
-			},
-			handleSizeChange(val) {
-			    console.log(`每页 ${val} 条`);
-			},
-			handleCurrentChange(val) {
-				console.log(`当前页: ${val}`);
 			},
       /*                 -------------------执行计划按钮----------------------                                 */
       zhixing(){
@@ -289,7 +309,7 @@
           sId:'',
           ykPurchaseSName:'',
           ykPurchaseIs:'',
-        }
+        },
         this.dialogFormVisible =false
       },
 		},
