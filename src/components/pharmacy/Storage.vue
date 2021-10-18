@@ -1,6 +1,6 @@
 <template>
 	<h1>入库</h1>
-	<el-row>
+<el-row>
 		<el-col :span="3">
 			<el-input placeholder="请输入批次" v-model="input" clearable></el-input>
 		</el-col>
@@ -8,6 +8,7 @@
 			<el-date-picker v-model="value1" type="date" placeholder="选择入库日期"></el-date-picker>
 			<el-button type="primary" icon="el-icon-search">搜索</el-button>
 		</el-col>
+  <!--
 		<el-col :span="1" :offset="10">
 			<el-button type="primary" @click="dialogFormVisible = true">新增入库信息</el-button>
 			<el-dialog title="药品入库" v-model="dialogFormVisible">
@@ -61,97 +62,102 @@
 			</el-dialog>
 		</el-col>
 	</el-row>
-	<el-row>
+	<el-row>-->
 		<el-col>
-			<el-table :data="tableData" border style="width: 100%;">
-				<el-table-column prop="drug" label="批次" width="150">
-					</el-table-column>
-				<el-table-column prop="date" label="日期" width="150">
-					</el-table-column>
-				<el-table-column prop="name" label="药品名" width="150">
-					</el-table-column>
-				<el-table-column prop="province" label="入库数量" width="150">
-					</el-table-column>
-				<el-table-column prop="dan" label="采购价格" width="150">
-					</el-table-column>
-				<el-table-column prop="city" label="单位" width="150">
-					</el-table-column>	
-				<el-table-column prop="cang" label="入库仓库" width="150">
-					</el-table-column>	
-				<el-table-column prop="address" label="经手人" width="150">
-					</el-table-column>
-				<el-table-column prop="zip" label="备注" width="150">
-					</el-table-column>
-				<el-table-column fixed="right" label="操作" width="150">
+			<el-table :data="daitukuForm" style="width: 100%;">
+				<el-table-column prop="ykPurchaseId" label="采购编号"/>
+				<el-table-column prop="ykPurchaseName" label="计划名称" />
+				<el-table-column fixed="right" label="操作">
 					<template #default="scope">
-						<el-button @click="handleClick(scope.row)" type="primary" plain size="small">查看</el-button>
-						<el-button type="success" plain size="small">编辑</el-button>
+						<el-button @click="handleClick(scope.row)" type="primary" plain size="small">查看详情</el-button>
+						<el-button type="success" plain size="small">通过审核</el-button>
 					</template>
 				</el-table-column>
 			</el-table>
 		</el-col>
+    <el-col>
+      <el-dialog title="入库明细" v-model="rukumingxi" width="80%" >
+        <el-table :data="ydpdform" >
+          <el-table-column property="drugId" label="药品编号" width="100px"/>
+          <el-table-column property="yfDruginformation.drugName" label="药品名称" width="150px"/>
+          <el-table-column property="ykSupplier.supplierName" label="供应商" width="150px"/>
+          <el-table-column property="ykChaseCount" label="入库数量" width="150px">
+            <template #default="scope">
+              <el-input-number v-model="scope.row.ykChaseCount" style="width:120px;" size="mini" >
+              </el-input-number>
+            </template>
+          </el-table-column>
+          <el-table-column property="ykDate" label="保质期" width="300px">
+            <template #default="scope">
+              <el-date-picker v-model="scope.row.ykDate" type="date" placeholder="选择保质期" />
+            </template>
+          </el-table-column>
+          <el-table-column property="ykBatch" label="药品批次" width="200px">
+            <template #default="scope">
+              <el-input v-model="scope.row.ykBatch"/>
+            </template>
+          </el-table-column>
+        </el-table>
+        <template #footer>
+				  <span class="dialog-footer">
+				    <el-button type="primary" @click="minrukumingxigxi = false">确 定</el-button>
+				  </span>
+        </template>
+      </el-dialog>
+    </el-col>
 	</el-row>
-	<!-- 分页 -->
-	<el-pagination
-			style="text-align: center;"
-		  @size-change="handleSizeChange"
-		  @current-change="handleCurrentChange"
-		  :current-page="currentPage4"
-		  :page-sizes="[100, 200, 300, 400]"
-		  :page-size="100"
-		  layout="total, sizes, prev, pager, next, jumper"
-		  :total="400">
-	</el-pagination>
+  <!-- 分页 -->
+  <el-pagination
+      style="text-align: center"
+      @size-change="handleSizeChange"
+      @current-change="handleCurrentChange"
+      :current-page="currentPage"
+      :page-sizes="[5, 10, 20, 40]"
+      :page-size="pagesize"
+      layout="total, sizes, prev, pager, next, jumper"
+      :total="daitukuForm.length">
+  </el-pagination>
 </template>
 
 <script>
 	export default {
-		methods: {
-			handleClick(row) {
-				console.log(row);
-			},
-			handleSizeChange(val) {
-			    console.log(`每页 ${val} 条`);
-			},
-			handleCurrentChange(val) {
-				console.log(`当前页: ${val}`);
-			},
-		},
-
 		data() {
 			return {
-				tableData: [{
-					date: '2016-05-02',
-					name: '六味地黄丸',
-					province: 50,
-					city: '盒',
-					drug:'20160502666',
-					address: '李四',
-					dan:'20元',
-					zip: '',
-					cang:'中药仓'
-				},
-				{
-					
-				},
-				{
-					
-				},
-				{
-					
-				}],
+        daitukuForm:[],//主表
+        ydpdform:[],//详表
 				input:'',
-				dialogFormVisible: false,
-				form: {
-					  name: '',
-					  region: '',
-					  
-					},
-				formLabelWidth: '120px',
-				value1: '',
+        currentPage:1, //初始页
+        pagesize:8,    //    每页的数据
+        rukumingxi:false,//药品入库明细弹窗
 			}
-		}
-	}
+		},
+    methods:{ handleSizeChange: function (size) {
+        this.pagesize = size;
+        console.log(this.pagesize)  //每页下拉显示数据
+      },
+      handleCurrentChange: function(currentPage){
+        this.currentPage = currentPage;
+        console.log(this.currentPage)  //点击第几页
+      },
+      getDate(){
+        //查询待入库的药品
+        this.axios.post("dairuku").then((v)=>{
+          this.daitukuForm = v.data
+        })
+        /*查询采购计划详单*/
+        this.axios.post("all-ydpd").then((v)=>{
+          this.ydpdform = v.data;
+        })
+      },
+      handleClick(row){
+      this.rukumingxi = true;
+      this.ydpdform = row.ykDrugpurchasePlanDetails;
+      }
+    },
+    created() {
+      this.getDate();
+    }
+  }
 </script>
 
 <style>

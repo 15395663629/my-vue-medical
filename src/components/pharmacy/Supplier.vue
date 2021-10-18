@@ -3,23 +3,23 @@
   <el-row>
     <el-col>
       <!-- 新增弹窗 -->
-      <el-button type="primary" @click="dialogFormVisible = true">新增供应商</el-button>
-      <el-dialog @close="clearform" title="供应商" v-model="dialogFormVisible" width="40%">
+      <el-button type="primary" @click="gysxinzeng()" size="small">新增供应商</el-button>
+      <el-dialog @close="clearform" title="新增供应商信息" v-model="dialogFormVisible" width="40%">
         <el-form :model="formSipplier">
           <el-form-item label="供应商编号" :label-width="formLabelWidth">
-            <el-input v-model="formSipplier.supplierId" autocomplete="off" style="width: 200px;"></el-input>
+            <el-input v-model="formSipplier.supplierId" disabled autocomplete="off" style="width: 240px;"></el-input>
           </el-form-item>
           <el-form-item label="供应商名称" :label-width="formLabelWidth">
-            <el-input v-model="formSipplier.supplierName" autocomplete="off" style="width: 200px;"></el-input>
+            <el-input v-model="formSipplier.supplierName" autocomplete="off" style="width: 240px;"></el-input>
           </el-form-item>
           <el-form-item label="供应商地址" :label-width="formLabelWidth">
-            <el-input v-model="formSipplier.supplierSite" type="textarea" autocomplete="off" style="width: 200px;"></el-input>
+            <el-input v-model="formSipplier.supplierSite" type="textarea" autocomplete="off" style="width: 240px;"></el-input>
           </el-form-item>
           <el-form-item label="供应商电话" :label-width="formLabelWidth">
-            <el-input v-model="formSipplier.supplierPhone" type="text" autocomplete="off" style="width: 200px;"></el-input>
+            <el-input v-model="formSipplier.supplierPhone" type="text" autocomplete="off" style="width: 240px;"></el-input>
           </el-form-item>
           <el-form-item label="供应商联系人" :label-width="formLabelWidth">
-            <el-input v-model="formSipplier.supplierLinkman" type="text" autocomplete="off" style="width: 200px;"></el-input>
+            <el-input v-model="formSipplier.supplierLinkman" type="text" autocomplete="off" style="width: 240px;"></el-input>
           </el-form-item>
         </el-form>
         <template #footer>
@@ -31,15 +31,8 @@
       </el-dialog>
 
       <!--修改弹窗-->
-      <el-dialog @close="clearform" title="供应商" v-model="handleEdit" width="40%">
+      <el-dialog @close="clearform" title="修改供应商信息" v-model="handleEdit" width="40%">
         <el-form :model="formSipplier">
-          <el-row :gutter="0">
-           <el-col :span="0">
-             <el-form-item label="供应商编号" :label-width="formLabelWidth">
-               <el-input v-model="formSipplier.supplierId" autocomplete="off" style="width: 200px;"></el-input>
-             </el-form-item>
-           </el-col>
-          </el-row>
           <el-form-item label="供应商名称" :label-width="formLabelWidth">
             <el-input v-model="formSipplier.supplierName" autocomplete="off" style="width: 200px;"></el-input>
           </el-form-item>
@@ -77,11 +70,10 @@
     </el-table-column>
     <el-table-column align="right"  width="200">
       <template #header>
-        <el-input v-model="search" size="mini" placeholder="输入关键字搜索" />
+        <el-input v-model="search" size="mini" placeholder="输入供应商名称搜索" />
       </template>
       <template #default="scope" >
         <el-button size="mini" type="primary" plain @click="editSupplier(scope.row)">编辑</el-button>
-        <el-button size="mini" type="danger" plain @click="handleDelete">删除</el-button>
       </template>
     </el-table-column>
   </el-table>
@@ -91,7 +83,7 @@
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
       :current-page="currentPage"
-      :page-sizes="[3, 8, 16, 32]"
+      :page-sizes="[5, 10, 20, 40]"
       :page-size="pagesize"
       layout="total, sizes, prev, pager, next, jumper"
       :total="tableData.length">
@@ -189,6 +181,10 @@ export default {
       }).catch(function (){
 
       })
+    },
+    gysxinzeng(){
+      this.dialogFormVisible = true;
+      this.formSipplier.supplierId = Math.floor(Math.random() * 100000);
     }
   },
   created() {
