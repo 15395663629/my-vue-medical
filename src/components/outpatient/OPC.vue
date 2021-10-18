@@ -2,7 +2,7 @@
 	<el-container style="height: 100%;">
 		<el-header height="30px"  style="line-height: 30px; background-color: #B3C0D1;color: #333;">
 			<!-- <newDateOPC style="margin: 0px; padding: 0px;"></newDateOPC> -->
-		{{leftRecord}}
+		{{}}
     </el-header>
 		<el-container style="height: 100%;">
 			<el-aside width="400px" style="background-color: #D3DCE6;color: #333;"> <!-- 右边 -->
@@ -939,6 +939,7 @@
               this.headerInput.mcNumber = this.leftTopTable[0].rtRegObject.cardObject.mcNumber;
               var number = this.formatDate(this.leftTopTable[0].bnTime,'yyyyMMddhhmm').toString()
                   +this.token.ksId.toString()+this.token.tid.toString()+this.headerInput.bnCount.toString()
+
               this.headerInput.mrCount = number;
               this.loading=false;
               return 'success';
@@ -953,7 +954,7 @@
       },
       //查询单个科室今天挂号的总数
       countLeftTopTable(){
-        this.axios.post('allMzOpcNumber',{ksName:this.token.ksId,science:this.token.tid}).then((v)=>{
+        this.axios.post('allMzOpcNumber',{ksName:this.token.ksId,science:this.token.sid}).then((v)=>{
           this.leftTopTable=v.data
         }).catch(()=>{ })
         this.selectRecord();

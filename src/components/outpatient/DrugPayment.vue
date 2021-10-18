@@ -50,8 +50,8 @@
           </el-col >
           <el-col :span="24" style="margin-top: 20px" :offset="8">
             <el-radio-group v-model="radioSf">
-              <el-radio :label="1">其他收费</el-radio>
-              <el-radio :label="2">诊疗卡收费</el-radio>
+              <el-radio :label="1">其他&支付</el-radio>
+              <el-radio :label="2">诊疗卡支付</el-radio>
             </el-radio-group>
           </el-col>
           <el-col :span="11" :offset="1" style="margin-top: 15px">
@@ -323,7 +323,7 @@ import { h } from 'vue'
               this.$message({
                 showClose: true,
                 type: 'warning',
-                message: '没有该患者的任何信息~'
+                message: '没有该患者的任何收费信息~'
               });
             }
 
