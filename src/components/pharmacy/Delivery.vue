@@ -46,13 +46,13 @@
             </template>
           </el-table-column>
         </el-table>
-          <!-- 分页-->
+        <!-- 分页 -->
         <el-pagination
             style="text-align: center"
             @size-change="handleSizeChange"
             @current-change="handleCurrentChange"
             :current-page="currentPage"
-            :page-sizes="[3, 8, 16, 32]"
+            :page-sizes="[5, 10, 20, 40]"
             :page-size="pagesize"
             layout="total, sizes, prev, pager, next, jumper"
             :total="ykStorge.length">
@@ -77,8 +77,7 @@
 	</el-row>
 	<el-row>
 		<el-col>
-			<el-table :data="ykallot.slice((currentPage-1)*pagesize,currentPage*pagesize)" style="width: 100%;" height="500px" @selection-change="">
-        <el-table-column type="selection" width="55"/>
+			<el-table :data="ykallot.slice((currentPage-1)*pagesize,currentPage*pagesize)" style="width: 100%;" height="500px">
         <el-table-column prop="ykAllotId" label="调拨编号" >
 					</el-table-column>
 				<el-table-column prop="ykAllotCause" label="申请原因">
@@ -96,13 +95,13 @@
 			</el-table>
 		</el-col>
 	</el-row>
-	<!-- 分页 -->
+  <!-- 分页 -->
   <el-pagination
       style="text-align: center"
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
       :current-page="currentPage"
-      :page-sizes="[3, 8, 16, 32]"
+      :page-sizes="[5, 10, 20, 40]"
       :page-size="pagesize"
       layout="total, sizes, prev, pager, next, jumper"
       :total="ykallot.length">
@@ -164,6 +163,7 @@
         let allotDetail = [];
         allotDetail.push(obj);
         this.axios.post("yk-batch-ykyf",{allotDetail:allotDetail,sId:this.staff.sid}).then().catch();
+        this.getData();
         this.$notify({
           title: '调拨成功',
           //message: '调拨成功',
@@ -194,5 +194,5 @@
 </script>
 
 <style>
-	
+
 </style>

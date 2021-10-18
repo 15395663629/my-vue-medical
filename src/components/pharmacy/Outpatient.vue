@@ -27,22 +27,28 @@
     <el-table-column label="操作">
       <template #default="scope">
         <el-button type="primary" plain size="small" @click="mzfy(scope.row)">查看药品</el-button>
-        <el-button type="success" plain size="small">发药</el-button>
+        <el-button type="success" plain size="small" @click="fayao(scope.row)">发药</el-button>
       </template>
     </el-table-column>
   </el-table>
   <!--        发药详情里面的药品-->
   <el-dialog title="发药详情" v-model="mzzy">
-    <el-table :data="zy">
-      <el-table-column property="zpNumber" label="中药处方中单"/>
-      <el-table-column property="zpName" label="药品名"/>
-      <el-table-column property="zpCount" label="药品数量"/>
-    </el-table>
-    <el-table :data="xy">
-      <el-table-column property="rdNumber" label="西药处方单号"/>
-      <el-table-column property="rdName" label="药品名"/>
-      <el-table-column property="rdCount" label="药品数量"/>
-    </el-table>
+    <el-tabs v-model="card" @tab-click="handleClick">
+      <el-tab-pane label="中药" name="中药">
+        <el-table :data="zy">
+          <el-table-column property="zpNumber" label="中药处方中单"/>
+          <el-table-column property="zpName" label="药品名"/>
+          <el-table-column property="zpCount" label="药品数量"/>
+        </el-table>
+      </el-tab-pane>
+      <el-tab-pane label="西药" name="西药">
+        <el-table :data="xy">
+          <el-table-column property="rdNumber" label="西药处方单号"/>
+          <el-table-column property="rdName" label="药品名"/>
+          <el-table-column property="rdCount" label="药品数量"/>
+        </el-table>
+      </el-tab-pane>
+    </el-tabs>
   </el-dialog>
   <!-- 分页 -->
   <el-pagination
@@ -50,7 +56,7 @@
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
       :current-page="currentPage"
-      :page-sizes="[3, 8, 16, 32]"
+      :page-sizes="[5, 10, 20, 40]"
       :page-size="pagesize"
       layout="total, sizes, prev, pager, next, jumper"
       :total="MzRecipe.length">
@@ -67,7 +73,7 @@ export default {
       zy:[],
       xy:[],
       mzzy:false,
-
+      card:'中药',
     }
   },
   methods: {
@@ -79,29 +85,44 @@ export default {
       this.currentPage = currentPage;
       console.log(this.currentPage)  //点击第几页
     },
-    getData() {
-      //查询门诊处方单号
-      this.axios.post("allMzRecipe").then((v) => {
-        this.MzRecipe = v.data
-      })
+    getData(recipeNumber) {
+
+
       //查询门诊发药西药
-      this.axios.post("allmzxy").then((v)=>{
+      this.axios({url:"allmzxy",params:{recipeNumber:recipeNumber}}).then((v)=>{
         this.xy = v.data
       })
       //查询门诊发药中药
-      this.axios.post("allmzzy").then((v)=>{
+      this.axios({url:"allmzzy",params:{recipeNumber:recipeNumber}}).then((v)=>{
         this.zy = v.data
       })
+    },
+    //药房发药
+    fayao(row){
+      console.log(row)
+      this.axios.post("fayao",{mzRecipe:row,sId:this.staff.sid}).then().catch();
+      console.log("sssss");
+      this.getData();
     },
     //发的药品详情弹窗
     mzfy(row){
       this.mzzy = true;
-      this.zy = row.zpList;
-      this.xy = row.xpList;
-    }
+      console.log(row);
+
+      this.getData(row.recipeNumber);
+      // this.zy = row.zpList;
+      // this.xy = row.xpList;
+    },
+    handleClick(tab, event) {
+      console.log(tab, event)
+    },
   },
   created() {
-    this.getData()
+    this.staff = this.$store.state.token.list;//将登录存入的值在取出来  获取当前的员工
+//查询门诊处方单号
+    this.axios.post("allMzRecipe").then((v) => {
+      this.MzRecipe = v.data
+    })
   }
 }
 </script>
