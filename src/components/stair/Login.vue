@@ -96,7 +96,7 @@ import qs from 'qs'
                   if(v.data.size!=0){
                     if(d.data.list.szt===0){
                       this.$store.state.token =d.data;
-                      // this.$store.commit("initMenu",d.data)
+                      this.$store.commit("initMenu",d.data)
                       sessionStorage.setItem("token",JSON.stringify(d.data))
                       console.log(d.data)
                       this.$router.push('/home')
