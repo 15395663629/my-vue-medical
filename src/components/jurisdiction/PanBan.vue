@@ -72,7 +72,7 @@
 
     <!--    主体开始  -->
     <el-row class="div20 " v-for="pb in pbtableData" style="margin-top: 2px;height: 60px;">
-      <el-col :span="2" class="div21 ">
+      <el-col :span="2" class="div21">
         {{pb.xq}}<br>{{pb.rq}}
       </el-col>
       <el-col :span="wid" v-for="bc in schedulingTypeOptions" class="doc">
@@ -90,16 +90,20 @@
     <!--==========================弹框开始===========================-->
     <el-dialog v-model="dialogVisible" title='添加员工' >
         <!-- 复选情况下使用 check-strictly （默认false）使父子不相互关联 -->
-        <el-tree
-            ref="tree"
-            :data="ksYgs"
-            :props="defaultProps"
-            show-checkbox
-            node-key="tid"
-            default-expand-all
-            check-strictly
+       <el-form >
+         <el-form-item :label="ksk.ksName">
+           <el-tree
+               ref="tree"
+               :data="ksYgs"
+               :props="defaultProps"
+               show-checkbox
+               node-key="tid"
+               default-expand-all
+               check-strictly
 
-        />
+           />
+         </el-form-item>
+       </el-form>
       <div style="text-align:right;">
         <el-button type="danger" @click="dialogVisible=false">关闭</el-button>
         <el-button type="primary" @click="confirmRole()">确定</el-button>
@@ -125,8 +129,8 @@ export default {
       },
       isShow:false,
       ksk: {
-        ksId:15,
-        ksName:"门诊部内科 "
+        ksId:1,
+        ksName:"住院部内科 "
       },
       keShi: [],
       //  班次类型
@@ -195,7 +199,10 @@ export default {
         this.keShi=v.data
         this.intercept()
       }).catch()
-      this.axios.get('add-sch').then((v)=>{
+      this.axios({
+        url:"add-sch",
+        params:{ksId:this.ksk.ksId}
+      }).then((v)=>{
       this.ksYgs=v.data
       }).catch()
     },
@@ -207,7 +214,7 @@ export default {
       }).then((v)=>{
         this.schedulingTypeOptions=v.data
         this.length2=v.data.length
-        console.log(this.schedulingTypeOptions)
+        console.log(this.schedulingTypeOptions,"11111")
       }).catch();
     },
     quit(){
@@ -217,9 +224,8 @@ export default {
       }).then((v)=>{
         this.pbtableData=v.data
         this.getData()
-        console.log("----")
-    console.log(this.pbtableData)
-
+        console.log("----"+this.ksk.ksId)
+    console.log(this.pbtableData,"2222")
       }).catch();
 
     },
@@ -227,6 +233,11 @@ export default {
       this.dialogVisible= true
      this.sch.rq=rq
       this.sch.bcId=bcId
+      for(const ks of this.keShi){
+        if(ks.ksId == this.ksk.ksId){
+          this.ksk.ksName=ks.ksName
+        }
+      }
     },
     confirmRole(){
       var funs=this.$refs.tree.getCheckedKeys();//员工id
@@ -235,9 +246,6 @@ export default {
       console.log(funs)
       var grants = JSON.stringify({bcId:this.sch.bcId,funs:funs,rq:this.sch.rq})
       this.axios.post("addSch",qs.stringify({grants:grants})).then((v)=>{
-        this.$nextTick(function() {
-          this.$refs.tree.setCheckedKeys(this.ksYgs)
-        })
         if(v.data==="ok"){
           console.log("ok")
           //日期
@@ -305,7 +313,7 @@ export default {
           }
         }
       }
-    }
+    },
   }
 }
 
