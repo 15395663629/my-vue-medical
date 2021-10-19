@@ -136,13 +136,9 @@
         this.currentPage = currentPage;
         console.log(this.currentPage)  //点击第几页
       },
-      getData(){
-        //查询调拨申请
-        this.axios.post("all-ykallot").then((v)=>{
-          this.ykallot = v.data;
-        })
+      getData(ykAllotId){
         //查询调拨详表
-        this.axios.post("all-detail").then((v)=>{
+        this.axios({url:"all-detail",params:{ykAllotId:ykAllotId}}).then((v)=>{
           this.detail = v.data;
         })
         //查询药库库存
@@ -174,6 +170,7 @@
       handleClick(row){
           this.dialogFormVisible = true;
           this.detail = row.ykAllotdetail;
+
       },
       //调拨记录的弹窗
       jiluFromm(){
@@ -182,13 +179,16 @@
       //调拨记录详细的弹窗
       jiluxiangFromm(row){
         this.jiluxiangFrom = true;
-        this.ykStorgeDetaile = row.ykStorageDetails
+        //this.ykStorgeDetaile = row.ykStorageDetails
+        this.getData(row.ykAllotId)
       }
     },
     created() {
       this.staff = this.$store.state.token.list;//将登录存入的值在取出来  获取当前的员工
-		  this.getData();
-
+      //查询调拨申请
+      this.axios.post("all-ykallot").then((v)=>{
+        this.ykallot = v.data;
+      })
     }
   }
 </script>

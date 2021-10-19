@@ -271,29 +271,28 @@
       zhixing(){
 			  console(row)
       },
-      /*查询采购计划*/
-      getData(){
-			  this.axios.post("all-plan").then((v)=>{
-			    console.log(v)
-			    this.tableData = v.data;
+
+      getData(ykPurchaseId){
+        /*查询采购计划详单*/
+        this.axios({url:"all-ydpd",params:{ykPurchaseId:ykPurchaseId}}).then((v)=>{
+          this.ydpdform = v.data;
         })
+
         /*查询经手人  员工表*/
         this.axios.get("all-stall").then((v)=>{
           this.stallform = v.data;
         })
-        /*查询采购计划详单*/
-        this.axios.post("all-ydpd").then((v)=>{
-          this.ydpdform = v.data;
-        })
+
         /*查询药品信息*/
         this.axios.post("drug").then((v)=>{
           this.drug = v.data;
         })
       },
       //打开采购明细弹框
-      opemMingxi(obj){
+      opemMingxi(row){
         this.mingxi = true;
-        this.ydpdform = obj.ykDrugpurchasePlanDetails;
+        //this.ydpdform = obj.ykDrugpurchasePlanDetails;
+        this.getData(row.ykPurchaseId);
       },
       /*选择药品添加到表格*/
       adddrug(){
@@ -314,7 +313,10 @@
       },
 		},
 		created() {
-      this.getData();
+      /*查询采购计划*/
+      this.axios.post("all-plan").then((v)=>{
+        this.tableData = v.data;
+      })
     }
   }
 </script>
