@@ -21,27 +21,18 @@
 
     <el-table-column label="治疗范围" >
       <template #default="scope">
-        <el-popover effect="light" trigger="hover" placement="top" width="250px">
-          <template #default>
-            <p>手术结果： {{scope.row.ssObject.susDoctorText}}</p>
-          </template>
-          <template #reference>
-            <div class="name-wrapper ">
-              <el-tag size="medium">{{scope.row.ssObject.projectPosition}}</el-tag>
-            </div>
-          </template>
-        </el-popover>
+        <el-tag size="medium">{{scope.row.ssObject.projectPosition}}</el-tag>
       </template>
 
     </el-table-column>
 
-    <el-table-column label="嘱托" class="patientText">
+    <el-table-column label="手术结果填写" class="patientText">
       <template #default="scope">
-          <div v-if="scope.row.ssObject.susPayState == 0">
-            <el-input type="textarea" size="mini" v-model="scope.row.ssObject.susMessage" rows="1" maxlength="400" ></el-input>
+          <div v-if="scope.row.ssObject.susPayState == 1">
+            <el-input type="textarea" size="mini" v-model="scope.row.ssObject.susDoctorText" rows="1" maxlength="400" ></el-input>
           </div>
           <div v-else>
-            <el-input type="textarea" size="mini" v-model="scope.row.ssObject.susMessage" rows="1" maxlength="400" disabled></el-input>
+            <el-input type="textarea" size="mini" v-model="scope.row.ssObject.susDoctorText" rows="1" maxlength="400" disabled></el-input>
           </div>
       </template>
     </el-table-column>

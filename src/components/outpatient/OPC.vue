@@ -488,8 +488,8 @@
           chFamilyHistory:null,
           chCause:null,
           chDoctorText:null,
-          chOe:null,
-          chOps:null,
+          chOe:'',
+          chOps:'',
         },
         //处方表
         recipeObject:{
@@ -645,7 +645,6 @@
         //就诊记录表
         this.medicalRecordObject=val.medicalRecordObject;
         this.historyObject = val.historyObject;/*病历集合*/
-        console.log(this.historyObject)
         this.recipeObject = val.recipeObject;/*处方集合*/
         if(val.tjCodeManObject!=null){//判断空值对象
           this.tjCodeManObject = val.tjCodeManObject;/*体检对象*/
@@ -718,7 +717,9 @@
               manResultId:drug.manResultId,
               manId:drug.manId,
             }
-            tjText+=drug.manResult+'\n';
+            if(drug.manResult !=null){
+              tjText+=drug.manResult+'\n';
+            }
             this.rightTableData3.push(drug);
           })
           //对病例的体检结果回显
@@ -727,7 +728,7 @@
         }
         //对手术的回流
         if(this.centerSurgeryList.length>0 && this.centerSurgeryList[0].susId !=0){
-          let tjSs = ''//体检结果拼接
+          let ssText = ''//手术结果拼接
           this.centerSurgeryList.forEach((drug,i)=>{
             drug.ssObject={
               projectName:drug.ssObject.projectName,
@@ -741,10 +742,13 @@
               susNumber:drug.susNumber,
               susId:drug.susId,
             }
-            tjSs+=drug.susDoctorText+'\n';
+            if(drug.susDoctorText !=null){
+              ssText+=drug.susDoctorText+'\n';
+            }
             this.rightTableData4.push(drug);
           });
-          this.historyObject.chOps=tjSs;
+          //对病例的体检结果回显
+          this.historyObject.chOps=ssText;
         }
       },
 		  // 加入后台部分-------------------------------------------------------------------
@@ -776,9 +780,9 @@
           this.$refs[headerInput].validate((valid)=>{
             if(valid){
               this.$confirm('是否结束就诊？').then(_ => {
+                console.log(this.historyObject.chComplaint)
                 //判断医生是否做了病历检验
-                if(this.historyObject.chComplaint!=''){
-
+                if(this.historyObject.chComplaint !=null){
                   this.addRecipeObject(2);
                   this.axios.post('addRecord',this.recordVo).then((v)=>{
                     if(v.data=='ok'){
@@ -1221,7 +1225,7 @@ z
             this.medicalRecordObject.mrCount=this.headerInput.mrCount;
             this.medicalRecordObject.mrDoctorName=this.token.sname;
             this.medicalRecordObject.mrDiagnoseRecord=this.historyObject.chDoctorText;//结果后面在获取
-            this.medicalRecordObject.mrKsName=this.headerInput.bnKsName;
+            this.medicalRecordObject.mrKsName=this.token.ks.ksName;
             this.medicalRecordObject.mrIdCard=this.headerInput.bnIdCard;
             this.medicalRecordObject.mrState=index;//结束就诊就把状态改成1进入就诊记录表2是就诊已经完成
             this.medicalRecordObject.sId=this.token.sid;
@@ -1380,8 +1384,8 @@ z
           chFamilyHistory:null,
           chCause:null,
           chDoctorText:null,
-          chOe:null,
-          chOps:null,
+          chOe:'',
+          chOps:'',
         };
         // 检验对象
         this.tjCodeManObject={
