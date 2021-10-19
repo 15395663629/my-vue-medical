@@ -100,8 +100,16 @@ export default {
     //药房发药
     fayao(row){
       console.log(row)
-      this.axios.post("fayao",{mzRecipe:row,sId:this.staff.sid}).then().catch();
+      this.axios.post("fayao",{mzRecipe:row,sId:this.staff.sid}).then((v)=>{
+        if(v.data == "ok"){
+          this.$message({
+            message: '发药成功',
+            type: 'success'
+          });
+        }
+      }).catch();
       console.log("sssss");
+
       this.getData();
     },
     //发的药品详情弹窗
@@ -119,7 +127,7 @@ export default {
   },
   created() {
     this.staff = this.$store.state.token.list;//将登录存入的值在取出来  获取当前的员工
-//查询门诊处方单号
+    //查询门诊处方单号
     this.axios.post("allMzRecipe").then((v) => {
       this.MzRecipe = v.data
     })
