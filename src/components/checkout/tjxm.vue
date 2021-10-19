@@ -346,7 +346,7 @@
         <el-form-item label="类型：" label-width="65px">
           <el-select  @change="getData" style="width: 120px" v-model="checkTpye" placeholder="请选择">
             <el-option
-                v-for="item in chenk"
+                v-for="item in chenk1"
                 :key="item.value"
                 :label="item.value"
                 :value="item.text">
@@ -472,7 +472,7 @@
             checkId:'',
             // 名称
             checkName:'',
-            // 价格
+            // 价格ing
             checkPay: '',
             // 指标
             indexName:'',
@@ -529,6 +529,17 @@
           },{
             text:1,
             value:'化验项目'
+          }
+          ],
+          chenk1:[{
+            text:0,
+            value:'检验项目'
+          },{
+            text:1,
+            value:'化验项目'
+          },{
+            text:'',
+            value:'所有'
           }
           ],
           //体检套餐对象
@@ -733,7 +744,19 @@
       },
       //清除修改与删除检查项目弹框
       inspectClear(){
-        this.jcdx=this.jcdww
+        this.jcdx={
+          //检查主键
+          checkId:'',
+              // 名称
+              checkName:'',
+              // 价格
+              checkPay: '',
+              // 指标
+              indexName:'',
+              // 指标意义
+              indexSignificance:'',
+              ksId:''
+        }
       },
       //清除修改与套餐弹框
       inspectClear1(formName){
