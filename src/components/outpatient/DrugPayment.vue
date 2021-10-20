@@ -274,6 +274,7 @@ import { h } from 'vue'
         sums:0,
         wardCurrentPage:1,//分页属性
         wardPageSize:4,
+        sumsa:0,
 			}
 		},
 		 methods: {
@@ -314,7 +315,9 @@ import { h } from 'vue'
                   sums+=drug.ssObject.projectPay;
                 })
               }
+              this.sumsa = sums;
               this.leftRecordObject.mrTotalMoney  = sums;
+              alert(this.leftRecordObject.mrTotalMoney)
               this.leftRecordListFunction(this.leftList)
               this.sCardPawd();
             }else{
@@ -383,6 +386,35 @@ import { h } from 'vue'
             this.contentArr2=[];
            this.leftTableList.push(this.zpObject)
          }
+
+
+         //手术
+         if(row.centerSurgeryList[0].susPayState ==0  && row.centerSurgeryList[0].susId != 0){
+           var sum3 = 0;//手术总价钱
+           row.centerSurgeryList.forEach((drug,i)=>{//循环判断总价钱
+             sum3 += drug.ssObject.projectPay;
+           })
+           this.ssObject.xmNumber = row.recipeObject.recipeNumber;
+           this.ssObject.xmName="手术项目";
+           this.ssObject.xmSum = sum3;
+           this.ssObject.xmText = row.recipeObject.zpNotes;
+           row.centerSurgeryList.forEach((b,i)=>{
+             if(b.susPayState==0){
+               //清空数组
+               this.contentObject3={};
+               //先添加一遍在清空数组
+               this.contentObject3.coName = b.ssObject.projectName;
+               this.contentObject3.coPrice = b.ssObject.projectPay;
+               this.contentObject3.coCount = 1;
+               this.contentArr3.push(this.contentObject3)
+             }
+           })
+           this.ssObject.xmContent=this.contentArr3
+           //赋值完后清空集合
+           this.contentArr3=[];
+           this.leftTableList.push(this.ssObject)
+         }
+
           //体检
           if(row.tjManResultList[0].manPayState ==0  && row.tjManResultList[0].manResultId != 0){
             var sum4 = 0;//中药总价钱
@@ -409,32 +441,7 @@ import { h } from 'vue'
             this.contentArr4=[];
             this.leftTableList.push(this.tjObject)
           }
-          //手术
-         if(row.centerSurgeryList[0].susPayState ==0  && row.centerSurgeryList[0].susId != 0){
-           var sum3 = 0;//中药总价钱
-           row.centerSurgeryList.forEach((drug,i)=>{//循环判断总价钱
-             sum3 += drug.ssObject.projectPay
-           })
-           this.ssObject.xmNumber = row.surgeryStampObject.susNumber;
-           this.ssObject.xmName="手术项目";
-           this.ssObject.xmSum = sum3;
-           this.ssObject.xmText = row.surgeryStampObject.susText;
-           row.centerSurgeryList.forEach((b,i)=>{
-             if(b.susPayState==0){
-               //清空数组
-               this.contentObject3={};
-               //先添加一遍在清空数组
-               this.contentObject3.coName = b.ssObject.projectName;
-               this.contentObject3.coPrice = b.ssObject.projectPay;
-               this.contentObject3.coCount = 1;
-               this.contentArr3.push(this.contentObject3)
-             }
-           })
-           this.ssObject.xmContent=this.contentArr3;
-           //赋值完后清空集合
-           this.contentArr3=[];
-           this.leftTableList.push(this.tjObject)
-         }
+
 
 
 		   },
@@ -508,13 +515,13 @@ import { h } from 'vue'
        },
 		   //收费打印价格
 		   forPrinting(){
-         this.axios.post("forPrinting",{recordVo:this.leftList,sId:this.token.sid,index:this.radioSf}).then((v)=>{
+         this.axios.post("forPrinting",{recordVo:this.leftList,sId:this.token.sid,index:this.radioSf,price:this.leftRecordObject.mrTotalMoney}).then((v)=>{
            if(this.radioSf==2){
                if(v.data == 'ok'){
                  this.$message({
                    showClose: true,
                    type: 'success',
-                   message: '缴费成功您的账户余额还剩“'+this.sums+'”元'
+                   message: '缴费成功您的账户余额还剩“'+(this.mcCardNumber.mcBalance-this.sumsa)+'”元'
                  });
                  this.leftText='';
                  this.resultAllVo()
@@ -534,7 +541,7 @@ import { h } from 'vue'
        sCardPawd(){
          this.axios.post("sCardPawd",{card:this.leftRecordObject.mrMcCard}).then((v)=>{
              this.mcCardNumber = v.data;
-            this.sums=(this.mcCardNumber.mcBalance - this.leftList.medicalRecordObject.mrTotalMoney).toFixed(2);
+            this.sums=(this.mcCardNumber.mcBalance ).toFixed(2);
          }).catch();
        },
        //查询所有的缴费记录总记录

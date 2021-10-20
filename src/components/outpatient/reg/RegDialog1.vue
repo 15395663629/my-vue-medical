@@ -235,6 +235,7 @@ import { h } from 'vue'
           cardObject: {},
           //判断选项缴费
           radioSf:null,
+          doctorSid:0,
         },
         rules: {//密码校验
           mcCard: [
@@ -264,7 +265,7 @@ import { h } from 'vue'
     methods:{
       //收取费用
       guaHaoPrinting(){
-        this.axios.post('addReg',this.regArr).then((v)=>{
+        this.axios.post('addReg',{regArr:this.regArr,radioSf:this.regArr.radioSf}).then((v)=>{
           console.log(v.data)
           if(v.data=='ok'){
             if(this.regArr.radioSf==2){
@@ -321,6 +322,7 @@ import { h } from 'vue'
         this.regArr.rtScience=row.title.tname+"号",
         // this.price = row.register.rmoeny;
         this.regArr.rtPrice=row.register.rmoeny
+        this.regArr.doctorSid = row.staff.sid;//医师员工id
         if(index==0){
           this.regArr.rtType='当天挂号';
         }else{
