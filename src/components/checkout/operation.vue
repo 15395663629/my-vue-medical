@@ -31,22 +31,22 @@
         </el-col>
         <el-col>
           <el-form-item prop="sickPhone" label="电话" >
-            <el-input v-model="mzSickArr.sickPhone"  disabled></el-input>
+            <el-input  v-model="mzSickArr.sickPhone"  disabled></el-input>
           </el-form-item>
         </el-col>
         <el-col>
           <el-form-item prop="sickIdCard" label="身份证" >
-            <el-input @input="getInfo(mzSickArr.sickIdCard)" v-model="mzSickArr.sickIdCard"  disabled></el-input>
+            <el-input  @input="getInfo(mzSickArr.sickIdCard)" v-model="mzSickArr.sickIdCard"  disabled></el-input>
           </el-form-item>
         </el-col>
         <el-col>
           <el-form-item prop="sickAge"  label="年龄" >
-            <el-input  v-model="mzSickArr.sickAge"   disabled></el-input>
+            <el-input readonly="readonly"  v-model="mzSickArr.sickAge"   disabled></el-input>
           </el-form-item>
         </el-col>
         <el-col >
           <el-form-item prop="sickSex" label="性别" >
-            <el-select v-model="mzSickArr.sickSex" placeholder="请选择"  style="width: 188px">
+            <el-select readonly="readonly" v-model="mzSickArr.sickSex" placeholder="请选择"  style="width: 188px">
               <el-option
                   v-for="item in optionsSex"
                   :key="item.value"
@@ -82,7 +82,7 @@
   </el-dialog>
 
 
-	<el-dialog :title=tiltm v-model="xztj" width="50%" center style="overflow: auto"  ><!-- 弹框      -=-=-=-=-=-=-==-=-=-=-=--=-=-=-=-=-=-新增体检人员弹框======================================= -->
+	<el-dialog :title=tiltm v-model="xztj" width="50%" :before-close="xgman" center style="overflow: auto"  ><!-- 弹框      -=-=-=-=-=-=-==-=-=-=-=--=-=-=-=-=-=-新增体检人员弹框======================================= -->
 		<el-form :model="man"  status-icon :rules="rulesm" ref="inserman" label-width="100px" class="demo-ruleForm">
 			<el-row>
 				<el-col :span="8">
@@ -105,19 +105,19 @@
 					</el-col>
 					<el-col :span="6">
 						<el-form-item label="年龄:" prop="manAge">
-						<el-input size="mini" v-model="man.manAge"></el-input>
+						<el-input readonly="readonly" size="mini" v-model="man.manAge"></el-input>
 						</el-form-item>
 					</el-col>
           <el-col :span="7">
             <el-form-item label="出生日期:" prop="manBirthtime">
-              <el-input size="mini" v-model="man.manBirthtime"></el-input>
+              <el-input readonly="readonly" size="mini" v-model="man.manBirthtime"></el-input>
             </el-form-item>
           </el-col>
 			</el-row>
 			<el-row>
         <el-col :span="8">
           <el-form-item label="手机号:" prop="manPhone">
-            <el-input size="mini" v-model="man.manPhone"  oninput="value=value.replace( /^1[0-9]{10}$/,'')"></el-input>
+            <el-input size="mini" v-model="man.manPhone"  oninput="value=value.replace( /^1[0-9]{11}$/,'')"></el-input>
           </el-form-item>
         </el-col>
 				<el-col :span="7">
@@ -232,7 +232,7 @@
 			</el-row>
 			<el-form-item>
 							  <el-col :span="1" :offset="8">
-							<el-button type="primary" @click="xztjForm()">确定</el-button>
+							<el-button type="primary" @click="xztjForm('inserman')">确定</el-button>
 							</el-col>
 			</el-form-item>
 		</el-form>
@@ -349,7 +349,7 @@
           <el-button size="mini" @click="xztjEdit(0,scope.row)" type="primary" >修改</el-button>
 				  <el-button size="mini" type="primary" @click="qyryEdit(scope.row)" v-show="getNowFormatDate==scope.row.manTime && scope.row.mcBalance!=null">启用</el-button>
           <el-button size="mini" type="primary" @click="aMc(scope.row)" v-show="scope.row.mcBalance==null">办卡</el-button>
-				  <el-button size="mini"   type="danger">取消</el-button>
+				  <el-button size="mini"  @click="deletman(scope.row)" type="danger">取消</el-button>
           </template>
 				</el-table-column>
 				
@@ -689,30 +689,70 @@ export default {
         this.xztj = true;
       },
       // 新增体检人员确认按钮
-      xztjForm() {
-        console.log(this.man)
-        //如果手动选择了项目就重新就算价格
-        if(this.man.jcXm.length!=this.tjprox.length){
-          this.man.manPhy=this.tc
-        }
-        //如果选的时间是当前时间之前的，就将时间改成当前时间后七天
-        if(this.man.manTime<this.getNowFormatDate){
-          this.man.manTime=this.getNowFormatDate1(-7,this.getNowFormatDate)
-        }
-        if(this.man.jcXm.length!=0){
-          this.axios.post("http://localhost:8089/addOrUpdataMan", {manj: this.man}).then((res) => {
-            this.getData()
-            this.inserClear();
-          }).catch()
-          this.xztj = false
-        }else {
-          this.$message.error('所选项目不能为空');
-        }
+      xztjForm(formName) {
+        this.$refs[formName].validate((valid) => {
+          if (valid) {
+            //如果手动选择了项目就重新就算价格
+            if(this.man.jcXm.length!=this.tjprox.length){
+              this.man.manPhy=this.tc
+            }
+            //如果选的时间是当前时间之前的，就将时间改成当前时间后七天
+            if(this.man.manTime<this.getNowFormatDate){
+              this.man.manTime=this.getNowFormatDate1(-7,this.getNowFormatDate)
+            }
+            if(this.man.jcXm.length!=0){
+              this.axios.post("http://localhost:8089/addOrUpdataMan", {manj: this.man}).then((res) => {
+                this.getData()
+                this.inserClear();
+              }).catch()
+              this.xztj = false
+            }else {
+              this.$message.error('所选项目不能为空');
+            }
+          } else {
+            console.log('error submit!!');
+            return false;
+          }
+        });
+
       },
       //体检人员修改状态
       manstate(row){
         //调用查询诊疗卡方法
           this.manj(row)
+      },
+      //体检人员弹框x
+      xgman(){
+        this.xztj=false;
+        this.$refs['inserman'].resetFields();
+      },
+      //删除人员
+      deletman(row){
+        this.$confirm('此操作将永久删除该人员, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          this.axios.post('http://localhost:8089/delet-man', qs.stringify({manId:row.manId}))
+              .then((v)=>{
+                if(v.data == 'ok'){
+                  this.getData()
+                }else{
+                  alert(v.data);
+                }
+              }).catch(function(){
+
+          })
+          this.$message({
+            type: 'success',
+            message: '删除成功!'
+          });
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          });
+        });
       },
       //修改状态方法
       manu(row){

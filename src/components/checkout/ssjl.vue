@@ -7,7 +7,7 @@
 	</el-row>
 	<el-row>
 		<el-col :span="6" >
-			结果：<span>2</span>条
+      结果：<span>{{ Ssdetailt.length }}</span>条
 		</el-col>
 	</el-row>
 	<el-dialog title="手术详情" v-model="isShow" width="50%" center  ><!-- 弹窗      -=-=-=-=-=-=-==-=-=-=-=--=-=-=-=-=-=-手术详情 -->
@@ -165,7 +165,7 @@
         </el-col>
       </el-row>
       <el-row>
-        <el-col :span="12">
+        <el-col :span="10">
           <el-form-item label="手术日期:" prop="name">
             <span v-for="(t,i) in Ssadetailt.slice(0,1)" >{{t.operationDate}}</span>
           </el-form-item>
