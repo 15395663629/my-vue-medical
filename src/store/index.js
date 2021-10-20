@@ -1,4 +1,5 @@
 import { createStore } from 'vuex'
+import echarts from "echarts";
 const store = createStore({
     state: {
         token: '',
@@ -6,6 +7,7 @@ const store = createStore({
             children:window.localStorage.getItem('children' || '[]') == null ?
                 '' : JSON.parse(window.localStorage.getItem('children' || '[]'))
         },
+
     },
     mutations: {
         initMenu(state, menus){
@@ -15,6 +17,7 @@ const store = createStore({
             window.localStorage.setItem('children',JSON.stringify(menus));
             window.console.log("children:"+JSON.stringify(menus))
         },
+
     }
 })
 export default store
