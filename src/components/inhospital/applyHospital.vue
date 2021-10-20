@@ -513,7 +513,7 @@
   }
 </script>
 
-<style>
+<style scoped>
 .works{
   padding: 15px;
 }
