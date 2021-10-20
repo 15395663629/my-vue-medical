@@ -89,7 +89,7 @@
           </el-table-column>
           <el-table-column property="ykDate" label="保质期" width="300px">
             <template #default="scope">
-              <el-date-picker v-model="scope.row.ykDate" type="date" placeholder="选择保质期" />
+              <el-date-picker v-model="scope.row.ykDate" type="date"  placeholder="选择保质期" />
             </template>
           </el-table-column>
           <el-table-column property="ykBatch" label="药品批次" width="200px">
@@ -99,9 +99,8 @@
           </el-table-column>
         </el-table>
         <template #footer>
-				  <span class="dialog-footer">
-				    <el-button type="primary" @click="minrukumingxigxi = false">确 定</el-button>
-				  </span>
+				    <el-button type="primary" @click="baocun()">保存信息</el-button>
+            <el-button type="primary" @click="rukumingxi = false">取 消</el-button>
         </template>
       </el-dialog>
     </el-col>
@@ -147,6 +146,20 @@
         /*查询采购计划详单*/
         this.axios.post("all-ydpd").then((v)=>{
           this.ydpdform = v.data;
+        })
+      },
+      baocun(){
+      console.log(this.ydpdform)
+        this.axios.post("preserve",this.ydpdform).then((v)=>{
+          this.rukumingxi = false;
+          this.getDate();
+          if(v.data == "ok"){
+            this.$message({
+              message: '入库信息保存成功',
+              type: 'success'
+            });
+          }
+
         })
       },
       handleClick(row){

@@ -132,7 +132,7 @@
 				<el-table-column label="操作">
 					<template #default="scope">
 						<el-button type="primary" plain size="small" @click="opemMingxi(scope.row)">查看明细</el-button>
-            <el-button type="danger" plain size="small">执行计划</el-button>
+            <el-button type="danger" plain size="small" @click="execute(scope.row)">执行计划</el-button>
 					</template>
 				</el-table-column>
 			</el-table>
@@ -293,6 +293,17 @@
         this.mingxi = true;
         //this.ydpdform = obj.ykDrugpurchasePlanDetails;
         this.getData(row.ykPurchaseId);
+      },
+      /*执行采购计划*/
+      execute(row){
+        this.axios.post("zhixing",{ykPurchaseId:row}).then((v)=>{
+          if (v.data == "ok"){
+            this.$message({
+              message: '执行成功',
+              type: 'success'
+            });
+          }
+        })
       },
       /*选择药品添加到表格*/
       adddrug(){

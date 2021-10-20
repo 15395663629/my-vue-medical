@@ -160,11 +160,10 @@
         allotDetail.push(obj);
         this.axios.post("yk-batch-ykyf",{allotDetail:allotDetail,sId:this.staff.sid}).then().catch();
         this.getData();
-        this.$notify({
-          title: '调拨成功',
-          //message: '调拨成功',
-          type: 'success',
-        })
+        this.$message({
+          message: '发药成功',
+          type: 'success'
+        });
       },
       //调拨详细的弹窗
       handleClick(row){
