@@ -101,8 +101,8 @@
 			  </el-form-item>
 		</el-form>
 	</el-dialog>
-	<el-dialog :title="option" v-model="xgss" width="50%" center  ><!-- 弹窗      -=-=-=-=-=-=-==-=-=-=-=--=-=-=-=-=-=-新增修改======================================= -->
-		<el-form   ref="ssForm" v-model="ssdx" label-width="100px" class="demo-ruleForm">
+	<el-dialog :title="option" :before-close="xzxgss" v-model="xgss" width="50%" center  ><!-- 弹窗      -=-=-=-=-=-=-==-=-=-=-=--=-=-=-=-=-=-新增修改======================================= -->
+		<el-form   ref="ssForm" :rules="rulessdx" :model="ssdx" label-width="100px" class="demo-ruleForm">
 			<el-row>
 								<el-col :span="7">
 									<el-form-item  label="手术编号:" prop="name">
@@ -110,7 +110,7 @@
 									</el-form-item>
 								</el-col>
 								<el-col :span="7" :offset="3">
-									<el-form-item label="科室:" prop="name">
+									<el-form-item label="科室:" prop="ksId">
                     <el-select v-model="ssdx.ksId" placeholder="请选择">
                       <el-option
                           v-for="item in department"
@@ -124,12 +124,12 @@
 			</el-row>
 			  <el-row>
 					<el-col :span="7">
-						<el-form-item label="手术名称:" prop="name">
+						<el-form-item label="手术名称:" prop="projectName">
 						<el-input v-model="ssdx.projectName"></el-input>
 						</el-form-item>
 					</el-col>
 					<el-col :span="7" :offset="3">
-						<el-form-item label="手术类型:" prop="name">
+						<el-form-item label="手术类型:" prop="projectType">
               <el-select v-model="ssdx.projectType" placeholder="请选择">
                 <el-option
                     v-for="item in ssdj"
@@ -143,19 +143,19 @@
 			  </el-row>
 			<el-row>
 					<el-col :span="7">
-							<el-form-item label="手术位置:" prop="name">
+							<el-form-item label="手术位置:" prop="projectPosition">
 							<el-input v-model="ssdx.projectPosition"></el-input>
               </el-form-item>
           </el-col>
 					<el-col :span="7" :offset="3">
-						<el-form-item label="手术价格:" prop="name">
+						<el-form-item label="手术价格:" prop="projectPay">
 						<el-input v-model="ssdx.projectPay"></el-input>
 						</el-form-item>
 					</el-col>
 			</el-row>
 			<el-row>
 				<el-col :span="9">
-					<el-form-item label="适应症:" prop="name">
+					<el-form-item label="适应症:" prop="projectIndication">
 					<el-input
 					  type="textarea"
 					  :rows="2"
@@ -165,7 +165,7 @@
 					</el-form-item>
 				</el-col>
 				<el-col :span="9" :offset="1">
-						<el-form-item label="所需麻醉:" prop="name">
+						<el-form-item label="所需麻醉:" prop="ssAn">
 						<el-select v-model="ssdx.ssAn" multiple placeholder="请选择" style="width: 230px;">
 						    <el-option
 						      v-for="item in mazui"
@@ -179,7 +179,7 @@
 			</el-row>
 			<el-row>
 								<el-col :span="9">
-									<el-form-item label="手术禁忌:" prop="name">
+									<el-form-item label="手术禁忌:" prop="projectTaboo">
 									  <el-input
 									  type="textarea"
 									  :rows="2"
@@ -189,7 +189,7 @@
 									</el-form-item>
 								</el-col>
 								<el-col :span="11" :offset="1">
-									<el-form-item label="注意事项:" prop="name">
+									<el-form-item label="注意事项:" prop="projectMatters">
 									<el-input
 									  type="textarea"
 									  :rows="2"
@@ -201,7 +201,7 @@
 			</el-row>
 			  <el-form-item>
 				  <el-col :span="1" :offset="8">
-				<el-button @click="ssForm('ssForm')">确定</el-button>
+				<el-button type="primary" @click="ssForm('ssForm')">确定</el-button>
 				</el-col>
 			  </el-form-item>
 		</el-form>
@@ -319,9 +319,41 @@
             // 手术位置
             projectPosition:'',
             //手术麻醉对象
-            ssAn: '',
+            ssAn:[],
             //手术等级
             projectType:''
+          },
+          rulessdx:{
+            ksId: [
+              { required: false, message: '请选择科室', trigger: 'change' },
+              { required: true, message: '请选择类型', trigger: 'blur' }
+            ],
+            projectPay: [
+              { required: true, message: '请输入价格', trigger: 'blur' }
+            ],
+            projectName: [
+              { required: true, message: '请输入名称', trigger: 'blur' }
+            ],
+            projectMatters: [
+              { required: true, message: '请输入名称', trigger: 'blur' }
+            ],
+            projectTaboo: [
+              { required: true, message: '请输入名称', trigger: 'blur' }
+            ],
+            projectIndication: [
+              { required: true, message: '请输入名称', trigger: 'blur' }
+            ],
+            projectPosition: [
+              { required: true, message: '请输入名称', trigger: 'blur' }
+            ],
+            ssAn: [
+              { type: 'array', required: true, message: '请至少选择一种麻醉', trigger: 'blur' },
+              { required: false, message: '请选择类型', trigger: 'change' }
+            ],
+            projectType: [
+              { required: false, message: '请选择类型', trigger: 'change' },
+              { required: true, message: '请选择类型', trigger: 'blur' }
+            ],
           },
           //删筛选科室
           kssx:[{
@@ -393,16 +425,26 @@
 			},
       //删除
       ssptDelete(row){
-        this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+        this.$confirm('此操作将永久删除该项目, 是否继续?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          this.scprjt(row)
-          this.$message({
-            type: 'success',
-            message: '删除成功!'
-          });
+          this.axios.get("http://localhost:8089/ssdproDetail",{params:{projectId:row.projectId}}).then((res)=>{
+            let aa=res.data;
+            if(res.data==null||res.data==""){
+              this.scprjt(row)
+              this.$message({
+                type: 'success',
+                message: '删除成功!'
+              });
+            }else {
+              this.$message({
+                type: 'info',
+                message: '此项目已留有记录,无法删除'
+              });
+            }
+          }).catch()
         }).catch(() => {
           this.$message({
             type: 'info',
@@ -412,6 +454,7 @@
       },
       //删除
       scprjt(row){
+
         this.axios.post('http://localhost:8089/delet-sprot', qs.stringify({projectId:row.projectId}))
             .then((v)=>{
               if(v.data == 'ok'){
@@ -426,6 +469,7 @@
       // 新增
 			ssInser() {
         this.option='新增手术';
+        this.opertClear();
         this.today=new Date().getFullYear()+new Date().getDay();
         this.ssdx.projectNumber=("SS"+this.today+Math.round(Math.random()*1000))
         this.xgss = true;
@@ -466,21 +510,56 @@
 			},
       resetForm(formName) {
         this.isShow = false
-        this.$refs[formName].resetFields();
       },
       //清除手术弹框数据
       opertClear(){
         this.ssdx = {
+          //手术主键
+          projectId:'',
+          // 手术编号
+          projectNumber:'',
+          // 科室编号
+          ksId: '',
+          // 手术价格
+          projectPay:'',
+          // 手术名称
+          projectName:'',
+          // 手术注意事项
+          projectMatters:'',
+          // 手术禁忌
+          projectTaboo:'',
+          // 手术适应症
+          projectIndication:'',
+          // 手术位置
+          projectPosition:'',
+          //手术麻醉对象
+          ssAn:'',
+          //手术等级
+          projectType:''
         }
       },
+      // 手术弹框x
+      xzxgss(){
+        this.xgss=false;
+        this.opertClear();
+        this.$refs['ssForm'].resetFields();
+      },
       //确定新增
-			ssForm(form) {
+			ssForm(formName) {
         console.log(this.ssdx.ssAn)
-        this.axios.post("http://localhost:8089/addOrUpdataProj",{proj:this.ssdx,ssAn:this.ssdx.ssAn}).then((res)=>{
-          this.getData();
-          this.opertClear();
-        }).catch()
-				this.xgss = false;
+        this.$refs[formName].validate((valid) => {
+          if (valid) {
+            this.axios.post("http://localhost:8089/addOrUpdataProj",{proj:this.ssdx,ssAn:this.ssdx.ssAn}).then((res)=>{
+              this.getData();
+              this.$refs[formName].resetFields();
+            }).catch()
+            this.xgss = false;
+          } else {
+            console.log('error submit!!');
+            return false;
+          }
+        });
+
 			}
 		},
     created() {

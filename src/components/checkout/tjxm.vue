@@ -32,7 +32,7 @@
 			
 	</el-row>
 	
-	<el-dialog :title="tctitl" v-model="tjtc" width="50%" center  ><!-- 弹窗      -=-=-=-=-=-=-==-=-=-=-=--=-=-=-=-=-=-新增套餐======================================= -->
+	<el-dialog :title="tctitl" :before-close="xzxgtc" v-model="tjtc" width="50%" center  ><!-- 弹窗      -=-=-=-=-=-=-==-=-=-=-=--=-=-=-=-=-=-新增套餐======================================= -->
 		<el-form   ref="tcdx" :rules="rulesc" :model="tcdx" label-width="100px" class="demo-ruleForm">
 			<el-row>
             <el-col :span="8">
@@ -125,8 +125,8 @@
 
 			</el-row>
 			  <el-form-item>
-				  <el-col :span="1" :offset="8">
-				<el-button @click="tjtcForm('inserdate')">确定</el-button>
+				  <el-col style="padding-top: 20px" :span="1" :offset="8">
+				<el-button type="primary" @click="tjtcForm('inserdate')">确定</el-button>
 				</el-col>
 			  </el-form-item>
 		</el-form>
@@ -209,7 +209,7 @@
 		</el-form>
 	</el-dialog>
 	
-	<el-dialog :title="tilt" v-model="jcxm" width="50%" center  ><!-- 弹窗      -=-=-=-=-=-=-==-=-=-=-=--=-=-=-=-=-=-新增医疗项目======================================= -->
+	<el-dialog :title="tilt"  :before-close="tjxmtk" v-model="jcxm" width="50%" center  ><!-- 弹窗      -=-=-=-=-=-=-==-=-=-=-=--=-=-=-=-=-=-新增医疗项目======================================= -->
 		<el-form  :model="jcdx" ref="jcdx"  label-width="100px" status-icon :rules="rulesw">
 			<el-row>
 								<el-col :span="7" >
@@ -346,7 +346,7 @@
         <el-form-item label="类型：" label-width="65px">
           <el-select  @change="getData" style="width: 120px" v-model="checkTpye" placeholder="请选择">
             <el-option
-                v-for="item in chenk"
+                v-for="item in chenk1"
                 :key="item.value"
                 :label="item.value"
                 :value="item.text">
@@ -472,7 +472,7 @@
             checkId:'',
             // 名称
             checkName:'',
-            // 价格
+            // 价格ing
             checkPay: '',
             // 指标
             indexName:'',
@@ -529,6 +529,17 @@
           },{
             text:1,
             value:'化验项目'
+          }
+          ],
+          chenk1:[{
+            text:0,
+            value:'检验项目'
+          },{
+            text:1,
+            value:'化验项目'
+          },{
+            text:'',
+            value:'所有'
           }
           ],
           //体检套餐对象
@@ -658,9 +669,7 @@
             }).catch()
           }else{
             this.inspectClear1(fromName);
-
           }
-
           this.tjtc = true;
         },
       //修改与新增套餐确认按钮===========
@@ -731,9 +740,32 @@
 
         })
       },
+      // 套餐弹框x
+      xzxgtc(){
+        this.tjtc =false;
+        this.$refs['tcdx'].resetFields();
+      },
+      // 检查项目弹框x
+      tjxmtk(){
+        this.jcxm =false;
+        this.inspectClear();
+        this.$refs['jcdx'].resetFields();
+      },
       //清除修改与删除检查项目弹框
       inspectClear(){
-        this.jcdx=this.jcdww
+        this.jcdx={
+          //检查主键
+          checkId:'',
+              // 名称
+              checkName:'',
+              // 价格
+              checkPay: '',
+              // 指标
+              indexName:'',
+              // 指标意义
+              indexSignificance:'',
+              ksId:''
+        }
       },
       //清除修改与套餐弹框
       inspectClear1(formName){
@@ -753,9 +785,6 @@
               return false;
             }
           });
-
-
-
         },
 
       // 关闭体检详情

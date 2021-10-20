@@ -84,8 +84,8 @@
 
   </el-drawer>
 
-  <el-dialog width="40%" :title='stit' v-model="sss">
-    <el-form>
+  <el-dialog width="40%" :before-close="xgsss" :title='stit' v-model="sss">
+    <el-form ref="sssfrom" :rules="rulessdx" :model="ssr">
       <el-row>
         <el-col :span="10">
           <el-form-item label="编号：" label-width="120px">
@@ -93,7 +93,7 @@
           </el-form-item>
         </el-col>
         <el-col :offset="1" :span="10">
-          <el-form-item label="科室:" label-width="120px">
+          <el-form-item label="科室:" label-width="120px" prop="ksId">
             <el-select v-model="ssr.ksId" placeholder="请选择">
               <el-option
                   v-for="item in department"
@@ -107,7 +107,7 @@
       </el-row>
       <el-row>
         <el-col :span="10">
-          <el-form-item label="类别：" label-width="120px">
+          <el-form-item label="类别：" label-width="120px" prop="operationType">
             <el-select v-model="ssr.operationType" placeholder="请选择">
               <el-option
                   v-for="item in ssml"
@@ -119,7 +119,7 @@
           </el-form-item>
         </el-col>
         <el-col :offset="1" :span="10">
-          <el-form-item label="负责人:" label-width="120px">
+          <el-form-item label="负责人:" label-width="120px" prop="sid">
             <el-select v-model="ssr.sid" placeholder="请选择">
               <el-option
                   v-for="item in staf"
@@ -133,14 +133,14 @@
       </el-row>
       <el-row>
         <el-col :span="21">
-          <el-form-item label="地址：" label-width="120px">
+          <el-form-item label="地址：" label-width="120px" prop="operationRoomAddress">
             <el-input v-model="ssr.operationRoomAddress"></el-input>
           </el-form-item>
         </el-col>
       </el-row>
       <el-form-item>
         <el-col :span="1" :offset="11">
-          <el-button type="primary" @click="ssmForm()">确定</el-button>
+          <el-button type="primary" @click="ssmForm('sssfrom')">确定</el-button>
         </el-col>
       </el-form-item>
     </el-form>
@@ -706,6 +706,23 @@ export default {
         simulationOperation:'',
         hocusId:''
       },
+      rulessdx: {
+        ksId: [
+          { required: false, message: '请选择科室', trigger: 'change' },
+          { required: true, message: '请选择类型', trigger: 'blur' }
+        ],
+        operationRoomAddress: [
+          { required: true, message: '请输入地址', trigger: 'blur' }
+        ],
+        operationType: [
+          { required: false, message: '请选择类别', trigger: 'change' },
+          { required: true, message: '请选择类别', trigger: 'blur' }
+        ],
+        sid: [
+          { required: false, message: '请选择负责人', trigger: 'change' },
+          { required: true, message: '请选择负责人', trigger: 'blur' }
+        ],
+      },
       ssr:{//手术室dx
         operationId:'',
         operationName:'',
@@ -1039,13 +1056,27 @@ export default {
       var showTime = year+seperator1+month+seperator1+strDate+" "+hour+seperator+minute+seperator+second;
       return showTime;
     },
+    // 手术室弹框x
+    xgsss(){
+      this.sss=false;
+      this.$refs['sssfrom'].resetFields();
+    },
     //手术室弹框确认
-    ssmForm(){
+    ssmForm(formName){
       console.log(this.ssr)
-      this.axios.post("http://localhost:8089/aOrUroom",{proj:this.ssr}).then((res)=>{
-        this.getData();
-      }).catch()
-      this.sss=false
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          this.axios.post("http://localhost:8089/aOrUroom",{proj:this.ssr}).then((res)=>{
+            this.getData();
+            this.$refs[formName].resetFields();
+          }).catch()
+          this.sss=false
+        } else {
+          console.log('error submit!!');
+          return false;
+        }
+      });
+
     },
     //手术室状态更改
     opensss(row,is) {
