@@ -18,12 +18,12 @@
         </el-col>
         <el-col>
           <el-form-item prop="sickPhone" label="电话" >
-            <el-input v-model="mzSickArr.sickPhone"></el-input>
+            <el-input v-model="mzSickArr.sickPhone" onkeyup="value=value.replace(/[^\d]/g,'')"  oninput="if(value.length>11)value=value.slice(0,11)"></el-input>
           </el-form-item>
         </el-col>
         <el-col>
           <el-form-item prop="sickIdCard" label="身份证" >
-            <el-input @input="getInfo(mzSickArr.sickIdCard)" v-model="mzSickArr.sickIdCard"></el-input>
+            <el-input @input="cardJiaoYan(mzSickArr.sickIdCard)" v-model="mzSickArr.sickIdCard" onkeyup="value=value.replace(/[^\d]/g,'')"></el-input>
           </el-form-item>
         </el-col>
         <el-col>
@@ -179,7 +179,7 @@ import { ElMessage } from 'element-plus'
            console.log(res.data)
            this.mzSickArr.mcNumberCard=res.data
            ElMessage.success({
-             message: '恭喜你，生成成功~',
+             message: '诊疗卡生成成功~',
              type: 'success'
            });
            console.log("1111")
@@ -204,6 +204,27 @@ import { ElMessage } from 'element-plus'
 				return defaultDate;
 				// this.$set(this.info, "stockDate", defaultDate);
 			},
+       cardJiaoYan(idCard){
+         this.axios({
+           url:'idCardJiaoyan',
+           params:{idCard:idCard}
+         }).then((v)=>{
+           console.log(v.data)
+           if(v.data=="ok"){
+             this.$message({
+               showClose:true,
+               type:'error',
+               message:"身份证号码重复",
+             });
+             this.mzSickArr.sickAge='';
+             this.mzSickArr.sickSex="";
+           }else if(v.data =="no"){
+             this.getInfo(idCard)
+           }
+         }).catch(function(){
+
+         })
+       },
        //身份证日期获取
        getInfo(idCard) {
          let sex = null;

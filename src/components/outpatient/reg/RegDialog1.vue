@@ -73,10 +73,10 @@
 
     <el-table-column label="操作"  align="center">
       <template #default="scope">
-        <div v-if="scope.row.rq==newDates">
+        <div v-if="scope.row.indexs==0">
           <el-button size="mini" type="success" @click="isDialog1(scope.row,0)" plain>当天挂号</el-button>
         </div>
-        <div v-if="scope.row.rq!=newDates">
+        <div v-if="scope.row.indexs==1">
           <el-button size="mini" type="warning" @click="isDialog1(scope.row,1)" plain>预约挂号</el-button>
         </div>
         <div v-else>
@@ -210,7 +210,6 @@ import { h } from 'vue'
         wardPageSize:4,
         token:[],//操作人员
         isShow1:false,//弹窗 - 挂号
-        isShow2:false,//弹窗 - 预约挂号
         optionsRge2: [{
           value: '初诊',
           label: '初诊'
@@ -387,20 +386,7 @@ import { h } from 'vue'
           }
         });
       },
-      isDialog2(row){//预约挂号====================================================================================
-        this.isShow2 = true;
-        this.regArr.rtOnsetTime =row.sDate;
-        this.regArr.rtOverKsName=row.sOverKsName;
-        this.regArr.rtDoctor=row.sDoctor
-        this.regArr.rtDoctorGenre=row.sType
-        this.regArr.rtScience=row.sScience
-        this.price =row.sPrice;
-        this.regArr.rtPrice=row.sPrice
-        this.regArr.rtType='预约挂号';
-        this.regArr.sId=this.token.uid;
-      },
       resetForm(){//取消
-        this.isShow2 = false;
         this.isShow1 = false;
         this.regArr={
           cardObject:'',
@@ -414,13 +400,13 @@ import { h } from 'vue'
         var newDate = this.getNowTime();
         if(row.length>0){
           row.forEach((v,i)=>{
+            console.log(v.indexs)
             if(this.getTimestamp(v.rq) > this.getTimestamp(newDate)){
-              this.booleanDate=1;
+              v.indexs=1;
             }else if(this.getTimestamp(v.rq) == this.getTimestamp(newDate)){
-              console.log(111)
-              this.booleanDate=0;
+              v.indexs=0;
             }else{
-              this.booleanDate=2;
+              v.indexs=2;
             }
           })
         }
