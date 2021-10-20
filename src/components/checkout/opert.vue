@@ -927,9 +927,9 @@ export default {
       this.ssApply.changeId=row.changeId
       this.ssApply.operationId=row.operationId
       this.ssApply.hocusId=row.hocusId
-      this.ssApply.operationDoctor=row.operationDoctor
-      this.ssApply.operationAnathe=row.operationAnathe
-      this.ssApply.operationHelper=row.operationHelper
+      this.ssjl.operationDoctor=row.operationDoctor
+      this.ssjl.operationAnathe=row.operationAnathe
+      this.ssjl.operationHelper=row.operationHelper
 
       this.jsss = true
     },
@@ -957,6 +957,7 @@ export default {
     },
     //确认结束按钮
     qrjsForm(){
+      console.log(this.ssjl)
       //格式化时间
       var sj=this.formatDate(this.sssc[0],'hh:mm:ss').toString()+"-"+this.formatDate(this.sssc[1],'hh:mm:ss').toString()
       this.ssjl.operationTime=sj
@@ -980,7 +981,7 @@ export default {
       this.axios.post("http://localhost:8089/aOrUDatils",{proj:this.ssjl}).then((res)=>{
         this.getData();
       }).catch()
-      console.log(this.ssjl)
+
       this.jsss=false
     },
     //重新选择手术弹框

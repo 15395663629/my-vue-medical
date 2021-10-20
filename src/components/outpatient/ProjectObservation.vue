@@ -9,6 +9,7 @@
             <el-input @input="getData"  v-model="sermen" placeholder="请输入你要查询的体检人员"></el-input>
                 <el-table :data="tjman" height="510"  size="mini" tooltip-effect="dark" style="width: 100%;">
                   <el-table-column
+                      width="50px"
                       label="编号"
                       prop="manId"
                   >
@@ -63,6 +64,7 @@
                 :data="tjres" height="550"  size="mini"  tooltip-effect="dark" style="width: 100%;">
               <el-table-column
                   label="编号"
+                  width="50px"
                   prop="checkId"
               >
               </el-table-column>
@@ -84,15 +86,16 @@
               </el-table-column>
               <el-table-column
                   prop="pro.checkPay"
+                  width="70px"
                   label="价格">
               </el-table-column>
               <el-table-column
                   prop="manTime"
-
+                  width="140px"
                   label="申请时间">
               </el-table-column>
               <el-table-column
-                  width="100px"
+                  width="80px"
                   label="状态">
                 <template #default="scope">
                   <div class="name-wrapper">

@@ -185,7 +185,7 @@
                   console.log(this.valus.deId)
                   for (let i=0;i<this.dept.length;i++){
                     if(this.valus.deName==this.dept[i].deName){
-                      return this.$message.error("不能为空")
+                      return this.$message.error("不能重复")
                     }
                   }
                   this.axios({
@@ -209,6 +209,7 @@
                     if (v.data === 'ok') {
                       this.clearForm()
                       this.getData()
+                      this.dialogVisible1=false
                     } else {
                       console.log(v.data)
                     }

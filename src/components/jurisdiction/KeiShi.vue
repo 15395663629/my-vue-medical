@@ -140,9 +140,9 @@ import  qs from 'qs'
         }
 
             if(this.ks.ksId===0){
-              for (let i=0;i<this.kslist.length;i++){
-                return this.$message.error("重复");
-              }
+              // for (let i=0;i<this.kslist.length;i++){
+              //   return this.$message.error("重复");
+              // }
               this.axios.post("http://localhost:8089/add-ks",this.ks).then((v)=>{
                 if(v.data===1){
                   this.qc()

@@ -2,7 +2,7 @@
 	<el-container style="height: 100%;">
 		<el-header height="30px"  style="line-height: 30px; background-color: #B3C0D1;color: #333;">
 			<!-- <newDateOPC style="margin: 0px; padding: 0px;"></newDateOPC> -->
-		{{}}
+		{{leftRecord}}
     </el-header>
 		<el-container style="height: 100%;">
 			<el-aside width="400px" style="background-color: #D3DCE6;color: #333;"> <!-- 右边 -->
@@ -714,7 +714,7 @@
               indexSignificance:drug.pro.indexSignificance,
               manResult:drug.manResult,
               manPayState:drug.manPayState,
-              manProposal:drug.manPayState,
+              manProposal:drug.manProposal,
               manResultId:drug.manResultId,
               manId:drug.manId,
             }

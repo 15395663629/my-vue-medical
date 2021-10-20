@@ -119,7 +119,7 @@
       <el-form :model="ruleForm2"  status-icon :rules="rules2"  ref="ruleForm2" label-width="100px" class="demo-ruleForm">
         <el-col>
           <el-form-item label="诊疗卡卡号:" >
-            <el-input  class="te" v-model="cardArr.mcNumber"   size="small" disabled></el-input>
+            <el-input  class="te" v-model="cardArr.mcCard"   size="small" disabled></el-input>
           </el-form-item>
         </el-col>
         <el-col>

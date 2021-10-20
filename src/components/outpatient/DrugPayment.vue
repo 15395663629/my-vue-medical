@@ -135,12 +135,11 @@
             <el-popover effect="light" trigger="hover" placement="top">
               <template #default>
                 <p>药品处方总价: {{ scope.row.recipeObject.recipePrice}}</p>
+                <p>体检项目总价: {{ scope.row.tjCodeManObject.manPhy}}</p>
                 <p>手术项目总价: {{ scope.row.surgeryStampObject.susSum}}</p>
               </template>
               <template #reference>
-                <div class="fontType2">
-                  {{ scope.row.historyObject.chComplaint }}
-                </div>
+                  <el-tag type="success" size="small" class="fontType2">{{ scope.row.historyObject.chComplaint }}</el-tag>
               </template>
             </el-popover>
           </template>
@@ -497,7 +496,7 @@ import { h } from 'vue'
                this.$message({
                  showClose: true,
                  type: 'success',
-                 message: '缴费成功您的账户余额还剩“'+this.sums+'”元'
+                 message: '缴费成功,本次缴费“'+this.leftRecordObject.mrTotalMoney+'”元，请注意查收'
                });
                this.leftText='';
                this.resultAllVo();

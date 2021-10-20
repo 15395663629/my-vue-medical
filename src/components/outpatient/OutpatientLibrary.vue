@@ -97,7 +97,7 @@
 		  </el-tag>
 		</template>
 	</el-table-column>
-    <el-table-column fixeds label="操作"  align="center">
+    <el-table-column fixed label="操作"  align="center">
       <template #default="scope">
         <el-button @click="openDrawer(scope.row)" size="mini" type="primary" plain>查看</el-button>
       </template>
@@ -172,7 +172,7 @@
 			</el-col>
 			<el-col :span="12">
 				<h5>手术项目</h5>
-        <el-table  :summary-method="getSummaries4" show-summary  size="mini" :data="surgeryListTable" border height="350px" style="width: 100%">
+          <el-table  :summary-method="getSummaries4" show-summary size="mini" :data="surgeryListTable" border height="350px" style="width: 100%">
           <el-table-column align="center" prop="susId" label="序号" width="50px" ></el-table-column>
           <el-table-column align="center" prop="ssObject.projectName" label="项目名称" width="250px" ></el-table-column>
           <el-table-column align="center" prop="ssObject.projectPay" label="单价" width="83px" ></el-table-column>
