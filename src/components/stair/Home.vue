@@ -17,17 +17,7 @@
                        </span>
                 <template #dropdown>
                   <el-dropdown-menu>
-                    <el-dropdown-item>
-                      <div style="width: 200px;height: 400px">
-                         <div style="width: 240px; height: 40px;margin-left: -20px;background: #D3DCE6;margin-top: -10px">
-                          <div>
-                            <span style="margin-left: 50px; ">{{deptName}} </span>
-                            <span style="margin-left: 60px"> {{ksName}}</span>
-                          </div>
-                         </div>
-                      </div>
-                    </el-dropdown-item>
-
+                    <el-dropdown-item @click="signout">切换用户</el-dropdown-item>
                   </el-dropdown-menu>
                 </template>
               </el-dropdown>
@@ -82,13 +72,19 @@ export default{
         this.kslist=v.data
         for (let i = 0 ; i<this.kslist.length ; i++){
           if(this.kslist[i].ksId === this.token.list.ksId){
-            this.deptName=this.kslist[i].dept.deName
             this.ksName=this.kslist[i].ksName
             return
           }
         }
         console.log(this.kslist)
       }).catch()
+      this.axios({
+        url:"gitee",
+        params:{uId:this.token.uid}
+      }).then((v)=>{
+       this.deptName=v.data[0].role.rname;
+      }).catch()
+
     },
 		pushUrl(path){
 			this.$router.push(path);

@@ -1,7 +1,35 @@
 <template>
 
 	<!--=============================================选择住院申请病人弹框===================================-->
-	<el-dialog title="选择住院申请病人" v-model="isShowXZBR">
+	<el-dialog title="选择住院申请病人" @close="closeHspApply" v-model="isShowXZBR">
+    <!--=============================================查询条件===================================-->
+    <el-row style="margin-bottom:10px">
+
+      <el-col :offset="2" :span="5">
+        <el-input size="mini" v-model="doctorEnjoinWheres.searchLike" placeholder="根据病人姓名或者电话"></el-input>
+      </el-col>
+      <el-col  :span="1">
+        <el-button size="mini" @click="refreshHspApply" icon="el-icon-search" type="primary" ></el-button>
+      </el-col>
+
+      <el-col :offset="1" :span="14">
+        &nbsp;<span style="font-size: 12px;">日期区间：</span>&nbsp;
+
+        <el-date-picker style="width: 130px" @change="refreshHspApply" v-model="doctorEnjoinWheres.startDate"
+                        type="date"
+                        size="mini"
+                        value-format="YYYY-MM-DD"
+                        placeholder="日期">
+        </el-date-picker>
+        &nbsp;<span style="font-size: 12px;">至</span>&nbsp;
+        <el-date-picker style="width: 130px" @change="refreshHspApply" v-model="doctorEnjoinWheres.endDate"
+                        type="date"
+                        size="mini"
+                        value-format="YYYY-MM-DD"
+                        placeholder="日期">
+        </el-date-picker>
+      </el-col>
+    </el-row>
 		<el-table
 		    ref="multipleTable"
 		    :data="InhospitalApplyArr.slice((hospitalCurrent-1)*hospitalSize,hospitalCurrent*hospitalSize)"
@@ -40,17 +68,11 @@
 
 			<el-table-column width="120px"
 			      align="right">
-			      <template  #header>
-			        <el-input	v-model="fromSearch" prefix-icon="el-icon-search"
-			          size="mini"
-			          placeholder="病人名称搜索"/>
-			      </template>
-				  
 				  <!--这里放操作按钮-->
 				  <template  #default='scope'>
 				  	<el-button type="success" @click="hospitalXZ(scope.row)" size="mini" >选择</el-button>
 				  </template>
-			    </el-table-column>
+      </el-table-column>
 			
 		  </el-table>
 		  <!--分页插件-->
@@ -79,7 +101,7 @@
 					</el-form-item>
 				</el-col>
 				<el-col :span="3">
-					<el-button @click="isShowXZBR = true" type="primary" icon="el-icon-user-solid"></el-button>
+					<el-button @click="refreshHspApply" type="primary" icon="el-icon-user-solid"></el-button>
 				</el-col>
 				
 				<el-col :offset="1" :span="9">
@@ -475,6 +497,15 @@
           sIdArr:[],//员工编号
           ptNo:''
         },
+        //======================查询条件数据
+        doctorEnjoinWheres:{
+          startDate:'',//开始日期
+          endDate:'',//结束日期
+          searchLike:'',//模糊搜索
+          doctorType:'',//医嘱类型
+          sIdArr:[],//员工编号
+          ptNo:''
+        },
 
         //============================================患者联系人数据
         contacts:{
@@ -531,7 +562,7 @@
           this.patientBaseArr = v.data;
         }).catch((date)=>{
         });
-        this.axios({url:'selectNoHspApply'}).then((v)=>{//查询所有病人登记信息
+        this.axios.post('selectNoHspApply',this.doctorEnjoinWhere).then((v)=>{//查询所有病人登记信息
           console.log(v.data)
           this.InhospitalApplyArr = v.data;
         }).catch((date)=>{
@@ -543,6 +574,24 @@
           // this.ksSelectFun();//查询排班信息
         }).catch((data)=>{
         });
+      },
+      refreshHspApply(){
+        this.isShowXZBR = true;
+        this.axios.post('selectNoHspApply',this.doctorEnjoinWheres).then((v)=>{//查询所有病人登记信息
+          console.log(v.data)
+          this.InhospitalApplyArr = v.data;
+        }).catch((date)=>{
+        });
+      },
+      closeHspApply(){
+        this.doctorEnjoinWheres={
+          startDate:'',//开始日期
+              endDate:'',//结束日期
+              searchLike:'',//模糊搜索
+              doctorType:2,//医嘱类型
+              sIdArr:[],//员工编号
+              ptNo:''
+        };
       },
 
       //科室修改是调用查询该科室的排班信息
@@ -712,7 +761,7 @@
   }
 </script>
 
-<style>
+<style scoped >
 	.works{
 		padding: 15px;
 	}
