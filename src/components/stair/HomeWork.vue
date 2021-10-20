@@ -10,15 +10,15 @@
     </div>
     <div style="width: 300px;height: 100px;margin-left: 500px;margin-top: -100px;">
       <i class="el-icon-s-operation" style="font-size: 100px;"></i>
-      <div style="font-size: 20px;font-family:微软雅黑;margin-top: -80px;margin-left: 120px;color: #909399;" >就诊记录</div>
-      <div style="font-size: 20px;font-family:微软雅黑;color: black;margin-top: 10px;margin-left: 130px">{{funs}}</div>
+      <div style="font-size: 20px;font-family:微软雅黑;margin-top: -80px;margin-left: 120px;color: #909399;" >就诊病例</div>
+      <div style="font-size: 20px;font-family:微软雅黑;color: black;margin-top: 10px;margin-left: 130px">{{nums}}</div>
     </div>
     <div style="width: 300px;height: 100px;margin-left: 1000px;margin-top: -100px">
       <i class="el-icon-user" style="font-size: 100px;"></i>
-      <div style="font-size: 20px;font-family:微软雅黑;color: #909399;margin-top: -80px;margin-left: 120px" >医院人数</div>
-      <div style="font-size: 20px;font-family:微软雅黑;color: black;margin-top: 10px;margin-left: 130px">{{funs}}</div>
+      <div style="font-size: 20px;font-family:微软雅黑;color: #909399;margin-top: -80px;margin-left: 120px" >本月收入</div>
+      <div style="font-size: 20px;font-family:微软雅黑;color: black;margin-top: 10px;margin-left: 130px">{{moeney}}</div>
     </div>
-    <div id="main" style="width:80%;height:60%"></div>
+    <div id="main" style="width:80%;height:60%;margin-top: 30px"></div>
   </div>
   </div>
 </template>
@@ -34,7 +34,9 @@ export default {
     return {
       name: [],
       num: [],
-      funs:""
+      funs:"",
+      nums:'',
+      moeney:''
     };
   },
   methods: {
@@ -86,6 +88,14 @@ export default {
     dome(){
       this.axios.get("selectall-staffs").then((res)=>{
         this.funs = res.data
+      }).catch()
+      this.axios.get("chaxunnums").then((res)=>{
+        this.nums=res.data
+      }).catch()
+      this.axios.get("moneny").then((res)=>{
+        this.moeney=res.data
+        // console.log(res,'1111')
+        console.log("1122",res)
       }).catch()
     }
   }
