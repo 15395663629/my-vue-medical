@@ -457,18 +457,16 @@ export default {
         this.$refs[formName].validate((valid) => {
           console.log(valid)
           if (valid) {
-
             this.axios.post("addMzSick", this.mzSickArr).then((res) => {
               console.log(res.data)
               if (res.data == 'ok') {
-                this.resetFormSick()
+                this.getData()
               }
             }).catch(() => {
             })
           }
         });
         this.isShow3=false
-        this.getData()
       },
       // 办理诊疗卡
       aMc(row){
@@ -811,7 +809,6 @@ export default {
         this.axios.post('http://localhost:8089/updeMoney', qs.stringify({mcBalance:mcBalance,mcIdCard:mcIdCard}))
             .then((v)=>{
               if(v.data == 'ok'){
-
               }else{
                 alert(v.data);
               }
