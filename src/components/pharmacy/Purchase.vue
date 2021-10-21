@@ -132,7 +132,7 @@
 				<el-table-column label="操作">
 					<template #default="scope">
 						<el-button type="primary" plain size="small" @click="opemMingxi(scope.row)">查看明细</el-button>
-            <el-button type="danger" plain size="small" @click="execute(scope.row)">执行计划</el-button>
+            <el-button type="danger" plain size="small" @click="execute(scope.row.ykPurchaseId)">执行计划</el-button>
 					</template>
 				</el-table-column>
 			</el-table>
@@ -273,6 +273,10 @@
       },
 
       getData(ykPurchaseId){
+        /*查询采购计划*/
+        this.axios.post("all-plan").then((v)=>{
+          this.tableData = v.data;
+        })
         /*查询采购计划详单*/
         this.axios({url:"all-ydpd",params:{ykPurchaseId:ykPurchaseId}}).then((v)=>{
           this.ydpdform = v.data;
@@ -295,14 +299,14 @@
         this.getData(row.ykPurchaseId);
       },
       /*执行采购计划*/
-      execute(row){
-        this.axios.post("zhixing",{ykPurchaseId:row}).then((v)=>{
-          if (v.data == "ok"){
+      execute(ykPurchaseId){
+        this.axios.get("zhixing",{params:{ykPurchaseId:ykPurchaseId}}).then((v)=>{
+          this.getData()
+          console.log(ykPurchaseId)
             this.$message({
               message: '执行成功',
               type: 'success'
             });
-          }
         })
       },
       /*选择药品添加到表格*/
@@ -324,10 +328,7 @@
       },
 		},
 		created() {
-      /*查询采购计划*/
-      this.axios.post("all-plan").then((v)=>{
-        this.tableData = v.data;
-      })
+      this.getData()
     }
   }
 </script>
