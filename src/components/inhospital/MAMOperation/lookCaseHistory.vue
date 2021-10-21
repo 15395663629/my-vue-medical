@@ -112,7 +112,7 @@ export default {
       }).catch();
     },
     emptyExecuteScreen(){
-      CaseHistoryWhere = {
+      this.CaseHistoryWhere = {
         startDate:'',//开始日期
         endDate:'',//结束日期
         doctorType:2,//医嘱类型

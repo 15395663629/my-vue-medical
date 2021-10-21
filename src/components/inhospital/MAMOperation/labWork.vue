@@ -192,6 +192,12 @@ export default {
     },
     //新增病人化验项目
     async addPatientCheckout(){
+      if(this.patientObj.ptNo == undefined){this.$message({
+        type: 'error',
+        message:'请选择病人！'
+      })
+        return;
+      }
       if(this.checkoutList.length <= 0){
         this.$message({
           type: 'error',

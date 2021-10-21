@@ -184,10 +184,10 @@
 	
 	<!--=====================================================================转科弹框======================-->
 	<el-dialog title="转科" width="45%" v-model="isZKShow" @close="closeChangeDeptFunction">
-	  <el-form>
+	  <el-form ref="changeDeptObjRef" :rules="changeDeptObjRules" :model="changeDeptObj">
 		  <el-row>
 			  <el-col :span="10">
-				  <el-form-item label="选择科室" label-width="80px">
+				  <el-form-item prop="cdrAfterKs" label="选择科室" label-width="80px">
 				  	<el-select @change="changeKsFunction" v-model="changeDeptObj.cdrAfterKs" placeholder="请选择">
 				  	    <el-option v-for="ks in ksArr"
 				  	      :label="ks.ksName"
@@ -200,7 +200,7 @@
 			  </el-col>
 
         <el-col :offset="2" :span="10">
-          <el-form-item label="主治医生" label-width="80px">
+          <el-form-item prop="doctorId" label="主治医生" label-width="80px">
             <el-select v-model="changeDeptObj.doctorId" placeholder="请选择">
               <el-option v-for="sta in this.staffArr"
                   :label="sta.sname"
@@ -214,7 +214,7 @@
 
       <el-row>
         <el-col :span="22">
-          <el-form-item label="转科原因" label-width="80px">
+          <el-form-item prop="cdrCause" label="转科原因" label-width="80px">
             <el-input type="textarea" v-model="changeDeptObj.cdrCause" placeholder="填写原因"></el-input>
           </el-form-item>
         </el-col>
@@ -235,7 +235,7 @@
 	  		<el-row>
 	  			<el-col :span="17"></el-col>
 	  			<el-col :span="2">
-	  				<el-button @click="addChangeDeptFunction('empFrom')" size="small" type="primary">确定</el-button>
+	  				<el-button @click="addChangeDeptFunction()" size="small" type="primary">确定</el-button>
 	  			</el-col>
 	  			<el-col :span="1"></el-col>
 	  			<el-col :span="2">
@@ -523,6 +523,11 @@
               ctsIphone:[{required:true,trigger:'blur',validator:checkPhone}],
               ctsRelation:[{required:true,message:"关系不能为空！",trigger:'change'}],
         },
+        changeDeptObjRules:{
+          cdrCause:[{required:true,message:"转科原因不能为空",trigger:'blur'}],
+          cdrAfterKs:[{required:true,message:"科室不能为空",trigger:'change'}],
+          doctorId:[{required:true,message:"主治医生不能为空！",trigger:'change'}],
+        },
 
         //================================================病人信息数据
         patientBaseArr:[
@@ -638,7 +643,7 @@
           this.staffArrs = v.data;
         }).catch();
         //查询手术
-        this.axios.get("http://localhost:8089/allDescSpro",{params:{input:this.input}}).then((res)=>{
+        this.axios.get("http://localhost:8089/allDescSpro1",{params:{input:this.input}}).then((res)=>{
           this.sproject = res.data;
         }).catch()
 
@@ -770,23 +775,28 @@
       //确定转科方法
       addChangeDeptFunction(form){
         this.changeDeptObj.sId = this.staff.sid;//操作员
-        console.log(this.changeDeptObj)
-        this.axios.post('patient-changeDept',this.changeDeptObj).then((v)=>{
-          if(v.data){
-            this.$message({
-              type: 'success',
-              message: '转科成功'
+        this.$refs['changeDeptObjRef'].validate((valid)=>{
+          if(valid){
+            console.log(this.changeDeptObj)
+            this.axios.post('patient-changeDept',this.changeDeptObj).then((v)=>{
+              if(v.data){
+                this.$message({
+                  type: 'success',
+                  message: '转科成功'
+                });
+              }
+              console.log(v.data);
+              this.closeChangeDeptFunction();
+              this.patientBaseInit();
+            }).catch((data)=>{
+
             });
           }
-          console.log(v.data);
-          this.closeChangeDeptFunction();
-          this.patientBaseInit();
-        }).catch((data)=>{
-
         });
       },
       //关闭转科方法
       closeChangeDeptFunction(){
+        this.$refs['changeDeptObjRef'].resetFields();
         this.changeDeptObj = {//转科对象
           cdrId:'',
           cdrCause:'',

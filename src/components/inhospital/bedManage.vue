@@ -1,11 +1,11 @@
 <template>
 
 	<!--=============================================新增修改床位弹框===================================-->
-	<el-dialog width="50%" @close="bedAddOrUpdateReset('bedForm')" v-model="isShowAddBed" title="新增床位">
-		<el-form ref="bedForm"  :model="bedObj">
+	<el-dialog width="50%" @close="bedAddOrUpdateReset()" v-model="isShowAddBed" title="新增床位">
+		<el-form ref="bedObjRef" :rules="bedObjRules"  :model="bedObj">
 			<el-row>
 				<el-col :span="9">
-					<el-form-item label="床位名称" label-width="80px">
+					<el-form-item label="床位名称" prop="bdName" label-width="80px">
 						<el-input v-model="bedObj.bdName"></el-input>
 					</el-form-item>
 				</el-col>
@@ -13,8 +13,8 @@
         <el-col :span="2"></el-col>
 
         <el-col :span="9">
-          <el-form-item label="床位价格" label-width="80px">
-            <el-input v-model="bedObj.bdPrice"></el-input>
+          <el-form-item prop="bdPrice" label="床位价格" label-width="80px">
+            <el-input onkeyup="value=value.replace(/[^\d^\.]+/g,'').replace('.','$#$').replace(/\./g,'').replace('$#$','.')"  v-model="bedObj.bdPrice"></el-input>
           </el-form-item>
         </el-col>
 			</el-row>
@@ -22,7 +22,7 @@
 
 			<el-row>
         <el-col :span="9">
-          <el-form-item label="所属科室" label-width="80px">
+          <el-form-item prop="ksId" label="所属科室" label-width="80px">
               <el-select @change="bedKsChangeFunction(1)" v-model="bedObj.ksId">
                 <el-option v-for="ks in ksArr"
                            :label="ks.ksName"
@@ -37,7 +37,7 @@
 
 
         <el-col :span="9">
-          <el-form-item label="选择病房" label-width="80px">
+          <el-form-item prop="wdId" label="选择病房" label-width="80px">
             <el-select v-model="bedObj.wdObj" value-key="wdId"  @change="bedChangeFunction" placeholder="请选择">
               <el-option v-for="wd in selectBedWardArr"
                          :value="wd"
@@ -54,7 +54,7 @@
 
       <el-row>
         <el-col :span="9">
-          <el-form-item label="管理护士" label-width="80px">
+          <el-form-item  label="管理护士" label-width="80px">
             <el-input  v-model="bedObj.sName" disabled></el-input>
           </el-form-item>
         </el-col>
@@ -62,7 +62,7 @@
         <el-col :span="2"></el-col>
 
         <el-col :span="9">
-          <el-form-item label="床位状态" label-width="80px">
+          <el-form-item prop="bdIs" label="床位状态" label-width="80px">
             <el-select @change="isBd" v-model="bedObj.bdIs" >
               <el-option
                   label="可入住"
@@ -85,18 +85,18 @@
 	</el-dialog>
 
   <!--=============================================新增修改病房弹框===================================-->
-  <el-dialog width="50%" v-model="isWradShow" @close="wardAddOrUpdateReset('wardForm')" :title="titleWard">
-    <el-form ref="wardForm"  :model="wardObj">
+  <el-dialog width="50%" v-model="isWradShow" @close="wardAddOrUpdateReset()" :title="titleWard">
+    <el-form ref="wardObjRef" :rules="wardObjRules"  :model="wardObj">
       
       <el-row >
         <el-col :span="1"/>
          <el-col :span="10">
-           <el-form-item label="病房名称" label-width="80px">
+           <el-form-item prop="wdName" label="病房名称" label-width="80px">
              <el-input v-model="wardObj.wdName"></el-input>
            </el-form-item>
          </el-col>
          <el-col :offset="2" :span="10">
-           <el-form-item label="所属科室" label-width="80px">
+           <el-form-item prop="ksId" label="所属科室" label-width="80px">
              <el-select @change="ksChangeFunction(1)" v-model="wardObj.ksId">
                <el-option v-for="ks in ksArr"
                    :label="ks.ksName"
@@ -110,7 +110,7 @@
       <el-row >
         <el-col :span="1"/>
         <el-col :span="10">
-          <el-form-item label="管理护士" label-width="80px">
+          <el-form-item label="管理护士" prop="sId" label-width="80px">
             <el-select @change="staffChangeFunction" v-model="wardObj.sId">
               <el-option v-for="sf in staffArr"
                          :label="sf.sname"
@@ -125,25 +125,37 @@
     </el-form>
 
     <template #footer>
-      <el-button size="small" @click="wardaddOrUpdate('wardForm')" type="primary">确定</el-button>
-      <el-button size="small" @click="wardAddOrUpdateReset('wardForm')" type="danger">取消</el-button>
+      <el-button size="small" @click="wardaddOrUpdate()" type="primary">确定</el-button>
+      <el-button size="small" @click="wardAddOrUpdateReset()" type="danger">取消</el-button>
     </template>
 
   </el-dialog>
 
 
 
-  <!--=============================================查询病房输入框和搜索按钮===================================-->
-	<el-row>
-    <el-col :span="9"></el-col>
-		<el-col :span="5">
-		 <el-input @blur="wardArrInit" size="small" placeholder="病房名称或者护士名称搜索" v-model="wardSearchText"></el-input>
-		</el-col>
-    <el-col :span="1">
-      <el-button  size="small" @click="wardArrInit" icon="el-icon-search" type="primary" ></el-button>
+
+  <!--============================================查询条件-->
+  <el-row style="padding:10px">
+
+    <el-col :offset="6" :span="5">
+      <el-input @blur="wardArrInit" size="mini" placeholder="病房名称或者护士名称搜索" v-model="doctorEnjoinWhere.searchLike"></el-input>
     </el-col>
-    <el-col :span="9"></el-col>
-	</el-row>
+    <el-col :span="1" >
+      <el-button  size="mini" @click="wardArrInit" icon="el-icon-search" type="primary" ></el-button>
+    </el-col>
+
+    <el-col :offset="1" :span="5">
+      <span style="font-size: 12px;">科室:</span>&nbsp;
+      <el-select size="mini" v-model="doctorEnjoinWhere.ksIdArr" placeholder="请选择" @change="wardArrInit"  multiple collapse-tags style="width: 180px" >
+        <el-option v-for="ks in ksArr"
+                   :label="ks.ksName"
+                   :value="ks.ksId">
+        </el-option>
+      </el-select>
+    </el-col>
+
+
+  </el-row>
 
 
   <!--=============================================病房信息表格===================================-->
@@ -153,7 +165,7 @@
           ref="multipleTable"
           highlight-current-row
           height="550px"
-          :header-cell-style="{background:'#F4F4F4'}"
+          :header-cell-style="{background:'#f4f4f4'}"
           @cell-click="openBedDrawer"
           :data="wardArr.slice((wardCurrentPage-1)*wardPageSize,wardCurrentPage*wardPageSize)"
           style="width: 100%"
@@ -226,7 +238,7 @@
       :title="bedDrawerTitle"
       v-model="bedDrawerIsShow"
       direction="btt"
-      size="60%"
+      size="65%"
       :before-close="handleClose" destroy-on-close>
 
     <!--=============================================床位信息表格===================================-->
@@ -385,7 +397,7 @@
   <!--==================================================转病床弹框==================================================-->
   <el-dialog width="40%" title="转床位" v-model="isShowPatientShiftBed" @close="closePatientShiftBedTK">
 
-    <el-form ref="bedChangeForm" :model="bedChangeRecordObj" label-width="80px">
+    <el-form ref="bedChangeRecordObjRef" :rules="bedChangeRecordObjRules" :model="bedChangeRecordObj" label-width="80px">
 
       <el-row>
         <el-col :offset="1" :span="9">
@@ -413,7 +425,7 @@
         <el-col :span="3"></el-col>
 
         <el-col :span="9">
-          <el-form-item label="选择病房" label-width="80px">
+          <el-form-item prop="wdId" label="选择病房" label-width="80px">
             <el-select @change="wardPatientChangeFunction" value-key="wdId" v-model="bedChangeRecordObj.wdObj">
               <el-option v-for="ward in wardChangeRecordArr"
                          :label="ward.wdName"
@@ -428,7 +440,7 @@
 
       <el-row>
         <el-col :offset="1" :span="9">
-          <el-form-item label="病床名称" label-width="80px">
+          <el-form-item prop="bdId" label="病床名称" label-width="80px">
             <el-select @change="bedPatientChangeFunction" value-key="bdId" v-model="bedChangeRecordObj.bedObjs">
               <el-option v-for="bed in bedChangeRecordArr"
                          :label="bed.bdName"
@@ -452,7 +464,7 @@
       <el-row>
 
         <el-col :offset="1" :span="21">
-          <el-form-item label="调换原因" >
+          <el-form-item prop="bcCause" label="调换原因" >
             <el-input placeholder="请输入原因" type="textarea" v-model="bedChangeRecordObj.bcCause">
             </el-input>
           </el-form-item>
@@ -462,8 +474,8 @@
 
 
     <template #footer>
-      <el-button size="small" @click="patientUpdateBed('bedChangeForm')" type="primary">确定</el-button>
-      <el-button size="small" @click="closePatientShiftBedTK('bedChangeForm')" type="danger">取消</el-button>
+      <el-button size="small" @click="patientUpdateBed()" type="primary">确定</el-button>
+      <el-button size="small" @click="closePatientShiftBedTK()" type="danger">取消</el-button>
     </template>
 
   </el-dialog>
@@ -474,7 +486,61 @@
   import qs from "qs"
 	export default{
 		data(){
+       var wdNameOne = async (rule, value, callback) => {//电话号码验证
+        if (!value) {
+          return callback(new Error('病房名称不能为空'))
+        }
+        let is = false;
+         await this.axios({url:'wdNameSelectRepetition',params:{wdName:value}}).then((v)=>{
+          // alert(v.data)
+          // console.log(v.data)
+          is = v.data;
+        }).catch();
+
+        if(is){
+          return callback(new Error('病房名称重复！'));
+        }else{
+          return true;
+        }
+      }
+      var bdNameOne = async (ruls,value,callback) =>{
+        if (!value) {
+          return callback(new Error('病床名称不能为空'))
+        }
+        let is = false;
+        await this.axios({url:'selectBdNameRepetition',params:{bdName:value}}).then((v)=>{
+          // alert(v.data)
+          // console.log(v.data)
+          is = v.data;
+        }).catch();
+
+        if(is){
+          return callback(new Error('病床名称重复！'));
+        }else{
+          return true;
+        }
+      }
 			return{
+        //================================================校验
+        wardObjRules:{
+          wdName:[{required:true,validator:wdNameOne,trigger:'blur'}],
+          ksId:[{required:true,message:"请选择科室！",trigger:'change'}],
+          sId:[{required:true,message:"请选择护士！",trigger:'change'}],
+        },
+        bedObjRules:{//病床对象
+          bdName:[{required:true,validator:bdNameOne,trigger:'blur'}],
+          bdPrice:[{required:true,message:"价格不能为空",trigger:'change'}],
+          ksId:[{required:true,message:"请选择科室！",trigger:'change'}],
+          bdIs:[{required:true,message:'请选择病床状态！',trigger:'change'}],
+          wdId:[{required:true,message:"请选择病房！",trigger:'change'}],
+        },
+        bedChangeRecordObjRules:{
+          wdId:[{required:true,message:"请选择病房！",trigger:'change'}],
+          bdId:[{required:true,message:"请选择科室！",trigger:'change'}],
+          bcCause:[{required:true,message:'原因不能为空！',trigger:'blur'}],
+        },
+
+
 			  //=====================================================================病人信息及病人表格数据操作
         isShowPatient:false,//是否显示申请病人弹框
         patientBaseObj:{//病人申请信息对象
@@ -499,6 +565,17 @@
         PatientXZBedObj:{},//被选中的病床数据
         patientSize:4,//分页页大小
         patientCurrent:1,//当前页
+
+        //======================查询条件数据
+        doctorEnjoinWhere:{
+          startDate:'',//开始日期
+          endDate:'',//结束日期
+          searchLike:'',//模糊搜索
+          doctorType:0,//医嘱类型
+          sIdArr:[],
+          ksIdArr:[],
+          ptNo:''
+        },
 
 
         //==============================================================================病床转换数据
@@ -560,7 +637,10 @@
         wardSearchText:'',//病房搜索值
         isBedZT:'',
         wardObj:{//病房对象
-
+          wdId:'',//病房编号
+          wdName:'',//病房名称
+          ksId:'',//科室编号
+          sId:''//员工编号
         },
         wardArr:[//病房集合
         ],
@@ -595,7 +675,7 @@
 		  wardArrInit(){
 		    console.log(this.staff)
         //查询所有病房
-			  this.axios.post("zyWard",{search:this.wardSearchText,staff:this.staff}).then((v)=>{
+			  this.axios.post("zyWard",this.doctorEnjoinWhere).then((v)=>{
 			    console.log(v.data);
             this.wardArr = v.data;
         }).catch((data)=>{
@@ -637,33 +717,41 @@
       closePatientShiftBedTK(){
 		    this.patientUpdateBedReset();
         this.isShowPatientShiftBed = false;
+        this.$refs['bedChangeRecordObjRef'].resetFields();
       },
       //病房切换时调用
       wardPatientChangeFunction(row){
         this.bedChangeRecordObj.bdId = '';
+        this.bedChangeRecordObj.bedObjs = {};
+        this.bedChangeRecordObj.wdId = row.wdId;
         this.bedChangeRecordArr =  row.listBed;
         this.bedChangeRecordObj.sName = row.staff.sname;
       },
       //病床切换时调用
       bedPatientChangeFunction(row){
+		    this.bedChangeRecordObj.bdId = row.bdId;
         this.bedChangeRecordObj.bdPrice = row.bdPrice;
         this.bedChangeRecordObj.bcLaterBdId = row.bdId;
       },
       //=======================修改病床方法
       patientUpdateBed(){
-		    alert(this.staff.sname);
         this.bedChangeRecordObj.sId = this.staff.sid;//将操作员的编号放入
         console.log(this.bedChangeRecordObj);
-        this.axios.post("bedUpdatePatient",this.bedChangeRecordObj).then((v)=>{
-          this.$message({
-            type: 'success',
-            message: '更改成功'
-          });
-          this.closePatientShiftBedTK();//关闭修改病床弹框
-          this.bedSelectByWdId(this.bedObj.wdId);//查询当前表格病床数据
-          this.wardArrInit();//重新加载页面数据
-        }).catch((data)=>{
+        this.$refs['bedChangeRecordObjRef'].validate((v)=>{
+          alert(v)
+          if (v){
+            this.axios.post("bedUpdatePatient",this.bedChangeRecordObj).then((v)=>{
+              this.$message({
+                type: 'success',
+                message: '更改成功'
+              });
+              this.closePatientShiftBedTK();//关闭修改病床弹框
+              this.bedSelectByWdId(this.bedObj.wdId);//查询当前表格病床数据
+              this.wardArrInit();//重新加载页面数据
+            }).catch((data)=>{
 
+            });
+          }
         });
       },
       //清除转换病床数据
@@ -685,6 +773,7 @@
         };
         this.wardChangeRecordArr = [];//病房数组
         this.bedChangeRecordArr = [];//病床数组
+        this.$refs['bedChangeRecordObjRef'].resetFields();
       },
 
 
@@ -786,6 +875,7 @@
       },
       //添加病床  病房改变时将调用
       bedChangeFunction(row){
+		    console.log(row)
 		    this.bedObj.sName = row.staff.sname;
       },
       //打开新增或者修改病床弹框
@@ -801,19 +891,35 @@
       },
       //新增病床或者修改病床方法
       bedAddOrUpdate(){
-        this.axios.post("bedAddOrUpdate",this.bedObj).then((v)=>{//新增
-          console.log(v.data);
-          this.bedAddOrUpdateReset("bedForm");//清空数据
-          this.bedSelectByWdId(this.bedObj.wdId);//查询当前表格病床数据
-          this.wardArrInit();//重新加载页面数据
-        }).catch((data)=>{
+		    this.$refs['bedObjRef'].validate((v)=>{
+		      if(v){
+            this.axios.post("bedAddOrUpdate",this.bedObj).then((v)=>{//新增
+              console.log(v.data);
+              this.isShowAddBed = false;
+              this.bedSelectByWdId(this.bedObj.wdId);//查询当前表格病床数据
+              this.wardArrInit();//重新加载页面数据
+            }).catch((data)=>{
+            });
+          }
         });
       },
       //清除病房新增或者修改弹框的表单方法
-      bedAddOrUpdateReset(formName){
+      bedAddOrUpdateReset(){
         this.isShowAddBed = false;
+        this.bedObj = {//病床对象
+          bdId:'',
+          bdName:'',
+          wdId:'',
+          wdObj:'',//病房对象
+          bdPrice:'',
+          bdIs:'',
+          ksName:'',//科室名称
+          ptNo:'',
+          ksId:'',//科室编号
+          sName:''//护士名称
+        };
         this.bedClear();
-        this.$refs[formName].resetFields();
+        this.$refs['bedObjRef'].resetFields();
       },
       //清空病床弹框数据
       bedClear() {
@@ -900,25 +1006,32 @@
         }
       },
       //新增或者修改病房方法
-      wardaddOrUpdate(form){
-      console.log(this.wardObj)
-
-        this.axios.post("addOrUpdataWard",this.wardObj).then((v)=>{//新增
-          console.log(v.data);
-          this.wardArrInit();//重新查询所有数据
-          this.wardAddOrUpdateReset("formWard");//清除表单以及数据
-        }).catch((data)=>{
-        });
+      wardaddOrUpdate(){
+        this.$refs['wardObjRef'].validate((valid)=>{
+        if(valid){
+          this.axios.post("addOrUpdataWard",this.wardObj).then((v)=>{//新增
+            console.log(v.data);
+            this.isWradShow = false;
+            this.wardArrInit();//重新查询所有数据
+          }).catch((data)=>{
+          });
+        }
+      });
       },
       //清除新增或者修改弹框的表单方法
-      wardAddOrUpdateReset(formName){
+      wardAddOrUpdateReset(){
         this.isWradShow = false;
         this.wardClear();
-        this.$refs[formName].resetFields();
+        this.$refs['wardObjRef'].resetFields();
       },
       //清空病房弹框数据
       wardClear(){
-			  this.wardObj = {};//病房对象
+			  this.wardObj = {//病房对象
+          wdId:'',//病房编号
+              wdName:'',//病房名称
+              ksId:'',//科室编号
+              sId:''//员工编号
+        },//病房对象
         this.staffArr = [];//员工对象
       },
       //选择科室值发生改变是触发
@@ -938,7 +1051,6 @@
       staffChangeFunction(){
 
       },
-
 
       // 初始病房每页数据数wardpagesize和数据data
       wardHandleSizeChange: function(size) {
@@ -970,8 +1082,6 @@
       oatientCurrentChange:function (currentPage){
 		    this.patientCurrent = currentPage;
       },
-
-
       // //点击病房表格将病房表格数据放入病床表格方法
       // wardClickBedObj(row){
       //
@@ -979,6 +1089,7 @@
 		},
     created() {
       this.staff = this.$store.state.token.list;//将登录存入的值在取出来
+      this.doctorEnjoinWhere.ksIdArr.push(this.staff.ksId);
       this.wardArrInit();
     }
   }
