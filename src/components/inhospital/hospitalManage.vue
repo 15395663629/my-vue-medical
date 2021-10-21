@@ -198,7 +198,7 @@
         <el-col :offset="1">
             <el-tag style="margin-right: 10px"
                 :key="cts"
-                v-for="(cts,index) in this.patientBaseObj.listContacts"
+                v-for="(cts,index) in patientBaseObj.listContacts"
                 closable
                 @click="updateContacts(index,cts)"
                 :disable-transitions="false"
@@ -612,13 +612,20 @@
       addContacts(){
         this.$refs['contacts'].validate((valid) => {
           if (valid) {
+          console.log(this.contacts)
             if(this.contactsIndex != null){
               this.patientBaseObj.listContacts.splice(this.contactsIndex,1,this.contacts);
             }else{
               this.patientBaseObj.listContacts.push(this.contacts);
             }
-            this.closeAddContacts();
-            console.log(this.patientBaseObj)
+            this.isShowAddCts = false;
+            this.contactsIndex = null;
+            this.contacts = {
+              ctsId:'',
+              ctsName:'',
+              ctsIphone:'',
+              ctsRelation:''
+            };
           }
         });
       },

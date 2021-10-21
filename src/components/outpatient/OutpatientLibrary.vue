@@ -150,7 +150,7 @@
 		<el-row style="margin-top: 10px;">
 			<el-col :span="12">
 				<h5>检验项目</h5>
-        <el-table  :summary-method="getSummaries3" show-summary  size="mini" :data="testListTable" border height="350px" style="width: 100%">
+        <el-table  :summary-method="getSummaries3" show-summary  size="mini" :data="testListTable" border height="300px" style="width: 100%">
           <el-table-column align="center" prop="manResultId" label="序号" width="50px" ></el-table-column>
           <el-table-column align="center" prop="pro.checkName" label="项目名称" width="120px" ></el-table-column>
           <el-table-column align="center" label="项目结果"  width="130px">
@@ -172,7 +172,7 @@
 			</el-col>
 			<el-col :span="12">
 				<h5>手术项目</h5>
-          <el-table  :summary-method="getSummaries4" show-summary size="mini" :data="surgeryListTable" border height="350px" style="width: 100%">
+          <el-table  :summary-method="getSummaries4" show-summary size="mini" :data="surgeryListTable" border height="300px" style="width: 100%">
           <el-table-column align="center" prop="susId" label="序号" width="50px" ></el-table-column>
           <el-table-column align="center" prop="ssObject.projectName" label="项目名称" width="250px" ></el-table-column>
           <el-table-column align="center" prop="ssObject.projectPay" label="单价" width="83px" ></el-table-column>
@@ -236,7 +236,7 @@
           this.zpListTable=row.recipeObject.zpList;
         }
 				//检验项目
-        if(row.tjManResultList[0].manId !=0){
+        if(row.tjManResultList[0].manResultId !=0){
           this.testListTable=row.tjManResultList;
         }
         //手术项目

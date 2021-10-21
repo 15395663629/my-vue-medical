@@ -23,7 +23,7 @@
         </el-col>
         <el-col>
           <el-form-item prop="sickIdCard" label="身份证" >
-            <el-input @input="cardJiaoYan(mzSickArr.sickIdCard)" v-model="mzSickArr.sickIdCard" onkeyup="value=value.replace(/[^\d]/g,'')"></el-input>
+            <el-input @input="cardJiaoYan(mzSickArr.sickIdCard)" v-model="mzSickArr.sickIdCard" ></el-input>
           </el-form-item>
         </el-col>
         <el-col>

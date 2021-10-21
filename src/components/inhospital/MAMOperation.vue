@@ -3,25 +3,25 @@
     <el-container style="height: 100%;">
       <el-aside width="350px" style="background-color: #E7ECF1;color: #333;"> <!-- 右边 -->
         <el-row style="height: 30px;background-color: #D3DCE6;line-height: 30px">
-          <el-col style="margin-left: 130px" >
+          <el-col :offset="9" :span="14" >
             医生工作站
           </el-col>
         </el-row>
 
         <el-row style="height: 30px;background-color: #D3DCE6;line-height: 30px">
-          <el-col style="color: red" :offset="7" :span="12">
+          <el-col style="color: red" :offset="7" :span="14" >
             {{currentTime}}
           </el-col>
         </el-row>
 
         <el-row style="height: 30px;background-color: #D3DCE6;line-height: 30px">
-          <el-col style="margin-left: 125px">
+          <el-col :offset="8" :span="14">
             <span style="font-size: 14px">所属科室 ：</span><span style="font-size: 14px">{{staffKsName}}</span>
           </el-col>
         </el-row>
 
         <el-row style="height: 30px;background-color: #D3DCE6;line-height: 30px">
-          <el-col style="margin-left: 115px" >
+          <el-col :offset="8" :span="14" >
             <span style="font-size: 14px">医生名称 ：</span><span style="font-size: 14px">{{staff.sname}}</span>
           </el-col>
         </el-row>
@@ -755,7 +755,6 @@ export default{
       this.axios({url:'select-ks-obj',params:{ksId:this.staff.ksId}}).then((v)=>{
         this.staffKsName = v.data.ksName;
       }).catch();
-      this.doctorEnjoinObj.deExecuteDate = new Date();
 
       this.axios.post('select-drug-usage').then((v) => {
         this.searchDrugUsageArr = v.data;

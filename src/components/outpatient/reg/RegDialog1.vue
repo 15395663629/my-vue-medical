@@ -101,7 +101,7 @@
       <el-form :rules="rules"  status-icon :model="regArr" ref="regArr" label-width="100px" size="small" class="demo-ruleForm">
         <el-col>
           <el-form-item label="挂号日期："  >
-            <el-input v-model="regArr.rtOnsetTime" style="width: 300px" disabled></el-input>430224199805045517
+            <el-input v-model="regArr.rtOnsetTime" style="width: 300px" disabled></el-input>
           </el-form-item>
         </el-col>
         <el-col >
