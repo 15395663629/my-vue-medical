@@ -67,10 +67,11 @@
 			<el-table :data="daitukuForm" style="width: 100%;">
 				<el-table-column prop="ykPurchaseId" label="采购编号"/>
 				<el-table-column prop="ykPurchaseName" label="计划名称" />
+        <el-table-column property="ykPurchaseTime" label="执行时间" />
 				<el-table-column fixed="right" label="操作">
 					<template #default="scope">
-						<el-button @click="handleClick(scope.row)" type="primary" plain size="small">查看详情</el-button>
-						<el-button type="success" plain size="small">通过审核</el-button>
+						<el-button @click="handleClick(scope.row.ykPurchaseId)" type="primary" plain size="small">查看详情</el-button>
+						<el-button type="success" plain size="small" @click="tongguoshenhe(scope.row)">通过审核</el-button>
 					</template>
 				</el-table-column>
 			</el-table>
@@ -119,6 +120,7 @@
 </template>
 
 <script>
+import qs from "qs"
 	export default {
 		data() {
 			return {
@@ -144,10 +146,9 @@
           this.daitukuForm = v.data
         })
         /*查询采购计划详单*/
-        this.axios.post("all-ydpd").then((v)=>{
-          this.ydpdform = v.data;
-        })
+
       },
+      //保存药品生产日期和批次
       baocun(){
       console.log(this.ydpdform)
         this.axios.post("preserve",this.ydpdform).then((v)=>{
@@ -162,13 +163,30 @@
 
         })
       },
+      //查看待入库的药品详情
       handleClick(row){
       this.rukumingxi = true;
-      this.ydpdform = row.ykDrugpurchasePlanDetails;
-      }
+        this.axios({url:"all-ydpd",params:{ykPurchaseId:row}}).then((v)=>{
+          this.ydpdform = v.data;
+          console.log(this.ydpdform,"1111")
+        })
+     // this.ydpdform = row.ykDrugpurchasePlanDetails;
+      },
+      //通过审核
+      tongguoshenhe(row){
+        var ydpdform = row
+        var grant = JSON.stringify({str:row})
+        console.log(grant,"444")
+        console.log(row,"33333")
+        this.axios.post("putstorage",qs.stringify({grant:grant})).then((v)=>{
+          // this.ydpdform = v.data;
+        })
+      },
+
     },
     created() {
       this.getDate();
+
     }
   }
 </script>
