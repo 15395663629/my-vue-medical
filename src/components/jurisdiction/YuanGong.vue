@@ -350,7 +350,7 @@ import qs from 'qs'
         this.$refs[formName].validate(valid =>{
           if (valid) {
             console.log(this.from.sId+'111')
-            if(this.from.sid != 0){
+            if(this.from.sid === 0){
               console.log(this.from,"新增")
               for (let i = 0 ; i<this.funs.length ; i++){
                 if(this.user.uname==this.funs[i].user.uname){
