@@ -5,7 +5,7 @@
       <el-row >
         <el-col :span="24">
           <el-input size="small" style="width: 200px;" v-model="leftText" clearable placeholder="请输入你要查询的内容" ></el-input>
-          <el-button size="small" @click="selectRecord" type="primary" icon="el-icon-search">查询</el-button> 430224199805045517
+          <el-button size="small" @click="selectRecord" type="primary" icon="el-icon-search">查询</el-button>
         </el-col>
         <el-form   status-icon :model="leftRecordObject"   ref="leftRecordObject" label-width="100px" class="demo-ruleForm te">
           <el-col :span="12" >
@@ -58,7 +58,7 @@
             <el-button style="margin-left: 6px" type="primary" @click="shouFei" size="mini" plain>收取全部费用</el-button>
           </el-col>
         </el-form>
-      <el-table  size="mini" height="370" row-key="date" style="margin-top: 10px" :data="leftTableList">
+      <el-table  size="mini" height="350" row-key="date" style="margin-top: 10px" :data="leftTableList">
 		       <el-table-column fixed prop="xmName"  align="center" label="项目类型"  filter-placement="bottom-end">
             <template #default="scope">
               <el-tag size="small"  :type="colorType(scope.row.xmName)" disable-transitions>
@@ -123,7 +123,7 @@
           <el-input size="small" style="width: 200px;" v-model="rightText" clearable placeholder="请输入你要查询的内容" ></el-input>
           <el-button size="small" type="primary" @click="selectRecordsAll" icon="el-icon-search" >查询</el-button>
         </el-col>
-        <el-table size="mini"  height="540px" row-key="date"  style="width: 100% ;margin-top: 5px;margin-left: 10px"
+        <el-table size="mini"  height="530px" row-key="date"  style="width: 100% ;margin-top: 5px;margin-left: 10px"
                   :data="rightList.slice((wardCurrentPage-1)*wardPageSize,wardCurrentPage*wardPageSize)" >
 
         <el-table-column fixed label="序号" prop="medicalRecordObject.mrNumber" width="80px" align="center"> </el-table-column>
@@ -317,7 +317,6 @@ import { h } from 'vue'
               }
               this.sumsa = sums;
               this.leftRecordObject.mrTotalMoney  = sums;
-              alert(this.leftRecordObject.mrTotalMoney)
               this.leftRecordListFunction(this.leftList)
               this.sCardPawd();
             }else{
