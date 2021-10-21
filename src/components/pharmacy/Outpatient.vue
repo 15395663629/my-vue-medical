@@ -101,6 +101,9 @@ export default {
     fayao(row){
       console.log(row)
       this.axios.post("fayao",{mzRecipe:row,sId:this.staff.sid}).then((v)=>{
+        this.axios.post("allMzRecipe").then((v) => {
+          this.MzRecipe = v.data
+        })
         if(v.data == "ok"){
           this.$message({
             message: '发药成功',

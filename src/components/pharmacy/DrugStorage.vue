@@ -11,7 +11,7 @@
         width="180">
     </el-table-column>
     <el-table-column
-        prop="ykSellingprice"
+        prop="ykSelingprice"
         label="药品售价"
         width="180">
     </el-table-column>

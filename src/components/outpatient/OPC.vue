@@ -2,7 +2,7 @@
 	<el-container style="height: 100%;">
 		<el-header height="30px"  style="line-height: 30px; background-color: #B3C0D1;color: #333;">
 			<!-- <newDateOPC style="margin: 0px; padding: 0px;"></newDateOPC> -->
-		{{leftRecord}}
+		{{}}
     </el-header>
 		<el-container style="height: 100%;">
 			<el-aside width="400px" style="background-color: #D3DCE6;color: #333;"> <!-- 右边 -->
@@ -942,7 +942,7 @@
               this.headerInput.bnNumber = this.leftTopTable[0].bnNumber;
               this.headerInput.mcNumber = this.leftTopTable[0].rtRegObject.cardObject.mcNumber;
               var number = this.formatDate(this.leftTopTable[0].bnTime,'yyyyMMddhhmm').toString()
-                  +this.token.ksId.toString()+this.token.tid.toString()+this.headerInput.bnCount.toString()
+                  +this.token.ksId.toString()+this.token.tid.toString()+this.headerInput.bnCount.toString()+this.headerInput.sickNumber.toString()
 
               this.headerInput.mrCount = number;
               this.loading=false;
@@ -1125,7 +1125,7 @@ z
             this.zyInhospitalApply.sickNumber=this.headerInput.sickNumber;
             this.zyInhospitalApply.inProposer=this.token.sname;//医生名字
             this.zyInhospitalApply.sId=this.token.sid;//医生外键
-            this.zyInhospitalApply.mrNumber=this.medicalRecordObject.sickNumber;
+            this.zyInhospitalApply.mrNumber=this.headerInput.sickNumber;
             this.zysqShow=true;
             console.log(this.rtNumberZy)
           }
