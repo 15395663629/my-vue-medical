@@ -161,7 +161,7 @@
         this.axios.post("yk-batch-ykyf",{allotDetail:allotDetail,sId:this.staff.sid}).then().catch();
         this.getData();
         this.$message({
-          message: '发药成功',
+          message: '药品调拨成功',
           type: 'success'
         });
       },

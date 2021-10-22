@@ -223,6 +223,10 @@ export default {
     addykall(){
       this.ykAllot.yfDruginventories=this.ykAllData;
       this.axios.post("add-YkAllot",this.ykAllot).then((V)=>{
+        this.$message({
+          message: '成功新增调拨申请',
+          type: 'success'
+        });
         this.fromdata();
       this.getData();
       })
@@ -237,7 +241,7 @@ export default {
         this.stallform = v.data;
       })
       //查询药库库存
-      this.axios.post("").then((v)=>{
+      this.axios.post("YK-repertory").then((v)=>{
         this.yaokuForm = v.data;
       })
     },
