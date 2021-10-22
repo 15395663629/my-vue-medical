@@ -111,7 +111,7 @@
 
 
   <el-dialog v-model="dyss" width="50%" center  ><!-- 弹窗      -=-=-=-=-=-=-==-=-=-=-=--=-=-=-=-=-=-手术详情 -->
-    <el-button style="margin-right:200px" type="primary"  v-print='"no"'>打印</el-button>
+    <el-button style="margin-right:200px" type="primary"  v-print='"no"'><i class="el-icon-printer"></i></el-button>
     <div id="no">
       <span style="font-size: 23px;margin-left: 300px">手术记录</span>
       <hr>
@@ -286,7 +286,7 @@
 			      <template #default="scope">
 					  <el-button
                 @click="dayin(scope.row)"
-					    size="mini"><i class="el-icon-printer"></i>
+					    size="mini"><i class="el-icon-document"></i>
 					    </el-button>
 			      </template>
 			    </el-table-column>

@@ -149,7 +149,7 @@
           </el-col>
 					<el-col :span="7" :offset="3">
 						<el-form-item label="手术价格:" prop="projectPay">
-						<el-input v-model="ssdx.projectPay"></el-input>
+						<el-input v-model="ssdx.projectPay" oninput="value=value.replace(/[^\d^\.]+/g,'')" onkeyup="value=value.replace(/[^\d^\.]+/g,'')"></el-input>
 						</el-form-item>
 					</el-col>
 			</el-row>
@@ -233,9 +233,6 @@
 			<el-table-column
 			  prop="ksName"
 			      width="180"
-        :filters="[{ text: '内科', value: '内科' }, { text: '外科', value: '外科' },{ text: 'qq', value: '脑科' }]"
-        :filter-method="ksScree"
-        filter-placement="bottom-end"
 			  label="科室">
 
 			</el-table-column>
@@ -247,8 +244,7 @@
 			      <template #default="scope">
 					<el-button
 					  size="mini"
-            type="info"
-					  @click="handleEdit(scope.row)">手术详情
+					  @click="handleEdit(scope.row)">详情
 					  </el-button>
 			        <el-button
 			          size="mini"
@@ -329,7 +325,8 @@
               { required: true, message: '请选择类型', trigger: 'blur' }
             ],
             projectPay: [
-              { required: true, message: '请输入价格', trigger: 'blur' }
+              { required: true, message: '请输入价格', trigger: 'blur' },
+              { required: true, message: '请输入价格', trigger: 'input' }
             ],
             projectName: [
               { required: true, message: '请输入名称', trigger: 'blur' }
@@ -378,7 +375,7 @@
 			    isShow:false,
 			    xgss:false,
           // 搜索框
-			    input: '',
+			    input:'',
           today: '',
 			    sstime: '',
 	        radio1: '查看全部'
@@ -406,10 +403,6 @@
           this.department = res.data;
         }).catch()
 
-      },
-      ksScree(value, row){
-
-        return row.ksName===value;
       },
       // 手术详情
 			handleEdit(row) {
@@ -454,7 +447,6 @@
       },
       //删除
       scprjt(row){
-
         this.axios.post('http://localhost:8089/delet-sprot', qs.stringify({projectId:row.projectId}))
             .then((v)=>{
               if(v.data == 'ok'){
@@ -546,19 +538,38 @@
       },
       //确定新增
 			ssForm(formName) {
-        console.log(this.ssdx.ssAn)
-        this.$refs[formName].validate((valid) => {
-          if (valid) {
-            this.axios.post("http://localhost:8089/addOrUpdataProj",{proj:this.ssdx,ssAn:this.ssdx.ssAn}).then((res)=>{
-              this.getData();
-              this.$refs[formName].resetFields();
-            }).catch()
-            this.xgss = false;
-          } else {
-            console.log('error submit!!');
-            return false;
-          }
-        });
+        if(this.option=='新增手术'){
+          this.axios.get("http://localhost:8089/ssqProject",{params:{projectName:this.ssdx.projectName}}).then((res)=>{
+            let aa=res.data;
+            if(res.data==null||res.data==""){
+              this.$refs[formName].validate((valid) => {
+                if (valid) {
+                  this.axios.post("http://localhost:8089/addOrUpdataProj",{proj:this.ssdx,ssAn:this.ssdx.ssAn}).then((res)=>{
+                    this.getData();
+                    this.$refs[formName].resetFields();
+                  }).catch()
+                  this.xgss = false;
+                } else {
+                  console.log('error submit!!');
+                  return false;
+                }
+              });
+            }else {
+              this.$message({
+                type: 'info',
+                message: '此项目已存在'
+              });
+            }
+          }).catch()
+        }else{
+          this.axios.post("http://localhost:8089/addOrUpdataProj",{proj:this.ssdx,ssAn:this.ssdx.ssAn}).then((res)=>{
+            this.getData();
+            this.$refs[formName].resetFields();
+          }).catch()
+          this.xgss = false;
+        }
+
+
 
 			}
 		},

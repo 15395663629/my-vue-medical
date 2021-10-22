@@ -92,7 +92,7 @@
 				</el-col>
         <el-col :span="10">
           <el-form-item label="身份证:" prop="manSid">
-            <el-input size="mini"  @input="getId(man.manSid)" v-model="man.manSid"></el-input>
+            <el-input size="mini"    @input="getId(man.manSid)" v-model="man.manSid"></el-input>
           </el-form-item>
         </el-col>
 			</el-row>
@@ -232,7 +232,7 @@
 			</el-row>
 			<el-form-item>
 							  <el-col :span="1" :offset="8">
-							<el-button type="primary" @click="xztjForm('inserman')">确定</el-button>
+							<el-button style="margin-top: 10px" type="primary" @click="xztjForm('inserman')">确定</el-button>
 							</el-col>
 			</el-form-item>
 		</el-form>
@@ -435,7 +435,7 @@ export default {
           manName: '',
           manSid: '',
           manGender: '',
-          manTime: '',
+          manTime:'',
           manBirthtime: '',
           manAge: '',
           manPhone:'',
@@ -683,35 +683,57 @@ export default {
           this.man.manTime=row.manTime
           //调用查询体检人员所含项目方法
           this.aloneMp(row)
+        }else{
+          this.man.manTime=this.getNowFormatDate
         }
         this.xztj = true;
       },
       // 新增体检人员确认按钮
       xztjForm(formName) {
-        this.$refs[formName].validate((valid) => {
-          if (valid) {
-            //如果手动选择了项目就重新就算价格
-            if(this.man.jcXm.length!=this.tjprox.length){
-              this.man.manPhy=this.tc
-            }
-            //如果选的时间是当前时间之前的，就将时间改成当前时间后七天
-            if(this.man.manTime<this.getNowFormatDate){
-              this.man.manTime=this.getNowFormatDate1(-7,this.getNowFormatDate)
-            }
-            if(this.man.jcXm.length!=0){
-              this.axios.post("http://localhost:8089/addOrUpdataMan", {manj: this.man}).then((res) => {
-                this.getData()
-                this.inserClear();
-              }).catch()
-              this.xztj = false
+        //如果手动选择了项目就重新就算价格
+        if(this.man.jcXm.length!=this.tjprox.length){
+          this.man.manPhy=this.tc
+        }
+        //如果选的时间是当前时间之前的，就将时间改成当前时间后七天
+        if(this.man.manTime<this.getNowFormatDate){
+          this.man.manTime=this.getNowFormatDate1(-7,this.getNowFormatDate)
+        }
+        if(this.tiltm=='新增体检人员'){
+          this.axios.get("http://localhost:8089/allsMan",{params:{manSid:this.man.manSid}}).then((res)=>{
+            let aa=res.data;
+            if(res.data==null||res.data==""){
+              this.$refs[formName].validate((valid) => {
+                if (valid) {
+                  if(this.man.jcXm.length!=0){
+                    this.axios.post("http://localhost:8089/addOrUpdataMan", {manj: this.man}).then((res) => {
+                      this.getData()
+                      this.inserClear();
+                    }).catch()
+                    this.xztj = false
+                  }else {
+                    this.$message.error('所选项目不能为空');
+                  }
+                } else {
+                  console.log('error submit!!');
+                  return false;
+                }
+              });
             }else {
-              this.$message.error('所选项目不能为空');
+              this.$message({
+                type: 'info',
+                message: '此人员已存在'
+              });
             }
-          } else {
-            console.log('error submit!!');
-            return false;
-          }
-        });
+          }).catch()
+        }else {
+            this.axios.post("http://localhost:8089/addOrUpdataMan", {manj: this.man}).then((res) => {
+              this.getData()
+              this.inserClear();
+            }).catch()
+            this.xztj = false
+        }
+
+
 
       },
       //体检人员修改状态

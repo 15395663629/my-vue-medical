@@ -42,14 +42,14 @@
 						</el-col>
             <el-col :span="8" :offset="4">
               <el-form-item label="套餐价格:"  prop="codePay">
-                <el-input  v-model="tcdx.codePay" oninput="value=value.replace(/[^\d]/g,'')"></el-input>
+                <el-input  v-model="tcdx.codePay" oninput="value=value.replace(/[^\d^\.]+/g,'')" onkeyup="value=value.replace(/[^\d^\.]+/g,'')"></el-input>
               </el-form-item>
             </el-col>
 			</el-row>
 			<el-row>
 					<el-col :span="8">
 							<el-form-item label="体检类型:" prop="codeType">
-							 <el-select v-model="tcdx.codeTypes" placeholder="请选择" value-key="typeId">
+							 <el-select v-model="tcdx.codeType"  value-key="typeId">
                  <el-option
                      v-for="item in xmzb"
                      :label="item.checkIndex"
@@ -219,7 +219,7 @@
 								</el-col>
               <el-col :span="7">
                 <el-form-item label="价格:" prop="checkPay">
-                  <el-input v-model="jcdx.checkPay" oninput="value=value.replace(/[^\d]/g,'')"></el-input>
+                  <el-input v-model="jcdx.checkPay" oninput="value=value.replace(/[^\d^\.]+/g,'')" onkeyup="value=value.replace(/[^\d^\.]+/g,'')"></el-input>
                 </el-form-item>
               </el-col>
             <el-col :span="7" >
@@ -489,7 +489,8 @@
               { required: true, message: '请输入价格', trigger: 'blur' }
             ],
             codeType: [
-              { required: true, message: '请输入内容', trigger: 'blur' }
+              { required: false, message: '请选择类型', trigger: 'change' },
+              { required: true, message: '请选择类型', trigger: 'blur' }
             ]
           },
           rulesw:{
@@ -503,10 +504,12 @@
               { required: true, message: '请输入内容', trigger: 'blur' }
             ],
             checkTpye: [
-              { required: true, message: '请选择类型', trigger: 'change' }
+              { required: false, message: '请选择类型', trigger: 'change' },
+              { required: true, message: '请选择类型', trigger: 'blur' }
             ],
             ksId: [
-              { required: true, message: '请选择科室', trigger: 'change' }
+              { required: false, message: '请选择科室', trigger: 'change' },
+              { required: true, message: '请选择科室', trigger: 'blur' }
             ],
           },
           jcdww:{//检查项目对象
@@ -547,11 +550,10 @@
             codeId:'',
             codeName:'',
             codePay:'',
-            codeTypes:'',
+            codeType:'',
             //检查项目集合
             TjAn:''
           },
-          //套餐类型model
       CodeType:"",
 			isShow:false,
 			tjtc:false,
@@ -645,12 +647,14 @@
         },
       // 新增修改套餐弹框====
         tjtcEdit(is,row,fromName) {
+          this.tcdx.codeType='请选择'
+	        console.log(this.tcdx.codeType)
           this.tctitl = is == 1 ? '新增套餐' : '修改套餐';//设置弹框标题
           if(row != undefined) {//判断是否有值
             this.tcdx.codeId=row.codeId;
             this.tcdx.codeName=row.codeName;
             this.tcdx.codePay=row.codePay;
-            this.tcdx.codeType=parseInt(row.codeTypes);
+            this.tcdx.codeType=parseInt(row.codeType);
             this.tcdx.TjAn = row.TjAn;
             let ckArr=[];
 
@@ -675,14 +679,12 @@
       //修改与新增套餐确认按钮===========
       tjtcForm(formName) {
         console.log(this.tcdx.TjAn)
-        this.tcdx.codeType = this.tcdx.codeTypes;//改一下参数的字段名
         if (this.tcdx.TjAn.length == 0) {
           this.$message.warning("没有勾选检查，无法创建")
           return;
         }else {
           this.axios.post("http://localhost:8089/addOrUpdataMroj",{mroj:this.tcdx}).then((res)=>{
             this.getMeal();
-            this.inspectClear1(formName);
           }).catch()
           this.tjtc = false
         }
@@ -773,18 +775,38 @@
       },
       //修改与新增检查项目确认按钮
         jcxmForm(formName) {
-          this.$refs[formName].validate((valid) => {
-            if (valid) {
-              this.axios.post("http://localhost:8089/addOrUpdataTroj",{troj:this.jcdx}).then((res)=>{
-                this.getData();
-                this.inspectClear1(formName);
-              }).catch()
-              this.jcxm = false
-            } else {
-              console.log('error submit!!');
-              return false;
-            }
-          });
+          if(this.tilt=='新增检查项目'){
+            this.axios.get("http://localhost:8089/alonecpro",{params:{checkName:this.jcdx.checkName}}).then((res)=>{
+              let aa=res.data;
+              if(res.data==null||res.data==""){
+                this.$refs[formName].validate((valid) => {
+                  if (valid) {
+                    this.axios.post("http://localhost:8089/addOrUpdataTroj",{troj:this.jcdx}).then((res)=>{
+                      this.getData();
+                      this.$refs[formName].resetFields();
+                    }).catch()
+                    this.jcxm = false
+                  } else {
+                    console.log('error submit!!');
+                    return false;
+                  }
+                });
+              }else {
+                this.$message({
+                  type: 'info',
+                  message: '此项目已存在'
+                });
+              }
+            }).catch()
+          }else {
+            this.axios.post("http://localhost:8089/addOrUpdataTroj",{troj:this.jcdx}).then((res)=>{
+              this.getData();
+              this.inspectClear1(formName);
+            }).catch()
+            this.jcxm = false
+          }
+
+
         },
 
       // 关闭体检详情

@@ -69,7 +69,6 @@
                 label="操作">
               <template #default="scope">
                 <el-button size="mini" @click="tjjlEdit(scope.row)" type="primary" plain>查看</el-button>
-                <el-button size="mini"   type="primary">打印</el-button>
               </template>
             </el-table-column>
 
@@ -86,8 +85,12 @@
           </el-pagination>
         </el-col>
       </el-row>
-	<el-dialog title="检查详情" v-model="tjjl" width="50%" center  ><!-- 弹窗     -=-=-=-=-=-=-==-=-=-=-=--=-=-=-=-=-=-检查结果 -->
-		<el-form label-width="100px">
+	<el-dialog title="" v-model="tjjl" width="50%" center  ><!-- 弹窗     -=-=-=-=-=-=-==-=-=-=-=--=-=-=-=-=-=-检查结果 -->
+    <el-button style="margin-right:200px" type="primary"  v-print='"no"'><i class="el-icon-printer"></i></el-button>
+    <div id="no">
+      <span style="font-size: 23px;margin-left: 300px">检查结果</span>
+      <hr>
+    <el-form label-width="100px">
 			<el-row>
 								<el-col :span="6">
 									<el-form-item label="体检人:" prop="name" >
@@ -143,26 +146,29 @@
           </el-form-item>
         </el-col>
       </el-row>
-			<el-row>
-				<el-col :span="22">
-					<el-form-item label="检查结果:" prop="name">
-            <li style="list-style: none;float: left" v-for="(value) in tjjg">{{value.pro.checkName}}:{{value.manResult}}、</li>
-					</el-form-item>
-				</el-col>
-			</el-row>
-      <el-row>
-        <el-col :span="22">
-          <el-form-item label="医生建议:" prop="name">
-            <span v-for="(t,i) in tjjg.slice(0,1)" >{{t.man.manProposal}}</span>
-          </el-form-item>
-        </el-col>
-      </el-row>
-			  <el-form-item>
-				  <el-col :span="1" :offset="8">
-				<el-button @click="tjjlForm('ruleForm')">确定</el-button>
-				</el-col>
-			  </el-form-item>
+      <hr>
+      <el-table :data="tjjg">
+        <el-table-column
+            width="150px"
+            prop="pro.checkName"
+            label="检查项目">
+        </el-table-column>
+        <el-table-column
+            prop="manResult"
+            label="检查结果">
+        </el-table-column>
+        <el-table-column
+            width="100px"
+            prop="staff.sname"
+            label="检查人员">
+        </el-table-column>
+        <el-table-column
+            prop="manProposal"
+            label="医生建议">
+        </el-table-column>
+      </el-table>
 		</el-form>
+    </div>
 	</el-dialog>
 
   <el-dialog title="填写检查结果" v-model="txjg" width="40%" center  ><!-- 弹窗  新增   -=-=-=-=-=-=-==-=-=-=-=--=-=-=-=-=-=-检查结果填写 -->
@@ -307,7 +313,6 @@
           this.getData();
         }).catch()
         this.txjg = false;
-
       },
       //卡片
       handleClick(tab, event) {
