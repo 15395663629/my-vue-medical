@@ -71,8 +71,8 @@
 				<el-table-column fixed="right" label="操作">
 					<template #default="scope">
 						<el-button @click="handleClick(scope.row.ykPurchaseId)" type="primary" plain size="small">查看详情</el-button>
-						<el-button type="success" plain size="small" @click="tongguoshenhe(scope.row)">通过审核</el-button>
-					</template>
+						<el-button v-if="scope.row.ykBaocun == 2" type="success" plain size="small" @click="tongguoshenhe(scope.row)">通过审核</el-button>
+          </template>
 				</el-table-column>
 			</el-table>
 		</el-col>
@@ -82,18 +82,25 @@
           <el-table-column property="drugId" label="药品编号" width="100px"/>
           <el-table-column property="yfDruginformation.drugName" label="药品名称" width="150px"/>
           <el-table-column property="ykSupplier.supplierName" label="供应商" width="150px"/>
-          <el-table-column property="ykChaseCount" label="入库数量" width="150px">
+          <el-table-column property="ykChaseCount" label="入库数量" width="100px"/>
+          <el-table-column property="ykRuku" label="实际入库数量" width="150px">
             <template #default="scope">
-              <el-input-number v-model="scope.row.ykChaseCount" style="width:120px;" size="mini" >
+              <el-input-number v-model="scope.row.ykRuku" style="width:120px;" size="mini" >
               </el-input-number>
             </template>
           </el-table-column>
-          <el-table-column property="ykDate" label="保质期" width="300px">
+          <el-table-column property="ykDate" label="生产日期" width="300px">
             <template #default="scope">
-              <el-date-picker v-model="scope.row.ykDate" type="date"  placeholder="选择保质期" />
+              <el-date-picker v-model="scope.row.ykDate" type="date"  placeholder="选择生产日期" />
+<!--              @change="ykDataChange(scope.row)"-->
             </template>
           </el-table-column>
-          <el-table-column property="ykBatch" label="药品批次" width="200px">
+<!--          <el-table-column  property="ykBatch" label="过期时间" width="200px">
+            <template #default="scope">
+&lt;!&ndash;              {{addMonth(scope.row.ykDate, scope.YfDruginformation.drugPastdate)}}&ndash;&gt;
+            </template>
+          </el-table-column>-->
+          <el-table-column  property="ykBatch" label="药品批次" width="200px">
             <template #default="scope">
               <el-input v-model="scope.row.ykBatch"/>
             </template>
@@ -150,7 +157,6 @@ import qs from "qs"
       },
       //保存药品生产日期和批次
       baocun(){
-      console.log(this.ydpdform)
         this.axios.post("preserve",this.ydpdform).then((v)=>{
           this.rukumingxi = false;
           this.getDate();
@@ -163,7 +169,7 @@ import qs from "qs"
 
         })
       },
-      //查看待入库的药品详情
+//查看待入库的药品详情
       handleClick(row){
       this.rukumingxi = true;
         this.axios({url:"all-ydpd",params:{ykPurchaseId:row}}).then((v)=>{
@@ -174,12 +180,9 @@ import qs from "qs"
       },
       //通过审核
       tongguoshenhe(row){
-        var ydpdform = row
-        var grant = JSON.stringify({str:row})
-        console.log(grant,"444")
-        console.log(row,"33333")
-        this.axios.post("putstorage",qs.stringify({grant:grant})).then((v)=>{
-          // this.ydpdform = v.data;
+      alert(row.ykPurchaseId);
+        this.axios.post("putstorage",{list:row.ykDrugpurchasePlanDetails,ykPurchaseId:row.ykPurchaseId}).then((v)=>{
+          this.ydpdform = v.data;
         })
       },
 

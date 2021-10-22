@@ -17,8 +17,10 @@
           <el-row>
             <el-col :span="10">
               <el-form-item label-width="100px" label="是否为处方药">
-                <el-radio v-model="form.drugPrescription" :label="1">处方药</el-radio>
-                <el-radio v-model="form.drugPrescription" :label="2">非处方药</el-radio>
+                <el-radio-group v-model="form.drugPrescription">
+                  <el-radio :label="1">处方药</el-radio>
+                  <el-radio :label="2">非处方药</el-radio>
+                </el-radio-group>
               </el-form-item>
             </el-col>
             <el-col :span="10" :offset="1">
@@ -94,25 +96,27 @@
             </el-col>
           </el-row>
           <el-row>
-            <el-col :span="10">
-              <el-form-item label-width="80px" label="药品单位">
-                <el-input v-model="form.drugUnit" style="width: 215px;"></el-input>
-              </el-form-item>
-            </el-col>
-            <el-col :span="10" :offset="1">
+            <el-col :span="10" >
               <el-form-item label-width="80px" label="药品功效">
                 <el-input v-model="form.drugRemark" style="width: 215px;"></el-input>
               </el-form-item>
             </el-col>
+
+            <el-col v-if="form.drugPrescription == 1" :offset="1" :span="10">
+              <el-form-item label-width="90px" label="小单位名称">
+                <el-input v-model="form.drugUnit" style="width: 215px;"></el-input>
+              </el-form-item>
+            </el-col>
           </el-row>
-          <el-row>
+          <el-row v-if="form.drugPrescription == 1">
             <el-col :span="10">
-              <el-form-item label-width="80px" label="每粒单价">
+              <el-form-item label-width="90px" label="小单位单价">
                 <el-input v-model="form.drugParticle" style="width: 215px;"/>
               </el-form-item>
             </el-col>
+
             <el-col :span="10" :offset="1">
-              <el-form-item label-width="80px" label="每瓶数量">
+              <el-form-item label-width="90px" label="小单位数量">
                 <el-input v-model="form.drugQuantity" style="width: 215px;"/>
               </el-form-item>
             </el-col>
@@ -241,7 +245,7 @@
           drugPastdate:'',
           drugParticle:'',//单粒价格
           drugQuantity:'',//每瓶数量
-          drugPrescription:'',//是否为处方药
+          drugPrescription:2,//是否为处方药
         },
         currentPage:1, //初始页
         pagesize:8,    //    每页的数据
@@ -317,23 +321,26 @@
       /*清空表单*/
       fromdata(){
         this.form = {
-          drugId:0,
-          drugName:null,
-          drugBarcode:null,
-          drugPrice:null,
-          drugUsage:null,
-          ykSpecId:null,
-          ykSupplierId:null,
-          yfDrcaId:null,
-          drugUpper:null,
-          drugRemark:null,
-          drugUnit:null,
-          drugSpecification:null,
-          drugPastdate:null,
-          drugParticle:null,
-          drugQuantity:null,
-          drugPrescription:null,
-        }
+          drugId:'',
+          drugName:'',
+          drugBarcode:'',
+          drugPrice:'',
+          drugUsage:'',
+          ykSpecId:'',
+          ykSupplierId:'',
+          yfDrcaId:'',
+          drugUpper:'',
+          drugRemark:'',
+          drugUnit:'',
+          yfDrcaId:'',
+          ykSpecId:'',
+          drugSpecification:'',
+          supplierId:'',
+          drugPastdate:'',
+          drugParticle:'',//单粒价格
+          drugQuantity:'',//每瓶数量
+          drugPrescription:2,//是否为处方药
+        };
         this.dialogFormVisible = false
       },
 		},

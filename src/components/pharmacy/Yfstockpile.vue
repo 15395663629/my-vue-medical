@@ -1,42 +1,42 @@
 <template>
 <h1>药房</h1>
-  <el-button type="primary" size="mini" @click="opendiaobo">调拨申请</el-button>
+  <el-button size="mini" type="primary" @click="opendiaobo">调拨申请</el-button>
   <el-table
       :data="yfstockplie.slice((currentPage-1)*pagesize,currentPage*pagesize)"
+      height="500"
       stripe
-      @selection-change="ykAllotdetail1"
-      style="width: 100%" height="500">
+      style="width: 100%" @selection-change="ykAllotdetail1">
     <el-table-column type="selection" width="55"/>
     <el-table-column
-        prop="yfDrvenName"
-        label="药品名称">
+        label="药品名称"
+        prop="yfDrvenName">
     </el-table-column>
     <el-table-column
-        prop="yfSellingprice"
-        label="药品售价">
+        label="药品售价"
+        prop="yfSellingprice">
     </el-table-column>
     <el-table-column
-        prop="yfDrvenBatch"
-        label="药品批次">
+        label="药品批次"
+        prop="yfDrvenBatch">
     </el-table-column>
     <el-table-column
-        prop="yfDrvenCount"
-        label="药品库存">
+        label="药品库存"
+        prop="yfDrvenCount">
     </el-table-column>
     <el-table-column
-        prop="yfDrvenCount"
-        label="药品类别">
+        label="药品类别"
+        prop="yfDrvenCount">
       <template #default="scope">
           {{scope.row.drugPrescription == 1? '西药':'中药'}}
       </template>
     </el-table-column>
     <el-table-column
-        prop="ykSupplier.supplierName"
-        label="供应商">
+        label="供应商"
+        prop="ykSupplier.supplierName">
     </el-table-column>
     <el-table-column
-        prop="drugPrescription"
-        label="处方药">
+        label="处方药"
+        prop="drugPrescription">
       <template #default="scope">
         <el-tag>
           {{scope.row.drugPrescription == 1? '处方药':'非处方'}}
@@ -44,31 +44,31 @@
       </template>
     </el-table-column>
     <el-table-column
-        prop="address"
-        label="操作">
+        label="操作"
+        prop="address">
       <template #default="scope">
-        <el-button type="primary" plain size="mini" @click="">调拨申请</el-button>
+        <el-button plain size="mini" type="primary" @click="">调拨申请</el-button>
       </template>
     </el-table-column>
   </el-table>
 <!--  调拨弹窗-->
-  <el-dialog title="调拨申请" v-model="diaoboform">
+  <el-dialog v-model="diaoboform" title="调拨申请">
     <el-form model="ykAllot">
       <el-row>
         <el-col :span="12">
           <el-form-item label="调拨编号">
-            <el-input style="width: 215px" disabled v-model="ykAllot.ykAllotId"/>
+            <el-input v-model="ykAllot.ykAllotId" disabled style="width: 215px"/>
           </el-form-item>
         </el-col>
         <el-col :span="10" offset="2">
           <el-form-item label="调拨原因">
-            <el-input style="width: 215px" v-model="ykAllot.ykAllotCause" />
+            <el-input v-model="ykAllot.ykAllotCause" style="width: 215px" />
           </el-form-item>
         </el-col>
         <el-col :span="12">
           <el-form-item label="调拨日期">
             <el-date-picker v-model="ykAllot.ykAllotTime" :picker-options="pickerOptions"
-                              clearable type="date" placeholder="选择调拨时间"/>
+                              clearable placeholder="选择调拨时间" type="date"/>
           </el-form-item>
         </el-col>
         <el-col :span="10" offset="4">
@@ -80,13 +80,13 @@
             </el-select>
           </el-form-item>
         </el-col>
+        <el-col >
+          <el-button size="mini" type="warning" @click="yaokuxz = true">从药库选择</el-button>
+        </el-col>
       </el-row>
     </el-form>
-
-
-<!--    {{ykAllData}}12-->
     <el-table :data="ykAllData" height="200">
-      <el-table-column prop="drugId" label="药品名称" >
+      <el-table-column label="药品名称" prop="drugId" >
         <template #default="scope">
           {{scope.row.yfDrvenName}}
         </template>
@@ -97,7 +97,6 @@
         </template>
       </el-table-column>
     </el-table>
-
     <template #footer>
 			    <span class="dialog-footer">
 			      <el-button @click="diaoboform = false">取 消</el-button>
@@ -105,16 +104,22 @@
 			    </span>
     </template>
   </el-dialog>
+            <!--  ------------------------从药库选择需要调拨的药------------------------------  -->
+  <el-dialog v-model="yaokuxz">
+    <el-table>
+
+    </el-table>
+  </el-dialog>
   <!-- 分页 -->
   <el-pagination
+      :current-page="currentPage"
+      :page-size="pagesize"
+      :page-sizes="[5, 10, 20, 40]"
+      :total="yfstockplie.length"
+      layout="total, sizes, prev, pager, next, jumper"
       style="text-align: center"
       @size-change="handleSizeChange"
-      @current-change="handleCurrentChange"
-      :current-page="currentPage"
-      :page-sizes="[5, 10, 20, 40]"
-      :page-size="pagesize"
-      layout="total, sizes, prev, pager, next, jumper"
-      :total="yfstockplie.length">
+      @current-change="handleCurrentChange">
   </el-pagination>
 </template>
 
@@ -130,17 +135,17 @@ export default {
         ykAllotTime:'',
         sId:'',
         ykAllotName:'',
-
         yfDruginventories:[],
-
-        ykAllotdetail:[]//调拨详表
+        ykAllotdetail:[],//调拨详表
       },
       stallform:[],//------员工数据
+      yaokuForm:[],//查询药库库存
       ykAllotdetaiff:[],
       ykAllData:[],
       currentPage:1, //初始页
       pagesize:8,    //    每页的数据
       diaoboform:false,//调拨弹窗
+      yaokuxz:false,//从药库选择需要调拨的药 弹窗
       pickerOptions: {//禁用今天之前的时间
         disabledDate:time=> {
           let delay = this.delayItem.EndTime;
@@ -210,7 +215,6 @@ export default {
       }
       // this.ykAllDatathis.ykAllotdetaiff;
       this.ykAllotdetaiff.forEach(v => {
-
         this.ykAllData.push(v)
       })
       console.log(this.ykAllData);
@@ -231,6 +235,10 @@ export default {
       /*查询经手人  员工表*/
       this.axios.get("all-stall").then((v)=>{
         this.stallform = v.data;
+      })
+      //查询药库库存
+      this.axios.post("").then((v)=>{
+        this.yaokuForm = v.data;
       })
     },
     //打开调拨弹窗
