@@ -15,10 +15,9 @@
 		<el-col>
 			<el-dialog title="药品调拨详表" v-model="dialogFormVisible">
         <el-table :data="detail">
-          <el-table-column property="ykAllotdetailCount" label="药品数量"/>
           <el-table-column property="ykDrugId" label="药品编号"/>
-          <el-table-column property="ykAllotId" label="调拨编号"/>
           <el-table-column property="yfDruginformation.drugName" label="药品名"/>
+          <el-table-column property="ykAllotdetailCount" label="调拨数量"/>
         </el-table>
 			  <template #footer>
 			    <span class="dialog-footer">
@@ -77,7 +76,7 @@
 	</el-row>
 	<el-row>
 		<el-col>
-			<el-table :data="ykallot.slice((currentPage-1)*pagesize,currentPage*pagesize)" style="width: 100%;" height="500px">
+			<el-table :data="ykallot.slice((currentPage-1)*pagesize,currentPage*pagesize)" stripe style="width: 100%;">
         <el-table-column prop="ykAllotId" label="调拨编号" >
 					</el-table-column>
 				<el-table-column prop="ykAllotCause" label="申请原因">
@@ -88,7 +87,7 @@
 					</el-table-column>
 				<el-table-column fixed="right" label="操作">
 					<template #default="scope">
-						<el-button @click="handleClick(scope.row)" type="primary" plain size="small">查看</el-button>
+						<el-button @click="handleClick(scope.row)" type="primary" plain size="small">出库药品</el-button>
 						<el-button @click="addYkAllot(scope.row)" type="success" plain size="small">通过审核</el-button>
 					</template>
 				</el-table-column>
@@ -168,7 +167,8 @@
       //调拨详细的弹窗
       handleClick(row){
           this.dialogFormVisible = true;
-          this.detail = row.ykAllotdetail;
+          // this.detail = row.ykAllotdetail;
+        this.getData(row.ykAllotId)
 
       },
       //调拨记录的弹窗

@@ -3,7 +3,6 @@
   <el-button size="mini" type="primary" @click="opendiaobo">调拨申请</el-button>
   <el-table
       :data="yfstockplie.slice((currentPage-1)*pagesize,currentPage*pagesize)"
-      height="500"
       stripe
       style="width: 100%" @selection-change="ykAllotdetail1">
     <el-table-column type="selection" width="55"/>
@@ -43,13 +42,6 @@
         </el-tag>
       </template>
     </el-table-column>
-    <el-table-column
-        label="操作"
-        prop="address">
-      <template #default="scope">
-        <el-button plain size="mini" type="primary" @click="">调拨申请</el-button>
-      </template>
-    </el-table-column>
   </el-table>
 <!--  调拨弹窗-->
   <el-dialog v-model="diaoboform" title="调拨申请">
@@ -86,9 +78,14 @@
       </el-row>
     </el-form>
     <el-table :data="ykAllData" height="200">
-      <el-table-column label="药品名称" prop="drugId" >
+      <el-table-column label="药品名称">
         <template #default="scope">
           {{scope.row.yfDrvenName}}
+        </template>
+      </el-table-column>
+      <el-table-column label="药品批次" prop="yfDrvenBatch">
+        <template #default="scope">
+          {{scope.row.yfDrvenBatch}}
         </template>
       </el-table-column>
       <el-table-column label="数量" width="150">
@@ -104,11 +101,35 @@
 			    </span>
     </template>
   </el-dialog>
-            <!--  ------------------------从药库选择需要调拨的药------------------------------  -->
-  <el-dialog v-model="yaokuxz">
-    <el-table>
-
+       <!--  ------------------------从药库选择需要调拨的药------------------------------  -->
+  <el-dialog v-model="yaokuxz" width="80%">
+    <el-table :data="yaokuForm.slice((currentPage-1)*pagesize,currentPage*pagesize)"
+              @selection-change="ykxz">
+      <el-table-column type="selection" width="55"/>
+      <el-table-column prop="ykDrvenName" label="药品名称"/>
+      <el-table-column prop="ykSelingprice" label="药品售价"/>
+      <el-table-column prop="ykDrvenCount" label="药品库存"/>
+      <el-table-column prop="ykDrvenBatch" label="药品批次"/>
+      <el-table-column prop="ykDrvenMftdate" label="生产日期"/>
+      <el-table-column prop="ykSupplier.supplierName" label="供应商"/>
     </el-table>
+    <template #footer>
+			    <span class="dialog-footer">
+			      <el-button @click="yaokuxz = false">取 消</el-button>
+			      <el-button type="primary" @click="tianjia()">确认选择</el-button>
+			    </span>
+    </template>
+    <!-- 分页 -->
+    <el-pagination
+        :current-page="currentPage"
+        :page-size="pagesize"
+        :page-sizes="[5, 10, 20, 40]"
+        :total="yaokuForm.length"
+        layout="total, sizes, prev, pager, next, jumper"
+        style="text-align: center"
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange">
+    </el-pagination>
   </el-dialog>
   <!-- 分页 -->
   <el-pagination
@@ -208,17 +229,7 @@ export default {
       var id = year + month + date + hours + minutes + seconds + num;
       return id;
     },
-    //选择药品，进行调拨申请
-    ykAllotdetail1(val){
-      this.ykAllotdetaiff = val;
-      for(var i = 0; i< this.ykAllotdetaiff.length; i++) {
-      }
-      // this.ykAllDatathis.ykAllotdetaiff;
-      this.ykAllotdetaiff.forEach(v => {
-        this.ykAllData.push(v)
-      })
-      console.log(this.ykAllData);
-    },
+
     //新增调拨申请
     addykall(){
       this.ykAllot.yfDruginventories=this.ykAllData;
@@ -245,11 +256,46 @@ export default {
         this.yaokuForm = v.data;
       })
     },
+    //选择药品，进行调拨申请
+    ykAllotdetail1(val){
+      this.ykAllotdetaiff = val;
+      for(var i = 0; i< this.ykAllotdetaiff.length; i++) {
+      }
+      // this.ykAllDatathis.ykAllotdetaiff;
+      this.ykAllotdetaiff.forEach(v => {
+        this.
+        this.ykAllData.push(v)
+      })
+      console.log(this.ykAllData);
+    },
+    //从药库选择药品
+    ykxz(val){
+      this.ykAllotdetaiff = val;
+      for (var i =0; i< this.ykAllotdetaiff.length;i++){
+        console.log('name'+this.ykAllotdetaiff[i])
+      }
+    },
     //打开调拨弹窗
     opendiaobo(){
       this.diaoboform = true;
       this.ykAllot.ykAllotId = this.getProjectNum()/* + Math.floor(Math.random() * 1000)*/ //随机数
       this.ykAllData=this.ykAllotdetaiff;
+    },
+    //点击确定把药库的药品添加进去
+    tianjia(){
+      this.ykAllotdetaiff.forEach(v => {
+        let obj = {
+          DrugId:'',
+          yfDrvenName:'',
+          yfNumbers:1
+        };
+        console.log(v)
+        obj.drugId = v.drugId;
+        obj.yfDrvenName = v.ykDrvenName;
+        obj.yfDrvenBatch = v.ykDrvenBatch
+        this.ykAllData.push(obj);
+      })
+          this.yaokuxz=false;
     },
     /*清空表单*/
     fromdata(){
@@ -259,6 +305,7 @@ export default {
             ykAllotTime:'',
             sId:'',
             ykAllotName:'',
+        yfNumbers:1
       },
       this.diaoboform=false
     },

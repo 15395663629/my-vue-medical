@@ -113,7 +113,7 @@
   <!-- ------------------------------------------------------------表格数据--------------------------------------------------- -->
   <el-row :gutter="20">
 		<el-col>
-			<el-table :data="tableData.slice((currentPage-1)*pagesize,currentPage*pagesize)" style="width: 100%;" height="500">
+			<el-table :data="tableData.slice((currentPage-1)*pagesize,currentPage*pagesize)" stripe style="width: 100%;">
 				<el-table-column prop="ykPurchaseTime" label="采购日期">
 					</el-table-column>
 				<el-table-column prop="ykPurchaseId" label="采购编号">

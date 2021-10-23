@@ -134,7 +134,7 @@
 		<el-col>
 			<el-table
 			    :data="tableData.slice((currentPage-1)*pagesize,currentPage*pagesize)"
-			    style="width: 100%" height="500">
+          stripe  style="width: 100%" >
 			    <el-table-column type="expand">
               <template #default="props">
                 <el-form inline>
