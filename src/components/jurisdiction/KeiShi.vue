@@ -2,7 +2,7 @@
 	<div class="wz">
 		<el-button type="primary" @click="dialogVisible1 = true">新增科室</el-button>
 		<span style="margin-left: 20px;">
-			<el-input style="width: 120px;" v-model="kname" value=""></el-input>
+			<el-input style="width: 140px;" v-model="kname" value="" placeholder="请输入科室名称"></el-input>
 			<el-button type="primary" icon="el-icon-orange" style="margin-left: 20px;" @click="select(this.kname)">查询科室</el-button>
 		</span>
 
@@ -43,7 +43,7 @@
   </el-pagination>
 
 
-	<el-dialog title="科室管理" v-model="dialogVisible1" width="30%" >
+	<el-dialog title="科室管理" v-model="dialogVisible1" width="30%" @close="qc">
 		科室名称：<el-input type="text" style="width: 40%;" v-model="ksName"></el-input><br />
 		部&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;门 ：<el-select v-model="value" placeholder="请选择"
 			style="width: 20%;margin-top:20px;" @change="dome($event)">
@@ -140,9 +140,12 @@ import  qs from 'qs'
         }
 
             if(this.ks.ksId===0){
-              // for (let i=0;i<this.kslist.length;i++){
-              //   return this.$message.error("重复");
-              // }
+              for (let i=0;i<this.kslist.length;i++){
+                if(this.ksName==this.kslist[i].ksName){
+                  return this.$message.error("不能重复")
+                }
+              }
+
               this.axios.post("http://localhost:8089/add-ks",this.ks).then((v)=>{
                 if(v.data===1){
                   this.qc()
@@ -153,6 +156,11 @@ import  qs from 'qs'
                 }
               }).catch()
             }else{
+              for (let i=0;i<this.kslist.length;i++){
+                if(this.ksName==this.kslist[i].ksName){
+                  return this.$message.error("不能重复")
+                }
+              }
               this.axios.post("http://localhost:8089/upa-ks",this.ks).then((v)=>{
                 if(v.data===1){
                   this.qc()
@@ -193,7 +201,8 @@ import  qs from 'qs'
         this.ksName=""
         this.value=""
         this.deId=''
-      this.kname=''
+       this.kname=''
+        this.ksdz=''
     },
       //查询科室
       select(name){

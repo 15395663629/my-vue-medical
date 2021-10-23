@@ -4,7 +4,7 @@
 		<el-button type="primary" @click="dialogVisible1 = true">新增员工</el-button>
 		<!-- <el-button type="primary">编辑员工</el-button> -->
 		<span class="name">
-			姓名：<el-input style="width: 120px;" v-model="name" value=""></el-input>
+			姓名：<el-input style="width: 140px;" v-model="name" value="" placeholder="请输入员工姓名"></el-input>
 			<el-button type="primary" icon="el-icon-orange" style="margin-left: 20px;">查询</el-button>
 		</span>
 	</div>
@@ -64,7 +64,7 @@
       layout="total, sizes, prev, pager, next, jumper"
       :total="funs.length">
   </el-pagination>
-	<el-dialog title="员工信息" v-model="dialogVisible1" width="40%" >
+	<el-dialog title="员工信息" v-model="dialogVisible1" width="40%" @close="qingchu">
     <el-form :model="from" ref="form" :rules="rules">
       <el-form-item >
         <el-col :span="11">
@@ -80,7 +80,7 @@
       </el-form-item>
       <el-form-item>
         <el-col :span="11">
-          <el-form-item label="密 码:" prop="uPswd">
+          <el-form-item label="密 码:" prop="uPswd" style="width:90%;margin-left: 20px">
             <el-input type="password" v-model="from.uPswd"></el-input>
           </el-form-item>
         </el-col>
@@ -95,7 +95,7 @@
       </el-form-item>
       <el-form-item>
         <el-col :span="11">
-          <el-form-item label="部 门:" >
+          <el-form-item label="部 门:" style="width:90%;margin-left: 25px">
             <el-select v-model="from.deptid" placeholder="请选择"
                        @change="ksDeId($event)">
               <el-option v-for="item in dplist" :key="item.deId" :label="item.deName" :value="item.deId">
@@ -139,10 +139,18 @@
 	</el-dialog>
   <!-- 角色授权弹框-->
   <el-dialog title="员工授权" v-model="dialogVisible" width="30%" >
-    <el-tree ref="tree" :data="roles" node-key="rid"
-             :props="props" show-checkbox  default-expand-all
-             >
-    </el-tree>
+<!--    <el-tree ref="tree" :data="roles" node-key="rid"-->
+<!--             :props="props" show-checkbox  default-expand-all-->
+<!--             >-->
+<!--    </el-tree>-->
+    请选择角色：<el-select v-model="value1" multiple placeholder="请选择角色" style="width: 30%;margin-left: 20px">
+      <el-option
+          v-for="item in roles"
+          :key="item.rid"
+          :label="item.rname"
+          :value="item.rid">
+      </el-option>
+    </el-select>
     <template #footer>
 			<span class="dialog-footer">
 				<el-button @click="dialogVisible = false">取 消</el-button>
@@ -157,13 +165,15 @@ import qs from 'qs'
 	export default {
 		data() {
 			return {
+        value1:[],
         from:{
-          sid:0,
+          sId:0,
           sName:'',
           sSore:'',
           sPhone: '',
           ksId:'',
           tId:'',
+          uId:'',
           uName:'',
           uPswd:'',
           deptid:''
@@ -290,6 +300,7 @@ import qs from 'qs'
         //查询角色
         this.axios.get("http://localhost:8089/staff-menus").then((v)=>{
           this.roles=v.data
+          console.log(this.roles)
         }).catch()
         //查询职称
         this.axios.get("http://localhost:8089/titel-list").then((v)=>{
@@ -331,14 +342,12 @@ import qs from 'qs'
         this.axios.get("staff-funs",{params:{rId:this.rId}}).then((res)=>{
           this.rols = res.data;
           this. dialogVisible =true
-          this.$nextTick(function() {
-            this.$refs.tree.setCheckedKeys(this.rols)
-          })
+
         }).catch()
       },
       saveGrant(){
-        var funs=this.$refs.tree.getCheckedKeys();
-        var grant = JSON.stringify({rId:this.rId,funs:funs})
+        // var funs=this.$refs.tree.getCheckedKeys();
+        var grant = JSON.stringify({rId:this.rId,funs:this.value1})
         this.axios.post("save-staff",qs.stringify({grant:grant})).then((res)=>{
           this.funs = res.data;
           this.dialogVisible = false;
@@ -349,8 +358,8 @@ import qs from 'qs'
       onSubmit(formName){
         this.$refs[formName].validate(valid =>{
           if (valid) {
-            console.log(this.from.sId+'111')
-            if(this.from.sid === 0){
+            console.log(this.from.sId+'编号')
+            if(this.from.sId === 0){
               console.log(this.from,"新增")
               for (let i = 0 ; i<this.funs.length ; i++){
                 if(this.user.uname==this.funs[i].user.uname){
@@ -368,7 +377,16 @@ import qs from 'qs'
                 this.dialogVisible1= false
               }).catch()
             }else{
-              console.log(this.from,"修改")
+              for (let i = 0 ; i<this.funs.length ; i++){
+                if(this.user.uname==this.funs[i].user.uname){
+                  return this.$message.error("用户已存在")
+                }
+              }
+              for (let i=0;i<this.funs.length;i++){
+                if(this.from.sSore==this.funs[i].ssore){
+                  return this.$message.error("身份证重复")
+                }
+              }
               //编辑
               console.log("232323",this.from)
               this.axios.post("upa-staff",qs.stringify(this.from)).then((v)=>{
@@ -390,6 +408,7 @@ import qs from 'qs'
       bianji(row){
         this.dialogVisible1 = true
         this.from.sId=row.sid
+        console.log(row,"----====")
         this.from.sName = row.sname
         this.from.uName = row.user.uname
         this.from.uPswd = row.user.upswd
@@ -399,6 +418,7 @@ import qs from 'qs'
         this.ksDeId(row.ks.ksId);
         this.from.sSore=row.ssore
         this.from.sPhone=row.sphone
+        this.from.uId=row.user.uid
       },
       chongzhi(row){
         this.axios({
@@ -415,16 +435,18 @@ import qs from 'qs'
       },
       qingchu(){
         this.from={
-          sid:0,
+          sId:0,
           sName:'',
-              sSore:'',
-              sPhone: '',
-              ksId:'',
-              tId:'',
-              uName:'',
-              uPswd:'',
-              deptid:''
+          sSore:'',
+          sPhone: '',
+          ksId:'',
+          tId:'',
+          uId:'',
+          uName:'',
+          uPswd:'',
+          deptid:''
         }
+
       }
 			
 		},

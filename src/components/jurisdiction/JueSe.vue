@@ -31,7 +31,7 @@
       :total="role.length">
   </el-pagination>
   <!--                 新增角色弹框                                   -->
-	<el-dialog title="角色管理" v-model="dialogVisible1" width="30%" >
+	<el-dialog title="角色管理" v-model="dialogVisible1" width="30%" @close="clear" >
 		请输入角色名称：<el-input type="text" style="width: 40%;" v-model="rolename"></el-input><br />
 		请选择父级名称：<el-select v-model="value" placeholder="请选择"
 			style="width: 20%;margin-top:20px;"  @change="dome($event)">
