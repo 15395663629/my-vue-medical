@@ -3,7 +3,7 @@
 	<div class="wz">
       <el-button type="primary" @click="dialogVisible1 = true">新增部门</el-button>
       <span style="margin-left: 20px;">
-			<el-input style="width: 120px;" v-model="name"></el-input>
+			<el-input style="width: 140px;" v-model="name" placeholder="请输入部门名称"></el-input>
 			<el-button type="primary"  icon="el-icon-orange" style="margin-left: 20px;" @click="select(this.name)">查询部门</el-button>
 		</span>
   <div style="margin-top: -40px;margin-left: 400px">
@@ -56,7 +56,7 @@
 	    title="部门信息"
 	    v-model="dialogVisible1"
 	    width="30%"
-	    >
+      @close="clearForm()" >
 	   <!-- 表格 -->
 	   部门名称：<el-input type="text" style="width: 40%;" v-model="value"></el-input><br />
 	    <template #footer>
@@ -205,6 +205,11 @@
                 } else {
                   //修改部门
                   this.valus.deName = this.value
+                  for (let i=0;i<this.dept.length;i++){
+                    if(this.valus.deName==this.dept[i].deName){
+                      return this.$message.error("不能重复")
+                    }
+                  }
                   this.axios.post("http://localhost:8089/upa-list", this.valus).then((v) => {
                     if (v.data === 'ok') {
                       this.clearForm()

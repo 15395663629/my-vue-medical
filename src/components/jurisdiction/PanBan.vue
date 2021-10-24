@@ -92,16 +92,35 @@
         <!-- 复选情况下使用 check-strictly （默认false）使父子不相互关联 -->
        <el-form >
          <el-form-item :label="ksk.ksName">
-           <el-tree
-               ref="tree"
-               :data="ksYgs"
-               :props="defaultProps"
-               show-checkbox
-               node-key="tid"
-               default-expand-all
-               check-strictly
-           />
+<!--           <el-tree-->
+<!--               ref="tree"-->
+<!--               :data="ksYgs"-->
+<!--               :props="defaultProps"-->
+<!--               show-checkbox-->
+<!--               node-key="tid"-->
+<!--               default-expand-all-->
+<!--               check-strictly-->
+<!--           />-->
+
+           <el-select v-model="value" clearable placeholder="请选择职称"  @change="clas($event,1)" style="width: 30%">
+             <el-option
+                 v-for="item in ksYgs"
+                 :key="item.tid"
+                 :label="item.tname"
+                 :value="item.tid"
+                >
+             </el-option>
+           </el-select>
+           <el-select v-model="value1" multiple placeholder="请选择" style="width: 30%;margin-left: 20px">
+             <el-option
+                 v-for="item in options"
+                 :key="item.tid"
+                 :label="item.tname"
+                 :value="item.tid">
+             </el-option>
+           </el-select>
          </el-form-item>
+         {{value1}}
        </el-form>
       <div style="text-align:right;">
         <el-button type="danger" @click="dialogVisible=false">关闭</el-button>
@@ -118,6 +137,9 @@ import qs from 'qs'
 export default {
   data() {
     return {
+      options: [],
+      value1: [],
+      value:'',
       status:false,
       ksYgs: [],
       ks:[],
@@ -198,12 +220,15 @@ export default {
         this.keShi=v.data
         this.intercept()
       }).catch()
-      this.axios({
-        url:"add-sch",
-        params:{ksId:this.ksk.ksId}
-      }).then((v)=>{
-      this.ksYgs=v.data
+      this.axios.get("http://localhost:8089/titel-list").then((v)=>{
+        this.ksYgs=v.data
       }).catch()
+      // this.axios({
+      //   url:"add-sch",
+      //   params:{ksId:this.ksk.ksId}
+      // }).then((v)=>{
+      //
+      // }).catch()
     },
     dome(){
       console.log(this.pbType)
@@ -239,16 +264,15 @@ export default {
       }
     },
     confirmRole(){
-      var funs=this.$refs.tree.getCheckedKeys();//员工id
       //班次编号
-      console.log(this.schedulingTypeOptions[0].fid)
-      console.log(funs)
-      var grants = JSON.stringify({bcId:this.sch.bcId,funs:funs,rq:this.sch.rq})
+      // console.log(this.schedulingTypeOptions[0].fid)
+      // console.log(funs)
+      var grants = JSON.stringify({bcId:this.sch.bcId,funs:this.value1,rq:this.sch.rq})
       this.axios.post("addSch",qs.stringify({grants:grants})).then((v)=>{
         if(v.data==="ok"){
           console.log("ok")
           //日期
-          var grant = JSON.stringify({rq:this.sch.rq,bcId:this.sch.bcId,funs:funs})
+          var grant = JSON.stringify({rq:this.sch.rq,bcId:this.sch.bcId,funs:this.value1})
           this.axios.post("saveGrant",qs.stringify({grant:grant})).then((res)=>{
             this.dialogVisible=false
             // this.getData()
@@ -313,6 +337,26 @@ export default {
         }
       }
     },
+    clas(event,dome){
+    console.log(event+"------"+dome)
+      if(dome===1){
+        this.value1=''
+      }
+      this.axios({
+        url:"add-schstaff",
+        params:{tid:event,ksId:this.ksk.ksId}
+      }).then((v)=>{
+        this.options=v.data
+        console.log(this.options)
+        this.getData()
+
+      }).catch();
+    }
+  },
+  watch:{
+    value : function (value1){
+        console.log(value1)
+    }
   }
 }
 
