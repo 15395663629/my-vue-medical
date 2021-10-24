@@ -340,7 +340,7 @@ import qs from 'qs'
       getRoleFuns(row){
         this.rId=row.user.uid
         this.axios.get("staff-funs",{params:{rId:this.rId}}).then((res)=>{
-          this.rols = res.data;
+          this.value1 = res.data;
           this. dialogVisible =true
 
         }).catch()
