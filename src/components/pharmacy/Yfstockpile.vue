@@ -45,7 +45,7 @@
   </el-table>
 <!--  调拨弹窗-->
   <el-dialog v-model="diaoboform" title="调拨申请">
-    <el-form model="ykAllot">
+    <el-form :model="ykAllot" ref="ykAllot" :rules="rules">
       <el-row>
         <el-col :span="12">
           <el-form-item label="调拨编号">
@@ -53,18 +53,18 @@
           </el-form-item>
         </el-col>
         <el-col :span="10" offset="2">
-          <el-form-item label="调拨原因">
+          <el-form-item label="调拨原因"  prop="ykAllotCause">
             <el-input v-model="ykAllot.ykAllotCause" style="width: 215px" />
           </el-form-item>
         </el-col>
         <el-col :span="12">
-          <el-form-item label="调拨日期">
+          <el-form-item label="调拨日期" prop="ykAllotTime">
             <el-date-picker v-model="ykAllot.ykAllotTime" :picker-options="pickerOptions"
                               clearable placeholder="选择调拨时间" type="date"/>
           </el-form-item>
         </el-col>
         <el-col :span="10" offset="4">
-          <el-form-item label="经手人">
+          <el-form-item label="经手人" prop="sId">
             <el-select v-model="ykAllot.sId" placeholder="选择经手人">
               <el-option v-for="stall in stallform"
                          :label="stall.sname"
@@ -175,6 +175,23 @@ export default {
           }
         }
       },
+      //校验
+      rules: {
+        ykAllotCause: [
+          {required: true, message: '请输入调拨原因', trigger: 'blur'},
+        ],
+        ykAllotTime: [
+          {
+            type: 'date',
+            required: true,
+            message: '请选择调拨时间',
+            trigger: 'change',
+          },
+        ],
+        sId: [
+          { required: true, message: '请选择经手人', trigger: 'change' },
+        ],
+      }
     }
   },
   methods:{

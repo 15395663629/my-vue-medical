@@ -13,7 +13,7 @@
     </el-col>
       <!-- 药品新增弹窗 -->
 			<el-dialog @close="fromdata" title="药品信息" v-model="dialogFormVisible">
-			  <el-form :model="form" ref="form">
+			  <el-form :model="form" ref="form" :rules="rules">
           <el-row>
             <el-col :span="10">
               <el-form-item label-width="100px" label="是否为处方药">
@@ -24,14 +24,14 @@
               </el-form-item>
             </el-col>
             <el-col :span="10" :offset="1">
-              <el-form-item label-width="80px" label="保质期(月)">
-                <el-input v-model="form.drugPastdate" style="width: 215px"/>
+              <el-form-item label-width="80px" label="保质期(月)" prop="drugPastdate" :rules="[{ type: 'number',  message: '请输入数字'}]">
+                <el-input v-model.number="form.drugPastdate" style="width: 215px" />
               </el-form-item>
             </el-col>
           </el-row>
           <el-row>
             <el-col :span="10">
-              <el-form-item label-width="80px" label="药品名称">
+              <el-form-item label-width="80px" label="药品名称" prop="drugName">
                 <el-input v-model="form.drugName" style="width: 215px;"></el-input>
               </el-form-item>
             </el-col>
@@ -39,15 +39,15 @@
               <el-form-item label-width="80px"
                             prop="drugBarcode"
                             label="条形码"
-                            :rules="[{ type: 'number',  message: '输入数字'}]">
+                            :rules="[{ type: 'number',  message: '请输入数字'}]">
                 <el-input v-model.number="form.drugBarcode"  autocomplete="off" style="width: 215px;" ></el-input>
               </el-form-item>
             </el-col>
           </el-row>
           <el-row>
             <el-col :span="10">
-              <el-form-item label-width="80px" label="药品进价">
-                <el-input v-model="form.drugPrice" @change="handleChange" :min="1" :max="1000" style="width: 215px" label="药品价格"></el-input>
+              <el-form-item label-width="80px" label="药品进价" :rules="[{ type: 'number',  message: '输入数字'}]" prop="drugPrice">
+                <el-input v-model.number="form.drugPrice" :min="1" :max="1000" style="width: 215px" label="药品价格"></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="10" :offset="1">
@@ -252,6 +252,13 @@
         specfrom:[],
         suppfrom:[],
         drcafrom:[],
+        //校验
+        rules: {
+          drugName: [
+            { required: true, message: '请输入药品名', trigger: 'blur' },
+              ]
+        },
+
       }
     },
 		methods: {

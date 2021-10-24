@@ -21,10 +21,6 @@
         width="180">
     </el-table-column>
     <el-table-column
-        prop="ykWarehouse.ykWareName"
-        label="仓库名称">
-    </el-table-column>
-    <el-table-column
         prop="ykDrvenBatch"
         label="药品批次">
     </el-table-column>

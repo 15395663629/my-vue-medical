@@ -13,7 +13,7 @@
     </el-col>
       <!-- ----------------------------------------------------新增计划弹窗---------------------------------------------------- -->
 			<el-dialog @close="fromdata" title="采购计划" v-model="dialogFormVisible">
-				<el-form model="caigou">
+				<el-form :model="caigou" ref="caigou" :rules="rules">
           <el-button type="primary" size="mini" @click="open = true">添加药品</el-button>
           <el-row>
             <el-col :span="12">
@@ -22,17 +22,17 @@
               </el-form-item>
             </el-col>
             <el-col :span="10" offset="2">
-              <el-form-item label="采购计划名称">
+              <el-form-item label="采购计划名称" prop="ykPurchaseName">
                 <el-input style="width: 215px;" v-model="caigou.ykPurchaseName"></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="12">
-              <el-form-item label="采购日期">
+              <el-form-item label="采购日期"  prop="ykPurchaseTime">
                 <el-date-picker v-model="caigou.ykPurchaseTime" type="date" placeholder="选择采购日期"></el-date-picker>
               </el-form-item>
             </el-col>
             <el-col :span="10" offset="4">
-              <el-form-item label="经手人">
+              <el-form-item label="经手人" prop="sId">
                 <el-select v-model="caigou.sId" placeholder="选择经手人">
                   <el-option v-for="stall in stallform"
                             :label="stall.sname"
@@ -184,6 +184,23 @@
         pagesize:8,    //    每页的数据
         pagesizesize:4,  //药品详情每页显示四条数据
         search: '',//添加药品搜索框（药品选择）
+        //校验
+        rules: {
+          ykPurchaseName: [
+            { required: true, message: '请输入计划名称', trigger: 'blur' },
+          ],
+          ykPurchaseTime: [
+            {
+              type: 'date',
+              required: true,
+              message: '请选择时间',
+              trigger: 'change',
+            },
+          ],
+          sId: [
+            { required: true, message: '请选择经手人', trigger: 'change' },
+          ],
+        },
       }
     },
 		methods: {
