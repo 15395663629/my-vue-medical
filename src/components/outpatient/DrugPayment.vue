@@ -4,7 +4,7 @@
     <el-col :span="10"  style="margin-top: 10px">
       <el-row >
         <el-col :span="24">
-          <el-input size="small" style="width: 200px;" v-model="leftText" clearable placeholder="请输入你要查询的内容" ></el-input>
+          <el-input size="small" style="width: 200px;" v-model="leftText" clearable placeholder="请输入就诊号查询" ></el-input>
           <el-button size="small" @click="selectRecord" type="primary" icon="el-icon-search">查询</el-button>
         </el-col>
         <el-form   status-icon :model="leftRecordObject"   ref="leftRecordObject" label-width="100px" class="demo-ruleForm te">
@@ -144,21 +144,18 @@
             </el-popover>
           </template>
         </el-table-column>
-
           <el-table-column fixed label="项目总金额" prop="medicalRecordObject.mrTotalMoney" width="120px" align="center"></el-table-column>
           <el-table-column fixed  label="操作" width="80px" align="center">
             <template #default="scope">
               <el-tooltip content="打印小票" >
-                <el-button
-                    size="mini"
-                    type="success"
-                    icon="el-icon-printer"
-                    circle
+                <el-button v-print='"xxx"' size="mini" type="success" icon="el-icon-printer" circle
                     @click="handleEdit(scope.$index, scope.row)"></el-button>
               </el-tooltip>
             </template>
           </el-table-column>
-
+          <div id="xxx">
+            xxx
+          </div>
           </el-table>
         <!--分页插件-->
         <el-pagination  @size-change="wardHandleSizeChange" @current-change="wardHandleCurrentChange"
@@ -441,12 +438,11 @@ import { h } from 'vue'
             this.leftTableList.push(this.tjObject)
           }
 
-
-
 		   },
        //收取费用
        shouFei(){
-		     if(this.leftRecordObject.mrCount!=''){
+		     if(this.leftRecordObject.mrCount!=''
+         ){
            if(this.radioSf==2){
              let that = this;
              this.$prompt('密码输入', '提示', {
@@ -533,7 +529,6 @@ import { h } from 'vue'
                  });
               }
            };
-
          }).catch();
 		   },
        //密码查询

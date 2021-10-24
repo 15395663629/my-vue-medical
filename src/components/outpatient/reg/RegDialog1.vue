@@ -101,7 +101,7 @@
       <el-form :rules="rules"  status-icon :model="regArr" ref="regArr" label-width="100px" size="small" class="demo-ruleForm">
         <el-col>
           <el-form-item label="挂号日期："  >
-            <el-input v-model="regArr.rtOnsetTime" style="width: 300px" disabled></el-input>
+            <el-input v-model="regArr.rtOnsetTime" style="width: 300px" disabled></el-input>430224199805045517
           </el-form-item>
         </el-col>
         <el-col >
@@ -174,6 +174,21 @@
     </el-row>
   </el-dialog>
 
+  <el-dialog title="其他&缴费" top="130px" v-model="isShowQtjf" width="28%" style="padding-bottom: 0px;"  :before-close="handleClose" >
+    <el-form :model="regArr" :rules="rules"  status-icon  ref="regArr1" label-width="100px" size="small" class="demo-ruleForm">
+      <el-form-item label="实收金额：" label-width="100px" prop="shPrice">
+        <el-input type="text" size="small" v-model="regArr.shPrice" @change="shPriceUp" onkeyup="value=value.replace(/[^\d]/g,'')"></el-input>
+      </el-form-item>
+      <el-form-item label="找零：" label-width="100px" >
+        {{regArr.shPrice-regArr.rtPrice}}
+      </el-form-item>
+      <span class="dialog-footer" style="margin-left:240px">
+        <el-button @click="isShowQtjf = false" size="small" >取 消</el-button>
+        <el-button type="primary" @click="isShowQtjf = false" size="small">确 定</el-button>
+      </span>
+    </el-form>
+  </el-dialog>
+
 </template>
 
 <script>
@@ -234,7 +249,10 @@ import { h } from 'vue'
           cardObject: {},
           //判断选项缴费
           radioSf:null,
+          /*挂号医生的id*/
           doctorSid:0,
+          shPrice:0,
+          zlPrice:0,
         },
         rules: {//密码校验
           mcCard: [
@@ -245,11 +263,20 @@ import { h } from 'vue'
           ],
           radioSf:[
             {required: true, message: "请选择支付方式", trigger: 'blur'}
+          ],
+          shPrice:[
+            {required: true, message: "实收金额不能为空", trigger: 'blur'}
+          ]
+        },
+        rules1: {//密码校验
+          shPrice:[
+            {required: true, message: "实收金额不能为空", trigger: 'blur'}
           ]
         },
         booleanDate:0,//时间戳判断点
         options1:[],//科室选择
         sOverKsName:1,//选择科室value
+        //选择日期传入到后台的vo对象
         guaHaoVO:{
           dateVue:0,
           dateJav:0,
@@ -259,9 +286,18 @@ import { h } from 'vue'
         },
         //现在时间（格式话后的时间）
         newDates:this.getNowTimes(new Date()),
+        isShowQtjf:false,
       }
     },
     methods:{
+      handleClose(done) {
+        this.$confirm('确认关闭？').then((_) => {
+              done()
+            }).catch((_) => {})
+      },
+      shPriceUp(){
+        
+      },
       //收取费用
       guaHaoPrinting(){
         this.axios.post('addReg',{regArr:this.regArr,radioSf:this.regArr.radioSf}).then((v)=>{
@@ -342,7 +378,7 @@ import { h } from 'vue'
                 });
               }else{
                 let that = this;
-                this.$prompt('密码输入', '提示', {
+                this.$prompt('密码输入', '诊疗卡缴费', {
                   inputPlaceholder: '请输入您要缴费的卡号密码',
                   inputType:"password",
                   confirmButtonText: '确定',
@@ -367,6 +403,7 @@ import { h } from 'vue'
               }
 
             }else{
+              // this.isShowQtjf=true;
               this.$confirm('请确认已完成缴费需求!', '提示', {
                 confirmButtonText: '确定',
                 cancelButtonText: '取消',
@@ -474,5 +511,8 @@ import { h } from 'vue'
   color: #ff0000;
   font-size: 13px;
   cursor: pointer;
+}
+/deep/ .el-dialog__body{
+  padding: 0px;
 }
 </style>

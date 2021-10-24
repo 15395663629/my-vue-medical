@@ -18,7 +18,7 @@
       <div style="font-size: 20px;font-family:微软雅黑;color: #909399;margin-top: -80px;margin-left: 120px" >本月收入</div>
       <div style="font-size: 20px;font-family:微软雅黑;color: black;margin-top: 10px;margin-left: 130px">{{moeney}}</div>
     </div>
-    <div id="main" style="width:80%;height:60%;margin-top: 30px"></div>
+    <div id="main" style="width:80%;height:60%;margin-top: 30px"></div>0
   </div>
   </div>
 </template>

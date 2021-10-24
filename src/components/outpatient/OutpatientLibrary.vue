@@ -76,7 +76,7 @@
 	
 	<el-table-column fixed prop="recipeObject.recipeDoctorName" label="诊断结果"  align="center">
 			  <template #default="scope" >
-			    <el-popover effect="light" width="300px"  trigger="hover" placement="top">
+			    <el-popover effect="light" width="200px"  trigger="hover" placement="top">
 			      <template #default >
 			        <p>主诉: {{ scope.row.historyObject.chComplaint }}</p>
 					    <p>现病史: {{ scope.row.historyObject.chCause }}</p>
@@ -91,11 +91,32 @@
 			  </template>
 	</el-table-column>
 	<el-table-column fixed label="总消费" align="center" >
-		<template #default="scope">
-		  <el-tag  size="mini"  type="danger" disable-transitions>
-		    {{scope.row.medicalRecordObject.mrTotalMoney}}
-		  </el-tag>
-		</template>
+    <template #default="scope">
+      <el-popover effect="light" trigger="hover" placement="top" width="400px">
+        <template #default>
+          <table>
+            <tr>
+              <td style="width: 100px">消费用途</td>
+              <td style="width: 100px">消费金额</td>
+              <td style="width: 100px">操作人员</td>
+              <td style="width: 100px">支付方式</td>
+            </tr>
+            <tr  v-for="x in scope.row.paymentList">
+              <td style="width: 100px">{{x.pmType}}</td>
+              <td style="width: 100px">{{x.pmSum}}</td>
+              <td style="width: 100px">{{x.pmSname}}</td>
+              <td style="width: 100px">{{x.pmPayment}}</td>
+            </tr>
+          </table>
+        </template>
+        <template #reference>
+          <el-tag  size="mini"  type="danger" disable-transitions>
+            {{scope.row.medicalRecordObject.mrTotalMoney}}
+          </el-tag>
+        </template>
+      </el-popover>
+    </template>
+
 	</el-table-column>
     <el-table-column fixed label="操作"  align="center">
       <template #default="scope">

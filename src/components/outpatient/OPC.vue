@@ -1,8 +1,75 @@
 <template>
 	<el-container style="height: 100%;">
-		<el-header height="30px"  style="line-height: 30px; background-color: #B3C0D1;color: #333;">
-			<!-- <newDateOPC style="margin: 0px; padding: 0px;"></newDateOPC> -->
-		{{}}
+		<el-header height="30px"  style="line-height: 30px; padding-left: 0px; background-color: #B3C0D1;color: #333;">
+
+      <el-row>
+        <el-form  :model="token" >
+          <el-col :span="12">
+            <el-row :gutter="10">
+               <el-col :span="8" >
+                 <i>
+                   <el-form-item label-width="80px" label="待诊量：" >
+                   <span style="font-size:15px ;font-weight:bolder;color: red;width: 50px" >
+                     {{leftTopTable.length}}
+                   </span>
+                   </el-form-item>
+                 </i>
+               </el-col>
+              <el-col :span="8">
+                <i>
+                  <el-form-item label-width="80px" label="就诊量：" >
+                    <div style="font-size:15px ;font-weight:bolder;color: red;width: 50px" >
+                      {{leftRecordLeng1}}
+                    </div>
+                  </el-form-item>
+                </i>
+              </el-col>
+              <el-col :span="8">
+                <i>
+                  <el-form-item label-width="100px" label="已结束就诊：" >
+                    <div style="font-size:15px ;font-weight:bolder;color: red;width: 50px" >
+                      {{leftRecordLeng2}}
+                    </div>
+                  </el-form-item>
+                </i>
+              </el-col>
+            </el-row>
+          </el-col>
+          <el-col :span="12" :push="14">
+            <el-row>
+              <el-col :span="8">
+                <i>
+                  <el-form-item label-width="100px" label="时间：" >
+                    <div style="font-size:15px ;font-weight:bolder;font-style:inherit;color: red;width: 200px" >
+                      {{currentTime}}
+                    </div>
+                  </el-form-item>
+                </i>
+              </el-col>
+              <el-col :span="8">
+                  <i>
+                    <el-form-item label-width="150px" label="科室：" >
+                      <div style="font-size:15px ;font-weight:bolder;font-style:inherit;color: red;width: 100px" >
+                        {{token.ks.ksName}}
+                      </div>
+                    </el-form-item>
+                  </i>
+              </el-col>
+              <el-col :span="8">
+                <i>
+                <el-form-item label-width="70px" label="医生：" >
+                  <div style="font-size:15px ;font-weight:bolder;color: red;width: 100px" >
+                    {{token.sname}}
+                  </div>
+                </el-form-item>
+                </i>
+              </el-col>
+            </el-row>
+          </el-col>
+        </el-form>
+      </el-row>
+
+
     </el-header>
 		<el-container style="height: 100%;">
 			<el-aside width="400px" style="background-color: #D3DCE6;color: #333;"> <!-- 右边 -->
@@ -127,11 +194,6 @@
 							</el-col>
 							<el-col >
 								<el-form-item label-width="15px" >
-									<el-button size="mini" type="warning" @click="saveDoctor('headerInput')">保存</el-button>
-								</el-form-item>
-							</el-col>
-							<el-col >
-								<el-form-item label-width="15px" >
 									<el-button size="mini" @click="openAddDrug(3)"  type="primary">历史病例</el-button>
 								</el-form-item>
 							</el-col>
@@ -140,15 +202,19 @@
 									<el-button size="mini" @click="openAddDrug(4)" type="primary">转住院</el-button>
 								</el-form-item>
 							</el-col>
-
+              <el-col >
+                <el-form-item label-width="15px" >
+                  <el-button size="mini" type="success" @click="saveDoctor('headerInput')" plain>保存</el-button>
+                </el-form-item>
+              </el-col>
 							<el-col >
 								<el-form-item label-width="15px" >
-									<el-button size="mini" @click="overDoctor('headerInput')" type="primary">结束就诊</el-button>
+									<el-button size="mini" @click="overDoctor('headerInput')" type="danger" plain>结束就诊</el-button>
 								</el-form-item>
 							</el-col>
 							<el-col >
 								<el-form-item label-width="15px" >
-									<el-button size="mini" @click="pushUrl('/home')" type="success">返回主页</el-button>
+									<el-button size="mini" @click="pushUrl('/home')" type="warning" plain>返回主页</el-button>
 								</el-form-item>
 							</el-col>
             </el-form>
@@ -156,7 +222,7 @@
 				</el-header>
         <!-- ================================================== 主体页面表格 ==================================================-->
 				<el-main style="background-color: #E9EEF3;color: #333;padding: 5px;" >
-					<el-tabs type="border-card" v-model="zhutiKey" >
+					<el-tabs type="border-card" v-model="zhutiKey"  >
             <el-tab-pane :key="0"   label="西药处方" >
               <opcTable1 @func="getTest1" :textValues="recipeObject.xpNotes" :rightTableData1="rightTableData1"></opcTable1>
             </el-tab-pane>
@@ -260,7 +326,7 @@
             <el-table-column prop="drugUnit" label="药品单位"> </el-table-column>
             <el-table-column prop="yfDrcaName" label="类别"></el-table-column>
             <el-table-column prop="drugPrice" label="价格"></el-table-column>
-            <el-table-column prop="drugSpecification" label="药品用法"></el-table-column>
+            <el-table-column prop="drugUsage" label="药品用法"></el-table-column>
           </el-table>
 
 				</el-dialog>
@@ -610,10 +676,11 @@
         rtNumberZy:0,
         zysqShow:false,/*弹窗*/
         ksList:[],/*科室信息*/
-        ksDzs:'',
-        vals:null,
-
-			}
+        ksDzs:'',/*科室地址*/
+        currentTime:'',/*头部时间显示*/
+        leftRecordLeng1:null,
+        leftRecordLeng2:null,
+      }
 		},
 		methods: {
       //右边点击事件
@@ -756,6 +823,16 @@
       selectRecord(){
         this.axios.post("selectRA",{index:this.indexRecord,texts:this.leftText}).then((v)=>{
           this.leftRecord = v.data;
+        }).catch();
+      },
+      selectRecord1(){
+        this.axios.post("selectRAs1",{index:1,texts:this.leftText}).then((v)=>{
+          this.leftRecordLeng1 = v.data;
+        }).catch();
+      },
+      selectRecord2(){
+        this.axios.post("selectRAs2",{index:2,texts:this.leftText}).then((v)=>{
+          this.leftRecordLeng2 = v.data;
         }).catch();
       },
       //子组件传值过来。对处方的意见建议，等值接收到vo去
@@ -960,8 +1037,11 @@
       countLeftTopTable(){
         this.axios.post('allMzOpcNumber',{ksName:this.token.ksId,science:this.token.sid}).then((v)=>{
           this.leftTopTable=v.data
+
         }).catch(()=>{ })
         this.selectRecord();
+        this.selectRecord1();
+        this.selectRecord2();
       },
       //重置中药和西药和头部的对象和集合
       resultLeftTopTable(){
@@ -1631,8 +1711,27 @@ z
 
         return  {age , sex, birth}
       },
+      //时间方法
+      appendZero(obj) {
+        if (obj < 10) {
+          return "0" + obj;
+        } else {
+          return obj;
+        }
+      },
 		},
 		created() {
+      var vm = this;
+      vm.date_value = setInterval(() => {
+        var y = new Date().getFullYear();
+        var m = vm.appendZero(new Date().getMonth() + 1);
+        var d = vm.appendZero(new Date().getDate());
+        var ho = vm.appendZero(new Date().getHours());
+        var mi = vm.appendZero(new Date().getMinutes());
+        var miao  =vm.appendZero(new Date().getSeconds())
+        //修改数据date
+        vm.currentTime = y + "-" + m + '-' + d + '  ' + ho + ':' + mi+':'+ miao;
+      }, 1000);
       this.token= this.$store.state.token == null ? null : this.$store.state.token.list;//将登录存入的值在取出来
       this.operationInit()
     },

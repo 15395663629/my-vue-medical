@@ -24,7 +24,7 @@
     </el-table-column>
     <el-table-column fixed  label="总金额"  width="150" align="center">
       <template #default="scope">
-        <span>{{scope.row.zpObject.zpCount*scope.row.zpObject.zpPrice}}</span>
+        <span>{{towNumber(scope.row.zpObject.zpCount*scope.row.zpObject.zpPrice)}}</span>
       </template>
     </el-table-column>
     <el-table-column fixed  label="计数"  width="200" align="center">
@@ -90,6 +90,9 @@
                 }
               }).catch(()=>{})
             }
+          },
+          towNumber(val) {
+            return val.toFixed(2);
           },
           //计算总和
           getSummaries2(param) {
