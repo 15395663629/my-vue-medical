@@ -99,7 +99,7 @@
 	
 	<!--=====================================================================出院弹框======================-->
 	<el-dialog title="申请出院" @close="closeDischargeApply" v-model="isCYShow">
-	  <el-form>
+	  <el-form ref="dischargeApplyObjRef" :model="dischargeApplyObj" :rules="dischargeApplyObjRules">
 		  <el-row>
 			  <el-col :offset="1" :span="9">
 				  <el-form-item label="病人名称：" label-width="90px">
@@ -158,7 +158,7 @@
       <el-row>
 
         <el-col :offset="1" :span="20">
-          <el-form-item label="申请原因：" label-width="90px">
+          <el-form-item style="border-left: 1px black solid" prop="dgaCause" label="申请原因：" label-width="100px">
             <el-input v-model="dischargeApplyObj.dgaCause" type="textarea" placeholder="原因"></el-input>
           </el-form-item>
         </el-col>
@@ -528,7 +528,9 @@
           cdrAfterKs:[{required:true,message:"科室不能为空",trigger:'change'}],
           doctorId:[{required:true,message:"主治医生不能为空！",trigger:'change'}],
         },
-
+        dischargeApplyObjRules:{
+          dgaCause:[{required:true,message:"出院原因不能为空！",trigger:'blur'}],
+        },
         //================================================病人信息数据
         patientBaseArr:[
 				],
@@ -698,20 +700,37 @@
       },
       //添加出院申请
       addDischargeApply(){
-        this.axios.post('/dis/addDischarge',this.dischargeApplyObj).then((v)=>{
-          if(v.data == "yes"){
-            this.$message({
-              type: 'success',
-              message: '申请成功'
-            });
+        this.$refs['dischargeApplyObjRef'].validate((v)=>{
+          if (v){
+            this.axios.post('/dis/addDischarge',this.dischargeApplyObj).then((v)=>{
+              if(v.data == "yes"){
+                this.$message({
+                  type: 'success',
+                  message: '申请成功'
+                });
+              }
+              this.isCYShow = false;
+              this.dischargeApplyObj = {
+                dgaCause:'',//申请原因
+                ptId:'',//住院号
+                sId:'',//操作人
+                ptName:'',//病人名称
+                ptSex:'',//病人性别
+                ksName:'',//科室名称
+                sName:'',//治疗医生名称
+                ptPayMoney:'',//总费用
+                ptPrice:'',//余额
+                bdName:''//病床名称
+              };
+              this.patientBaseInit();//刷新表格
+              console.log(v.data)
+            }).catch();
           }
-          this.closeDischargeApply();
-          this.patientBaseInit();//刷新表格
-          console.log(v.data)
-        }).catch();
+        });
       },
       //关闭申请出院弹框
       closeDischargeApply(){
+        this.$refs['dischargeApplyObjRef'].resetFields();
         this.isCYShow = false;
         this.dischargeApplyObj = {
           dgaCause:'',//申请原因

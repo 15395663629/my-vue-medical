@@ -576,6 +576,12 @@
             <el-tab-pane name="检验结果" :key="'检验结果'" label="检验结果">
               <lab-work-result ref="resultFun" :patient-obj="patientBaseObj"></lab-work-result>
             </el-tab-pane>
+            <el-tab-pane name="转病床记录" :key="'转病床记录'" label="转病床记录">
+              <changeBedRecord :patient-obj="patientBaseObj" ref="changeBedRef" ></changeBedRecord>
+            </el-tab-pane>
+            <el-tab-pane name="转科室记录" :key="'转科室记录'" label="转科室记录">
+              <changeKsRecord  ref="changeKsRef" :patient-obj="patientBaseObj"></changeKsRecord>
+            </el-tab-pane>
           </el-tabs>
         </el-main>
 
@@ -588,11 +594,13 @@
 import labWork from "./MAMOperation/labWork.vue";//化验项目页面
 import labWorkResult from "./MAMOperation/labWorkResult.vue";//查看化验结果页面
 import CaseHistory from "./MAMOperation/CaseHistory.vue";//添加病例页面
-import lokkCaseHistory from "./MAMOperation/lookCaseHistory.vue";
+import lokkCaseHistory from "./MAMOperation/lookCaseHistory.vue";//查看病人病历
+import changeBedRecord from "./MAMOperation/changeBedRecord.vue";//查看病人转病床记录
+import changeKsRecord from "./MAMOperation/changeKsRecord.vue";//查看病人转科记录
 //查看病历页面
 
 export default{
-  components:{labWork,labWorkResult,CaseHistory,lokkCaseHistory},
+  components:{labWork,labWorkResult,CaseHistory,lokkCaseHistory,changeBedRecord,changeKsRecord},
   data(){
     return{
       //========================================================================员工数据
@@ -1242,6 +1250,10 @@ export default{
 
       }else if(this.maxCard == '检验结果'){
         this.$refs.resultFun.initResultMan();
+      }else if(this.maxCard == '转病床记录'){
+        this.$refs.changeBedRef.initChangeBedRecord();
+      }else if(this.maxCard == '转科室记录'){
+        this.$refs.changeKsRef.initChangeKsRecord();
       }
     },
 

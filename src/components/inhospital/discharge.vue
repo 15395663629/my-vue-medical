@@ -384,7 +384,7 @@
 	
 
   <!--=============================================查询条件===================================-->
-  <el-row style="margin-bottom:10px">
+  <el-row style="margin:0px 0px 10px 30px;padding-top: 10px;">
 
     <el-col  :span="1">
       <el-button @click="isShowZY = true" size="mini" type="primary">新增</el-button>
@@ -734,7 +734,7 @@
   }
 </script>
 
-<style>
+<style scoped>
 	.works{
 		padding: 15px;
 	}
