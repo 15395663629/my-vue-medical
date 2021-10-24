@@ -4,43 +4,45 @@
     <el-form :model="caseHistory"  status-icon style="margin-top: 30px" :rules="caseHistoryRules"  ref="caseHistoryRef" label-width="80px" class="demo-ruleForm" >
       <el-row>
         <el-col :span="23">
+          <el-form-item label="诊断建议：" prop="chDoctorText" label-width="100px">
+            <el-input  v-model="caseHistory.chDoctorText"  placeholder="请输入病理原因"
+                       rows="3" type="textarea" size="mini" maxlength="1000"
+                       show-word-limit>
+            </el-input>
+          </el-form-item>
+        </el-col>
+
+        <el-col :span="23"  >
+          <el-form-item label="现病史：" prop="chCause" label-width="100px">
+            <el-input  v-model="caseHistory.chCause"  placeholder="请输入病理原因"
+                       rows="3" type="textarea" size="mini" maxlength="1000"
+                       show-word-limit>
+            </el-input>
+          </el-form-item>
+        </el-col>
+
+        <el-col :span="23">
           <el-form-item label="主诉：" prop="chComplaint" label-width="100px"  >
             <el-input  v-model="caseHistory.chComplaint"  rows="3" type="textarea" size="mini"  maxlength="400"
                        show-word-limit>
             </el-input>
           </el-form-item>
         </el-col>
-        <el-col :span="23">
+        <el-col :span="11">
           <el-form-item label="既往病史：" prop="chHistory" label-width="100px"  >
-            <el-input  v-model="caseHistory.chHistory"  rows="3" type="textarea" size="mini"  maxlength="400"
+            <el-input  v-model="caseHistory.chHistory"  rows="5" type="textarea" size="mini"  maxlength="400"
                        show-word-limit>
             </el-input>
           </el-form-item>
         </el-col>
-        <el-col :span="23">
+        <el-col  :offset="1" :span="11">
           <el-form-item label="家族史：" prop="chFamilyHistory" label-width="100px"  >
-            <el-input  v-model="caseHistory.chFamilyHistory"  rows="3" type="textarea" size="mini"  maxlength="400"
+            <el-input  v-model="caseHistory.chFamilyHistory"  rows="5" type="textarea" size="mini"  maxlength="400"
                        show-word-limit>
-            </el-input>
-          </el-form-item>
-        </el-col>
-        <el-col :span="11"  >
-          <el-form-item label="现病史：" prop="chCause" label-width="100px">
-            <el-input  v-model="caseHistory.chCause"  placeholder="请输入病理原因"
-                      rows="5" type="textarea" size="mini" maxlength="1000"
-                      show-word-limit>
             </el-input>
           </el-form-item>
         </el-col>
 
-        <el-col :offset="1" :span="11">
-          <el-form-item label="诊断建议：" prop="chDoctorText" label-width="100px">
-            <el-input  v-model="caseHistory.chDoctorText"  placeholder="请输入病理原因"
-                      rows="5" type="textarea" size="mini" maxlength="1000"
-                      show-word-limit>
-            </el-input>
-          </el-form-item>
-        </el-col>
       </el-row>
     </el-form>
 

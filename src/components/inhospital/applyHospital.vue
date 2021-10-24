@@ -1,112 +1,6 @@
 <template>
-	<el-dialog title="新增申请住院信息" v-model="isShowXZBR">
-
-		<el-form :model="InhospitalApplyObj" ref="baseForm" :rules="baseFormRules" >
-			
-			<el-row>
-				<el-col :span="1"></el-col>
-				
-				<el-col :span="6">
-					<el-form-item prop="name" label="诊疗编号" label-width="80px" >
-						<el-input v-model="InhospitalApplyObj.name"></el-input>
-					</el-form-item>
-				</el-col>
-				
-        <el-col :span="4">
-          <el-button @click="isShowXZBR = true" type="primary" icon="el-icon-user-solid"></el-button>
-        </el-col>
-				
-				<el-col :span="8">
-					<el-form-item prop="zdxx" label="诊断信息" label-width="80px">
-						<el-input disabled v-model="InhospitalApplyObj.zdxx"></el-input>
-					</el-form-item>
-				</el-col>
-				
-				<el-col :span="1"></el-col>
-			</el-row>
-			
-			<el-row>
-				<el-col :span="1"></el-col>
-				
-				<el-col :span="8">
-					<el-form-item prop="idCardNo" label="病人姓名" label-width="80px" >
-						<el-input v-model="InhospitalApplyObj.idCardNo" disabled></el-input>
-					</el-form-item>
-				</el-col>
-				
-				<el-col :span="2"></el-col>
-				
-				<el-col :span="8">
-					<el-form-item label="科室" label-width="80px">
-						<el-input disabled model-value="当前登录科室"></el-input>
-					</el-form-item>
-				</el-col>
-				
-				<el-col :span="1"></el-col>
-			</el-row>
-			
-			
-			<el-row>
-				<el-col :span="1"></el-col>
-				
-				<el-col :span="8">
-					<el-form-item label="性别" label-width="80px" >
-						<el-input v-model="InhospitalApplyObj.sex" disabled></el-input>
-					</el-form-item>
-				</el-col>
-				
-				<el-col :span="2"></el-col>
-				
-				<el-col :span="8">
-					<el-form-item label="身份证" label-width="80px">
-						<el-input v-model="InhospitalApplyObj.birthday" disabled></el-input>
-					</el-form-item>
-				</el-col>
-				
-				<el-col :span="1"></el-col>
-			</el-row>
-			
-			<el-row>
-				<el-col :span="1"></el-col>
-				
-				<el-col :span="8">
-					<el-form-item label="年龄" label-width="80px" >
-						<el-input v-model="InhospitalApplyObj.age" disabled ></el-input>
-					</el-form-item>
-				</el-col>
-				
-				<el-col :span="2"></el-col>
-				
-				<el-col :span="8">
-					<el-form-item label="出生日期" label-width="80px">
-						<el-input v-model="InhospitalApplyObj.birthplace" readonly="true" ></el-input>
-					</el-form-item>
-				</el-col>
-				
-				<el-col :span="1"></el-col>
-			</el-row>
-		</el-form>
-		<template #footer>
-				<el-row>
-					<el-col :span="18"></el-col>
-					<el-col :span="2">
-						<el-button @click="addEmp('empFrom')" type="primary">确定</el-button>
-					</el-col>
-					<el-col :span="1"></el-col>
-					<el-col :span="2">
-						<el-button @click="isShowZY = false" type="danger">取消</el-button>
-					</el-col>
-					<el-col :span="1"></el-col>
-				</el-row>
-				
-				
-		</template>
-		
-	</el-dialog>
-	
-
   <!--=============================================查询条件===================================-->
-  <el-row style="margin-bottom:10px">
+  <el-row style="margin:0px 0px 10px 30px;padding-top: 10px;">
 
     <el-col :span="2">
       <el-button size="mini" @click="openFormSick" type="primary">新增</el-button>
@@ -189,10 +83,7 @@
 						  	<el-button size="mini" type="danger" icon="el-icon-delete" @click="callHospital(scope.row)">取消申请</el-button>
 						  </template>
 					    </el-table-column>
-					
 				  </el-table>
-				  
-				  
 				  <!--分页插件-->
 				   <el-pagination
 				  					style="text-align: center;"
