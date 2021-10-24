@@ -7,7 +7,7 @@
   </el-row>
   <el-table
       :data="tablemable.filter(data => !search || data.consumablesName.toLowerCase().includes(search.toLowerCase())).slice((currentPage-1)*pagesize,currentPage*pagesize)"
-      style="width: 100%"  height="500">
+      stripe  style="width: 100%">
     <el-table-column
         prop="consumablesName"
         label="耗材名称">

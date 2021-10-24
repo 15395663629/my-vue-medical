@@ -8,71 +8,16 @@
 			<el-date-picker v-model="value1" type="date" placeholder="选择入库日期"></el-date-picker>
 			<el-button type="primary" icon="el-icon-search">搜索</el-button>
 		</el-col>
-  <!--
-		<el-col :span="1" :offset="10">
-			<el-button type="primary" @click="dialogFormVisible = true">新增入库信息</el-button>
-			<el-dialog title="药品入库" v-model="dialogFormVisible">
-			  <el-form>
-			    <el-form-item label="药品批次" :label-width="formLabelWidth">
-			      <el-input autocomplete="off" style="width: 215px;"></el-input>
-			    </el-form-item>
-				<el-form-item label="药品名" :label-width="formLabelWidth">
-				  <el-input autocomplete="off" style="width: 215px;"></el-input>
-				</el-form-item>
-				<el-form-item label="药品数量" :label-width="formLabelWidth">
-					<el-input-number @change="handleChange" :min="1" :max="1000" label="药品数量"></el-input-number>
-				</el-form-item>
-				<el-form-item label="药品规格" :label-width="formLabelWidth">
-					<el-select v-model="form.region" placeholder="药品规格">
-					  <el-option label="盒" value="shanghai"></el-option>
-					  <el-option label="箱" value="beijing"></el-option>
-					  <el-option label="包" value="beijing"></el-option>
-					</el-select>
-				</el-form-item>
-				<el-form-item label="采购价" :label-width="formLabelWidth">
-				  <el-input autocomplete="off" style="width: 215px;"></el-input>
-				</el-form-item>
-			    <el-form-item label="生产厂家" :label-width="formLabelWidth">
-			      <el-input autocomplete="off" style="width: 215px;"></el-input>
-			    </el-form-item>
-			    <el-form-item label="入库日期" :label-width="formLabelWidth">
-			    	<el-date-picker v-model="value1" type="date" placeholder="选择采购日期"></el-date-picker>
-			    </el-form-item>
-			    <el-form-item label="经手人" :label-width="formLabelWidth">
-			    	<el-select v-model="form.region" placeholder="选择经手人">
-			    	  <el-option label="张三" value="shanghai"></el-option>
-			    	  <el-option label="李四" value="beijing"></el-option>
-			    	  <el-option label="王五" value="beijing"></el-option>
-			    	</el-select>
-			    </el-form-item>
-				<el-form-item label="仓库" :label-width="formLabelWidth">
-					<el-select v-model="form.region" placeholder="选择仓库">
-					  <el-option label="中药仓" value="shanghai"></el-option>
-					  <el-option label="西药仓" value="beijing"></el-option>
-					  <el-option label="冷藏仓" value="beijing"></el-option>
-					</el-select>
-				</el-form-item>
-			  </el-form>
-			  <template #footer>
-			    <span class="dialog-footer">
-			      <el-button @click="dialogFormVisible = false">取 消</el-button>
-			      <el-button type="primary" @click="dialogFormVisible = false">确 定</el-button>
-			    </span>
-			  </template>
-			</el-dialog>
-		</el-col>
-	</el-row>
-	<el-row>-->
 		<el-col>
-			<el-table :data="daitukuForm" style="width: 100%;">
+			<el-table :data="daitukuForm" stripe style="width: 100%;">
 				<el-table-column prop="ykPurchaseId" label="采购编号"/>
 				<el-table-column prop="ykPurchaseName" label="计划名称" />
-        <el-table-column property="ykPurchaseTime" label="执行时间" />
+        <el-table-column property="ykPurchaseTime" label="采购日期" />
 				<el-table-column fixed="right" label="操作">
 					<template #default="scope">
-						<el-button @click="handleClick(scope.row.ykPurchaseId)" type="primary" plain size="small">查看详情</el-button>
-						<el-button type="success" plain size="small" @click="tongguoshenhe(scope.row)">通过审核</el-button>
-					</template>
+						<el-button @click="handleClick(scope.row.ykPurchaseId)" type="primary" plain size="small">入库药品</el-button>
+						<el-button v-if="scope.row.ykBaocun == 2" type="success" plain size="small" @click="tongguoshenhe(scope.row)">通过审核</el-button>
+          </template>
 				</el-table-column>
 			</el-table>
 		</el-col>
@@ -82,18 +27,25 @@
           <el-table-column property="drugId" label="药品编号" width="100px"/>
           <el-table-column property="yfDruginformation.drugName" label="药品名称" width="150px"/>
           <el-table-column property="ykSupplier.supplierName" label="供应商" width="150px"/>
-          <el-table-column property="ykChaseCount" label="入库数量" width="150px">
+          <el-table-column property="ykChaseCount" label="入库数量" width="100px"/>
+          <el-table-column property="ykRuku" label="实际入库数量" width="150px">
             <template #default="scope">
-              <el-input-number v-model="scope.row.ykChaseCount" style="width:120px;" size="mini" >
+              <el-input-number v-model="scope.row.ykRuku" style="width:120px;" size="mini" >
               </el-input-number>
             </template>
           </el-table-column>
-          <el-table-column property="ykDate" label="保质期" width="300px">
+          <el-table-column property="ykDate" label="生产日期" width="300px">
             <template #default="scope">
-              <el-date-picker v-model="scope.row.ykDate" type="date"  placeholder="选择保质期" />
+              <el-date-picker v-model="scope.row.ykDate" type="date"  placeholder="选择生产日期" />
+<!--              @change="ykDataChange(scope.row)"-->
             </template>
           </el-table-column>
-          <el-table-column property="ykBatch" label="药品批次" width="200px">
+<!--          <el-table-column  property="ykBatch" label="过期时间" width="200px">
+            <template #default="scope">
+&lt;!&ndash;              {{addMonth(scope.row.ykDate, scope.YfDruginformation.drugPastdate)}}&ndash;&gt;
+            </template>
+          </el-table-column>-->
+          <el-table-column  property="ykBatch" label="药品批次" width="200px">
             <template #default="scope">
               <el-input v-model="scope.row.ykBatch"/>
             </template>
@@ -150,7 +102,6 @@ import qs from "qs"
       },
       //保存药品生产日期和批次
       baocun(){
-      console.log(this.ydpdform)
         this.axios.post("preserve",this.ydpdform).then((v)=>{
           this.rukumingxi = false;
           this.getDate();
@@ -163,7 +114,7 @@ import qs from "qs"
 
         })
       },
-      //查看待入库的药品详情
+//查看待入库的药品详情
       handleClick(row){
       this.rukumingxi = true;
         this.axios({url:"all-ydpd",params:{ykPurchaseId:row}}).then((v)=>{
@@ -174,12 +125,9 @@ import qs from "qs"
       },
       //通过审核
       tongguoshenhe(row){
-        var ydpdform = row
-        var grant = JSON.stringify({str:row})
-        console.log(grant,"444")
-        console.log(row,"33333")
-        this.axios.post("putstorage",qs.stringify({grant:grant})).then((v)=>{
-          // this.ydpdform = v.data;
+      alert(row.ykPurchaseId);
+        this.axios.post("putstorage",{list:row.ykDrugpurchasePlanDetails,ykPurchaseId:row.ykPurchaseId}).then((v)=>{
+          this.ydpdform = v.data;
         })
       },
 

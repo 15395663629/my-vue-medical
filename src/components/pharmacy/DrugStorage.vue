@@ -3,7 +3,7 @@
   <el-table
       :data="tableStorage.slice((currentPage-1)*pagesize,currentPage*pagesize)"
       stripe
-      style="width: 100%" height="500">
+      style="width: 100%">
     <el-table-column type="selection" width="55"/>
     <el-table-column
         prop="ykDrvenName"

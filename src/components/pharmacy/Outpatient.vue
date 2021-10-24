@@ -38,14 +38,14 @@
         <el-table :data="zy">
           <el-table-column property="zpNumber" label="中药处方中单"/>
           <el-table-column property="zpName" label="药品名"/>
-          <el-table-column property="zpCount" label="药品数量"/>
+          <el-table-column property="zpCount" label="发药数量"/>
         </el-table>
       </el-tab-pane>
       <el-tab-pane label="西药" name="西药">
         <el-table :data="xy">
           <el-table-column property="rdNumber" label="西药处方单号"/>
           <el-table-column property="rdName" label="药品名"/>
-          <el-table-column property="rdCount" label="药品数量"/>
+          <el-table-column property="rdCount" label="发药数量"/>
         </el-table>
       </el-tab-pane>
     </el-tabs>
