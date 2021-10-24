@@ -47,16 +47,9 @@
 
     <el-table-column label="操作" align="center">
       <template #default="scope">
-        <el-button
-            size="mini"
-            type="primary"
-            plain
-            @click="cardRecharge(scope.row)">诊卡充值</el-button>
-        <el-button
-            size="mini"
-            type="danger"
-            plain
-            @click="cardRefund(scope.row)">诊卡退款</el-button>
+        <el-button  size="mini" type="warning"  plain  @click="billCard(scope.row.mcNumber)">消费记录</el-button>
+        <el-button size="mini" type="primary"   plain  @click="cardRecharge(scope.row)">诊卡充值</el-button>
+        <el-button  size="mini" type="danger"   plain  @click="cardRefund(scope.row)">诊卡退款</el-button>
       </template>
     </el-table-column>
   </el-table>
@@ -145,6 +138,21 @@
         </el-col>
       </el-form>
     </el-row>
+  </el-dialog>
+
+  <!-- 消费记录表查询=================================================================================================================================================== -->
+  <el-dialog title="诊疗卡消费记录"  @close="closeBill" v-model="billShow" width="50%"  destroy-on-close center>
+    <el-table  size="mini"  :data="cardBill" ref="closeBills"  style="width: 100%" height="380">
+      <el-table-column fixed  label="日期" align="center" >
+        <template #default="scope">
+          <i class="el-icon-time"></i>
+          <span>{{ scope.row.cbTime }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column fixed label="消费用途" prop="cbCause" align="center"></el-table-column>
+      <el-table-column fixed label="消费金额" prop="cbPrice"  align="center" ></el-table-column>
+      <el-table-column fixed label="操作医生" prop="staff.sname" align="center" ></el-table-column>
+    </el-table>
   </el-dialog>
 
 </template>
@@ -247,9 +255,23 @@ export default{
           { validator: validate4, trigger: 'blur' }
         ],
       },
+      cardBill:[],
+      billShow:false,
+
     }
   },
   methods:{
+    billCard(index){
+      this.billShow=true;
+      this.axios({url:'billCard',params:{card:index}}).then((v)=>{
+        this.cardBill=v.data
+      }).catch({});
+    },
+    closeBill(){
+      this.billShow=false;
+      this.cardBill=[];
+      this.$refs.closeBills.clearSelection();
+    },
     cardRecharge(row){//充值---------------------------------------------------------------
       this.isUpTable1=true;
       this.cardArr=row;

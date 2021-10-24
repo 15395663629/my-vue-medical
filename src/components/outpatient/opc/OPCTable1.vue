@@ -23,7 +23,7 @@
     </el-table-column>
     <el-table-column  fixed label="总金额"  width="120" align="center">
       <template #default="scope" class="sums">
-        <span>{{scope.row.xpObject.rdCount*scope.row.xpObject.rdPrice}}</span>
+        <span>{{towNumber(scope.row.xpObject.rdCount*scope.row.xpObject.rdPrice)}}</span>
       </template>
     </el-table-column>
 
@@ -98,6 +98,9 @@
               }
             }).catch(()=>{})
           }
+        },
+        towNumber(val) {
+          return val.toFixed(2);
         },
         getSummaries1(param) {
           const { columns} = param;//获取到的整个表格的总栏位数
