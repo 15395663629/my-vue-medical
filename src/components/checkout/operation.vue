@@ -429,6 +429,15 @@ export default {
             { required: true, message: '请输入手机号', trigger: 'blur' }
           ],
         },
+        //扣费记录对象
+        MzCardBill:{
+          cbNumber:'',
+          cbTime:'',
+          cbCause:'',
+          cbPrice:'',
+          sId:'',
+          mcNumber:''
+        },
         // 体检人员对象
         man: {
           manId: 0,
@@ -536,6 +545,18 @@ export default {
           }
         }
       },
+      //默认勾选项目修改时
+      cleaxm1() {
+        this.$refs.jcxmtable.clearSelection();
+        this.$refs.tcdata.clearSelection();
+        for (let i = 0; i < this.aloneg.length; i++) {
+          for (let j = 0; j < this.tjpro.length; j++) {
+            if (this.aloneg[i].checkId == this.tjpro[j].checkId) {
+              this.$refs.jcxmtable.toggleRowSelection(this.tjpro[j], true)
+            }
+          }
+        }
+      },
       //设置单选
       select(selection, row) {
         this.$refs.tcdata.clearSelection();
@@ -571,18 +592,7 @@ export default {
       handleClick(tab, event) {
 
       },
-      //默认勾选项目修改时
-      cleaxm1() {
-        this.$refs.jcxmtable.clearSelection();
-        this.$refs.tcdata.clearSelection();
-        for (let i = 0; i < this.aloneg.length; i++) {
-          for (let j = 0; j < this.tjpro.length; j++) {
-            if (this.aloneg[i].checkId == this.tjpro[j].checkId) {
-              this.$refs.jcxmtable.toggleRowSelection(this.tjpro[j], true)
-            }
-          }
-        }
-      },
+
       submitMedicalCard(formName) { // 生成诊疗卡卡号
         this.axios.post("inserMedicalCard").then((res) => {
           console.log(res.data)
@@ -743,7 +753,12 @@ export default {
       },
       //体检人员弹框x
       xgman(){
+        //清空表格多选
+        this.$refs.jcxmtable.clearSelection();
+        this.$refs.tcdata.clearSelection();
         this.xztj=false;
+        this.activeName='first';//还原选项卡
+        // 清空校验
         this.$refs['inserman'].resetFields();
       },
       //删除人员
@@ -791,17 +806,33 @@ export default {
         let aa='没卡';
         let bb=this.rlmm;
         let cc='';
+        let dd='';
           this.axios.get("http://localhost:8089/aloneCard", {params: {sId:row.manSid}}).then((res) => {
               res.data.forEach(v=>{
                 console.log(v.mcPawd)
                 aa=v.mcBalance
                 cc=v.mcPawd
+                dd=v.mcNumber
               })
             if(bb==cc){
               if(aa>=row.manPhy){
                 //调用扣钱方法
                 this.updmoney(aa-row.manPhy,row.manSid)
                 this.token =this.$store.state.token//获取当前用户
+                //新增扣钱记录
+                this.MzCardBill.cbTime=this.getNowFormatDate
+                this.MzCardBill.cbCause='体检缴费'
+                this.MzCardBill.cbPrice=row.manPhy
+                this.MzCardBill.sId=this.token.list.sid
+                this.MzCardBill.mcNumber=dd
+                this.axios.post('http://localhost:8089/addbill', qs.stringify({MzCardBill:this.MzCardBill}))
+                    .then((v)=>{
+                      if(v.data == 'ok'){
+                      }else{
+                        alert(v.data);
+                      }
+                    }).catch(function(){
+                })
                 this.aloneg.forEach(v=>{
                   this.Res.push({'checkId':v.checkId,manResult:v.tjCodeIndex,manId:row.manId,sId:this.token.list.sid})
                 })

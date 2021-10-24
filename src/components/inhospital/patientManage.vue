@@ -672,6 +672,7 @@
       ssopenApply(row){
         this.ssApply.ptName=row.ptName
         this.ssApply.ptDiagnoseName=row.ptDiagnoseName
+        this.ssApply.simulationTime=this.getNowFormatDate
         this.token =this.$store.state.token//获取当前用户
         this.ssApply.sId=this.token.list.sid
         this.ssApply.ptNo=row.ptNo
@@ -679,10 +680,18 @@
       },
       //手术弹框确认按钮
       ssdoorApply(){
+      if(this.ssApply.simulationOperation!=''){
         this.axios.post("http://localhost:8089/aOrUApply",{proj:this.ssApply}).then((res)=>{
           this.patientBaseInit();
         }).catch()
         this.isSSShow=false;
+        }else {
+        this.$message({
+          type: 'info',
+          message: '请选择一个手术'
+        });
+      }
+
       },
       //============================================申请出院方法
       //打开申请出院弹框
@@ -949,6 +958,11 @@
         console.log(this.currentPage) //点击第几页
       },
 
+    },filters:{
+      formatDate(time){
+        let date=new Date(time)
+        return formatDate(date,'yyyy-MM-dd')
+      }
     },
     created() {
       this.staff = this.$store.state.token.list;//将登录存入的值在取出来
@@ -959,6 +973,22 @@
       patientPrice(){
         // return 100;
         return this.dischargeApplyObj.ptPayMoney - this.dischargeApplyObj.ptPrice;
+      },
+      //获取当前时间
+      getNowFormatDate() {
+        var date = new Date();
+        var seperator1 = "-";
+        var year = date.getFullYear();
+        var month = date.getMonth() + 1;
+        var strDate = date.getDate();
+        if (month >= 1 && month <= 9) {
+          month = "0" + month;
+        }
+        if (strDate >= 0 && strDate <= 9) {
+          strDate = "0" + strDate;
+        }
+        var currentdate = year + seperator1 + month + seperator1 + strDate;
+        return currentdate;
       }
     }
   }

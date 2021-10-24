@@ -263,12 +263,26 @@
 			  label="手术位置">
 			</el-table-column>
       <el-table-column
+          width="120px"
           prop="operationAnaesthesia"
           label="麻醉方法">
       </el-table-column>
 			<el-table-column
+          width="160px"
 			  prop="operationHandle"
 			  label="术后处理">
+        <template #default="scope">
+          <el-popover effect="light" trigger="hover"  placement="top">
+            <template #default>
+              <p>术后处理: {{ scope.row.operationHandle }}</p>
+            </template>
+            <template #reference>
+              <div class="name-wrapper">
+                <el-tag size="medium">{{ scope.row.operationHandle }}</el-tag>
+              </div>
+            </template>
+          </el-popover>
+        </template>
 			</el-table-column>
 			<el-table-column width="100px"
 			  prop="operationDate"
@@ -282,7 +296,7 @@
             prop="ssdx.projectPay"
             label="手术金额">
 			</el-table-column>
-			<el-table-column label="操作" width="300px">
+			<el-table-column label="操作">
 			      <template #default="scope">
 					  <el-button
                 @click="dayin(scope.row)"

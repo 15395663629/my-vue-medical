@@ -138,7 +138,7 @@
 		</template>
 	</el-dialog>
   <!-- 角色授权弹框-->
-  <el-dialog title="员工授权" v-model="dialogVisible" width="30%" >
+  <el-dialog title="员工授权" v-model="dialogVisible" width="30%"  @close="qingchu">
 <!--    <el-tree ref="tree" :data="roles" node-key="rid"-->
 <!--             :props="props" show-checkbox  default-expand-all-->
 <!--             >-->
@@ -340,7 +340,13 @@ import qs from 'qs'
       getRoleFuns(row){
         this.rId=row.user.uid
         this.axios.get("staff-funs",{params:{rId:this.rId}}).then((res)=>{
-          this.rols = res.data;
+          console.log(res.data)
+          this.rols.push(res.date)
+          console.log(this.rols)
+          for (let i = 0; i <res.data.length ; i++) {
+            this.value1.push(res.data)
+          }
+          console.log(this.value1)
           this. dialogVisible =true
 
         }).catch()
@@ -446,6 +452,7 @@ import qs from 'qs'
           uPswd:'',
           deptid:''
         }
+        this.value1=[]
 
       }
 			

@@ -120,7 +120,6 @@
              </el-option>
            </el-select>
          </el-form-item>
-         {{value1}}
        </el-form>
       <div style="text-align:right;">
         <el-button type="danger" @click="dialogVisible=false">关闭</el-button>
@@ -238,7 +237,7 @@ export default {
       }).then((v)=>{
         this.schedulingTypeOptions=v.data
         this.length2=v.data.length
-        console.log(this.schedulingTypeOptions,"11111")
+        console.log(this.schedulingTypeOptions,"")
       }).catch();
     },
     quit(){
@@ -249,7 +248,7 @@ export default {
         this.pbtableData=v.data
         this.getData()
         console.log("----"+this.ksk.ksId)
-    console.log(this.pbtableData,"2222")
+    console.log(this.pbtableData,"排班")
       }).catch();
 
     },
@@ -262,6 +261,7 @@ export default {
           this.ksk.ksName=ks.ksName
         }
       }
+
     },
     confirmRole(){
       //班次编号
@@ -333,6 +333,7 @@ export default {
         for ( let j=0;j<this.dept.length; j++){
           if(this.keShi[i].deId === this.dept[j].deId){
               this.keShi[i].ksName=this.dept[j].deName.slice(0,this.dept[j].deName.length)+this.keShi[i].ksName
+
           }
         }
       }
