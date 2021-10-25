@@ -1,7 +1,19 @@
 <template>
+
+  <el-select v-model="ks.ksname" clearable  placeholder="请选择科室" style="width: 150px"  @change="selectKs()">
+    <el-option
+
+        v-for="item in options"
+        :key="item.ksId"
+        :label="item.ksName"
+        :value="item.ksId">
+    </el-option>
+  </el-select>
+  <el-input v-model="ks.sname" placeholder="请输入姓名" style="width: 150px;margin-left: 50px"></el-input>
+  <el-button type="primary" style="margin-left: 10px" @click="selectKs">查询</el-button>
   <el-table
       :data="tableData"
-      style="width: 100%">
+      style="width: 100%;margin-top: 10px">
     <el-table-column type="expand">
       <template #default="props">
         <el-form label-position="left" inline class="demo-table-expand">
@@ -41,16 +53,42 @@ import axios from "axios";
 export default {
   data() {
     return {
-      tableData: []
+      tableData: [],
+      options: [],
+      ks:{
+        ksname:'',
+        sname:''
+      }
     }
   },
   methods:{
     getDate(){
       this.axios.post('home-sch').then((v)=>{
         this.tableData=v.data
-        console.log(this.tableData)
+
       }).catch()
-    }
+      this.axios.get('http://localhost:8089/ks-list').then((v)=>{
+        this.options=v.data
+        console.log(this.kslist)
+      }).catch()
+    },
+    selectKs(){
+      if(this.ks.ksname=='' && this.ks.sname==''){
+        console.log("进")
+        this.getDate()
+      }else{
+        this.axios({
+          url: "home-sch-name",
+          params: {ksFrom: this.ks}
+        }).then((v) => {
+          this.tableData=v.data
+          // console.log(this.tableData+"111----")
+          // this.getDate()
+        }).catch()
+      }
+
+    },
+
   },
   created() {
     this.getDate()
