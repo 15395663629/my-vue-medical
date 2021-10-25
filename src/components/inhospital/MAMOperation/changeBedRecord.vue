@@ -3,7 +3,7 @@
   <el-row>
 
     <el-col :offset="2" :span="3">
-      <el-input @blur="initChangeBedRecord" size="mini" v-model="doctorEnjoinWhere.searchLike" placeholder="药品名称"></el-input>
+      <el-input @blur="initChangeBedRecord" size="mini" v-model="doctorEnjoinWhere.searchLike" placeholder="科室名称"></el-input>
     </el-col>
     <el-col :span="1" >
       <el-button  size="mini" @click="initChangeBedRecord" icon="el-icon-search" type="primary" ></el-button>
