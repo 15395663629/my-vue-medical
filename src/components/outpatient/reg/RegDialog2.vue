@@ -14,15 +14,11 @@
   <el-table size="mini" height="490"
       :data="list.slice((wardCurrentPage2-1)*wardPageSize2,wardCurrentPage2*wardPageSize2)"
       style="width: 100%">
-    <el-table-column
-        label="挂号时间"
-        width="180">
+    <el-table-column label="挂号时间" width="130">
       <template #default="scope">
-        <i class="el-icon-time"></i>
         <span style="margin-left: 10px">{{ scope.row.rtOnsetTime }}</span>
       </template>
     </el-table-column>
-
     <el-table-column label="挂号人员">
       <template #default="scope">
         <el-popover effect="light" trigger="hover" placement="top" width="300">
@@ -45,13 +41,13 @@
         <span style="margin-left: 10px">{{ scope.row.rtOverKsName}}</span>
       </template>
     </el-table-column>
-    <el-table-column label="挂号医生">
+    <el-table-column label="挂号医生" width="80px">
       <template #default="scope">
         <el-popover effect="light" trigger="hover" placement="top">
           <template #default>
             <p>医生: {{ scope.row.rtDoctor }}</p>
+            <p>挂号科室: {{ scope.row.rtOverKsName }}</p>
             <p>职位: {{ scope.row.rtDoctorGenre }}</p>
-
           </template>
           <template #reference>
             <div class="name-wrapper">
@@ -62,14 +58,13 @@
       </template>
     </el-table-column>
 
-    <el-table-column
-        label="挂号类型"
-        width="100">
+    <el-table-column label="类型" width="70" align="center">
       <template #default="scope">
         <el-popover effect="light" trigger="hover" placement="top">
           <template #default>
             <p>挂号费: {{ scope.row.rtPrice }}</p>
-            <p>挂号科室: {{ scope.row.rtOverKsName }}</p>
+            <p>实收金额: {{ scope.row.shPrice }}</p>
+            <p>找零: {{ scope.row.zlPrice}}</p>
             <p>初复诊: {{ scope.row.rtClass }}</p>
             <p>操作人: {{ scope.row.staffObject.sname }}</p>
           </template>
@@ -82,7 +77,7 @@
       </template>
     </el-table-column>
 
-    <el-table-column prop="rtType" label="标签"
+    <el-table-column prop="rtType" label="标签" align="center"
                      width="100" :filters="[{ text: '当天挂号', value: '当天挂号' }, { text: '预约挂号', value: '预约挂号' }]"
                      :filter-method="filterTag"  filter-placement="bottom-end">
       <template #default="scope" >
@@ -91,15 +86,14 @@
         </el-tag>
       </template>
     </el-table-column>
-
-<!--    <el-table-column label="操作">-->
-<!--      <template #default="scope">-->
-<!--        <el-button-->
-<!--            size="mini"-->
-<!--            type="success"-->
-<!--            @click="handleEdit(scope.row)">打印小票</el-button>-->
-<!--      </template>-->
-<!--    </el-table-column>-->
+    <el-table-column label="操作"   width="50" >
+      <template #default="scope">
+        <el-tooltip content="打印小票" >
+          <el-button v-print='"guahaoDY"' size="mini" type="success" icon="el-icon-printer" circle
+                     @click="dayinGH(scope.row)"></el-button>
+        </el-tooltip>
+      </template>
+    </el-table-column>
   </el-table>
   <!--分页插件-->
   <el-pagination  @size-change="wardHandleSizeChange2" @current-change="wardHandleCurrentChange2"
@@ -110,6 +104,21 @@
                   layout="total, sizes, prev, pager, next, jumper"
                   :total="list.length">
   </el-pagination>
+
+  <el-dialog title="挂号明细"  top="130px" v-model="isShowGHMX" width="28%" :before-close="resetForm">
+    <div id="guahaoDY">
+      <el-form   label-width="100px" size="small" class="demo-ruleForm">
+        <el-form-item label="就诊时间：" label-width="100px" style="margin-bottom: 0px" >{{dayinList.rtOnsetTime}}</el-form-item>
+        <el-form-item label="就诊卡号：" label-width="100px" style="margin-bottom: 0px">{{dayinList.cardObject.mcCard}}</el-form-item>
+        <el-form-item label="就诊人：" label-width="100px" style="margin-bottom: 0px" >{{dayinList.cardObject.mzSick.sickName}}</el-form-item>
+        <el-form-item label="就诊科室：" label-width="100px"  style="margin-bottom: 0px">{{dayinList.rtOverKsName}}</el-form-item>
+        <el-form-item label="就诊医生：" label-width="100px"  style="margin-bottom: 0px">{{dayinList.rtDoctor}}</el-form-item>
+        <el-form-item label="就诊费用：" label-width="100px"  style="margin-bottom: 0px">{{dayinList.rtPrice}}</el-form-item>
+        <el-form-item label="就诊排号：" label-width="100px"  style="margin-bottom: 0px">{{dayinList.opcNumberObject.bnCount}}</el-form-item>
+      </el-form>
+    </div>
+  </el-dialog>
+
 </template>
 
 <script>
@@ -127,13 +136,22 @@ import { ElMessage } from 'element-plus'
     },
     data(){
       return{
+        isShowGHMX:false,
         radio2:"查看全部",
         wardCurrentPage2:1,
         wardPageSize2:4,
         input2:"",//查询搜索框
+        dayinList:{},
       }
     },
     methods:{
+      dayinGH(row){
+        this.isShowGHMX=true;
+        this.dayinList=row;
+      },
+      resetForm(){
+        this.isShowGHMX=false;
+      },
       filterTag(value, row) {/* 复诊初诊标签方法 */
         return row.rtType === value;
       },

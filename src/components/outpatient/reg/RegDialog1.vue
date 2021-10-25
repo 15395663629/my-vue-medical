@@ -101,7 +101,7 @@
       <el-form :rules="rules"  status-icon :model="regArr" ref="regArr" label-width="100px" size="small" class="demo-ruleForm">
         <el-col>
           <el-form-item label="挂号日期："  >
-            <el-input v-model="regArr.rtOnsetTime" style="width: 300px" disabled></el-input>430224199805045517
+            <el-input v-model="regArr.rtOnsetTime" style="width: 300px" disabled></el-input>
           </el-form-item>
         </el-col>
         <el-col >
@@ -174,17 +174,17 @@
     </el-row>
   </el-dialog>
 
-  <el-dialog title="其他&缴费" top="130px" v-model="isShowQtjf" width="28%" style="padding-bottom: 0px;"  :before-close="handleClose" >
-    <el-form :model="regArr" :rules="rules"  status-icon  ref="regArr1" label-width="100px" size="small" class="demo-ruleForm">
+  <el-dialog title="其他&缴费"  top="130px" v-model="isShowQtjf" width="28%" :before-close="resetForm2" >
+    <el-form :model="regArr"  :rules="rules"  ref="regArr1" label-width="100px" size="small" class="demo-ruleForm">
       <el-form-item label="实收金额：" label-width="100px" prop="shPrice">
-        <el-input type="text" size="small" v-model="regArr.shPrice" @change="shPriceUp" onkeyup="value=value.replace(/[^\d]/g,'')"></el-input>
+        <el-input type="text" size="small" v-model="regArr.shPrice" onkeyup="value=value.replace(/[^\d]/g,'')"></el-input>
       </el-form-item>
       <el-form-item label="找零：" label-width="100px" >
-        {{regArr.shPrice-regArr.rtPrice}}
+        {{handleClose()}}
       </el-form-item>
       <span class="dialog-footer" style="margin-left:240px">
         <el-button @click="isShowQtjf = false" size="small" >取 消</el-button>
-        <el-button type="primary" @click="isShowQtjf = false" size="small">确 定</el-button>
+        <el-button type="primary" @click="shPriceUp('regArr1')" size="small">确 定</el-button>
       </span>
     </el-form>
   </el-dialog>
@@ -251,8 +251,8 @@ import { h } from 'vue'
           radioSf:null,
           /*挂号医生的id*/
           doctorSid:0,
-          shPrice:0,
-          zlPrice:0,
+          shPrice:null,
+          zlPrice:this.handleClose,
         },
         rules: {//密码校验
           mcCard: [
@@ -264,11 +264,6 @@ import { h } from 'vue'
           radioSf:[
             {required: true, message: "请选择支付方式", trigger: 'blur'}
           ],
-          shPrice:[
-            {required: true, message: "实收金额不能为空", trigger: 'blur'}
-          ]
-        },
-        rules1: {//密码校验
           shPrice:[
             {required: true, message: "实收金额不能为空", trigger: 'blur'}
           ]
@@ -290,13 +285,22 @@ import { h } from 'vue'
       }
     },
     methods:{
-      handleClose(done) {
-        this.$confirm('确认关闭？').then((_) => {
-              done()
-            }).catch((_) => {})
+      //金额赋值
+      handleClose() {
+        this.regArr.zlPrice = this.regArr.shPrice-this.regArr.rtPrice
+        return this.regArr.zlPrice;
       },
-      shPriceUp(){
-        
+      //其他缴费收取金额
+      shPriceUp(form){
+        console.log(form)
+        this.$refs[form].validate((valid)=>{
+          if (valid) {
+            this.guaHaoPrinting();
+          } else {
+            console.log('error submit!!');
+            return false;
+          }
+        });
       },
       //收取费用
       guaHaoPrinting(){
@@ -403,19 +407,8 @@ import { h } from 'vue'
               }
 
             }else{
-              // this.isShowQtjf=true;
-              this.$confirm('请确认已完成缴费需求!', '提示', {
-                confirmButtonText: '确定',
-                cancelButtonText: '取消',
-                type: 'warning',
-              }).then(() => {
-                    this.guaHaoPrinting()
-              }).catch(() => {
-                    this.$message({
-                      type: 'info',
-                      message: '已取消挂号',
-                    })
-              })
+              //跳到结算找零
+              this.isShowQtjf=true;
             }
           } else {
             console.log('error submit!!');
@@ -425,10 +418,13 @@ import { h } from 'vue'
       },
       resetForm(){//取消
         this.isShow1 = false;
-        this.regArr={
-          cardObject:'',
-        };
+        this.result();
         this.$refs['regArr'].resetFields();
+      },
+      resetForm2(){//取消
+        this.isShowQtjf=false;
+        this.result();
+        this.$refs['regArr1'].resetFields();
       },
       getTimestamp(time) { //把时间日期转成时间戳
         return (new Date(time)).getTime() / 1000
@@ -454,11 +450,36 @@ import { h } from 'vue'
           url:'byIdCard',
           params:{mcCard:test}
         }).then((v)=>{
-          this.regArr.cardObject=v.data;
-          this.regArr.sickName=this.regArr.cardObject.mzSick.sickName;//查询到的用户名赋值到model显示属性中
+          if(v.data != null && v.data !=''){
+            this.regArr.cardObject=v.data;
+            this.regArr.sickName=this.regArr.cardObject.mzSick.sickName;//查询到的用户名赋值到model显示属性中
+          }
         }).catch(function(){
 
         })
+      },
+      result(){
+        this.regArr={
+              sickName:'',//这两个不在实体类里
+              mcCard:'',
+              rtOnsetTime:'',
+              rtClass:'',
+              rtOverKsName:'',
+              rtDoctor:'',
+              rtType:'',
+              rtScience:'',
+              rtPrice:0,
+              rtDoctorGenre:'',
+              sId:'',
+              ksId:null,
+              cardObject: {},
+              //判断选项缴费
+              radioSf:null,
+              /*挂号医生的id*/
+              doctorSid:0,
+              shPrice:null,
+              zlPrice:this.handleClose,
+        };
       },
       // 初始病房每页数据数wardpagesize和数据data-----------------------分页方法------------------------------
       wardHandleSizeChange: function(size) {

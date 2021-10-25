@@ -14,11 +14,12 @@
         <template #default="scope">
           <el-popover effect="light" trigger="hover" placement="top" width="210px" >
             <template #default>
-              <p>就诊卡号： {{ scope.row.medicalRecordObject.mrMcCard }}</p>
+              <p>就诊号： {{ scope.row.medicalRecordObject.mrCount}}</p>
               <p>姓名：{{ scope.row.medicalRecordObject.sickObject.sickName }}</p>
               <p>年龄： {{ scope.row.medicalRecordObject.sickObject.sickAge }}</p>
               <p>性别： {{ scope.row.medicalRecordObject.sickObject.sickSex }}</p>
               <p>身份证： {{ scope.row.medicalRecordObject.sickObject.sickIdCard }}</p>
+              <p>就诊卡号： {{ scope.row.medicalRecordObject.mrMcCard }}</p>
             </template>
             <template #reference>
               <div class="name-wrapper">
