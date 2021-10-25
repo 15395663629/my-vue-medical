@@ -244,12 +244,7 @@
                   </el-col>
 
 
-                  <el-col :offset="1" :span="2">
-                    <el-form-item>
-                      <el-button :disabled="!patientBaseObj.ptName != ''" type="success" size="mini">打印</el-button>
 
-                    </el-form-item>
-                  </el-col>
 
 <!--                  <el-col :offset="1" :span="2">-->
 <!--                    <el-form-item>-->

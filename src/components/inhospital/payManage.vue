@@ -97,7 +97,7 @@
       </el-col>
 
       <el-col  :span="1">
-        <el-button @click="emptyExecuteScreen" type="success" size="mini">打印</el-button>
+        <el-button @click="onStart" type="success" size="mini">打印</el-button>
       </el-col>
 
     </el-row>
@@ -117,7 +117,7 @@
 
             <el-table size="mini"
                       :data="payArr"
-                      :summary-method="patientPaySum" show-summary
+                      id="dys"
                       height="340px"
                       style="width: 100%">
               <el-table-column
@@ -157,9 +157,9 @@
 
         </el-tabs>
         <el-table height="340px" v-if="isShowCostTable"
-                  :summary-method="patientPaySum" show-summary
                   ref="multipleTable"
                   :data="patientCostArr"
+                  id="dy"
                   size="mini"
                   tooltip-effect="dark"
                   style="width: 100%">
@@ -189,15 +189,9 @@
               {{obj.row.pcdPrice.toFixed(2)}}
             </template>
           </el-table-column>
-
-
         </el-table>
-
-
       </el-col>
     </el-row>
-
-
 	</el-dialog>
 
 
@@ -374,6 +368,67 @@ import {getLodop} from '../../js/LodopFuncs';
           this.staffArr = v.data;//员工数组
         });
       },
+      onStart: function() {
+        const LODOP = getLodop()
+        LODOP.PRINT_INIT('')
+        var strStyle =
+            "<style> table,td,th {border-bottom: 1px solid black;border-collapse: collapse;margin:5px 0px;text-align: center;}</style>"
+        this.AddPrintContent(this.formatDate(new Date(),"yyyy年MM月dd日"))
+        if(this.costTabs != '病人缴费') {
+          LODOP.ADD_PRINT_HTM(100, 20, '40%', '100%', strStyle + document.getElementById('dy').innerHTML);
+          let sum = 0;
+          this.patientCostArr.forEach(i=>{
+            console.log(i)
+           sum += i.pcdPrice;
+          });
+          LODOP.ADD_PRINT_HTM(document.getElementById('dy').children[2].children[0].scrollHeight+120, 690, '40%', '100%','合计'+sum.toFixed(2));
+        }else{
+          LODOP.ADD_PRINT_HTM(100, 20, '40%', '100%', strStyle + document.getElementById('dys').innerHTML)
+          let sum = 0;
+          this.payArr.forEach(i=>{
+            console.log(i)
+            sum += i.pyPrice;
+          });
+          LODOP.ADD_PRINT_HTM(document.getElementById('dys').children[2].children[0].scrollHeight+120, 690, '40%', '100%','合计'+sum.toFixed(2));
+        }
+        LODOP.PREVIEW()
+
+      },
+      AddPrintContent: function(sj) {
+        let LODOP = getLodop();
+        LODOP.ADD_PRINT_TEXT(15, 300, 300, 25, "柿子医院费用明细");
+        LODOP.SET_PRINT_STYLEA(1, "FontName", "隶书");
+        LODOP.SET_PRINT_STYLEA(1, "FontSize", 15);
+        LODOP.SET_PRINT_STYLEA(1, "FontColor", 0);
+        LODOP.ADD_PRINT_TEXT(55, 50, 431, 20, "患者姓名:" + this.payObj.ptName + "                            住院号:" + this.payObj.ptNo);
+        LODOP.SET_PRINT_STYLEA(2, "FontName", "隶书");
+        LODOP.SET_PRINT_STYLEA(2, "FontSize", 10);
+        LODOP.ADD_PRINT_TEXT(75, 50, 431, 20, "打印日期:" + sj);
+        LODOP.SET_PRINT_STYLEA(3, "FontName", "隶书");
+        LODOP.SET_PRINT_STYLEA(3, "FontSize", 10);
+      },
+      //格式化日期  thistime时间  fmt格式
+      formatDate (thistime, fmt) {
+        let $this = new Date(thistime)
+        let o = {
+          'M+': $this.getMonth() + 1,
+          'd+': $this.getDate(),
+          'h+': $this.getHours(),
+          'm+': $this.getMinutes(),
+          's+': $this.getSeconds(),
+          'q+': Math.floor(($this.getMonth() + 3) / 3),
+          'S': $this.getMilliseconds()
+        }
+        if (/(y+)/.test(fmt)) {
+          fmt = fmt.replace(RegExp.$1, ($this.getFullYear() + '').substr(4 - RegExp.$1.length))
+        }
+        for (var k in o) {
+          if (new RegExp('(' + k + ')').test(fmt)) {
+            fmt = fmt.replace(RegExp.$1, (RegExp.$1.length === 1) ? (o[k]) : (('00' + o[k]).substr(('' + o[k]).length)))
+          }
+        }
+        return fmt;
+      },
 
       //清空费用查询条件
       emptyPayWhere(){
@@ -483,6 +538,7 @@ import {getLodop} from '../../js/LodopFuncs';
         console.log(obj.listPay)
         this.isPayRecordShow = true;
         this.payObj.ptNo = obj.ptNo;
+        this.payObj.ptName = obj.ptName;
         this.patientSelectStaff(obj.ptNo);
         this.costTabsClick();
       },

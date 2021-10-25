@@ -469,6 +469,11 @@
               label="住院天数">
           </el-table-column>
           <el-table-column prop="dgDepositPrice" label="总费用"></el-table-column>
+          <el-table-column label="操作">
+            <template #default="obj">
+              <el-button type="primary" @click="showPay(obj.row)" size="mini">查看全部费用</el-button>
+            </template>
+          </el-table-column>
 
         </el-table-column>
 			  </el-table>
@@ -485,10 +490,155 @@
       layout="total, sizes, prev, pager, next, jumper"
       :total="total">
   </el-pagination>
+
+
+
+
+
+
+
+  <!--=============================================费用明细===================================-->
+  <el-dialog width="55%"  title="费用明细" v-model="isPayRecordShow" >
+
+    <el-row style="margin-bottom:10px">
+
+      <el-col  :span="1">
+        <el-button @click="emptyPayWhere" type="primary" size="mini">清空条件</el-button>
+      </el-col>
+
+      <el-col :offset="2" :span="7">
+        <span style="font-size: 12px;">操作员:</span>&nbsp;
+        <el-select @change="costTabsClicks" style="width: 160px" v-model="doctorEnjoinWheres.sIdArr" multiple collapse-tags size="mini">
+          <el-option v-for="st in staffArr"
+                     :label="st.sname"
+                     :value="st.sid"/>
+        </el-select>
+      </el-col>
+
+      <el-col  :span="12">
+        &nbsp;<span style="font-size: 12px;">日期区间：</span>&nbsp;
+
+        <el-date-picker style="width: 140px" @change="costTabsClicks" v-model="doctorEnjoinWheres.startDate"
+                        type="date"
+                        size="mini"
+                        value-format="YYYY-MM-DD"
+                        placeholder="日期">
+        </el-date-picker>
+        &nbsp;<span style="font-size: 12px;">至</span>&nbsp;
+        <el-date-picker style="width: 140px" @change="costTabsClicks" v-model="doctorEnjoinWheres.endDate"
+                        type="date"
+                        size="mini"
+                        value-format="YYYY-MM-DD"
+                        placeholder="日期">
+        </el-date-picker>
+      </el-col>
+
+      <el-col  :span="1">
+        <el-button @click="onStart" type="success" size="mini">打印</el-button>
+      </el-col>
+
+    </el-row>
+
+    <el-row>
+
+      <el-col>
+
+        <el-tabs v-model="costTabss" @tab-click="costTabsClicks">
+          <el-tab-pane label="全部费用" name="全部费用"/>
+          <el-tab-pane label="医嘱药品费用" name="医嘱药品费用" />
+          <el-tab-pane label="床位费用" name="床位费用" />
+          <el-tab-pane label="化验项目费用" name="化验项目费用" />
+          <el-tab-pane label="其它费用" name="其它费用" />
+          <el-tab-pane label="手术费用" name="手术费用" />
+          <el-tab-pane  label="病人缴费" name="病人缴费" >
+
+            <el-table size="mini"
+                      :data="payArrs"
+                      id="dys"
+                      height="340px"
+                      style="width: 100%">
+              <el-table-column
+                  prop="pyId"
+                  label="缴费编号"
+                  width="180">
+              </el-table-column>
+              <el-table-column prop="pyPrice"
+                               label="缴费金额">
+              </el-table-column>
+              <el-table-column
+                  prop="pyDate"
+                  label="缴费时间">
+              </el-table-column>
+              <el-table-column
+                  prop="pyWay"
+                  label="缴费方式">
+              </el-table-column>
+              <el-table-column prop="staff.sname"
+                               label="操作护士">
+              </el-table-column>
+            </el-table>
+            <!--分页插件-->
+            <!--        <el-pagination-->
+            <!--            style="text-align: right;"-->
+            <!--            @size-change="paySizeChange"-->
+            <!--            @current-change="payCurrentChange"-->
+            <!--            :current-page="payCurrent"-->
+            <!--            :page-sizes="[2,4,6,8,10]"-->
+            <!--            :page-size="paySize"-->
+            <!--            layout="total, sizes, prev, pager, next, jumper"-->
+            <!--            :total="payArr.length">-->
+            <!--        </el-pagination>-->
+
+          </el-tab-pane>
+
+
+        </el-tabs>
+        <el-table height="340px" v-if="isShowCostTables"
+                  ref="multipleTable"
+                  :data="patientCostArr"
+                  id="dy"
+                  size="mini"
+                  tooltip-effect="dark"
+                  style="width: 100%">
+          <el-table-column
+              label="费用编号"
+              prop="pcdId"
+          >
+          </el-table-column>
+          <el-table-column
+              prop="name"
+              label="费用名称">
+          </el-table-column>
+
+          <el-table-column
+              prop="sname"
+              label="操作员工">
+          </el-table-column>
+
+          <el-table-column
+              prop="pcdDate"
+              label="扣除时间">
+          </el-table-column>
+
+          <el-table-column
+              label="费用价格">
+            <template #default="obj">
+              {{obj.row.pcdPrice.toFixed(2)}}
+            </template>
+          </el-table-column>
+        </el-table>
+      </el-col>
+    </el-row>
+  </el-dialog>
+
+
+
 </template>
 
 <script>
-	export default{
+	import {getLodop} from "../../js/LodopFuncs";
+
+  export default{
 		data(){
 			return{
         staff:{},//医生对象
@@ -513,7 +663,9 @@
 				},
         maxCard:'病人信息',
         payArr:[],//缴费明细
+        payArrs:[],
         isShowCostTable:false,//是否显示费用表格
+        isShowCostTables:true,//是否显示费用表格
 
         //===============病人数据
        patientBaseObj:{
@@ -554,6 +706,29 @@
           sIdArr:[],//员工编号
           ptNo:''
         },
+        doctorEnjoinWheres:{
+          startDate:'',//开始日期
+          endDate:'',//结束日期
+          searchLike:'',//模糊搜索
+          doctorType:2,//医嘱类型
+          sIdArr:[],//员工编号
+          ptNo:''
+        },
+        costTabss:'全部费用',
+        //=================缴费详细
+        payObj:{//缴费实体类
+          pyId:'',
+          pyPrice:'',
+          pyDate:'',
+          ptNo:'',
+          ptName:'',
+          sId:'',
+          ptInDate:'',//住院日期
+          ptOutDate:'',//出院日期
+          ptPrice:'',//病人余额
+          pyWay:''//缴费方式
+        },
+        staffArr:[],
 
         //==============病人出院数据
         dischargeArr:[],
@@ -573,6 +748,7 @@
         },
        patientBaseArr:[],//病人数组
         costTabs:'病人信息',
+        isPayRecordShow:false,//显示病人费用明细表
 
 				csrq:'',
 				isShowXZBR:false,//选择住院病人弹框
@@ -631,6 +807,108 @@
         });
 
       },
+      showPay(obj){
+			  console.log(obj)
+        this.isPayRecordShow = true;
+        this.payObj.ptNo = obj.ptNo;
+        this.payObj.ptName = obj.patientBase.ptName;
+        this.patientSelectStaff(obj.ptNo);
+        this.payObj.ptInDate = obj.patientBase.ptInDate;
+        this.payObj.ptOutDate = obj.patientBase.ptOutDate;
+        this.costTabsClicks();
+      },
+      //==============================打印
+      onStart: function() {
+        const LODOP = getLodop()
+        LODOP.PRINT_INIT('');
+        var strStyle =
+            "<style> table,td,th {border-bottom: 1px solid black;border-collapse: collapse;margin:5px 0px;text-align: center;}</style>"
+        this.AddPrintContent(this.formatDate(new Date(),"yyyy年MM月dd日 hh:ss:mm"))
+        if(this.costTabss != '病人缴费') {
+          LODOP.ADD_PRINT_HTM(120, 20, '40%', '100%', strStyle + document.getElementById('dy').innerHTML);
+          let sum = 0;
+          this.patientCostArr.forEach(i=>{
+            console.log(i)
+            sum += i.pcdPrice;
+          });
+          LODOP.ADD_PRINT_HTM(document.getElementById('dy').children[2].children[0].scrollHeight+140, 690, '40%', '100%','合计'+sum.toFixed(2));
+        }else{
+          LODOP.ADD_PRINT_HTM(120, 20, '40%', '100%', strStyle + document.getElementById('dys').innerHTML)
+          let sum = 0;
+          this.payArrs.forEach(i=>{
+            console.log(i)
+            sum += i.pyPrice;
+          });
+          LODOP.ADD_PRINT_HTM(document.getElementById('dys').children[2].children[0].scrollHeight+140, 690, '40%', '100%','合计'+sum.toFixed(2));
+        }
+        LODOP.PREVIEW()
+      },
+      //格式化日期  thistime时间  fmt格式
+      formatDate (thistime, fmt) {
+        let $this = new Date(thistime)
+        let o = {
+          'M+': $this.getMonth() + 1,
+          'd+': $this.getDate(),
+          'h+': $this.getHours(),
+          'm+': $this.getMinutes(),
+          's+': $this.getSeconds(),
+          'q+': Math.floor(($this.getMonth() + 3) / 3),
+          'S': $this.getMilliseconds()
+        }
+        if (/(y+)/.test(fmt)) {
+          fmt = fmt.replace(RegExp.$1, ($this.getFullYear() + '').substr(4 - RegExp.$1.length))
+        }
+        for (var k in o) {
+          if (new RegExp('(' + k + ')').test(fmt)) {
+            fmt = fmt.replace(RegExp.$1, (RegExp.$1.length === 1) ? (o[k]) : (('00' + o[k]).substr(('' + o[k]).length)))
+          }
+        }
+        return fmt;
+      },
+      AddPrintContent: function(sj) {
+        let LODOP = getLodop();
+        LODOP.ADD_PRINT_TEXT(15, 300, 300, 25, "柿子医院费用明细");
+        LODOP.SET_PRINT_STYLEA(1, "FontName", "隶书");
+        LODOP.SET_PRINT_STYLEA(1, "FontSize", 15);
+        LODOP.SET_PRINT_STYLEA(1, "FontColor", 0);
+        LODOP.ADD_PRINT_TEXT(55, 50, 831, 20, "   患者姓名:" + this.payObj.ptName + "                                              住院号:" + this.payObj.ptNo);
+        LODOP.SET_PRINT_STYLEA(2, "FontName", "隶书");
+        LODOP.SET_PRINT_STYLEA(2, "FontSize", 10);
+        LODOP.ADD_PRINT_TEXT(75, 50, 831, 20, "   住院日期:" + this.payObj.ptInDate + "                                    出院日期:" + this.payObj.ptOutDate);
+        LODOP.SET_PRINT_STYLEA(3, "FontName", "隶书");
+        LODOP.SET_PRINT_STYLEA(3, "FontSize", 10);
+        LODOP.ADD_PRINT_TEXT(95, 50, 431, 20, "   打印日期:" + sj);
+        LODOP.SET_PRINT_STYLEA(4, "FontName", "隶书");
+        LODOP.SET_PRINT_STYLEA(4, "FontSize", 10);
+      },
+
+      costTabsClicks(){
+        if(this.costTabss == '全部费用'){
+          this.isShowCostTables = true;
+          this.axios.post("select-by-ptNo",{ptNo:this.payObj.ptNo,payWhere:this.doctorEnjoinWheres}).then((v)=>{//查询病人缴费记录
+            this.patientCostArr = v.data;
+            console.log(v.data)
+          });
+        }else if(this.costTabss != '全部费用' && this.costTabss != '病人缴费'){
+          this.isShowCostTables = true;
+          this.axios.post("select-by-ptNo",{ptNo:this.payObj.ptNo,text:this.costTabss,payWhere:this.doctorEnjoinWheres}).then((v)=>{//查询病人缴费记录
+            this.patientCostArr = v.data;
+          });
+        }else{
+          this.isShowCostTables = false;
+          this.axios.post( "select-pay-byPtId", {ptNo: this.payObj.ptNo,payWhere:this.doctorEnjoinWheres}).then((v) => {//查询病人缴费记录
+            this.payArrs = v.data;
+          });
+        }
+      },
+      //根据住院编号查询所有操作员
+      patientSelectStaff(ptNo){
+        this.axios({url:"selectBy-ptno-staff",params:{ptNo:ptNo}}).then((v)=>{
+          console.log(v.data)
+          this.staffArr = v.data;//员工数组
+        });
+      },
+
       //新增确定出院
       addDischargeHT(){
         if(this.patientBaseObj.ptNo == ''){

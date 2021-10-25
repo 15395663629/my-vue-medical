@@ -1018,7 +1018,7 @@ export default{
         })
         return;
       }
-
+      this.doctorEnjoinObj.sId = this.staff.sid;
       this.doctorEnjoinObj.ptNo = this.patientBaseObj.ptNo;
       this.axios.post('add-doctorEnjoin',this.doctorEnjoinObj).then((v)=>{
         if(v.data){

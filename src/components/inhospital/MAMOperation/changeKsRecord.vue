@@ -1,7 +1,7 @@
 <template>
   <el-row>
     <el-col :offset="2" :span="3">
-      <el-input @blur="initChangeKsRecord" size="mini" v-model="doctorEnjoinWhere.searchLike" placeholder="药品名称"></el-input>
+      <el-input @blur="initChangeKsRecord" size="mini" v-model="doctorEnjoinWhere.searchLike" placeholder="科室名称"></el-input>
     </el-col>
     <el-col :span="1" >
       <el-button  size="mini" @click="initChangeKsRecord" icon="el-icon-search" type="primary" ></el-button>
