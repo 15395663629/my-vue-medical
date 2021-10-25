@@ -1,5 +1,5 @@
 <template><!-- 药品缴费 -->
-  {{}}
+  {{}}20211025160011119
   <el-row>
     <el-col :span="10"  style="margin-top: 10px">
       <el-row >
@@ -148,14 +148,11 @@
           <el-table-column fixed  label="操作" width="80px" align="center">
             <template #default="scope">
               <el-tooltip content="打印小票" >
-                <el-button v-print='"xxx"' size="mini" type="success" icon="el-icon-printer" circle
-                    @click="handleEdit(scope.$index, scope.row)"></el-button>
+                <el-button  size="mini" type="success" icon="el-icon-printer" circle
+                    @click="onStart(scope.row)"></el-button>
               </el-tooltip>
             </template>
           </el-table-column>
-          <div id="xxx">
-            xxx
-          </div>
           </el-table>
         <!--分页插件-->
         <el-pagination  @size-change="wardHandleSizeChange" @current-change="wardHandleCurrentChange"
@@ -167,19 +164,46 @@
                         :total="rightList.length">
         </el-pagination>
       </el-row>
-
     </el-col>
-
   </el-row>
-
+<!--暂时没用到-->
+<!--  <el-dialog title="其他&缴费"  top="130px" v-model="isShowQtjf" width="28%" :before-close="resetForm">-->
+<!--    <el-form  :model="priceVO" :rules="rules" rsu ref="regArr" label-width="100px" size="small" class="demo-ruleForm">-->
+<!--      <el-form-item label="实收金额：" label-width="100px" prop="shPrice">-->
+<!--        <el-input type="text" size="small" v-model="priceVO.shPrice" onkeyup="value=value.replace(/[^\d]/g,'')"></el-input>-->
+<!--      </el-form-item>-->
+<!--      <el-form-item label="找零：" label-width="100px" >-->
+<!--        {{handleClose()}}-->
+<!--      </el-form-item>-->
+<!--      <span class="dialog-footer" style="margin-left:240px">-->
+<!--        <el-button @click="resetForm" size="small" >取 消</el-button>-->
+<!--        <el-button type="primary" @click="shPriceUp('regArr')" size="small">确 定</el-button>-->
+<!--      </span>-->
+<!--    </el-form>-->
+<!--  </el-dialog>-->
 
 </template>
 
 <script>
+import {getLodop} from "../../js/LodopFuncs";
 import { h } from 'vue'
 	export default {
 		data() {
 			return {
+			  /*暂时没用到*/
+        // priceVO:{
+        //   shPrice:null,
+        //   zlPrice:this.handleClose,
+        // },
+        // rules: {//金额校验
+        //   shPrice:[
+        //     {required: true, message: "实收金额不能为空", trigger: 'blur'}
+        //   ]
+        // },
+        // isShowQtjf:false,
+        //判断打印显示开关
+        isShowJFMX:false,
+        //判断缴费卡缴还是其他缴
         radioSf:2,
 				//输入text
 				leftText:'',
@@ -268,13 +292,136 @@ import { h } from 'vue'
         token:[],//操作人员
         //获取缴费人员的
         mcCardNumber:{},
-        sums:0,
+        sums:0,//获取到的总金额
         wardCurrentPage:1,//分页属性
         wardPageSize:4,
-        sumsa:0,
+        sumsa:0,//提交时的总金额
+
+
 			}
 		},
 		 methods: {
+		  //打印
+       //==============================打印
+       onStart: function(row) {
+         const LODOP = getLodop()
+         LODOP.PRINT_INIT('');
+         var strStyle =
+             "<style> table,td,th {border-bottom: 1px solid black;border-collapse: collapse;margin:5px 0px;text-align: center;}<style>"
+         this.AddPrintContent(this.formatDate(new Date(),"yyyy年MM月dd日 hh:ss:mm"),row)
+         LODOP.PREVIEW()
+       },
+      //格式化日期  thistime时间  fmt格式
+       formatDate (thistime, fmt) {
+         let $this = new Date(thistime)
+         let o = {
+           'M+': $this.getMonth() + 1,
+           'd+': $this.getDate(),
+           'h+': $this.getHours(),
+           'm+': $this.getMinutes(),
+           's+': $this.getSeconds(),
+           'q+': Math.floor(($this.getMonth() + 3) / 3),
+           'S': $this.getMilliseconds()
+         }
+         if (/(y+)/.test(fmt)) {
+           fmt = fmt.replace(RegExp.$1, ($this.getFullYear() + '').substr(4 - RegExp.$1.length))
+         }
+         for (var k in o) {
+           if (new RegExp('(' + k + ')').test(fmt)) {
+             fmt = fmt.replace(RegExp.$1, (RegExp.$1.length === 1) ? (o[k]) : (('00' + o[k]).substr(('' + o[k]).length)))
+           }
+         }
+         return fmt;
+       },
+       AddPrintContent: function(sj,row) {
+         let LODOP = getLodop();
+         LODOP.ADD_PRINT_TEXT(15, 300, 300, 25, "柿子医院项目费用明细");
+         LODOP.SET_PRINT_STYLEA(1, "FontName", "隶书");
+         LODOP.SET_PRINT_STYLEA(1, "FontSize", 15);
+         LODOP.SET_PRINT_STYLEA(1, "FontColor", 0);
+         LODOP.ADD_PRINT_TEXT(55, 50, 831, 20, "   患者姓名:" +
+             row.medicalRecordObject.sickObject.sickName + "                          " +
+             "                          就诊时间:" + row.medicalRecordObject.mrSection);
+         LODOP.SET_PRINT_STYLEA(2, "FontName", "隶书");
+         LODOP.SET_PRINT_STYLEA(2, "FontSize", 10);
+         LODOP.ADD_PRINT_TEXT(75, 50, 831, 20, "   就诊号:" + row.medicalRecordObject.mrCount + "                      " +
+             "                     结束时间:" + row.medicalRecordObject.mrOverTime);
+         LODOP.SET_PRINT_STYLEA(3, "FontName", "隶书");
+         LODOP.SET_PRINT_STYLEA(3, "FontSize", 10);
+         LODOP.ADD_PRINT_TEXT(95, 50, 831, 20, "   打印日期:" +sj+"                                   "+"操作人:"+row.paymentList[0].pmSname);
+         LODOP.SET_PRINT_STYLEA(4, "FontName", "隶书");
+         LODOP.SET_PRINT_STYLEA(4, "FontSize", 10);
+         LODOP.ADD_PRINT_TEXT(110, 50, 1000, 25, "———————————————————————————————————————————————————————");
+         LODOP.SET_PRINT_STYLEA(5, "FontName", "隶书");
+         LODOP.SET_PRINT_STYLEA(5, "FontSize", 10);
+
+         LODOP.ADD_PRINT_TEXT(130, 50, 300, 25,  "项目收费明细：");
+         LODOP.SET_PRINT_STYLEA(6, "FontName", "隶书");
+         LODOP.SET_PRINT_STYLEA(6, "FontSize", 15);
+         LODOP.SET_PRINT_STYLEA(6, "FontColor", 0);
+         //********************西药处方
+         LODOP.ADD_PRINT_TEXT(300, 50, 300, 25,  "西药处方：");
+         LODOP.SET_PRINT_STYLEA(7, "FontName", "隶书");
+         LODOP.SET_PRINT_STYLEA(7, "FontSize", 10);
+         LODOP.SET_PRINT_STYLEA(7, "FontColor", 0);
+         if(row.recipeObject.xpList[0].rdNumber !=0){
+           let height1 = 320;
+           row.recipeObject.xpList.forEach(i=>{
+             LODOP.ADD_PRINT_TEXT(height1, 50, 300, 25,  i.rdName +"     "+ i.rdPrice+"元");
+             LODOP.SET_PRINT_STYLEA(7, "FontName", "隶书");
+             LODOP.SET_PRINT_STYLEA(7, "FontSize", 10);
+             LODOP.SET_PRINT_STYLEA(7, "FontColor", 0);
+             height1 = height1 + 25;
+           })
+         }
+         //********************中药处方
+         LODOP.ADD_PRINT_TEXT(300, 500, 300, 25,  "中药处方：");
+         LODOP.SET_PRINT_STYLEA(8, "FontName", "隶书");
+         LODOP.SET_PRINT_STYLEA(8, "FontSize", 10);
+         LODOP.SET_PRINT_STYLEA(8, "FontColor", 0);
+         if(row.recipeObject.zpList[0].zpNumber !=0){
+           let height2 = 320;
+           row.recipeObject.zpList.forEach(i=>{
+             LODOP.ADD_PRINT_TEXT(height2, 500, 300, 25,  i.zpName +"     "+ i.zpPrice+"元");
+             LODOP.SET_PRINT_STYLEA(8, "FontName", "隶书");
+             LODOP.SET_PRINT_STYLEA(8, "FontSize", 10);
+             LODOP.SET_PRINT_STYLEA(8, "FontColor", 0);
+             height2 = height2 + 25;
+           })
+         }
+         //********************体检处方
+         LODOP.ADD_PRINT_TEXT(150, 50, 300, 25,  "体检处方：");
+         LODOP.SET_PRINT_STYLEA(7, "FontName", "隶书");
+         LODOP.SET_PRINT_STYLEA(7, "FontSize", 10);
+         LODOP.SET_PRINT_STYLEA(7, "FontColor", 0);
+         if(row.tjManResultList[0].manResultId !=0){
+           let height3 = 170;
+           row.tjManResultList.forEach(i=>{
+             LODOP.ADD_PRINT_TEXT(height3, 50, 300, 25,  i.pro.checkName +"     "+ i.pro.checkPay+"元");
+             LODOP.SET_PRINT_STYLEA(7, "FontName", "隶书");
+             LODOP.SET_PRINT_STYLEA(7, "FontSize", 10);
+             LODOP.SET_PRINT_STYLEA(7, "FontColor", 0);
+             height3 = height3 + 25;
+           })
+         }
+         //********************手术处方
+         LODOP.ADD_PRINT_TEXT(150, 500, 300, 25,  "手术处方：");
+         LODOP.SET_PRINT_STYLEA(8, "FontName", "隶书");
+         LODOP.SET_PRINT_STYLEA(8, "FontSize", 10);
+         LODOP.SET_PRINT_STYLEA(8, "FontColor", 0);
+         if(row.centerSurgeryList[0].susId !=0){
+           let height4 = 170;
+           row.centerSurgeryList.forEach(i=>{
+             LODOP.ADD_PRINT_TEXT(height4, 500, 300, 25,  i.ssObject.projectName +"     "+ i.ssObject.projectPay+"元");
+             LODOP.SET_PRINT_STYLEA(8, "FontName", "隶书");
+             LODOP.SET_PRINT_STYLEA(8, "FontSize", 10);
+             LODOP.SET_PRINT_STYLEA(8, "FontColor", 0);
+             height4 = height4 + 25;
+           })
+         }
+
+       },
+
 		  /*搜索输入*/
 		   selectRecord(){
          if(this.leftText!=null && this.leftText != ''){
@@ -390,10 +537,10 @@ import { h } from 'vue'
            row.centerSurgeryList.forEach((drug,i)=>{//循环判断总价钱
              sum3 += drug.ssObject.projectPay;
            })
-           this.ssObject.xmNumber = row.recipeObject.recipeNumber;
+           this.ssObject.xmNumber = row.surgeryStampObject.susNumber;
            this.ssObject.xmName="手术项目";
            this.ssObject.xmSum = sum3;
-           this.ssObject.xmText = row.recipeObject.zpNotes;
+           this.ssObject.xmText = row.surgeryStampObject.susText;
            row.centerSurgeryList.forEach((b,i)=>{
              if(b.susPayState==0){
                //清空数组
@@ -469,6 +616,7 @@ import { h } from 'vue'
              })
 
            }else{
+             // this.isShowQtjf=true;//没用到了
              this.$msgbox({
                title: '消息',
                message: h('p', null, [
@@ -528,7 +676,16 @@ import { h } from 'vue'
                    message: '您卡上余额：“'+this.mcCardNumber.mcBalance+'”元，不足以完成此次的缴费，请及时充值~'
                  });
               }
-           };
+           }else{
+             this.$message({
+               showClose: true,
+               type: 'success',
+               message: '缴费成功,本次缴费“'+this.leftRecordObject.mrTotalMoney+'”元，请注意查收'
+             });
+             this.leftText='';
+             this.resultAllVo();
+             this.selectRecordsAll();
+           }
          }).catch();
 		   },
        //密码查询
@@ -643,6 +800,53 @@ import { h } from 'vue'
          this.wardCurrentPage = currentPage;
          console.log(this.currentPage) //点击第几页allDescSick
        },
+       //格式化日期  thistime时间  fmt格式
+       formatDate (thistime, fmt) {
+         let $this = new Date(thistime)
+         let o = {
+           'M+': $this.getMonth() + 1,
+           'd+': $this.getDate(),
+           'h+': $this.getHours(),
+           'm+': $this.getMinutes(),
+           's+': $this.getSeconds(),
+           'q+': Math.floor(($this.getMonth() + 3) / 3),
+           'S': $this.getMilliseconds()
+         }
+         if (/(y+)/.test(fmt)) {
+           fmt = fmt.replace(RegExp.$1, ($this.getFullYear() + '').substr(4 - RegExp.$1.length))
+         }
+         for (var k in o) {
+           if (new RegExp('(' + k + ')').test(fmt)) {
+             fmt = fmt.replace(RegExp.$1, (RegExp.$1.length === 1) ? (o[k]) : (('00' + o[k]).substr(('' + o[k]).length)))
+           }
+         }
+         return fmt;
+       },
+       //结算找零
+       // handleClose() {
+       //   this.priceVO.zlPrice=(this.priceVO.shPrice - this.leftRecordObject.mrTotalMoney);
+       //   return this.priceVO.zlPrice;
+       // },
+       // // 充值找零弹窗
+       // resetForm(){
+       //   this.isShowQtjf=false;
+       //   this.priceVO={
+       //     shPrice:null,
+       //     zlPrice:this.handleClose,
+       //   };
+       //   this.$refs['regArr'].resetFields();
+       // },
+       // //收费提交
+       // shPriceUp(form){
+       //   this.$refs[form].validate((valid)=>{
+       //     if (valid) {
+       //       this.forPrinting();
+       //     } else {
+       //       console.log('error submit!!');
+       //       return false;
+       //     }
+       //   });
+       // },
 		},
 		created(){
       this.token= this.$store.state.token == null ? null : this.$store.state.token.list;//将登录存入的值在取出来

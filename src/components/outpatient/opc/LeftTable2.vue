@@ -10,7 +10,7 @@
   <el-col><!-- ================================================== 左下 第二个table ==================================================-->
     <el-table highlight-current-row  size="mini"  @cell-dblclick="rightPassBack"	 :data="leftTable" style="width: 100%" height="530">
       <el-table-column fixed  label="序号" align="center" prop="medicalRecordObject.mrNumber" width="70"></el-table-column>
-      <el-table-column fixed label="就诊信息" align="center" width="200" >
+      <el-table-column fixed label="就诊信息" align="center" width="180" >
         <template #default="scope">
           <el-popover effect="light" trigger="hover" placement="top" width="210px" >
             <template #default>
@@ -18,6 +18,7 @@
               <p>年龄： {{ scope.row.medicalRecordObject.sickObject.sickAge }}</p>
               <p>性别： {{ scope.row.medicalRecordObject.sickObject.sickSex }}</p>
               <p>身份证： {{ scope.row.medicalRecordObject.sickObject.sickIdCard }}</p>
+              <p>就诊卡号：{{ scope.row.medicalRecordObject.mrMcCard }}</p>
             </template>
             <template #reference>
               <div class="name-wrapper">
@@ -27,10 +28,10 @@
           </el-popover>
         </template>
       </el-table-column>
-      <el-table-column  fixed label="就诊卡号"  align="center" width="130" >
+      <el-table-column  fixed label="就诊号"  align="center" width="150" >
         <template #default="scope">
           <div class="name-wrapper">
-            <el-tag size="medium">{{ scope.row.medicalRecordObject.mrMcCard }}</el-tag>
+            <el-tag size="medium">{{ scope.row.medicalRecordObject.mrCount}}</el-tag>
           </div>
         </template>
       </el-table-column>
