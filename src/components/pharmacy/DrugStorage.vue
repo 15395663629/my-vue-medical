@@ -21,8 +21,8 @@
         width="180">
     </el-table-column>
     <el-table-column
-        prop="ykWarehouse.ykWareName"
-        label="仓库名称">
+        prop="yfDruginformation.drugUnit"
+        label="药品规格">
     </el-table-column>
     <el-table-column
         prop="ykDrvenBatch"
@@ -33,14 +33,16 @@
         label="生产日期">
     </el-table-column>
     <el-table-column
-        prop="ykSupplier.supplierName"
+        prop="yfDruginformation.ykSupplier.supplierName"
         label="供应商">
     </el-table-column>
     <el-table-column
-        prop="address"
-        label="操作">
+        label="处方药"
+        prop="drugPrescription">
       <template #default="scope">
-        <el-button type="primary" plain size="mini" @click="">调价</el-button>
+        <el-tag>
+          {{scope.row.drugPrescription == 1? '处方药':'非处方'}}
+        </el-tag>
       </template>
     </el-table-column>
   </el-table>

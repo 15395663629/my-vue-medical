@@ -19,8 +19,16 @@
         prop="yfDrvenBatch">
     </el-table-column>
     <el-table-column
+        prop="yfDrvenMftdate"
+        label="生产日期">
+    </el-table-column>
+    <el-table-column
         label="药品库存"
         prop="yfDrvenCount">
+    </el-table-column>
+    <el-table-column
+        prop="yfDruginformation.drugUnit"
+        label="药品规格">
     </el-table-column>
     <el-table-column
         label="药品类别"
@@ -45,7 +53,7 @@
   </el-table>
 <!--  调拨弹窗-->
   <el-dialog v-model="diaoboform" title="调拨申请">
-    <el-form model="ykAllot">
+    <el-form :model="ykAllot" ref="ykAllot" :rules="rules">
       <el-row>
         <el-col :span="12">
           <el-form-item label="调拨编号">
@@ -53,18 +61,18 @@
           </el-form-item>
         </el-col>
         <el-col :span="10" offset="2">
-          <el-form-item label="调拨原因">
+          <el-form-item label="调拨原因"  prop="ykAllotCause">
             <el-input v-model="ykAllot.ykAllotCause" style="width: 215px" />
           </el-form-item>
         </el-col>
         <el-col :span="12">
-          <el-form-item label="调拨日期">
+          <el-form-item label="调拨日期" prop="ykAllotTime">
             <el-date-picker v-model="ykAllot.ykAllotTime" :picker-options="pickerOptions"
                               clearable placeholder="选择调拨时间" type="date"/>
           </el-form-item>
         </el-col>
         <el-col :span="10" offset="4">
-          <el-form-item label="经手人">
+          <el-form-item label="经手人" prop="sId">
             <el-select v-model="ykAllot.sId" placeholder="选择经手人">
               <el-option v-for="stall in stallform"
                          :label="stall.sname"
@@ -90,7 +98,7 @@
       </el-table-column>
       <el-table-column label="数量" width="150">
         <template #default="scope">
-          <el-input-number v-model="scope.row.yfNumbers" mix="1" size="mini"/>
+            <el-input-number v-model="scope.row.yfNumbers"  mix="1" size="mini"/>
         </template>
       </el-table-column>
     </el-table>
@@ -110,8 +118,12 @@
       <el-table-column prop="ykSelingprice" label="药品售价"/>
       <el-table-column prop="ykDrvenCount" label="药品库存"/>
       <el-table-column prop="ykDrvenBatch" label="药品批次"/>
+      <el-table-column prop="yfDruginformation.drugUnit" label="规格"/>
       <el-table-column prop="ykDrvenMftdate" label="生产日期"/>
-      <el-table-column prop="ykSupplier.supplierName" label="供应商"/>
+      <el-table-column
+          label="供应商"
+          prop="yfDruginformation.ykSupplier.supplierName">
+      </el-table-column>
     </el-table>
     <template #footer>
 			    <span class="dialog-footer">
@@ -175,6 +187,23 @@ export default {
           }
         }
       },
+      //校验
+      rules: {
+        ykAllotCause: [
+          {required: true, message: '请输入调拨原因', trigger: 'blur'},
+        ],
+        ykAllotTime: [
+          {
+            type: 'date',
+            required: true,
+            message: '请选择调拨时间',
+            trigger: 'change',
+          },
+        ],
+        sId: [
+          { required: true, message: '请选择经手人', trigger: 'change' },
+        ],
+      }
     }
   },
   methods:{

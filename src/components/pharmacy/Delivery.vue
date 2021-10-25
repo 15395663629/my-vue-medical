@@ -29,7 +29,7 @@
 
 <!-- ==========================================调拨记录表========================================= -->
     <el-col>
-      <el-dialog title="调拨记录表" v-model="jiluFrom">
+      <el-dialog title="调拨记录" v-model="jiluFrom">
         <el-table :data="ykStorge.slice((currentPage-1)*pagesize,currentPage*pagesize)">
           <el-table-column property="ykStorageId" label="调拨编号"/>
           <el-table-column property="ykStorageCause" label="调拨原因"/>
@@ -144,12 +144,11 @@
         this.axios.post("YK-repertory").then((v)=>{
           this.repertory = v.data;
         })
-        //查询出入库
-        this.axios.post("allStorage").then((v)=>{
-          this.ykStorge = v.data
-        })
+      },
+      //查询出库记录
+      getDaaa(ykStorageId){
         //查询出入库详表
-        this.axios.post("allstoragedetail").then((v)=>{
+        this.axios({url:"allstoragedetail",params:{ykStorageId:ykStorageId}}).then((v)=>{
           this.ykStorgeDetaile = v.data
         })
       },
@@ -174,12 +173,17 @@
       //调拨记录的弹窗
       jiluFromm(){
         this.jiluFrom = true;
+        //查询出入库
+        this.axios.post("allStorage").then((v)=>{
+          this.ykStorge = v.data
+        })
       },
       //调拨记录详细的弹窗
       jiluxiangFromm(row){
         this.jiluxiangFrom = true;
+
         //this.ykStorgeDetaile = row.ykStorageDetails
-        this.getData(row.ykAllotId)
+        this.getDaaa(row.ykStorageId)
       }
     },
     created() {

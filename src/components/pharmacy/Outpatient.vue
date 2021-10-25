@@ -1,5 +1,8 @@
 <template>
   <h1>门诊发药</h1>
+  <el-col span="2">
+    <el-button type="submit" @click="jiluFromm()" size="mini">查看发药记录</el-button>
+  </el-col>
   <el-table
       :data="MzRecipe.slice((currentPage-1)*pagesize,currentPage*pagesize)"
       stripe
@@ -50,6 +53,30 @@
       </el-tab-pane>
     </el-tabs>
   </el-dialog>
+  <el-col>
+    <el-dialog title="发药记录" v-model="jiluFrom">
+      <el-table :data="fayaojilu.slice((currentPage-1)*pagesize,currentPage*pagesize)">
+        <el-table-column property="yfDisDate" label="发药时间"/>
+        <el-table-column property="yfDisGo" label="药品去向"/>
+
+        <el-table-column property="yfDruginformation.drugName" label="药品名称"/>
+        <el-table-column property="yfDisDurgCount" label="发药数量"/>
+
+        <el-table-column property="yfDrvenBatch" label="发药批次"/>
+      </el-table>
+      <!-- 分页 -->
+      <el-pagination
+          style="text-align: center"
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+          :current-page="currentPage"
+          :page-sizes="[5, 10, 20, 40]"
+          :page-size="pagesize"
+          layout="total, sizes, prev, pager, next, jumper"
+          :total="fayaojilu.length">
+      </el-pagination>
+    </el-dialog>
+  </el-col>
   <!-- 分页 -->
   <el-pagination
       style="text-align: center"
@@ -72,8 +99,10 @@ export default {
       MzRecipe: [],//处方单
       zy:[],
       xy:[],
+      fayaojilu:[],//发药记录
       mzzy:false,
       card:'中药',
+      jiluFrom:false,//发药记录的弹窗
     }
   },
   methods: {
@@ -86,8 +115,6 @@ export default {
       console.log(this.currentPage)  //点击第几页
     },
     getData(recipeNumber) {
-
-
       //查询门诊发药西药
       this.axios({url:"allmzxy",params:{recipeNumber:recipeNumber}}).then((v)=>{
         this.xy = v.data
@@ -123,6 +150,14 @@ export default {
       this.getData(row.recipeNumber);
       // this.zy = row.zpList;
       // this.xy = row.xpList;
+    },
+    //发药记录的弹窗
+    jiluFromm(){
+      this.jiluFrom = true;
+      //查询发药记录
+      this.axios.post("allyfdisng").then((v)=>{
+        this.fayaojilu = v.data
+      })
     },
     handleClick(tab, event) {
       console.log(tab, event)

@@ -5,20 +5,20 @@
       <!-- 新增弹窗 -->
       <el-button type="primary" @click="gysxinzeng()" size="small">新增供应商</el-button>
       <el-dialog @close="clearform" title="新增供应商信息" v-model="dialogFormVisible" width="40%">
-        <el-form :model="formSipplier">
-          <el-form-item label="供应商编号" :label-width="formLabelWidth">
+        <el-form :model="formSipplier" ref="formSipplier" :rules="rules">
+          <el-form-item label="供应商编号" :label-width="formLabelWidth" >
             <el-input v-model="formSipplier.supplierId" disabled autocomplete="off" style="width: 240px;"></el-input>
           </el-form-item>
-          <el-form-item label="供应商名称" :label-width="formLabelWidth">
+          <el-form-item label="供应商名称" :label-width="formLabelWidth" prop="supplierName">
             <el-input v-model="formSipplier.supplierName" autocomplete="off" style="width: 240px;"></el-input>
           </el-form-item>
-          <el-form-item label="供应商地址" :label-width="formLabelWidth">
+          <el-form-item label="供应商地址" :label-width="formLabelWidth" prop="supplierSite">
             <el-input v-model="formSipplier.supplierSite" type="textarea" autocomplete="off" style="width: 240px;"></el-input>
           </el-form-item>
-          <el-form-item label="供应商电话" :label-width="formLabelWidth">
-            <el-input v-model="formSipplier.supplierPhone" type="text" autocomplete="off" style="width: 240px;"></el-input>
+          <el-form-item label="供应商电话" :label-width="formLabelWidth" prop="supplierPhone" >
+            <el-input v-model.number="formSipplier.supplierPhone" type="text" autocomplete="off" style="width: 240px;"></el-input>
           </el-form-item>
-          <el-form-item label="供应商联系人" :label-width="formLabelWidth">
+          <el-form-item label="供应商联系人" :label-width="formLabelWidth" prop="supplierLinkman">
             <el-input v-model="formSipplier.supplierLinkman" type="text" autocomplete="off" style="width: 240px;"></el-input>
           </el-form-item>
         </el-form>
@@ -56,7 +56,9 @@
     </el-col>
   </el-row>
   <!-- 供应商表格 -->
-  <el-table :data="tableData.filter(data => !search || data.supplierName.toLowerCase().includes(search.toLowerCase())).slice((currentPage-1)*pagesize,currentPage*pagesize)"
+  <el-table :data="tableData.filter(data => !search || data.supplierName.toLowerCase().includes(search.toLowerCase()))
+                            .filter(data => !search || data.supplierSite.toLowerCase().includes(search.toLowerCase()))
+                            .slice((currentPage-1)*pagesize,currentPage*pagesize)"
             stripe  style="width: 100%">
     <el-table-column label="供应商编号" prop="supplierId" >
     </el-table-column>
@@ -110,6 +112,22 @@ export default {
       formLabelWidth: '',
       currentPage:1, //初始页
       pagesize:8,    //    每页的数据
+      //校验
+      rules: {
+        supplierName: [
+          {required: true, message: '请输入供应商名称', trigger: 'blur'},
+        ],
+        supplierSite: [
+          {required: true, message: '请输入供应商地址', trigger: 'blur'},
+        ],
+        supplierPhone: [
+          {required: true, message: '请输入供应商电话', trigger: 'blur'},
+          { type: 'number',  message: '请输入数字'}
+        ],
+        supplierLinkman: [
+          {required: true, message: '请输入供应商联系人', trigger: 'blur'},
+        ],
+      },
     }
   },
   methods: {
