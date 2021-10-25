@@ -56,7 +56,9 @@
     </el-col>
   </el-row>
   <!-- 供应商表格 -->
-  <el-table :data="tableData.filter(data => !search || data.supplierName.toLowerCase().includes(search.toLowerCase())).slice((currentPage-1)*pagesize,currentPage*pagesize)"
+  <el-table :data="tableData.filter(data => !search || data.supplierName.toLowerCase().includes(search.toLowerCase()))
+                            .filter(data => !search || data.supplierSite.toLowerCase().includes(search.toLowerCase()))
+                            .slice((currentPage-1)*pagesize,currentPage*pagesize)"
             stripe  style="width: 100%">
     <el-table-column label="供应商编号" prop="supplierId" >
     </el-table-column>

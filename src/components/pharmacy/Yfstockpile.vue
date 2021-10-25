@@ -19,8 +19,16 @@
         prop="yfDrvenBatch">
     </el-table-column>
     <el-table-column
+        prop="yfDrvenMftdate"
+        label="生产日期">
+    </el-table-column>
+    <el-table-column
         label="药品库存"
         prop="yfDrvenCount">
+    </el-table-column>
+    <el-table-column
+        prop="yfDruginformation.drugUnit"
+        label="药品规格">
     </el-table-column>
     <el-table-column
         label="药品类别"
@@ -90,7 +98,7 @@
       </el-table-column>
       <el-table-column label="数量" width="150">
         <template #default="scope">
-          <el-input-number v-model="scope.row.yfNumbers" mix="1" size="mini"/>
+            <el-input-number v-model="scope.row.yfNumbers"  mix="1" size="mini"/>
         </template>
       </el-table-column>
     </el-table>
@@ -110,8 +118,12 @@
       <el-table-column prop="ykSelingprice" label="药品售价"/>
       <el-table-column prop="ykDrvenCount" label="药品库存"/>
       <el-table-column prop="ykDrvenBatch" label="药品批次"/>
+      <el-table-column prop="yfDruginformation.drugUnit" label="规格"/>
       <el-table-column prop="ykDrvenMftdate" label="生产日期"/>
-      <el-table-column prop="ykSupplier.supplierName" label="供应商"/>
+      <el-table-column
+          label="供应商"
+          prop="yfDruginformation.ykSupplier.supplierName">
+      </el-table-column>
     </el-table>
     <template #footer>
 			    <span class="dialog-footer">
