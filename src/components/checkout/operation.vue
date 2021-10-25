@@ -819,20 +819,16 @@ export default {
                 //调用扣钱方法
                 this.updmoney(aa-row.manPhy,row.manSid)
                 this.token =this.$store.state.token//获取当前用户
-                //新增扣钱记录
+                //新增诊疗卡扣费记录
                 this.MzCardBill.cbTime=this.getNowFormatDate
                 this.MzCardBill.cbCause='体检缴费'
                 this.MzCardBill.cbPrice=row.manPhy
                 this.MzCardBill.sId=this.token.list.sid
                 this.MzCardBill.mcNumber=dd
-                this.axios.post('http://localhost:8089/addbill', qs.stringify({MzCardBill:this.MzCardBill}))
-                    .then((v)=>{
-                      if(v.data == 'ok'){
-                      }else{
-                        alert(v.data);
-                      }
-                    }).catch(function(){
-                })
+                console.log(this.MzCardBill)
+                this.axios.post("http://localhost:8089/addbill",{manj:this.MzCardBill}).then((res)=>{
+                }).catch()
+
                 this.aloneg.forEach(v=>{
                   this.Res.push({'checkId':v.checkId,manResult:v.tjCodeIndex,manId:row.manId,sId:this.token.list.sid})
                 })
