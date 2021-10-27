@@ -14,7 +14,7 @@
         :show-file-list="false"
         :on-change="handle"
     >
-      <el-button type="success" style="margin-left: 20px">导入</el-button>
+<!--      <el-button type="success" style="margin-left: 20px">导入</el-button>-->
     </el-upload>
   </div>
 
@@ -23,7 +23,7 @@
 	</div>
   <!-- 表格 -->
   <el-table ref="multipleTable" :data="dept.slice((page-1)*size,page*size)"
-            tooltip-effect="dark" style="width: 100%"
+            tooltip-effect="dark" style="width: 100%; margin-top: 30px"
             class="dome">
     <el-table-column type="selection">
     </el-table-column>

@@ -1122,7 +1122,6 @@
       },
       //添加住院================住院住院住院住院住院住院住院
       addZy(){
-        alert(this.medicalRecordObject.mrNumber)
         this.axios.post('addInHospita',{inhospitalApply:this.zyInhospitalApply,rtNumber:this.rtNumberZy,mrNumber:this.medicalRecordObject.mrNumber}).then((v)=>{
           if(v.data=='ok'){
             this.$message({

@@ -1,5 +1,5 @@
 <template><!-- 药品缴费 -->
-  {{}}20211025160011119
+  {{}}
   <el-row>
     <el-col :span="10"  style="margin-top: 10px">
       <el-row >
@@ -643,14 +643,7 @@ import { h } from 'vue'
                  }
                },
              }).then((action) => {
-               this.$message({
-                 showClose: true,
-                 type: 'success',
-                 message: '缴费成功,本次缴费“'+this.leftRecordObject.mrTotalMoney+'”元，请注意查收'
-               });
-               this.leftText='';
-               this.resultAllVo();
-               this.selectRecordsAll();
+
              }).catch(()=>{ })
 
            }

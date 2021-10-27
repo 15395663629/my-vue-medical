@@ -261,15 +261,22 @@ export default {
 
     //新增调拨申请
     addykall(){
-      this.ykAllot.yfDruginventories=this.ykAllData;
-      this.axios.post("add-YkAllot",this.ykAllot).then((V)=>{
-        this.$message({
-          message: '成功新增调拨申请',
-          type: 'success'
-        });
-        this.fromdata();
-      this.getData();
+      this.$refs['ykAllot'].validate((s) =>{
+        if(s){
+          this.ykAllot.yfDruginventories=this.ykAllData;
+          this.axios.post("add-YkAllot",this.ykAllot).then((V)=>{
+            this.$message({
+              message: '成功新增调拨申请',
+              type: 'success'
+            });
+            this.fromdata();
+            this.getData();
+          })
+        }else(
+            this.$message('请填写字段')
+        )
       })
+
     },
     getData(){
       //查询药房库存

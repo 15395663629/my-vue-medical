@@ -254,14 +254,14 @@
       },
       // 体检人员预约参数
       getData() {
-        this.axios.get("http://localhost:8089/allMan", {
-          params: {
-            manState: this.manState,
-            sermen: this.serman
-          }
-        }).then((res) => {
-          this.tjman = res.data;
-        }).catch()
+        // this.axios.get("http://localhost:8089/allMan", {
+        //   params: {
+        //     manState: this.manState,
+        //     sermen: this.serman
+        //   }
+        // }).then((res) => {
+        //   this.tjman = res.data;
+        // }).catch()
         //已填写结果
         this.axios.get("http://localhost:8089/allMan2", {
           params: {

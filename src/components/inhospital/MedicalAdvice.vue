@@ -5,7 +5,11 @@
       <el-aside width="350px" style="background-color: #E7ECF1;color: #333;"> <!-- 右边 -->
 
         <el-row style="height: 30px;background-color: #D3DCE6;line-height: 30px">
-          <el-col  :offset="9" :span="14">
+          <el-col :span="3" >
+            <el-button type="success"  @click="pushUrl('/home')"  size="mini">退出</el-button>
+          </el-col>
+
+          <el-col  :offset="6" :span="14">
             护士工作站
           </el-col>
         </el-row>
@@ -555,6 +559,13 @@ export default{
         });
       }
     },
+    pushUrl(path){/* 页面跳转 */
+      this.$confirm('是否返回主页？').then(_ => {
+        this.$router.push(path);
+      }).catch(_ => {});
+    },
+
+
     //选中病人方法
     async patientChecked(obj) {
       console.log(obj);

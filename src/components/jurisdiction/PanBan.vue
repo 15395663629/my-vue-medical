@@ -88,7 +88,7 @@
 </div>
     <!--    主体结束  -->
     <!--==========================弹框开始===========================-->
-    <el-dialog v-model="dialogVisible" title='新增排班' >
+    <el-dialog v-model="dialogVisible" title='新增排班'  @close="qinchu" >
         <!-- 复选情况下使用 check-strictly （默认false）使父子不相互关联 -->
        <el-form >
          <el-form-item :label="ksk.ksName">
@@ -228,6 +228,10 @@ export default {
       // }).then((v)=>{
       //
       // }).catch()
+    },
+    qinchu(){
+      this.value1=[]
+      this.value=""
     },
     dome(){
       console.log(this.pbType)

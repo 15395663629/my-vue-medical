@@ -38,10 +38,10 @@
     </el-table-column>
     <el-table-column
         label="处方药"
-        prop="drugPrescription">
+        prop="yfDruginformation.drugPrescription">
       <template #default="scope">
         <el-tag>
-          {{scope.row.drugPrescription == 1? '处方药':'非处方'}}
+          {{scope.row.yfDruginformation.drugPrescription == 1? '处方药':'非处方'}}
         </el-tag>
       </template>
     </el-table-column>

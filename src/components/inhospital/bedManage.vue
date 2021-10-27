@@ -492,8 +492,6 @@
         }
         let is = false;
          await this.axios({url:'wdNameSelectRepetition',params:{wdName:value}}).then((v)=>{
-          // alert(v.data)
-          // console.log(v.data)
           is = v.data;
         }).catch();
 
@@ -509,8 +507,6 @@
         }
         let is = false;
         await this.axios({url:'selectBdNameRepetition',params:{bdName:value}}).then((v)=>{
-          // alert(v.data)
-          // console.log(v.data)
           is = v.data;
         }).catch();
 
@@ -738,7 +734,6 @@
         this.bedChangeRecordObj.sId = this.staff.sid;//将操作员的编号放入
         console.log(this.bedChangeRecordObj);
         this.$refs['bedChangeRecordObjRef'].validate((v)=>{
-          alert(v)
           if (v){
             this.axios.post("bedUpdatePatient",this.bedChangeRecordObj).then((v)=>{
               this.$message({
@@ -788,6 +783,7 @@
         this.PatientXZBedObj.bdPrice = patient.row.bdPrice;
         this.PatientXZBedObj.bdId = patient.row.bdId;
         this.PatientXZBedObj.bdName = patient.row.bdName;
+        // this.bedObj.ksName =
       },
       //关闭住院登记信息表
       closePatientTK(){
@@ -812,7 +808,6 @@
             })
           });
         }else{
-          alert(is == "true")
           this.$confirm("是否将【"+Patient.row.ptName+"】 转入【"+this.PatientXZBedObj.bdName+"】 病床",'确认信息', {
             distinguishCancelAndClose: true,
             confirmButtonText: "确定转入",
@@ -876,6 +871,7 @@
       //添加病床  病房改变时将调用
       bedChangeFunction(row){
 		    console.log(row)
+        this.bedObj.wdId = row.wdId;
 		    this.bedObj.sName = row.staff.sname;
       },
       //打开新增或者修改病床弹框
@@ -919,6 +915,7 @@
           sName:''//护士名称
         };
         this.bedClear();
+        this.selectBedWardArr = [];
         this.$refs['bedObjRef'].resetFields();
       },
       //清空病床弹框数据
@@ -1039,7 +1036,6 @@
 			  if(is == 1){//如果是等于1就说明他不是从弹框那边调用的就需要将员工编号清空
           this.wardObj.sId = '';
         }
-
         this.axios({url:"select-staff-all",params:{ksId:this.wardObj.ksId}}).then((v)=>{//查询所有该科室的员工
           console.log(v.data)
           this.staffArr = v.data;

@@ -24,7 +24,7 @@
               </el-form-item>
             </el-col>
             <el-col :span="10" :offset="1">
-              <el-form-item label-width="80px" label="保质期(月)" prop="drugPastdate" :rules="[{ type: 'number',  message: '请输入数字'}]">
+              <el-form-item label-width="90px" label="保质期(月)" prop="drugPastdate" :rules="[{ required: true, message: '保质期不能为空'},{ type: 'number',  message: '请输入数字'}]">
                 <el-input v-model.number="form.drugPastdate" style="width: 215px" />
               </el-form-item>
             </el-col>
@@ -39,15 +39,15 @@
               <el-form-item label-width="80px"
                             prop="drugBarcode"
                             label="条形码"
-                            :rules="[{ type: 'number',  message: '请输入数字'}]">
+                            :rules="[{ required: true, message: '条形码不能为空'},{ type: 'number',  message: '请输入数字'}]">
                 <el-input v-model.number="form.drugBarcode"  autocomplete="off" style="width: 215px;" ></el-input>
               </el-form-item>
             </el-col>
           </el-row>
           <el-row>
             <el-col :span="10">
-              <el-form-item label-width="80px" label="药品进价" :rules="[{ type: 'number',  message: '输入数字'}]" prop="drugPrice">
-                <el-input v-model.number="form.drugPrice" :min="1" :max="1000" style="width: 215px" label="药品价格"></el-input>
+              <el-form-item label-width="80px" label="药品进价" :rules="[{ required: true, message: '进价不能为空'}]" prop="drugPrice">
+                <el-input v-model="form.drugPrice" onkeyup="value=value.replace(/[^\d^\.]+/g,'').replace('.','$#$').replace(/\./g,'').replace('$#$','.')" style="width: 215px" label="药品价格"></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="10" :offset="1">
@@ -103,20 +103,20 @@
             </el-col>
 
             <el-col v-if="form.drugPrescription == 1" :offset="1" :span="10">
-              <el-form-item label-width="90px" label="小单位名称">
+              <el-form-item label-width="90px" label="小单位名称" prop="drugUnit">
                 <el-input v-model="form.drugUnit" style="width: 215px;"></el-input>
               </el-form-item>
             </el-col>
           </el-row>
           <el-row v-if="form.drugPrescription == 1">
             <el-col :span="10">
-              <el-form-item label-width="90px" label="小单位单价">
-                <el-input v-model="form.drugParticle" style="width: 215px;"/>
+              <el-form-item label-width="90px" label="小单位单价" prop="drugParticle">
+                <el-input v-model="form.drugParticle" onkeyup="value=value.replace(/[^\d^\.]+/g,'').replace('.','$#$').replace(/\./g,'').replace('$#$','.')" style="width: 215px;"/>
               </el-form-item>
             </el-col>
 
             <el-col :span="10" :offset="1">
-              <el-form-item label-width="90px" label="小单位数量">
+              <el-form-item label-width="90px" label="小单位数量" prop="drugQuantity">
                 <el-input v-model="form.drugQuantity" style="width: 215px;"/>
               </el-form-item>
             </el-col>
@@ -238,8 +238,6 @@
           drugUpper:'',
           drugRemark:'',
           drugUnit:'',
-          yfDrcaId:'',
-          ykSpecId:'',
           drugSpecification:'',
           supplierId:'',
           drugPastdate:'',
@@ -256,7 +254,7 @@
         rules: {
           drugName: [
             { required: true, message: '请输入药品名', trigger: 'blur' },
-              ]
+          ]
         },
 
       }
@@ -296,13 +294,23 @@
       },
       /*新增药品*/
       addPharmacy(){
-        console.log(this.form)
-        this.axios.post("yp-add",this.form).then((v)=>{
-            this.getData();
-            this.fromdata();
-        }).catch(function (){
+        this.$refs['form'].validate((v) =>{
+          if(v){
+            this.axios.post("yp-add",this.form).then((v)=>{
+              this.$message({
+                message: '操作成功',
+                type: 'success'
+              });
+              this.getData();
+              this.fromdata();
+            }).catch(function (){
 
+            })
+          }else(
+              this.$message('请填写字段')
+          )
         })
+
       },
       updatePharmacy(row){
             this.form.drugId = row.drugId;
@@ -335,12 +343,10 @@
           drugUsage:'',
           ykSpecId:'',
           ykSupplierId:'',
-          yfDrcaId:'',
           drugUpper:'',
           drugRemark:'',
           drugUnit:'',
           yfDrcaId:'',
-          ykSpecId:'',
           drugSpecification:'',
           supplierId:'',
           drugPastdate:'',

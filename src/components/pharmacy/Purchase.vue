@@ -275,10 +275,18 @@
       },
       /*添加计划*/
       insertPuchase(){
-        this.caigou.ykDrugpurchasePlanDetails=this.gridData
-        this.axios.post("add-plan",this.caigou).then((v)=>{
-          this.getData()
-          this.fromdata()
+        this.$refs['caigou'].validate((s) =>{
+          if(s){
+            this.caigou.ykDrugpurchasePlanDetails=this.gridData
+            this.axios.post("add-plan",this.caigou).then((v)=>{
+              this.getData()
+              this.fromdata()
+            }).catch(function (){
+
+            })
+          }else(
+              this.$message('请填写字段')
+          )
         })
       },
       handleClick(row) {

@@ -4,7 +4,7 @@
 			<el-row type="flex" justify="space-between">
 				<el-col :span="20" style="line-height: 40px">
 					<router-link to="/home" style=" margin-top: 0px; font-size: 20px;font-weight: 900; color: white;">
-						🍅🍅🐟医院管理系统
+						柿子医院管理系统
 					</router-link>
 				</el-col>
 				<el-col :span="3">

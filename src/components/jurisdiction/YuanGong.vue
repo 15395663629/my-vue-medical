@@ -414,8 +414,9 @@ import qs from 'qs'
         this.from.uPswd = row.user.upswd
         this.from.tId = row.t.tid
         this.from.deptid = row.dept.deId
-        this.from.ksId = row.ks.ksId
+        this.from.ksId = row.ks.ksName
         this.ksDeId(row.ks.ksId);
+
         this.from.sSore=row.ssore
         this.from.sPhone=row.sphone
         this.from.uId=row.user.uid

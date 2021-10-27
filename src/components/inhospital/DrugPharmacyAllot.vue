@@ -111,11 +111,6 @@
 
       </el-tab-pane>
 
-      <el-tab-pane name="临时医嘱发药" :key="'临时医嘱发药'" label="临时医嘱发药">
-
-      </el-tab-pane>
-
-
     </el-tabs>
   </el-main>
 

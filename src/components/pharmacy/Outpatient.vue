@@ -54,11 +54,12 @@
     </el-tabs>
   </el-dialog>
   <el-col>
-    <el-dialog title="发药记录" v-model="jiluFrom">
+    <el-dialog title="发药记录" v-model="jiluFrom" width="80%">
       <el-table :data="fayaojilu.slice((currentPage-1)*pagesize,currentPage*pagesize)">
         <el-table-column property="yfDisDate" label="发药时间"/>
         <el-table-column property="yfDisGo" label="药品去向"/>
 
+        <el-table-column property="drugId" label="药品编号"/>
         <el-table-column property="yfDruginformation.drugName" label="药品名称"/>
         <el-table-column property="yfDisDurgCount" label="发药数量"/>
 

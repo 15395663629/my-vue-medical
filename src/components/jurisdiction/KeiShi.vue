@@ -46,7 +46,7 @@
 	<el-dialog title="科室管理" v-model="dialogVisible1" width="30%" @close="qc">
 		科室名称：<el-input type="text" style="width: 40%;" v-model="ksName"></el-input><br />
 		部&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;门 ：<el-select v-model="value" placeholder="请选择"
-			style="width: 20%;margin-top:20px;" @change="dome($event)">
+			style="width: 200px;margin-top:20px;" @change="dome($event)">
 			<el-option v-for="item in dplist" :key="item.deId" :label="item.deName" :value="item.deId" >
 
 			</el-option>
@@ -131,6 +131,7 @@ import  qs from 'qs'
         this.ks.ksName =this.ksName
         this.ks.ksDz=this.ksdz
         this.ks.deId =this.deId
+        console.log(this.kslist,"1231321231231321----")
         if(this.ksName==='' && this.ksdz===''){
           return this.$message.error("请先选择");
         }else if(this.ksdz===''){
@@ -141,7 +142,7 @@ import  qs from 'qs'
 
             if(this.ks.ksId===0){
               for (let i=0;i<this.kslist.length;i++){
-                if(this.ksName==this.kslist[i].ksName){
+                if(this.ksName==this.kslist[i].ksName&&this.deId==this.kslist[i].deId ){
                   return this.$message.error("不能重复")
                 }
               }

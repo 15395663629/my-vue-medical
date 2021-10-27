@@ -152,15 +152,23 @@ export default {
     },
     //新增
     addSupplier(){
-      console.log(this.formSipplier);
-      this.axios({
-        url:'http://localhost:8089/gys-add',
-        params:{ykSupplier:this.formSipplier}
-      }).then((v)=>{
-        this.getData();
-        this.clearform();
-      }).catch(function (){
-
+      this.$refs['formSipplier'].validate((s) =>{
+        if(s){
+          console.log(this.formSipplier);
+          this.axios({
+            url:'http://localhost:8089/gys-add',
+            params:{ykSupplier:this.formSipplier}
+          }).then((v)=>{
+            this.$message({
+              message: '供应商新增成功',
+              type: 'success'
+            });
+            this.getData();
+            this.clearform();
+          })
+        }else(
+            this.$message('请填写字段')
+        )
       })
     },
     //修改获取数据

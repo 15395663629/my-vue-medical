@@ -183,7 +183,7 @@
         {{handleClose()}}
       </el-form-item>
       <span class="dialog-footer" style="margin-left:240px">
-        <el-button @click="isShowQtjf = false" size="small" >取 消</el-button>
+        <el-button @click="resetForm2" size="small" >取 消</el-button>
         <el-button type="primary" @click="shPriceUp('regArr1')" size="small">确 定</el-button>
       </span>
     </el-form>
@@ -248,7 +248,7 @@ import { h } from 'vue'
           ksId:null,
           cardObject: {},
           //判断选项缴费
-          radioSf:null,
+          radioSf:2,
           /*挂号医生的id*/
           doctorSid:0,
           shPrice:null,
@@ -292,7 +292,6 @@ import { h } from 'vue'
       },
       //其他缴费收取金额
       shPriceUp(form){
-        console.log(form)
         this.$refs[form].validate((valid)=>{
           if (valid) {
             this.guaHaoPrinting();
@@ -318,7 +317,7 @@ import { h } from 'vue'
                 type: 'success'
               });
             }
-            this.resetForm()//刷新主界面的校验提示
+            this.resetForm();
             this.allRightTable()//刷新父组件的挂号记录表查询
           }
         }).catch(function(){})
@@ -418,12 +417,12 @@ import { h } from 'vue'
       },
       resetForm(){//取消
         this.isShow1 = false;
+        this.isShowQtjf=false;
         this.result();
         this.$refs['regArr'].resetFields();
       },
       resetForm2(){//取消
         this.isShowQtjf=false;
-        this.result();
         this.$refs['regArr1'].resetFields();
       },
       getTimestamp(time) { //把时间日期转成时间戳
@@ -474,7 +473,7 @@ import { h } from 'vue'
               ksId:null,
               cardObject: {},
               //判断选项缴费
-              radioSf:null,
+              radioSf:2,
               /*挂号医生的id*/
               doctorSid:0,
               shPrice:null,

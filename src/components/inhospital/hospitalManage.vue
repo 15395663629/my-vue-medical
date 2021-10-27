@@ -588,7 +588,7 @@
           startDate:'',//开始日期
               endDate:'',//结束日期
               searchLike:'',//模糊搜索
-              doctorType:2,//医嘱类型
+              doctorType:'',//医嘱类型
               sIdArr:[],//员工编号
               ptNo:''
         };
@@ -718,13 +718,13 @@
 
       //新增住院方法
       addPatientFunction(){
-        // if(this.patientBaseObj.inId == ''){
-        //   this.$message({
-        //     type:'error',
-        //     message:'未选择住院病人'
-        //   });
-        //   return;
-        // }
+        if(this.patientBaseObj.inId == ''){
+          this.$message({
+            type:'error',
+            message:'未选择住院病人'
+          });
+          return;
+        }
         this.$refs['patientBaseObj'].validate((valid) => {
           if (valid) {
             this.axios.post("addPatient",this.patientBaseObj).then((v)=>{

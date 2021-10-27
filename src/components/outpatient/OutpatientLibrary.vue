@@ -84,7 +84,7 @@
 			      </template>
 			      <template #reference>
 			        <div class="name-wrapper">
-			          <el-tag size="medium" class="fontType">{{scope.row.historyObject.chDoctorText}}</el-tag>
+			          <el-tag size="medium" class="fontType">{{scope.row.historyObject.chComplaint}}</el-tag>
 			        </div>
 			      </template>
 			    </el-popover>

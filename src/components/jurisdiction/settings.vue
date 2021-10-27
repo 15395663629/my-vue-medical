@@ -53,23 +53,32 @@ import axios from "axios";
 export default {
   data() {
     return {
+      //表格数据
       tableData: [],
+      //下拉框科室
       options: [],
       ks:{
         ksname:'',
         sname:''
-      }
+      },
+        dept:[]
     }
   },
+
   methods:{
     getDate(){
       this.axios.post('home-sch').then((v)=>{
         this.tableData=v.data
-
+        console.log(this.tableData,"表格数据")
       }).catch()
       this.axios.get('http://localhost:8089/ks-list').then((v)=>{
         this.options=v.data
-        console.log(this.kslist)
+        console.log(this.options,"1111111111111111111")
+        this.intercept()
+        this.intercepts()
+      }).catch()
+      this.axios.get("http://localhost:8089/bm-list").then((v)=>{
+        this.dept=v.data
       }).catch()
     },
     selectKs(){
@@ -82,16 +91,41 @@ export default {
           params: {ksFrom: this.ks}
         }).then((v) => {
           this.tableData=v.data
+          this.intercepts()
           // console.log(this.tableData+"111----")
           // this.getDate()
         }).catch()
       }
 
     },
+    intercept(){
+      for ( let i=0; i<this.options.length; i++){
+        for ( let j=0;j<this.dept.length; j++){
+          if(this.options[i].deId === this.dept[j].deId){
+            this.options[i].ksName=this.dept[j].deName.slice(0,this.dept[j].deName.length)+this.options[i].ksName
 
+          }
+        }
+      }
+    },
+    intercepts(){
+      for ( let i=0; i<this.tableData.length; i++){
+        for ( let j=0;j<this.options.length; j++){
+          // console.log(this.options)
+          // console.log(this.tableData[i].departmentKs.deId)
+          if(this.tableData[i].departmentKs.ksId === this.options[j].ksId){
+            this.tableData[i].departmentKs.ksName=this.options[j].ksName
+            // console.log(this.tableData[i].departmentKs.ksName)
+          }
+        }
+      }
+    }
   },
   created() {
     this.getDate()
+  },
+  mounted(){
+
   }
 }
 </script>
